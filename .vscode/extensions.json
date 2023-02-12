@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "stylelint.vscode-stylelint",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "eliostruyf.vscode-typescript-exportallmodules",
+    "rvest.vs-code-prettier-eslint",
+    "aaron-bond.better-comments",
+    "naumovs.color-highlight",
+    "dakshmiglani.hex-to-rgba",
+    "styled-components.vscode-styled-components",
+    "gruntfuggly.todo-tree",
+    "orta.vscode-twoslash-queries",
+    "xyz.local-history"
+  ]
+}

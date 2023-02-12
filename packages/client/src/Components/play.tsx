@@ -99,7 +99,7 @@ export default function Play() {
     };
   }>({})
 	const [newRoomName, setNewRoomName] = useState("");
-  
+
 
   // 사이트에서 나가면 경고창 띄우기
   const preventClose = (e: BeforeUnloadEvent) => {
@@ -116,7 +116,7 @@ export default function Play() {
           window.removeEventListener("beforeunload", preventClose);
       };
   }, []);
-  
+
   useEffect(() => {
     socket.emit('rooms');
     return () => {
