@@ -2,18 +2,15 @@
 
 
 ## 실행환경
-describe here
+plz describe here
 
 ## 개발환경 셋팅
-
-1. yarn
-
 ```bash
+# install yarn
 $ brew install yarn
-```
 
-2. nvm
-
-```bash
-$ brew install yarn
+# install nvm
+$ brew install nvm
+$ nvm install 16.19.0
+$ nvm use 16.19.0
 ```
