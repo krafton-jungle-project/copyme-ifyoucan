@@ -2,6 +2,12 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "@mediapipe/pose": "^0.5.1675469404",
     "@tensorflow-models/pose-detection": "^2.0.0",
@@ -24,14 +30,16 @@
     "react-scripts": "5.0.1",
     "socket.io-client": "^4.6.0",
     "styled-components": "^5.3.6",
-    "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+  "devDependencies": {
+    "@types/jest": "29.2.4",
+    "@types/node": "18.11.18",
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/styled-components": "^5.1.26",
+    "prettier": "^2.5.1"
   },
   "eslintConfig": {
     "extends": [
