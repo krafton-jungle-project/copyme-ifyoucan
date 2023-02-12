@@ -11,7 +11,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 
-@WebSocketGateway(8080, {
+@WebSocketGateway(8081, {
   cors: {
     origin: 'http://localhost:3000',
     // origin: '*',

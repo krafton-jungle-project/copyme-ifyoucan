@@ -5,7 +5,7 @@ import { io, Socket } from 'socket.io-client';
 import styled from 'styled-components';
 import Poro from '../Assets/arcadePoro.png'
 
-const SOCKET_SERVER_URL = 'http://localhost:8080';
+const SOCKET_SERVER_URL = 'http://localhost:8081';
 // const SOCKET_SERVER_URL = 'https://8d4a-175-126-107-17.jp.ngrok.io';
 const RoomContainer = styled.div `
   width: 950px;
@@ -83,7 +83,7 @@ export default function Play() {
   // const [nickName, setNickName] = useState<string>("");
   const nickName = "user1";
   const [disable, setDisable] = useState<boolean>(false);
-  const socket = io(SOCKET_SERVER_URL); 
+  const socket = io(SOCKET_SERVER_URL);
 
 	const [rooms, setRooms] = useState<{
     [key: string]: {
@@ -94,7 +94,7 @@ export default function Play() {
     };
   }>({})
 	const [newRoomName, setNewRoomName] = useState("");
-  
+
 
   // 사이트에서 나가면 경고창 띄우기
   const preventClose = (e: BeforeUnloadEvent) => {
@@ -111,7 +111,7 @@ export default function Play() {
           window.removeEventListener("beforeunload", preventClose);
       };
   }, []);
-  
+
   useEffect(() => {
     socket.emit('rooms');
     return () => {
