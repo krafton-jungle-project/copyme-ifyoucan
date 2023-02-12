@@ -1,0 +1,14 @@
+/* #xowns97__wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+} */
+
+img {
+  /* margin-top: 50px; */
+  margin: auto;
+  display: block;
+  width: 370px;
+  height: auto;
+  text-align: center;
+}
