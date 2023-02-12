@@ -16,8 +16,8 @@ const pc_config = {
 		},
 	],
 };
-const SOCKET_SERVER_URL = 'http://localhost:8081';
-// const SOCKET_SERVER_URL = 'https://8d4a-175-126-107-17.jp.ngrok.io';
+// const SOCKET_SERVER_URL = 'http://localhost:8081';
+const SOCKET_SERVER_URL = 'http://bead-13-209-62-5.ngrok.io';
 
 
 function Room() {
@@ -27,6 +27,11 @@ function Room() {
 	const roomId: string = location.state.roomId;
 	const nickName: string = location.state.nickName;
 	const socket = io(SOCKET_SERVER_URL);
+	useEffect(() => {
+		socket.on('connect', () => {
+			console.log('socket connected');
+		});
+	}, []);
 
 	// const socket: Socket = location.state.socket;
 	// const { roomId, nickName, socket } = location.state;
