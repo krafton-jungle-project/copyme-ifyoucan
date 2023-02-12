@@ -16,7 +16,7 @@ const pc_config = {
 		},
 	],
 };
-const SOCKET_SERVER_URL = 'http://localhost:8080';
+const SOCKET_SERVER_URL = 'http://localhost:8081';
 // const SOCKET_SERVER_URL = 'https://8d4a-175-126-107-17.jp.ngrok.io';
 
 
@@ -34,14 +34,14 @@ function Room() {
 
 
 	const socketRef = useRef<Socket>(); // 유저 자신의 socket ref
-	const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection }>({}); // 상대 유저의 RTCPeerConnection 저장 
+	const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection }>({}); // 상대 유저의 RTCPeerConnection 저장
 	const myVideoRef = useRef<HTMLVideoElement>(null); // 유저 자신의 비디오 ref
 	const myStreamRef = useRef<MediaStream>(); // 유저 자신의 스트림 ref
 	const [otherUsers, setOtherUsers] = useState<WebRTCUser[]>([]); // 상대 유저들의 정보 저장
 	const [myNickName, setMyNickName] = useState<string>(''); // 상대 유저들의 정보 저장
 
 
-	
+
 	const getMyStream = useCallback(async () => {
 		try {
 			// 유저 자신의 stream 얻기
@@ -49,7 +49,7 @@ function Room() {
 				audio: true,
 				video: true,
 			});
-      
+
 			myStreamRef.current = myStream;
 			if (myVideoRef.current) myVideoRef.current.srcObject = myStream;
 			if (!socketRef.current) return;
@@ -62,7 +62,7 @@ function Room() {
 			console.log(`getUserMedia error: ${e}`);
 		}
 		}, []);
-	
+
 	// 인자로 받은 유저와 peerConnection을 생성하는 함수
 	const makeConnection = useCallback((userId: string, nickName: string) => {
 
@@ -104,16 +104,16 @@ function Room() {
 			console.log('my stream error');
 		}
 		return peerConnection;
-	
+
 	}, [])
-	
+
 	useEffect(() => {
 		console.log("useEffect");
 		if (!location.state) {
 			console.log("no state");
 			navigate('/');
 		};
-		
+
 		if (!roomId || !nickName ||!socket) {
 			console.log(`roomId: ${roomId}, nickName: ${nickName}`)
 			navigate('/');
@@ -121,11 +121,11 @@ function Room() {
 		socketRef.current = socket;
 		// if (!socketRef.current) return;
 		getMyStream();
-		
+
 		if (!socketRef.current) return;
 		// 유저를 방에 join
 
-		
+
 		socketRef.current.on('other_users', (otherUsers: Array<{ id: string, nickName: string }>) => {
 			console.log(otherUsers);
 			otherUsers.forEach(async (user) => {
@@ -133,7 +133,7 @@ function Room() {
 				const peerConnection = makeConnection(user.id, user.nickName);
 				if (!peerConnection || !socketRef.current) return;
 				pcsRef.current = { ...pcsRef.current, [user.id]: peerConnection }
-				
+
 				try {
 					const offer = await peerConnection.createOffer();
 					peerConnection.setLocalDescription(new RTCSessionDescription(offer));
@@ -143,11 +143,11 @@ function Room() {
 						offerSendNickName: nickName,
 						offerReceiveID: user.id,
 					});
-					
+
 				} catch (e) {
 					console.log(e);
 				}
-				
+
 			})
 		});
 
@@ -226,7 +226,7 @@ function Room() {
 
 
 	}, [getMyStream, makeConnection])
-	
+
 	return (
 		<div>
 		<video
