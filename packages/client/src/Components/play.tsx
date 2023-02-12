@@ -5,8 +5,8 @@ import { io, Socket } from 'socket.io-client';
 import styled from 'styled-components';
 import Poro from '../Assets/arcadePoro.png'
 
-// const SOCKET_SERVER_URL = 'http://localhost:8080';
-const SOCKET_SERVER_URL = 'http://ccc7-175-126-107-17.jp.ngrok.io';
+const SOCKET_SERVER_URL = 'http://localhost:8081';
+// const SOCKET_SERVER_URL = 'http://b442-175-126-107-17.jp.ngrok.io';
 const RoomContainer = styled.div `
   width: 950px;
   height: 530px;

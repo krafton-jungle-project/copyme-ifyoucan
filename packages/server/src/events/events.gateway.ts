@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
   cors: {
     // origin: 'http://localhost:3000',
     origin: '*',
-    // origin: 'https://13ec-175-126-107-17.jp.ngrok.io',
+    // origin: 'http://6650-175-126-107-17.jp.ngrok.io',
   },
 })
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {

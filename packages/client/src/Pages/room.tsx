@@ -16,8 +16,8 @@ const pc_config = {
 		},
 	],
 };
-const SOCKET_SERVER_URL = 'http://localhost:8080';
-// const SOCKET_SERVER_URL = 'https://8d4a-175-126-107-17.jp.ngrok.io';
+// const SOCKET_SERVER_URL = 'http://localhost:8081';
+const SOCKET_SERVER_URL = 'https://8d4a-175-126-107-17.jp.ngrok.io';
 
 
 function Room() {
