@@ -1,6 +1,5 @@
 {
   "recommendations": [
-    "stylelint.vscode-stylelint",
     "dbaeumer.vscode-eslint",
     "eliostruyf.vscode-typescript-exportallmodules",
     "rvest.vs-code-prettier-eslint",
