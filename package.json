@@ -1,0 +1,15 @@
+{
+  "name": "copyme-ifyoucan",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/krafton-jungle-project/copyme-ifyoucan.git",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "server:dev": "yarn workspace server start:dev",
+    "client:start": "yarn workspace client start"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
