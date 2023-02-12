@@ -16,14 +16,13 @@ const pc_config = {
 		},
 	],
 };
-// const SOCKET_SERVER_URL = 'http://localhost:8080';
-const SOCKET_SERVER_URL = 'https://8d4a-175-126-107-17.jp.ngrok.io';
+const SOCKET_SERVER_URL = 'http://localhost:8080';
+// const SOCKET_SERVER_URL = 'https://8d4a-175-126-107-17.jp.ngrok.io';
 
 
 function Room() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	console.log(location)
 	const roomId: string = location.state.roomId;
 	const nickName: string = location.state.nickName;
 	const socket = io(SOCKET_SERVER_URL);
@@ -38,7 +37,7 @@ function Room() {
 	const myVideoRef = useRef<HTMLVideoElement>(null); // 유저 자신의 비디오 ref
 	const myStreamRef = useRef<MediaStream>(); // 유저 자신의 스트림 ref
 	const [otherUsers, setOtherUsers] = useState<WebRTCUser[]>([]); // 상대 유저들의 정보 저장
-	const [myNickName, setMyNickName] = useState<string>(''); // 상대 유저들의 정보 저장
+	// const [myNickName, setMyNickName] = useState<string>(''); // 상대 유저들의 정보 저장
 
 
 	
@@ -108,7 +107,7 @@ function Room() {
 	}, [])
 	
 	useEffect(() => {
-		console.log("useEffect");
+
 		if (!location.state) {
 			console.log("no state");
 			navigate('/');
@@ -119,13 +118,13 @@ function Room() {
 			navigate('/');
 		}
 		socketRef.current = socket;
-		// if (!socketRef.current) return;
+
 		getMyStream();
 		
 		if (!socketRef.current) return;
-		// 유저를 방에 join
 
 		
+		//! 서버에서 다른 유저들의 정보를 받는다
 		socketRef.current.on('other_users', (otherUsers: Array<{ id: string, nickName: string }>) => {
 			console.log(otherUsers);
 			otherUsers.forEach(async (user) => {
@@ -150,7 +149,8 @@ function Room() {
 				
 			})
 		});
-
+		
+		//! offer에 대한 RTCSessionDescription을 얻는다.
 		socketRef.current.on(
 			'get_offer',
 			async (data: {
@@ -180,26 +180,25 @@ function Room() {
 			},
 		);
 
+		//! answer에 대한 RTCSessionDescription을 얻는다.
 		socketRef.current.on(
 			'get_answer',
 			(data: { sdp: RTCSessionDescription; answerSendID: string }) => {
 				const { sdp, answerSendID } = data;
-				console.log('get answer');
-				const peerConnection: RTCPeerConnection = pcsRef.current[answerSendID];
-				if (!peerConnection) return;
-				peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
+				pcsRef.current[answerSendID].setRemoteDescription(new RTCSessionDescription(sdp));
 			},
 		);
 
 		socketRef.current.on(
 			'get_ice',
 			async (data: { candidate: RTCIceCandidateInit; candidateSendID: string }) => {
-				console.log('get ice');
-				const { candidate, candidateSendID } = data;
-				const peerConnection: RTCPeerConnection = pcsRef.current[candidateSendID];
-				if (!peerConnection) return;
-				await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-				console.log('candidate add success');
+				try {
+					const { candidate, candidateSendID } = data;
+					await pcsRef.current[candidateSendID].addIceCandidate(new RTCIceCandidate(candidate));
+					console.log('candidate add success');
+				} catch(e) {
+					console.log(e);
+				}
 			},
 		);
 
@@ -246,6 +245,9 @@ function Room() {
 		{otherUsers.map((user, index) => (
 			<PeerVideo key={index} nickName={user.nickName} stream={user.stream} />
 		))}
+			{/* <div>
+				<button></button>
+		<div /> */}
 	</div>
 	);
 }

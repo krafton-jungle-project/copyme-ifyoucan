@@ -11,11 +11,11 @@ import {
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 
-@WebSocketGateway(8080, {
+@WebSocketGateway(8081, {
   cors: {
-    origin: 'http://localhost:3000',
-    // origin: '*',
-    // origin: 'https://82f4-175-126-107-17.jp.ngrok.io',
+    // origin: 'http://localhost:3000',
+    origin: '*',
+    // origin: 'https://13ec-175-126-107-17.jp.ngrok.io',
   },
 })
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
