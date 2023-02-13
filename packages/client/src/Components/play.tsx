@@ -5,8 +5,8 @@ import { io, Socket } from 'socket.io-client';
 import styled from 'styled-components';
 import Poro from '../Assets/arcadePoro.png'
 
-const SOCKET_SERVER_URL = 'http://localhost:8081';
-// const SOCKET_SERVER_URL = 'https://8d4a-175-126-107-17.jp.ngrok.io';
+// const SOCKET_SERVER_URL = 'http://localhost:8081';
+const SOCKET_SERVER_URL = 'https://f4b1-13-209-62-5.ngrok.io';
 const RoomContainer = styled.div `
   width: 950px;
   height: 530px;
@@ -84,6 +84,11 @@ export default function Play() {
   const nickName = "user1";
   const [disable, setDisable] = useState<boolean>(false);
   const socket = io(SOCKET_SERVER_URL);
+  useEffect(() => {
+		socket.on('connect', () => {
+			console.log('socket connected');
+		});
+	}, []);
 
 	const [rooms, setRooms] = useState<{
     [key: string]: {

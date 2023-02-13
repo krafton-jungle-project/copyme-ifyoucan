@@ -1,1 +1,26 @@
-{}
+{
+  "auto-rename-tag.activationOnLanguage": [
+    "javascriptreact",
+    "typescriptreact"
+  ],
+  "[javascript, javascriptreact, typescript, typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "breadcrumbs.enabled": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true
+  },
+  "editor.formatOnSave": true,
+
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.stickyScroll.enabled": true,
+
+  "git.autofetch": true,
+  "git.mergeEditor": true,
+  "gitlens.advanced.messages": {
+    "suppressLineUncommittedWarning": true
+  },
+  "gitlens.hovers.currentLine.over": "line",
+  "todohighlight.isEnable": true
+}
