@@ -118,14 +118,16 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     socket.join(roomId);
 
     console.log(this.rooms);
-    // 유저에게 이미 방에 있는 다른 유저 정보 주기
-    // if ()
     const otherUsers = this.rooms[roomId].users.filter(
       (user) => user.id !== socket.id,
     );
     console.log(otherUsers);
 
+    // 유저에게 이미 방에 있는 다른 유저 정보 주기
     this.server.sockets.to(socket.id).emit('other_users', otherUsers);
+
+    // Lobby 유저에게 Romm 정보 전달
+    this.server.sockets.emit('get_rooms', this.rooms);
 
     this.logger.log(
       `nickName: ${nickName}, userId: ${socket.id}, join_room : ${roomId}`,
