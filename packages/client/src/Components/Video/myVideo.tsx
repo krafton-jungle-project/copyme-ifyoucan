@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 const VideoContainer = styled.video`
-	width: 240,
-	height: 240,
-	margin: 5,
-	backgroundColor: 'black',
+	width: 240;
+	height: 240;
+	margin: 5;
+	background-color: 'black';
 `;
 
 const UserLabel = styled.p`

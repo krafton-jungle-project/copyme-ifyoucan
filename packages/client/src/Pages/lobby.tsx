@@ -6,6 +6,7 @@ import Play from '../Components/play';
 import logo from '../Assets/logo.png'
 import xownsstyle from '../CSS/xowns97.module.css';
 ;
+
 export default function Lobby() {
   return (
     <div>

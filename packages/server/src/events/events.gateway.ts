@@ -85,8 +85,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       started: false,
       readyCount: 0,
     };
-    this.server.sockets.emit('get_rooms', this.rooms);
+    console.log(socket.id);
     this.server.sockets.to(socket.id).emit('new_room', roomId);
+    this.server.sockets.emit('get_rooms', this.rooms);
 
     this.logger.log(`create room roomname: ${roomName} by user:${socket.id} `);
   }

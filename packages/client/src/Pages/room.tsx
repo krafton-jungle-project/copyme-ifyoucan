@@ -16,13 +16,14 @@ const pc_config = {
 		},
 	],
 };
-const SOCKET_SERVER_URL = 'http://localhost:8081';
-// const SOCKET_SERVER_URL = 'https://8d4a-175-126-107-17.jp.ngrok.io';
+// const SOCKET_SERVER_URL = 'http://localhost:8081';
+const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
 
 
 function Room() {
 	const navigate = useNavigate();
 	const location = useLocation();
+
 	const roomId: string = location.state.roomId;
 	const nickName: string = location.state.nickName;
 	const socket = io(SOCKET_SERVER_URL);
@@ -52,10 +53,10 @@ function Room() {
 			myStreamRef.current = myStream;
 			if (myVideoRef.current) myVideoRef.current.srcObject = myStream;
 			if (!socketRef.current) return;
-			socketRef.current.emit('join_room', {
-				roomId,
-				nickName,
-			});
+			// socketRef.current.emit('join_room', {
+			// 	roomId,
+			// 	nickName,
+			// });
 
 		} catch (e) {
 			console.log(`getUserMedia error: ${e}`);
@@ -119,16 +120,21 @@ function Room() {
 		}
 		socketRef.current = socket;
 
+		//! 유저 자신 비디오 스트림 얻기
 		getMyStream();
 
-		if (!socketRef.current) return;
-
+		//! socket join
+		socketRef.current.emit('join_room', {
+			roomId,
+			nickName,
+		});
+		
 		
 		//! 서버에서 다른 유저들의 정보를 받는다
 		socketRef.current.on('other_users', (otherUsers: Array<{ id: string, nickName: string }>) => {
 			console.log(otherUsers);
 			otherUsers.forEach(async (user) => {
-				if (!myStreamRef.current) return;
+				// if (!myStreamRef.current) return;
 				const peerConnection = makeConnection(user.id, user.nickName);
 				if (!peerConnection || !socketRef.current) return;
 				pcsRef.current = { ...pcsRef.current, [user.id]: peerConnection }
@@ -150,7 +156,7 @@ function Room() {
 			})
 		});
 		
-		//! offer에 대한 RTCSessionDescription을 얻는다.
+		//! offer를 받은 유저는 answer를 보낸다
 		socketRef.current.on(
 			'get_offer',
 			async (data: {
@@ -159,11 +165,13 @@ function Room() {
 				offerSendNickName: string;
 			}) => {
 				const { sdp, offerSendID, offerSendNickName } = data;
-				console.log('get offer');
 				if (!myStreamRef.current) return;
+				
 				const peerConnection = makeConnection(offerSendID, offerSendNickName);
+
 				if (!(peerConnection && socketRef.current)) return;
 				pcsRef.current = { ...pcsRef.current, [offerSendID]: peerConnection };
+
 				try {
 					await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
 					console.log('answer set remote description success');
@@ -201,7 +209,9 @@ function Room() {
 				}
 			},
 		);
+		
 
+		//! 유저가 나갔을 시 
 		socketRef.current.on('user_exit', (userId) => {
 			if (!pcsRef.current[userId]) return;
 			pcsRef.current[userId].close();

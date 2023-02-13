@@ -2,7 +2,6 @@
   "recommendations": [
     "stylelint.vscode-stylelint",
     "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
     "eliostruyf.vscode-typescript-exportallmodules",
     "rvest.vs-code-prettier-eslint",
     "aaron-bond.better-comments",

@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import styled from 'styled-components';
 import Poro from '../Assets/arcadePoro.png'
+import CreateRoom from './createRoom';
 
-const SOCKET_SERVER_URL = 'http://localhost:8081';
-// const SOCKET_SERVER_URL = 'http://b442-175-126-107-17.jp.ngrok.io';
+// const SOCKET_SERVER_URL = 'http://localhost:8081';
+const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
 const RoomContainer = styled.div `
   width: 950px;
   height: 530px;
@@ -74,7 +75,6 @@ const RoomCnt = styled.span`
   font-size: 23px;
   font-weight: 600;
 `
-
 
 
 export default function Play() {
@@ -149,12 +149,7 @@ export default function Play() {
 
   return (
 	<div className="play">
-	  <form>
-				방이름: <input onChange={(e)=>setNewRoomName(e.target.value)} type="text" value={newRoomName} />{" "}
-			<button type="submit">
-				생성
-			</button>
-    </form>
+      <CreateRoom nickName={nickName}  socket={socket} ></CreateRoom>
       <RoomHeader>방 목록</RoomHeader>
       <RoomContainer>{
         Object.entries(rooms).map((room) => {
