@@ -1,7 +1,11 @@
 {
   "recommendations": [
     "dbaeumer.vscode-eslint",
+<<<<<<< HEAD
+    "esbenp.prettier-vscode",
+=======
     "eliostruyf.vscode-typescript-exportallmodules",
+>>>>>>> 74bb31e (feat: 방 만들기 기능)
     "rvest.vs-code-prettier-eslint",
     "aaron-bond.better-comments",
     "naumovs.color-highlight",
