@@ -3,3 +3,5 @@
 node_modules
 
 ngrok.yml
+
+.DS_STORE

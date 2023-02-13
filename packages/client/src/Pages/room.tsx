@@ -4,6 +4,7 @@ import { io, Socket } from "socket.io-client";
 import { WebRTCUser } from "../types";
 import PeerVideo from "../components/PeerVideo";
 import styled from "styled-components";
+import MyVideo from "../components/MyVideo";
 
 const UserLabel = styled.h2`
   color: blue;
@@ -217,18 +218,7 @@ function Room() {
 
   return (
     <div>
-      <video
-        style={{
-          width: 240,
-          height: 240,
-          margin: 5,
-          backgroundColor: "black",
-        }}
-        muted
-        ref={myVideoRef}
-        autoPlay
-        playsInline
-      />
+      <MyVideo />
       <UserLabel>{nickName}</UserLabel>
       {otherUsers.map((user, index) => (
         <PeerVideo key={index} nickName={user.nickName} stream={user.stream} />
