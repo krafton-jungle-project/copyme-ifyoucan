@@ -42,9 +42,11 @@ export default function CreateRoom({ nickName, socket }: Props) {
 
   return (
     <>
-      <Button type="default" onClick={showModal}>
-        방만들기
-      </Button>
+      <div style={{ textAlign: "center" }}>
+        <Button type="default" onClick={showModal}>
+          방만들기
+        </Button>
+      </div>
       <Modal
         title="방 만들기"
         open={open}

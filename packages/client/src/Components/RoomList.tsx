@@ -76,14 +76,23 @@ const RoomCnt = styled.span`
   font-weight: 600;
 `;
 
-export default function Play() {
+export default function RoomList() {
   const navigate = useNavigate();
-  const nickName = "user1";
-  const socket = io(SOCKET_SERVER_URL);
+  const nickName = "user1"; //temp
+
+  const socket = io(SOCKET_SERVER_URL); //check 렌더링 될 때마다 기존 연결을 끊지 않고 소켓을 새로 만든다.
+
+  // 페이지를 나갈 때 소켓 연결을 끊는다.
+  //check 어디서 return 하며 disconnect 해야할까? 위 생성 과정과 연계하여 추후 고민 필요
+  useEffect(() => {
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
-    socket.on("connect", () => console.log("connect"));
-    socket.on("error", () => console.log("error"));
+    socket.on("connect", () => console.log("lobby: socket connection complete."));
+    socket.on("error", () => console.log("lobby: socket connection error occur."));
   }, []);
 
   const [rooms, setRooms] = useState<{
@@ -95,41 +104,26 @@ export default function Play() {
     };
   }>({});
 
-  // 사이트에서 나가면 경고창 띄우기
+  // 사이트에서 나가는 시도(새로고침, 브라우저 닫기)를 할 때 경고창 띄우기
   const preventClose = (e: BeforeUnloadEvent) => {
     e.preventDefault();
     e.returnValue = ""; // chrome에서는 return value 설정 필요
   };
 
   useEffect(() => {
-    (() => {
-      window.addEventListener("beforeunload", preventClose);
-    })();
-
-    return () => {
-      window.removeEventListener("beforeunload", preventClose);
-    };
+    (() => window.addEventListener("beforeunload", preventClose))();
+    return () => window.removeEventListener("beforeunload", preventClose);
   }, []);
 
   useEffect(() => {
     socket.emit("rooms");
-    return () => {
-      socket.disconnect();
-    };
   }, []);
 
   useEffect(() => {
-    socket.on("get_rooms", (rooms) => {
-      setRooms(rooms);
-      console.log(Object.entries(rooms));
-    });
-    return () => {
-      socket.disconnect();
-    };
+    socket.on("get_rooms", (rooms) => setRooms(rooms));
   }, [rooms]);
 
   const joinRoom = (roomId: string) => {
-    console.log(roomId);
     navigate("/room", {
       state: {
         roomId: roomId,
@@ -138,6 +132,7 @@ export default function Play() {
     });
   };
 
+  //! 방 하나 하나를 component화 필요
   return (
     <div className="play">
       <CreateRoom nickName={nickName} socket={socket}></CreateRoom>

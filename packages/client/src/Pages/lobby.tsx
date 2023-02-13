@@ -1,6 +1,6 @@
-import Play from "../components/Play";
-import logo from "../assets/logo.png";
-import xownsstyle from "../css/xowns97.module.css";
+import RoomList from "../components/RoomList";
+import logo from "../assets/logo.png"; //temp
+import xownsstyle from "../css/xowns97.module.css"; //temp
 
 export default function Lobby() {
   return (
@@ -9,7 +9,7 @@ export default function Lobby() {
         <img src={logo} alt="logo" />
       </div>
       <hr />
-      <Play />
+      <RoomList />
     </div>
   );
 }

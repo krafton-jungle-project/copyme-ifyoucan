@@ -9,6 +9,7 @@ const UserLabel = styled.h2`
   color: blue;
 `;
 
+//todo 스턴 서버 직접 생성 고려(임시)
 const pc_config = {
   iceServers: [
     {
@@ -20,23 +21,21 @@ const pc_config = {
 // const SOCKET_SERVER_URL = 'http://localhost:8081';
 const SOCKET_SERVER_URL = "http://15.165.237.195:8081";
 
+//todo 주소로 직접 접근 시 홈(로그인)/로비 페이지로 redirect
 function Room() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const roomId: string = location.state.roomId;
-  const nickName: string = location.state.nickName;
-  const socket = io(SOCKET_SERVER_URL);
+  const nickName: string = location.state.nickName; //check 전역 변수로 관리하도록 수정 고려 필요
+  const socket = io(SOCKET_SERVER_URL); //temp get_room으로 인해 room 정보가 업데이트 될 때마다 소켓이 계속해서 생성된다.
 
-  // const socket: Socket = location.state.socket;
-  // const { roomId, nickName, socket } = location.state;
-
+  //todo useRef를 써야할까? 일반 변수로 바꿔서 테스트 및 Ref로 해야한다면 왜 그런지 알아보자
   const socketRef = useRef<Socket>(); // 유저 자신의 socket ref
   const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection }>({}); // 상대 유저의 RTCPeerConnection 저장
   const myVideoRef = useRef<HTMLVideoElement>(null); // 유저 자신의 비디오 ref
   const myStreamRef = useRef<MediaStream>(); // 유저 자신의 스트림 ref
   const [otherUsers, setOtherUsers] = useState<WebRTCUser[]>([]); // 상대 유저들의 정보 저장
-  // const [myNickName, setMyNickName] = useState<string>(''); // 상대 유저들의 정보 저장
 
   const getMyStream = useCallback(async () => {
     try {
@@ -47,12 +46,9 @@ function Room() {
       });
 
       myStreamRef.current = myStream;
+
       if (myVideoRef.current) myVideoRef.current.srcObject = myStream;
       if (!socketRef.current) return;
-      // socketRef.current.emit('join_room', {
-      // 	roomId,
-      // 	nickName,
-      // });
     } catch (e) {
       console.log(`getUserMedia error: ${e}`);
     }
@@ -234,13 +230,9 @@ function Room() {
         playsInline
       />
       <UserLabel>{nickName}</UserLabel>
-      {/* <MyVideo nickName={nickName} stream={myStreamRef} /> */}
       {otherUsers.map((user, index) => (
         <PeerVideo key={index} nickName={user.nickName} stream={user.stream} />
       ))}
-      {/* <div>
-				<button></button>
-		<div /> */}
     </div>
   );
 }
