@@ -1,12 +1,12 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
-import styled from "styled-components";
-import Poro from "../assets/arcadePoro.png";
-import CreateRoom from "./CreateRoom";
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+import styled from 'styled-components';
+import Poro from '../assets/arcadePoro.png';
+import CreateRoom from './CreateRoom';
 
 // const SOCKET_SERVER_URL = 'http://localhost:8081';
-const SOCKET_SERVER_URL = "http://15.165.237.195:8081";
+const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
 
 const RoomContainer = styled.div`
   width: 950px;
@@ -18,13 +18,6 @@ const RoomContainer = styled.div`
   padding: 30px 50px;
   flex-wrap: wrap;
   overflow: scroll;
-`;
-
-const RoomListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-items: center;
-  align-items: center;
 `;
 
 const RoomBox = styled.div`
@@ -78,7 +71,7 @@ const RoomCnt = styled.span`
 
 export default function RoomList() {
   const navigate = useNavigate();
-  const nickName = "user1"; //temp
+  const nickName = 'user1'; //temp
 
   const socket = io(SOCKET_SERVER_URL); //check 렌더링 될 때마다 기존 연결을 끊지 않고 소켓을 새로 만든다.
 
@@ -91,8 +84,8 @@ export default function RoomList() {
   }, []);
 
   useEffect(() => {
-    socket.on("connect", () => console.log("lobby: socket connection complete."));
-    socket.on("error", () => console.log("lobby: socket connection error occur."));
+    socket.on('connect', () => console.log('lobby: socket connection complete.'));
+    socket.on('error', () => console.log('lobby: socket connection error occur.'));
   }, []);
 
   const [rooms, setRooms] = useState<{
@@ -107,24 +100,24 @@ export default function RoomList() {
   // 사이트에서 나가는 시도(새로고침, 브라우저 닫기)를 할 때 경고창 띄우기
   const preventClose = (e: BeforeUnloadEvent) => {
     e.preventDefault();
-    e.returnValue = ""; // chrome에서는 return value 설정 필요
+    e.returnValue = ''; // chrome에서는 return value 설정 필요
   };
 
   useEffect(() => {
-    (() => window.addEventListener("beforeunload", preventClose))();
-    return () => window.removeEventListener("beforeunload", preventClose);
+    (() => window.addEventListener('beforeunload', preventClose))();
+    return () => window.removeEventListener('beforeunload', preventClose);
   }, []);
 
   useEffect(() => {
-    socket.emit("rooms");
+    socket.emit('rooms');
   }, []);
 
   useEffect(() => {
-    socket.on("get_rooms", (rooms) => setRooms(rooms));
+    socket.on('get_rooms', (rooms) => setRooms(rooms));
   }, [rooms]);
 
   const joinRoom = (roomId: string) => {
-    navigate("/room", {
+    navigate('/room', {
       state: {
         roomId: roomId,
         nickName: nickName,

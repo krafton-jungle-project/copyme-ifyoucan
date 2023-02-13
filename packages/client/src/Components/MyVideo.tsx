@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
-import styled from "styled-components";
-import * as moveNet from "../utils/tfjs-movenet";
+import { useEffect, useRef } from 'react';
+import styled from 'styled-components';
+import * as moveNet from '../utils/tfjs-movenet';
 
 const CanvasWrapper = styled.div`
   position: relative;
@@ -31,7 +31,10 @@ function MyVideo() {
       canvas: canvasRef.current,
     };
 
-    moveNet.canvasRender({ size: { width: 640, height: 480 }, element: elements });
+    moveNet.canvasRender({
+      size: { width: 640, height: 480 },
+      element: elements,
+    });
   }, []);
 
   return (

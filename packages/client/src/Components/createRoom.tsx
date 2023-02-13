@@ -1,7 +1,7 @@
-import { Button, Modal } from "antd";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Socket } from "socket.io-client";
+import { Button, Modal } from 'antd';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Socket } from 'socket.io-client';
 
 interface Props {
   nickName: string;
@@ -12,12 +12,12 @@ export default function CreateRoom({ nickName, socket }: Props) {
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
 
-  let roomName: string = "";
+  let roomName: string = '';
 
   const joinRoom = () => {
-    socket.on("new_room", (roomId: string) => {
-      console.log("방 입장");
-      navigate("/room", {
+    socket.on('new_room', (roomId: string) => {
+      console.log('방 입장');
+      navigate('/room', {
         state: {
           roomId,
           nickName,
@@ -31,7 +31,7 @@ export default function CreateRoom({ nickName, socket }: Props) {
   };
 
   const handleOk = () => {
-    socket.emit("create_room", roomName);
+    socket.emit('create_room', roomName);
     setOpen(false);
     joinRoom();
   };
@@ -42,7 +42,7 @@ export default function CreateRoom({ nickName, socket }: Props) {
 
   return (
     <>
-      <div style={{ textAlign: "center" }}>
+      <div style={{ textAlign: 'center' }}>
         <Button type="default" onClick={showModal}>
           방만들기
         </Button>

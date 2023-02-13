@@ -1,6 +1,6 @@
-import RoomList from "../components/RoomList";
-import logo from "../assets/logo.png"; //temp
-import xownsstyle from "../css/xowns97.module.css"; //temp
+import RoomList from '../components/RoomList';
+import logo from '../assets/logo.png'; //temp
+import xownsstyle from '../css/xowns97.module.css'; //temp
 
 export default function Lobby() {
   return (
