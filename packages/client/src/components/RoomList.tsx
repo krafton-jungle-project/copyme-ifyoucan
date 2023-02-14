@@ -8,6 +8,11 @@ import CreateRoom from './CreateRoom';
 // const SOCKET_SERVER_URL = 'http://localhost:8081';
 const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
 
+const RoomContainerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 const RoomContainer = styled.div`
   width: 950px;
   height: 530px;
@@ -130,26 +135,28 @@ export default function RoomList() {
     <div className="play">
       <CreateRoom nickName={nickName} socket={socket}></CreateRoom>
       <RoomHeader>방 목록</RoomHeader>
-      <RoomContainer>
-        {Object.entries(rooms).map((room) => {
-          return (
-            <RoomBox key={room[0]}>
-              <div>
-                <PoroImg src={Poro} />
-              </div>
-              <RoomInfo>
-                <RoomName>
-                  <RoomCnt>{room[1].users.length} / 4</RoomCnt>
-                  {room[1].roomName}
-                </RoomName>
-                <JoinBtn onClick={() => joinRoom(room[0])} disabled={room[1].users.length >= 4}>
-                  드루와
-                </JoinBtn>
-              </RoomInfo>
-            </RoomBox>
-          );
-        })}
-      </RoomContainer>
+      <RoomContainerWrapper>
+        <RoomContainer>
+          {Object.entries(rooms).map((room) => {
+            return (
+              <RoomBox key={room[0]}>
+                <div>
+                  <PoroImg src={Poro} />
+                </div>
+                <RoomInfo>
+                  <RoomName>
+                    <RoomCnt>{room[1].users.length} / 4</RoomCnt>
+                    {room[1].roomName}
+                  </RoomName>
+                  <JoinBtn onClick={() => joinRoom(room[0])} disabled={room[1].users.length >= 4}>
+                    드루와
+                  </JoinBtn>
+                </RoomInfo>
+              </RoomBox>
+            );
+          })}
+        </RoomContainer>
+      </RoomContainerWrapper>
     </div>
   );
 }
