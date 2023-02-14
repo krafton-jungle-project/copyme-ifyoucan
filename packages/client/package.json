@@ -9,13 +9,34 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@mediapipe/pose": "^0.5.1675469404",
+    "@reduxjs/toolkit": "^1.9.2",
+    "@tensorflow-models/pose-detection": "^2.0.0",
+    "@tensorflow/tfjs-backend-webgl": "^4.2.0",
+    "@tensorflow/tfjs-converter": "^4.2.0",
+    "@tensorflow/tfjs-core": "^4.2.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.12",
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@types/react-redux": "^7.1.25",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/styled-components": "^5.1.26",
+    "antd": "^5.2.0",
+    "axios": "^1.3.3",
+    "compute-scroll-into-view": "^2.0.4",
+    "jotai": "^2.0.1",
+    "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
+    "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
     "react-router-dom": "^6.8.1",
     "react-scripts": "5.0.1",
+    "redux": "^4.2.1",
     "socket.io-client": "^4.6.0",
     "styled-components": "^5.3.6",
     "web-vitals": "^2.1.4"
@@ -28,12 +49,6 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.26",
     "prettier": "^2.5.1"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [

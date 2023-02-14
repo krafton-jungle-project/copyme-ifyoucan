@@ -1,2 +1,6 @@
 .history
+.vscode/sftp.json
 node_modules
+ngrok.yml
+
+.DS_STORE
