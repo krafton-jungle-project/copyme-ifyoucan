@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios, { AxiosRequestConfig } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import { setCookie } from '../utils/cookies';
@@ -43,7 +44,8 @@ export default function Login() {
   const onClickConfirmButton = () => {
     console.log('login');
     axios
-      .post<AxiosRequestConfig>('http://localhost:5001/users/login', {
+      // .post<AxiosRequestConfig>('http://localhost:5001/users/login', {
+      .post<AxiosRequestConfig>('http://15.165.237.195:5001/users/login', {
         loginid: id,
         password: pw,
       })
@@ -63,7 +65,7 @@ export default function Login() {
   };
 
   const registerButton = () => {
-    navigate('/users');
+    navigate('/signup');
   };
 
   return (

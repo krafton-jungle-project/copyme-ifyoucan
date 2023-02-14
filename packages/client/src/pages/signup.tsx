@@ -45,7 +45,8 @@ export default function SignUp() {
   const onClickConfirmButton = () => {
     console.log('signup');
     axios
-      .post('http://localhost:5001/users', {
+      // .post('http://localhost:5001/users', {
+      .post('http://15.165.237.195:5001/users', {
         loginid: id,
         name: name,
         password: pw,
@@ -54,7 +55,7 @@ export default function SignUp() {
         console.log('asd');
         console.log(res.data.data);
         // 토큰을 받아서 저장 (local storage 또는 쿠키?)
-        navigate('/users/login');
+        navigate('/login');
         return res;
       })
       .catch((error) => {
