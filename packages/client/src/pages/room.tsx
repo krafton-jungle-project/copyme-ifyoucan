@@ -6,9 +6,16 @@ import PeerVideo from '../components/PeerVideo';
 import styled from 'styled-components';
 import MyVideo from '../components/MyVideo';
 import { stream } from '../utils/tfjs-movenet';
+import PrintScore from '../components/PrintScore';
 
 const UserLabel = styled.h2`
   color: blue;
+`;
+
+const VideoWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 //todo 스턴 서버 직접 생성 고려(임시)
@@ -201,7 +208,10 @@ function Room() {
 
   return (
     <div>
-      <MyVideo />
+      <VideoWrapper>
+        <MyVideo />
+        <PrintScore />
+      </VideoWrapper>
       <UserLabel>{nickName}</UserLabel>
       {otherUsers.map((user, index) => (
         <PeerVideo key={index} nickName={user.nickName} stream={user.stream} />
