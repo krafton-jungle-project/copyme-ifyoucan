@@ -1,8 +1,5 @@
 {
-  "auto-rename-tag.activationOnLanguage": [
-    "javascriptreact",
-    "typescriptreact"
-  ],
+  "auto-rename-tag.activationOnLanguage": ["javascriptreact", "typescriptreact"],
   "[javascript, javascriptreact, typescript, typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

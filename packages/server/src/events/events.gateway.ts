@@ -46,22 +46,20 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!roomId) return;
 
     // 유저 정보 업데이트
-    // const users = this.rooms[roomId].users;
-    console.log(this.rooms[roomId].users);
-    this.rooms[roomId].users = this.rooms[roomId].users.filter(
-      (user) => user.id !== socket.id,
-    );
-    console.log(this.rooms[roomId].users);
-    if (this.rooms[roomId].users.length === 0) {
-      // 방 삭제
-      delete this.rooms[roomId];
-      this.logger.log(`roomId: ${roomId} 삭제`);
-    } else {
-      socket.to(roomId).emit('user_exit', socket.id);
+    if (this.rooms[roomId]) {
+      this.rooms[roomId].users = this.rooms[roomId].users.filter((user) => user.id !== socket.id);
+      if (this.rooms[roomId].users.length === 0) {
+        // 방 삭제
+        delete this.rooms[roomId];
+        this.logger.log(`roomId: ${roomId} 삭제`);
+      } else {
+        socket.to(roomId).emit('user_exit', socket.id);
+      }
     }
-    // console.log(this.rooms[roomId].users);
-    // this.server.sockets.to(socket.id).emit('get_rooms', this.rooms);
+
+    // 클라이언트에게 업데이트 된 방 정보 전달
     this.server.sockets.emit('get_rooms', this.rooms);
+
     this.logger.log(`socketId: ${socket.id} 소켓 연결 해제 ❌`);
   }
 
@@ -74,10 +72,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 방 생성
   @SubscribeMessage('create_room')
-  createRoom(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() roomName: string,
-  ): void {
+  createRoom(@ConnectedSocket() socket: Socket, @MessageBody() roomName: string): void {
     const roomId = uuidv4();
     this.rooms[roomId] = {
       roomName,
@@ -100,27 +95,27 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ): void {
     const { roomId, nickName } = data;
 
+    if (!this.rooms[roomId]) {
+      this.server.sockets.to(socket.id).emit('error');
+      return;
+    }
+
     // 방 정보 업데이트
-    if (this.rooms[roomId]) {
-      const countUsers = this.rooms[roomId].users.length;
-      if (countUsers === 4) {
-        //# 에러 방출?
-        this.server.sockets.to(socket.id).emit('full');
-        this.logger.log(`full users ${countUsers}`);
-        return;
-      } else {
-        this.rooms[roomId].users.push({ id: socket.id, nickName });
-      }
+    const countUsers = this.rooms[roomId].users.length;
+    if (countUsers === 4) {
+      //! 방 인원이 다 찼을 경우
+      this.server.sockets.to(socket.id).emit('full');
+      this.logger.log(`full users ${countUsers}`);
+      return;
+    } else {
+      this.rooms[roomId].users.push({ id: socket.id, nickName });
     }
     this.userToRoom[socket.id] = roomId;
 
     // 방에 연결
     socket.join(roomId);
 
-    console.log(this.rooms);
-    const otherUsers = this.rooms[roomId].users.filter(
-      (user) => user.id !== socket.id,
-    );
+    const otherUsers = this.rooms[roomId].users.filter((user) => user.id !== socket.id);
     console.log(otherUsers);
 
     // 유저에게 이미 방에 있는 다른 유저 정보 주기
@@ -129,9 +124,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // Lobby 유저에게 Romm 정보 전달
     this.server.sockets.emit('get_rooms', this.rooms);
 
-    this.logger.log(
-      `nickName: ${nickName}, userId: ${socket.id}, join_room : ${roomId}`,
-    );
+    this.logger.log(`nickName: ${nickName}, userId: ${socket.id}, join_room : ${roomId}`);
   }
 
   @SubscribeMessage('offer')
@@ -150,9 +143,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       sdp: data.sdp,
       answerSendID: data.answerSendID,
     });
-    this.logger.log(
-      `answer from ${data.answerSendID} to ${data.answerReceiveID}`,
-    );
+    this.logger.log(`answer from ${data.answerSendID} to ${data.answerReceiveID}`);
   }
 
   @SubscribeMessage('ice')
@@ -161,8 +152,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       candidate: data.candidate,
       candidateSendID: data.candidateSendID,
     });
-    this.logger.log(
-      `ice from ${data.candidateSendID} to ${data.candidateReceiveID}`,
-    );
+    this.logger.log(`ice from ${data.candidateSendID} to ${data.candidateReceiveID}`);
   }
 }
