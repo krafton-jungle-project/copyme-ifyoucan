@@ -3,6 +3,8 @@ import { io } from 'socket.io-client';
 import PeerVideo from '../components/PeerVideo';
 import styled from 'styled-components';
 import MyVideo from '../components/MyVideo';
+import { stream } from '../utils/tfjs-movenet';
+import PrintScore from '../components/PrintScore';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import WebRTC from '../components/WebRTC';
@@ -13,6 +15,21 @@ import { initializeUser } from '../modules/user';
 const UserLabel = styled.h2`
   color: blue;
 `;
+
+const VideoWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+//todo 스턴 서버 직접 생성 고려(임시)
+const pc_config = {
+  iceServers: [
+    {
+      urls: 'stun:stun.l.google.com:19302',
+    },
+  ],
+};
 
 // const SOCKET_SERVER_URL = 'http://localhost:8081';
 const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
@@ -36,7 +53,10 @@ function Room() {
 
   return (
     <div>
-      <MyVideo />
+      <VideoWrapper>
+        <MyVideo />
+        <PrintScore />
+      </VideoWrapper>
       <UserLabel>{nickName}</UserLabel>
       <WebRTC socket={socket} nickName={nickName} roomId={roomId} />
       {otherUsers.map((user, index) => (

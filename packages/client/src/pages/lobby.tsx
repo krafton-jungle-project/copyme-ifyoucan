@@ -3,7 +3,7 @@ import logo from '../assets/logo.png'; //temp
 import xownsstyle from '../css/xowns97.module.css'; //temp
 import MyVideo from '../components/MyVideo';
 
-export default function Lobby() {
+function Lobby() {
   return (
     <div>
       <div style={xownsstyle}>
@@ -15,3 +15,5 @@ export default function Lobby() {
     </div>
   );
 }
+
+export default Lobby;

@@ -1,5 +1,4 @@
 import * as poseDetection from '@tensorflow-models/pose-detection';
-import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
 
 interface MovenetParam {
@@ -29,8 +28,8 @@ const KEYPOINT_RADIUS = 4; // key point의 반지름(원의 크기)
 const LINE_WIDTH = 2; // key point의 둘레 및 골격의 두께
 
 export let stream: MediaStream;
-let detector: poseDetection.PoseDetector;
-let camera: Camera;
+export let detector: poseDetection.PoseDetector;
+export let camera: Camera;
 let rafId: number | null = null;
 
 class Camera {
@@ -171,7 +170,7 @@ async function renderResult() {
   if (camera.video.readyState < 2) {
     // 아직 frame에 대한 data가 도달하지 않았다면
     await new Promise((resolve) => {
-      // 현재 frame에 대한 데이터가 로드될 때 onloadeddate 이벤트 발생
+      // 현재 frame에 대한 데이터가 로드될 때 onloadeddata 이벤트 발생
       camera.video.onloadeddata = () => {
         resolve(camera.video);
       };

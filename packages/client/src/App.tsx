@@ -4,7 +4,8 @@ import Room from './pages/room';
 import Login from './pages/login';
 import SignUp from './pages/signup';
 
-export default function App() {
+function App() {
+
   return (
     <div className="App">
       <BrowserRouter>
@@ -18,3 +19,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App;
