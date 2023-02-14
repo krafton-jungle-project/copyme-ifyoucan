@@ -2,10 +2,11 @@ import { Button, Modal } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
+import type { WrappedSocket } from '../types/socket';
 
 interface Props {
   nickName: string;
-  socket: Socket;
+  socket: WrappedSocket;
 }
 
 export default function CreateRoom({ nickName, socket }: Props) {
@@ -15,7 +16,7 @@ export default function CreateRoom({ nickName, socket }: Props) {
   let roomName: string = '';
 
   const joinRoom = () => {
-    socket.on('new_room', (roomId: string) => {
+    socket.on('new_room', (roomId) => {
       console.log('방 입장');
       navigate('/room', {
         state: {

@@ -8,8 +8,15 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import {
+  ClientToServerEvents,
+  InterServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from 'project-types';
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
+type ClientToServerSocket = Socket<ClientToServerEvents>;
 
 @WebSocketGateway(8081, {
   cors: {
@@ -33,15 +40,15 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private userToRoom: { [key: string]: string } = {};
 
   @WebSocketServer()
-  server: Server;
+  server: Server<ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData>;
 
   //!소켓 연결
-  handleConnection(@ConnectedSocket() socket: Socket): void {
+  handleConnection(@ConnectedSocket() socket: ClientToServerSocket): void {
     this.logger.log(`socketId: ${socket.id} 소켓 연결`);
   }
 
   //!소켓 연결 해제
-  handleDisconnect(@ConnectedSocket() socket: Socket): void {
+  handleDisconnect(@ConnectedSocket() socket: ClientToServerSocket): void {
     const roomId = this.userToRoom[socket.id];
     if (!roomId) return;
 
@@ -65,14 +72,17 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 방 조회
   @SubscribeMessage('rooms')
-  getRooms(@ConnectedSocket() socket: Socket): void {
+  getRooms(@ConnectedSocket() socket: ClientToServerSocket): void {
     console.log(this.rooms);
     this.server.sockets.to(socket.id).emit('get_rooms', this.rooms);
   }
 
   //! 방 생성
   @SubscribeMessage('create_room')
-  createRoom(@ConnectedSocket() socket: Socket, @MessageBody() roomName: string): void {
+  createRoom(
+    @ConnectedSocket() socket: ClientToServerSocket,
+    @MessageBody() roomName: string,
+  ): void {
     const roomId = uuidv4();
     this.rooms[roomId] = {
       roomName,
@@ -90,7 +100,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //! 방에 새로운 유저 join
   @SubscribeMessage('join_room')
   joinRoom(
-    @ConnectedSocket() socket: Socket,
+    @ConnectedSocket() socket: ClientToServerSocket,
     @MessageBody() data: { roomId: string; nickName: string },
   ): void {
     const { roomId, nickName } = data;
@@ -128,7 +138,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('offer')
-  offer(@ConnectedSocket() socket: Socket, @MessageBody() data: any): void {
+  offer(@ConnectedSocket() socket: ClientToServerSocket, @MessageBody() data: any): void {
     socket.to(data.offerReceiveID).emit('get_offer', {
       sdp: data.sdp,
       offerSendID: data.offerSendID,
@@ -138,7 +148,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('answer')
-  answer(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
+  answer(@ConnectedSocket() socket: ClientToServerSocket, @MessageBody() data: any) {
     socket.to(data.answerReceiveID).emit('get_answer', {
       sdp: data.sdp,
       answerSendID: data.answerSendID,
@@ -147,7 +157,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('ice')
-  ice(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
+  ice(@ConnectedSocket() socket: ClientToServerSocket, @MessageBody() data: any) {
     socket.to(data.candidateReceiveID).emit('get_ice', {
       candidate: data.candidate,
       candidateSendID: data.candidateSendID,
