@@ -1,6 +1,5 @@
-import * as poseDetection from "@tensorflow-models/pose-detection";
-import * as tf from "@tensorflow/tfjs-core";
-import "@tensorflow/tfjs-backend-webgl";
+import * as poseDetection from '@tensorflow-models/pose-detection';
+import '@tensorflow/tfjs-backend-webgl';
 
 interface MovenetParam {
   size: {
@@ -18,12 +17,12 @@ const POSE_DETECTION_MODEL = poseDetection.SupportedModels.MoveNet; // 이미지
 const POSE_DETECTION_MODEL_TYPE = poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING; // 모델 상세 타입: Single Pose(한 명), Lightning(정확도 보단 인식 속도에 중점)
 const SCORE_THRESSHOLD = 0.3; // key point의 score(인식 정확도)의 최소 인정 기준 (score: 0 ~ 1)
 
-const KEYPOINT_COLOR_ROUND = "white"; // 원으로 표현되는 key point의 둘레 색상
-const SKELEOTON_COLOR = "white"; // 골격의 색상
+const KEYPOINT_COLOR_ROUND = 'white'; // 원으로 표현되는 key point의 둘레 색상
+const SKELEOTON_COLOR = 'white'; // 골격의 색상
 
-const KEYPOINT_COLOR_FILL_CENTER = "Red"; // 신체의 가운데에 해당하는 key point(코가 유일)의 색상
-const KEYPOINT_COLOR_FILL_LEFT = "Green"; // 신체의 왼쪽 부분에 해당하는 key point의 색상
-const KEYPOINT_COLOR_FILL_RIGHT = "Orange"; // 신체의 오른쪽 부분에 해당하는 key point의 색상
+const KEYPOINT_COLOR_FILL_CENTER = 'Red'; // 신체의 가운데에 해당하는 key point(코가 유일)의 색상
+const KEYPOINT_COLOR_FILL_LEFT = 'Green'; // 신체의 왼쪽 부분에 해당하는 key point의 색상
+const KEYPOINT_COLOR_FILL_RIGHT = 'Orange'; // 신체의 오른쪽 부분에 해당하는 key point의 색상
 
 const KEYPOINT_RADIUS = 4; // key point의 반지름(원의 크기)
 const LINE_WIDTH = 2; // key point의 둘레 및 골격의 두께
@@ -41,7 +40,7 @@ class Camera {
   constructor(videoElem: HTMLVideoElement, canvasElem: HTMLCanvasElement) {
     this.video = videoElem;
     this.canvas = canvasElem;
-    this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
   }
 
   static async setupCamera(movenetParam: MovenetParam) {
@@ -61,9 +60,9 @@ class Camera {
     //temp 현재는 처음 MyVideo 렌더링 시에는 캔버스 뒤에서 비디오가 출력 중이다(더 좋은 방법 찾아 최적화 해야 함)
     //temp 이후 렌더링에서는 캔버스 뒤에서도 비디오는 hidden 상태
     if (detector === undefined) {
-      camera.video.style.visibility = "visible";
+      camera.video.style.visibility = 'visible';
     } else {
-      camera.video.style.visibility = "hidden";
+      camera.video.style.visibility = 'hidden';
     }
 
     // 재생하는 video(영상)의 너비와 높이
@@ -200,7 +199,7 @@ async function renderDetection() {
 // 웹캠 스트림을 생성하여 반환하는 함수
 function getMyStream(param: { width: number; height: number }): Promise<MediaStream> {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    throw new Error("Browser API navigator.mediaDevices.getUserMedia not available");
+    throw new Error('Browser API navigator.mediaDevices.getUserMedia not available');
   }
 
   const videoConfig = {
@@ -231,7 +230,7 @@ export async function canvasRender(movenetParam: MovenetParam) {
   // '가장 처음'으로 MyVideo 컴포넌트가 렌더링 될 때, stream 및 detector를 초기화 해준다.
   if (stream === undefined) {
     stream = await getMyStream(movenetParam.size);
-    console.log("webcam stream is ready.");
+    console.log('webcam stream is ready.');
   }
 
   // detector가 생성되지 않았어도 먼저 canvas 뒤에 비디오를 출력한다.
@@ -239,7 +238,7 @@ export async function canvasRender(movenetParam: MovenetParam) {
 
   if (detector === undefined) {
     detector = await createDetector();
-    console.log("pose detector is ready.");
+    console.log('pose detector is ready.');
   }
 
   // detector가 생성된 이후에 자세를 추정하여 인식된 랜드마크와 골격을 canvas에 그린다.
