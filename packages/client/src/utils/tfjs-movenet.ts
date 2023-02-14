@@ -28,7 +28,7 @@ const KEYPOINT_RADIUS = 4; // key point의 반지름(원의 크기)
 const LINE_WIDTH = 2; // key point의 둘레 및 골격의 두께
 
 export let stream: MediaStream;
-let detector: poseDetection.PoseDetector;
+export let detector: poseDetection.PoseDetector;
 let camera: Camera;
 let rafId: number | null = null;
 
