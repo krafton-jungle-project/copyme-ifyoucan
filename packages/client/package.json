@@ -8,12 +8,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
   "dependencies": {
     "@mediapipe/pose": "^0.5.1675469404",
     "@reduxjs/toolkit": "^1.9.2",
@@ -47,14 +41,6 @@
     "styled-components": "^5.3.6",
     "web-vitals": "^2.1.4"
   },
-  "devDependencies": {
-    "@types/jest": "29.2.4",
-    "@types/node": "18.11.18",
-    "@types/react": "^18.0.27",
-    "@types/react-dom": "^18.0.10",
-    "@types/react-router-dom": "^5.3.3",
-    "@types/styled-components": "^5.1.26",
-    "prettier": "^2.5.1"
   "devDependencies": {
     "@types/jest": "29.2.4",
     "@types/node": "18.11.18",
