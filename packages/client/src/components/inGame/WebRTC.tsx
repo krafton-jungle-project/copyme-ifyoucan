@@ -1,12 +1,11 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Socket } from 'socket.io-client';
-
+import { useSelector, useDispatch } from 'react-redux';
 import { stream } from '../../utils/tfjs-movenet';
-import { useDispatch } from 'react-redux';
 import { addUser, deleteUser } from '../../modules/user';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../app/store';
+import { behost, outRoom } from '../../modules/host';
+import type { Socket } from 'socket.io-client';
+import type { RootState } from '../../app/store';
 
 //! 스턴 서버 직접 생성 고려(임시)
 const pc_config = {
@@ -35,7 +34,7 @@ const WebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
   const navigator = useNavigate();
 
   // 인자로 받은 유저와 peerConnection을 생성하는 함수
-  const makeConnection = useCallback((userId: string, nickName: string) => {
+  const makeConnection = useCallback((userId: string, nickName: string, host: boolean) => {
     const peerConnection = new RTCPeerConnection(pc_config);
 
     peerConnection.addEventListener('icecandidate', (data) => {
@@ -51,7 +50,9 @@ const WebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
 
     //! 수정해야될 부분 dispatch
     peerConnection.addEventListener('track', (data) => {
-      dispatch(addUser({ socketId: userId, nickName, stream: data.streams[0] }));
+      dispatch(
+        addUser({ socketId: userId, nickName, host, stream: data.streams[0], isReady: false }),
+      );
     });
 
     if (myStreamRef.current) {
@@ -83,10 +84,9 @@ const WebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
 
     //! 서버에서 다른 유저들의 정보를 받는다
     socket.on('other_users', (otherUsers: Array<{ id: string; nickName: string }>) => {
-      console.log(otherUsers);
-      otherUsers.forEach(async (user) => {
+      otherUsers.forEach(async (user, index) => {
         // if (!myStreamRef.current) return;
-        const peerConnection = makeConnection(user.id, user.nickName);
+        const peerConnection = makeConnection(user.id, user.nickName, index === 0);
         if (!peerConnection || !socket) return;
         pcsRef.current = { ...pcsRef.current, [user.id]: peerConnection };
 
@@ -116,7 +116,8 @@ const WebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
         const { sdp, offerSendID, offerSendNickName } = data;
         if (!myStreamRef.current) return;
 
-        const peerConnection = makeConnection(offerSendID, offerSendNickName);
+        // offer를 한 user는 방장이 될 수 없다.
+        const peerConnection = makeConnection(offerSendID, offerSendNickName, false);
 
         if (!(peerConnection && socket)) return;
         pcsRef.current = { ...pcsRef.current, [offerSendID]: peerConnection };
@@ -162,6 +163,11 @@ const WebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
       pcsRef.current[userId].close();
       delete pcsRef.current[userId];
       dispatch(deleteUser(userId));
+
+      // 더이상 방에 유저가 없으면 자신이 방장이 된다.
+      if (!otherUsers.length) {
+        dispatch(behost(userId));
+      }
     });
 
     return () => {
@@ -175,10 +181,11 @@ const WebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
         // pcsRef에서 user 삭제
         delete pcsRef.current[user.socketId];
       });
+      dispatch(outRoom());
       navigator('/');
     };
   }, [makeConnection]);
 
-  return <></>;
+  return null;
 };
 export default WebRTC;

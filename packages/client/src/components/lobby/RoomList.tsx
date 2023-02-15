@@ -1,12 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 import styled from 'styled-components';
 import Poro from '../../assets/images/arcadePoro.png';
-import CreateRoom from './roomList/CreateRoom';
-
-// const SOCKET_SERVER_URL = 'http://localhost:8081';
-const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
+import CreateRoom from '../lobby/roomList/CreateRoom';
 
 const RoomContainerWrapper = styled.div`
   display: flex;
@@ -74,14 +71,10 @@ const RoomCnt = styled.span`
   font-weight: 600;
 `;
 
-export default function RoomList() {
+export default function RoomList({ socket }: { socket: Socket }) {
   const navigate = useNavigate();
   const nickName = 'user1'; //temp
 
-  const socket = io(SOCKET_SERVER_URL); //check 렌더링 될 때마다 기존 연결을 끊지 않고 소켓을 새로 만든다.
-
-  // 페이지를 나갈 때 소켓 연결을 끊는다.
-  //check 어디서 return 하며 disconnect 해야할까? 위 생성 과정과 연계하여 추후 고민 필요
   useEffect(() => {
     return () => {
       socket.disconnect();

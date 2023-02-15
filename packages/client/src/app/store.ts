@@ -1,10 +1,12 @@
-import { configureStore, Action, ThunkAction } from '@reduxjs/toolkit';
-// ...
+import type { Action, ThunkAction } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import usersReducer from '../modules/user';
+import hostReducer from '../modules/host';
 
 export const store = configureStore({
   reducer: {
     users: usersReducer,
+    host: hostReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
