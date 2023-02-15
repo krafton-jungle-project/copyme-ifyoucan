@@ -3,9 +3,13 @@ import logo from '../assets/images/logo.png'; //temp
 import styled from 'styled-components';
 import { io } from 'socket.io-client';
 import { useEffect } from 'react';
+import { atom, useAtom } from 'jotai';
+import Loading from '../components/lobby/Loading';
 
 // const SOCKET_SERVER_URL = 'http://localhost:8081';
 const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
+
+export const isLoadedAtom = atom(false);
 
 const Logo = styled.img`
   margin: auto;
@@ -16,7 +20,9 @@ const Logo = styled.img`
 `;
 
 function Lobby() {
+  const [isLoaded] = useAtom(isLoadedAtom);
   const socket = io(SOCKET_SERVER_URL);
+
   useEffect(() => {
     return () => {
       socket.disconnect();
@@ -26,11 +32,17 @@ function Lobby() {
   console.log('lobby 소켓 연결');
 
   return (
-    <div>
-      <Logo src={logo} />
-      <hr />
-      <RoomList socket={socket} />
-    </div>
+    <>
+      {isLoaded ? (
+        <div>
+          <Logo src={logo} />
+          <hr />
+          <RoomList socket={socket} />
+        </div>
+      ) : (
+        <Loading />
+      )}
+    </>
   );
 }
 
