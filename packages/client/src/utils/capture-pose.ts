@@ -17,7 +17,7 @@ async function Capture(
   toCapture: HTMLVideoElement,
   canvasWidth: number,
   canvasHeight: number,
-  socket: Socket,
+  socket?: Socket,
 ) {
   if (toDraw !== null && toCapture !== null) {
     // canvas 크기 설정
@@ -30,7 +30,10 @@ async function Capture(
       ctx?.drawImage(canvas, 0, 0, canvasWidth, canvasHeight);
       let imgSrc: string = canvas.toDataURL();
       console.log(imgSrc);
-      emitDataToDefender(imgSrc, socket);
+
+      if (socket) {
+        emitDataToDefender(imgSrc, socket);
+      }
     });
   }
 }
