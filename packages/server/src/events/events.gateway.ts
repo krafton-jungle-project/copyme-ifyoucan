@@ -96,12 +96,32 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     socket.to(roomId).emit('get_ready', socket.id);
   }
 
+  //! 준비 취소
   @SubscribeMessage('unready')
   cancleReady(@ConnectedSocket() socket: Socket, @MessageBody() roomId: string): void {
     this.rooms[roomId].readyCount -= 1;
 
     // 방에 다른 유저들에게 준비 취소했다고 알려줌
     socket.to(roomId).emit('get_unready', socket.id);
+  }
+
+  //! imgae 전송(공격이 끝났을 시 이벤트를 받는다)
+  @SubscribeMessage('image')
+  imageHandle(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: { pose: any; imgSrc: string },
+  ): void {
+    const roomId = this.userToRoom[socket.id];
+
+    // 다른 유저들에게 공격자의 image와 포즈 데이터 전송
+    socket.to(roomId).emit('get_image', socket.id, data.pose, data.imgSrc);
+  }
+
+  //! 수비가 끝났을 시 이벤트를 받는다
+  @SubscribeMessage('image_reset')
+  resetImage(@ConnectedSocket() socket: Socket): void {
+    const roomId = this.userToRoom[socket.id];
+    socket.to(roomId).emit('get_image_reset', socket.id);
   }
 
   //! 게임 시작
