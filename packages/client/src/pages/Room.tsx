@@ -6,7 +6,7 @@ import MyVideo from '../components/inGame/MyVideo';
 import { stream } from '../utils/tfjs-movenet';
 import PrintScore from '../components/inGame/PrintScore';
 import { useSelector } from 'react-redux';
-import { RootState } from '../app/store';
+import type { RootState } from '../app/store';
 import WebRTC from '../components/inGame/WebRTC';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
