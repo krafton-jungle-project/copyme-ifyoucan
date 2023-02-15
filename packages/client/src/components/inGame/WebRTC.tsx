@@ -2,11 +2,11 @@ import { useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 
-import { stream } from '../utils/tfjs-movenet';
+import { stream } from '../../utils/tfjs-movenet';
 import { useDispatch } from 'react-redux';
-import { addUser, deleteUser } from '../modules/user';
+import { addUser, deleteUser } from '../../modules/user';
 import { useSelector } from 'react-redux';
-import { RootState } from '../app/store';
+import { RootState } from '../../app/store';
 
 //! 스턴 서버 직접 생성 고려(임시)
 const pc_config = {

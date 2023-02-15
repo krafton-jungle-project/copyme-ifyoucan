@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { comparePoses } from '../utils/pose-similarity';
+import { comparePoses } from '../../utils/pose-similarity';
 import * as poseDetection from '@tensorflow-models/pose-detection';
-import * as movenet from '../utils/tfjs-movenet';
+import * as movenet from '../../utils/tfjs-movenet';
 import styled from 'styled-components';
 
 const Score = styled.div`
