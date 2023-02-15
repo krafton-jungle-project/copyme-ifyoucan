@@ -1,4 +1,4 @@
-import * as poseDetection from '@tensorflow-models/pose-detection';
+import type * as poseDetection from '@tensorflow-models/pose-detection';
 import '@tensorflow/tfjs-backend-webgl';
 
 const stdPose: poseDetection.Pose = {

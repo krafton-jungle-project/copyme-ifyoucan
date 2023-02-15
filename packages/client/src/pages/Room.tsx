@@ -3,7 +3,7 @@ import type { Socket } from 'socket.io-client';
 import { io } from 'socket.io-client';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../app/store';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { initializeUser } from '../modules/user';
 import InGame from '../components/inGame/InGame';

@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import * as moveNet from '../../utils/tfjs-movenet';
+import Capture from '../../utils/capture-pose';
 
 const CanvasWrapper = styled.div`
   position: relative;
@@ -13,13 +14,21 @@ const Video = styled.video`
 `;
 
 const Canvas = styled.canvas`
-  position: relative;
+  position: absolute;
+`;
+
+const Button = styled.button`
+  margin: 2px;
 `;
 
 function MyVideo() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef2 = useRef<HTMLCanvasElement>(null);
+  const captureBtnRef = useRef<HTMLButtonElement>(null);
+
+  const [visibility, setVisibility] = useState<boolean>(true);
 
   useEffect(() => {
     if (videoRef.current === null || canvasRef.current === null || wrapperRef.current === null)
@@ -37,11 +46,35 @@ function MyVideo() {
     });
   }, []);
 
+  const Canvas2 = styled.canvas`
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    display: ${visibility ? 'visible' : 'hidden'};
+  `;
+
+  function onClickCapture() {
+    if (canvasRef2.current !== null && videoRef.current !== null) {
+      Capture(canvasRef2.current, videoRef.current, 640, 480);
+    }
+  }
+
+  function onClickCancel() {
+    setVisibility(true);
+    console.log('click cancel');
+  }
+
   return (
-    <CanvasWrapper ref={wrapperRef}>
-      <Video ref={videoRef}></Video>
-      <Canvas ref={canvasRef}></Canvas>
-    </CanvasWrapper>
+    <div>
+      <CanvasWrapper ref={wrapperRef}>
+        <Video ref={videoRef}></Video>
+        <Canvas ref={canvasRef}></Canvas>
+        <Canvas2 ref={canvasRef2}></Canvas2>
+      </CanvasWrapper>
+      <Button ref={captureBtnRef} onClick={onClickCapture}>
+        캡처!
+      </Button>
+      <Button onClick={onClickCancel}>취소</Button>
+    </div>
   );
 }
 
