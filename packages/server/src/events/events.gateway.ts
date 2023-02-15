@@ -105,7 +105,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     socket.to(roomId).emit('get_unready', socket.id);
   }
 
-  //! imgae 전송
+  //! imgae 전송(공격이 끝났을 시 이벤트를 받는다)
   @SubscribeMessage('image')
   imageHandle(
     @ConnectedSocket() socket: Socket,
@@ -115,6 +115,13 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     // 다른 유저들에게 공격자의 image와 포즈 데이터 전송
     socket.to(roomId).emit('get_image', socket.id, data.pose, data.imgSrc);
+  }
+
+  //! 수비가 끝났을 시 이벤트를 받는다
+  @SubscribeMessage('image_reset')
+  resetImage(@ConnectedSocket() socket: Socket): void {
+    const roomId = this.userToRoom[socket.id];
+    socket.to(roomId).emit('get_image_reset', socket.id);
   }
 
   //! 게임 시작
