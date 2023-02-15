@@ -29,7 +29,6 @@ function Loading() {
     }
     if (!isLoaded) mediaLoad();
   }, []);
-  console.log(21311);
 
   return (
     <LoadingContainer>
