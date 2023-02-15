@@ -9,6 +9,8 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "@mediapipe/pose": "^0.5.1675469404",
     "@reduxjs/toolkit": "^1.9.2",
     "@tensorflow-models/pose-detection": "^2.0.0",
