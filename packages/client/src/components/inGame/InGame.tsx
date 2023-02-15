@@ -39,13 +39,7 @@ function Game({ socket, roomId, nickName }: IProps) {
       <WebRTC socket={socket} nickName={nickName} roomId={roomId} />
       <GameSocket socket={socket} />
       {otherUsers.map((user, index) => (
-        <PeerVideo
-          key={index}
-          nickName={user.nickName}
-          stream={user.stream}
-          host={user.host}
-          isReady={user.isReady}
-        />
+        <PeerVideo key={index} user={user} />
       ))}
       <ReadyButton socket={socket} roomId={roomId} />
     </div>
