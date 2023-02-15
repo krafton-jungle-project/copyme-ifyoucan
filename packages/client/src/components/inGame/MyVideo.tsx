@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import * as moveNet from '../utils/tfjs-movenet';
+import * as moveNet from '../../utils/tfjs-movenet';
 
 const CanvasWrapper = styled.div`
   position: relative;

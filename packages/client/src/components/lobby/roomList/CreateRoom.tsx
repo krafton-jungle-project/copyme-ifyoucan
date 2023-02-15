@@ -41,7 +41,7 @@ export default function CreateRoom({ nickName, socket }: Props) {
   };
 
   return (
-    <>
+    <div>
       <div style={{ textAlign: 'center' }}>
         <Button type="default" onClick={showModal}>
           방만들기
@@ -63,6 +63,6 @@ export default function CreateRoom({ nickName, socket }: Props) {
           }}
         />
       </Modal>
-    </>
+    </div>
   );
 }

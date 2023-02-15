@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import type { AxiosRequestConfig } from 'axios';
 import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import { setCookie } from '../utils/cookies';
 
-//todo 모달 창으로 변경 필요
-export default function SignUp() {
+export default function Login() {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
-  const [name, setName] = useState('');
+
   const [idValid, setIdValid] = useState(false);
   const [pwValid, setPwValid] = useState(false);
   const [notAllow, setNotAllow] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,36 +41,36 @@ export default function SignUp() {
       setPwValid(false);
     }
   };
-
-  const handleName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
-
   const onClickConfirmButton = () => {
-    console.log('signup');
+    console.log('login');
     axios
-      // .post('http://localhost:5001/users', {
-      .post('http://15.165.237.195:5001/users', {
+      // .post<AxiosRequestConfig>('http://localhost:5001/users/login', {
+      .post<AxiosRequestConfig>('http://15.165.237.195:5001/users/login', {
         loginid: id,
-        name: name,
         password: pw,
       })
       .then((res) => {
-        console.log('asd');
-        console.log(res.data.data);
-        // 토큰을 받아서 저장 (local storage 또는 쿠키?)
-        navigate('/login');
+        const jwtToken = res.data.data.token;
+        setCookie('accessJwtToken', jwtToken);
+        const decodedUserInfo = jwt_decode(jwtToken); // 토큰 decode
+        localStorage.setItem('userInfo', JSON.stringify(decodedUserInfo)); //토큰에 저장되어있는 userInfo 저장
+        navigate('/'); // 성공시 이동될 url 적용하기
         return res;
       })
       .catch((error) => {
-        // 회원가입 실패시 알림
+        // 로그실 실패시 알림
         console.log(error);
+        alert('로그인이 실패했습니다. 정보가 올바른지 다시 확인해주세요');
       });
+  };
+
+  const registerButton = () => {
+    navigate('/signup');
   };
 
   return (
     <div className="page">
-      <div className="titleWrap">회원가입</div>
+      <div className="titleWrap">COPY ME IF YOU CAN</div>
 
       <div className="contentWrap">
         <div className="inputTitle">아이디</div>
@@ -99,23 +102,15 @@ export default function SignUp() {
         <div className="errorMessageWrap">
           {!pwValid && pw.length > 0 && <div>영문, 숫자를 입력해주세요.</div>}
         </div>
-        <div style={{ marginTop: '26px' }} className="inputTitle">
-          닉네임
-        </div>
-        <div className="inputWrap">
-          <input
-            className="input"
-            type="name"
-            placeholder="닉네임"
-            value={name}
-            onChange={handleName}
-          />
-        </div>
       </div>
-
       <div>
-        <button onClick={onClickConfirmButton} disabled={notAllow} className="CompleteButton">
-          가입하기
+        <button onClick={registerButton} className="signupButton">
+          회원가입
+        </button>
+      </div>
+      <div>
+        <button onClick={onClickConfirmButton} disabled={notAllow} className="bottomButton">
+          로그인
         </button>
       </div>
     </div>

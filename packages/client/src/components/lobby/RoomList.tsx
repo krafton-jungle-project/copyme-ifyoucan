@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import styled from 'styled-components';
-import Poro from '../assets/arcadePoro.png';
-import CreateRoom from './CreateRoom';
+import Poro from '../../assets/images/arcadePoro.png';
+import CreateRoom from './roomList/CreateRoom';
 
 // const SOCKET_SERVER_URL = 'http://localhost:8081';
 const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
