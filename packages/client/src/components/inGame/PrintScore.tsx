@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { comparePoses } from '../../utils/pose-similarity';
 import type * as poseDetection from '@tensorflow-models/pose-detection';
 import styled from 'styled-components';
-import getPose from '../../utils/getPose';
+import getPose from '../../utils/get-pose';
 
 const Score = styled.div`
   width: 150px;

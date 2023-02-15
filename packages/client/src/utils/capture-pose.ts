@@ -1,5 +1,5 @@
 import html2canvas from 'html2canvas';
-import getPose from './getPose';
+import getPose from './get-pose';
 
 async function Capture(
   toDraw: HTMLCanvasElement,
