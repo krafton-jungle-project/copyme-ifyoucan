@@ -25,9 +25,12 @@ const UserLabel = styled.p`
 interface Props {
   stream: MediaStream;
   nickName: string;
+  host: boolean;
+  isReady: boolean;
 }
 
-const PeerVideo = ({ stream, nickName }: Props) => {
+const PeerVideo = ({ stream, nickName, host, isReady }: Props) => {
+  // const PeerVideo = ({ stream, nickName }: Props) => {
   const ref = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -36,8 +39,10 @@ const PeerVideo = ({ stream, nickName }: Props) => {
 
   return (
     <Container>
+      {host ? <p>방장</p> : <p></p>}
       <VideoContainer ref={ref} autoPlay />
       <UserLabel>{nickName}</UserLabel>
+      {!host && isReady ? <h2>준비 완료</h2> : <></>}
     </Container>
   );
 };

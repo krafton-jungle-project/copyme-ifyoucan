@@ -53,7 +53,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         delete this.rooms[roomId];
         this.logger.log(`roomId: ${roomId} 삭제`);
       } else {
-        socket.to(roomId).emit('user_exit', socket.id);
+        socket.to(roomId).emit('user_exit', socket.id); //방장이 될 사람의 id 보내기
       }
     }
 
@@ -85,6 +85,46 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.sockets.emit('get_rooms', this.rooms);
 
     this.logger.log(`create room roomname: ${roomName} by user:${socket.id} `);
+  }
+
+  //! 준비
+  @SubscribeMessage('ready')
+  ready(@ConnectedSocket() socket: Socket, @MessageBody() roomId: string): void {
+    this.rooms[roomId].readyCount += 1;
+
+    // 방에 다른 유저들에게 준비 했다고 알려줌
+    socket.to(roomId).emit('get_ready', socket.id);
+  }
+
+  @SubscribeMessage('unready')
+  cancleReady(@ConnectedSocket() socket: Socket, @MessageBody() roomId: string): void {
+    this.rooms[roomId].readyCount -= 1;
+
+    // 방에 다른 유저들에게 준비 취소했다고 알려줌
+    socket.to(roomId).emit('get_unready', socket.id);
+  }
+
+  //! 게임 시작
+  @SubscribeMessage('start')
+  gameStart(@ConnectedSocket() socket: Socket, @MessageBody() roomId: string): void {
+    if (this.rooms[roomId].readyCount === this.rooms[roomId].users.length - 1) {
+      // 게임이 시작하면 모든 유저들에게 게임이 시작됐다는 이벤트 발생
+      socket.in(roomId).emit('get_start');
+    }
+  }
+
+  //! 공격 시작
+  @SubscribeMessage('attack')
+  attack(@ConnectedSocket() socket: Socket, @MessageBody() roomId: string): void {
+    // 공격자가 공격을 시작하면 수비자들에게 공격이 시작되었다는 이벤트 발생
+    socket.to(roomId).emit('get_attack');
+  }
+
+  //! 게임 끝
+  @SubscribeMessage('finish')
+  finish(@ConnectedSocket() socket: Socket, @MessageBody() roomId: string): void {
+    // 방에 모든 유저들에게 게임이 끝났다고 알려줌
+    socket.to(roomId).emit('get_finish', socket.id);
   }
 
   //! 방에 새로운 유저 join
