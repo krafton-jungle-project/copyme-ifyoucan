@@ -25,8 +25,9 @@ async function Capture(
     toDraw.height = canvasHeight;
 
     // 캡처할 html 요소를 넣으면 return 값이 'HTMLCanvasElement'로 나옴
-    await html2canvas(toCapture).then(async (canvas) => {
-      const imgSrc: string = canvas.toDataURL();
+    await html2canvas(toCapture).then(async (canvas: HTMLCanvasElement) => {
+      let imgSrc: string = canvas.toDataURL();
+
       if (socket) {
         emitDataToDefender(imgSrc, socket);
       }

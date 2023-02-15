@@ -21,6 +21,12 @@ const Button = styled.button`
   margin: 2px;
 `;
 
+const Canvas2 = styled.canvas<{ visible: any }>`
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
+`;
+
 function MyVideo() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -44,22 +50,21 @@ function MyVideo() {
       size: { width: 640, height: 480 },
       element: elements,
     });
-  }, []);
 
-  const Canvas2 = styled.canvas`
-    -webkit-transform: scaleX(-1);
-    transform: scaleX(-1);
-    display: ${visibility ? 'visible' : 'hidden'};
-  `;
+    return () => {
+      cancelAnimationFrame(moveNet.rafId);
+    };
+  }, []);
 
   function onClickCapture() {
     if (canvasRef2.current !== null && videoRef.current !== null) {
       Capture(canvasRef2.current, videoRef.current, 640, 480);
     }
+    setVisibility(true);
   }
 
   function onClickCancel() {
-    setVisibility(true);
+    setVisibility(false);
     console.log('click cancel');
   }
 
@@ -68,7 +73,7 @@ function MyVideo() {
       <CanvasWrapper ref={wrapperRef}>
         <Video ref={videoRef}></Video>
         <Canvas ref={canvasRef}></Canvas>
-        <Canvas2 ref={canvasRef2}></Canvas2>
+        <Canvas2 visible={visibility} ref={canvasRef2}></Canvas2>
       </CanvasWrapper>
       <Button ref={captureBtnRef} onClick={onClickCapture}>
         캡처!
