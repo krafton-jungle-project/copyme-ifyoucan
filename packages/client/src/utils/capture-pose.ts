@@ -12,18 +12,8 @@ async function emitDataToDefender(imgSrc: string, socket: Socket) {
   }
 }
 
-async function Capture(
-  toDraw: HTMLCanvasElement,
-  toCapture: HTMLVideoElement,
-  canvasWidth: number,
-  canvasHeight: number,
-  socket?: Socket,
-) {
-  if (toDraw !== null && toCapture !== null) {
-    // canvas 크기 설정
-    toDraw.width = canvasWidth;
-    toDraw.height = canvasHeight;
-
+export async function capturePose(toCapture: HTMLVideoElement, socket?: Socket) {
+  if (toCapture !== null) {
     // 캡처할 html 요소를 넣으면 return 값이 'HTMLCanvasElement'로 나옴
     await html2canvas(toCapture).then(async (canvas: HTMLCanvasElement) => {
       let imgSrc: string = canvas.toDataURL();
@@ -34,5 +24,3 @@ async function Capture(
     });
   }
 }
-
-export default Capture;

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import * as moveNet from '../../utils/tfjs-movenet';
-import Capture from '../../utils/capture-pose';
 
 const CanvasWrapper = styled.div`
   position: relative;
@@ -18,9 +17,9 @@ const Canvas = styled.canvas`
   position: absolute;
 `;
 
-function MyVideo() {
+function MyVideo({ inheritRef }: { inheritRef: React.RefObject<HTMLVideoElement> }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = inheritRef;
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {

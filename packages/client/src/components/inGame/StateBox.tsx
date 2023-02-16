@@ -1,4 +1,7 @@
+import { useAtom } from 'jotai';
 import styled from 'styled-components';
+import getPose from '../../utils/get-pose';
+import { modeAtom, scoreAtom } from './InGame';
 
 const Nickname = styled.div`
   display: flex;
@@ -34,15 +37,16 @@ const Score = styled.div`
 `;
 
 function StateBox() {
+  const [mode, setMode] = useAtom(modeAtom);
+  const [score] = useAtom(scoreAtom);
+
   return (
     // 점수 닉네임 props로 받으십쇼
     <Nickname>
       <Name>
         <h2>닉네임</h2>
       </Name>
-      <Score>
-        <h3>READY or SCORE</h3>
-      </Score>
+      <Score>{mode === 'wating' ? '준비해주세요' : score}</Score>
     </Nickname>
   );
 }

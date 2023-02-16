@@ -73,7 +73,7 @@ const RoomCnt = styled.span`
 
 export default function RoomList({ socket }: { socket: Socket }) {
   const navigate = useNavigate();
-  const nickName = 'user1'; //temp
+  const nickName = '정태욱'; //temp
 
   useEffect(() => {
     return () => {

@@ -28,7 +28,7 @@ function ReadyButton({ socket, roomId }: Props) {
   // 준비 취소
   const cancleReady = () => {
     setIsReady(false);
-    socket.emit('unready', roomId);
+    socket.emit('unready', roomId)
   };
 
   return (

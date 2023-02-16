@@ -16,12 +16,11 @@ const VideoContainer = styled.video`
   height: 300;
 `;
 
-const UserLabel = styled.p`
-  display: inline-block;
-  position: absolute;
-  top: 230px;
-  left: 0px;
+const OffendImg = styled.img`
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
 `;
+
 export interface IProps {
   socketId: string;
   nickName: string;
@@ -42,10 +41,11 @@ const PeerVideo = ({ user }: { user: IProps }) => {
 
   return (
     <Container>
-      {/* {user.host ? <p>방장</p> : <p></p>} */}
-      {user.imgSrc ? <img ref={imgRef} alt="xowns97"></img> : <VideoContainer ref={ref} autoPlay />}
-      {/* <UserLabel>{user.nickName}</UserLabel> */}
-      {/* {!user.host && user.isReady ? <h2>준비 완료</h2> : <></>} */}
+      {user.imgSrc ? (
+        <OffendImg ref={imgRef} alt="xowns97" width="400" height="300"></OffendImg>
+      ) : (
+        <VideoContainer ref={ref} autoPlay />
+      )}
     </Container>
   );
 };

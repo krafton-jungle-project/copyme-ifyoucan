@@ -3,9 +3,13 @@ import type { Socket } from 'socket.io-client';
 import { useDispatch } from 'react-redux';
 import { ready, unready, getAttackerInfo, resetAttackerInfo } from '../../modules/user';
 import type * as poseDetection from '@tensorflow-models/pose-detection';
+import { useAtom } from 'jotai';
+import { modeAtom } from './InGame';
 
 const GameSocket = ({ socket }: { socket: Socket }) => {
   const dispatch = useDispatch();
+  const [mode, setMode] = useAtom(modeAtom);
+
   useEffect(() => {
     socket.on('get_ready', (socketId: string) => {
       console.log(`get_ready: ${socket.id}`);
@@ -26,11 +30,16 @@ const GameSocket = ({ socket }: { socket: Socket }) => {
     //! 공격자의 이미지가 리셋된다
     socket.on('get_image_reset', (socketId: string) => {
       // 공격자 이미지 리셋
+      console.log('get_image_reset');
       dispatch(resetAttackerInfo(socketId));
     });
 
     //! 구현 필요
-    socket.on('get_start', () => {});
+    socket.on('get_start', () => {
+      console.log('get_start');
+      setMode('game');
+    });
+
     socket.on('get_attack', () => {});
   }, [dispatch, socket]);
 

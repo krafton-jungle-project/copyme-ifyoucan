@@ -162,6 +162,8 @@ const ConnectWebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
       pcsRef.current[userId].close();
       delete pcsRef.current[userId];
       dispatch(deleteUser(userId));
+      
+      
 
       // 더이상 방에 유저가 없으면 자신이 방장이 된다.
       if (!otherUsers.length) {

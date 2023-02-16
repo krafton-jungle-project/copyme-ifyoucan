@@ -16,8 +16,8 @@ const Div = styled.div`
   box-shadow: 3.3px 3.3px 3.3px rgba(0, 0, 0, 0.3);
 `;
 
-function AnnounceWrapper() {
-  return <Div>관리실에서 안내 말씀 드립니다.</Div>;
+function AnnounceWrapper({ message }: { message: string | JSX.Element }) {
+  return <Div>{message}</Div>;
 }
 
 export default AnnounceWrapper;
