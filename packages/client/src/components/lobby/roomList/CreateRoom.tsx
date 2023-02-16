@@ -1,7 +1,9 @@
 import { Button, Modal } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Socket } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
+import { useDispatch } from 'react-redux';
+import { behost } from '../../../modules/host';
 
 interface Props {
   nickName: string;
@@ -10,13 +12,16 @@ interface Props {
 
 export default function CreateRoom({ nickName, socket }: Props) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState<boolean>(false);
 
   let roomName: string = '';
 
   const joinRoom = () => {
     socket.on('new_room', (roomId: string) => {
-      console.log('방 입장');
+      // 방 생성자는 호스트가 된다.
+      dispatch(behost());
+
       navigate('/room', {
         state: {
           roomId,
