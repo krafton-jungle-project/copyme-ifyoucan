@@ -19,7 +19,7 @@ function Loading() {
     async function mediaLoad() {
       // Login하여 처음 Lobby로 이동 시, stream 및 detector를 초기화 해준다.
 
-      await movenet.getMyStream({ width: 640, height: 480 });
+      await movenet.getMyStream({ width: 400, height: 300 }); // TODO: 임시 수정
       console.log('webcam stream is ready.');
 
       await movenet.createDetector();

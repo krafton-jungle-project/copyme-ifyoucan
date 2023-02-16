@@ -1,18 +1,19 @@
 import { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import type { RootState } from '../../app/store';
 
 const Container = styled.div`
   position: relative;
-  display: inline-block;
-  width: 240px;
-  height: 270px;
-  margin: 5px;
+  width: 400;
+  height: 300;
 `;
 
 const VideoContainer = styled.video`
-  width: 240px;
-  height: 240px;
-  background-color: black;
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  width: 400;
+  height: 300;
 `;
 
 const UserLabel = styled.p`
@@ -21,28 +22,30 @@ const UserLabel = styled.p`
   top: 230px;
   left: 0px;
 `;
-
-interface Props {
-  stream: MediaStream;
+export interface IProps {
+  socketId: string;
   nickName: string;
   host: boolean;
+  stream: MediaStream;
   isReady: boolean;
+  imgSrc?: null | string;
 }
 
-const PeerVideo = ({ stream, nickName, host, isReady }: Props) => {
+const PeerVideo = ({ user }: { user: IProps }) => {
   // const PeerVideo = ({ stream, nickName }: Props) => {
   const ref = useRef<HTMLVideoElement>(null);
-
+  const imgRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
-    if (ref.current) ref.current.srcObject = stream;
-  }, [stream]);
+    if (ref.current) ref.current.srcObject = user.stream;
+    if (imgRef.current && user.imgSrc) imgRef.current.src = user.imgSrc;
+  }, [user.stream, user.imgSrc]);
 
   return (
     <Container>
-      {host ? <p>방장</p> : <p></p>}
-      <VideoContainer ref={ref} autoPlay />
-      <UserLabel>{nickName}</UserLabel>
-      {!host && isReady ? <h2>준비 완료</h2> : <></>}
+      {/* {user.host ? <p>방장</p> : <p></p>} */}
+      {user.imgSrc ? <img ref={imgRef} alt="xowns97"></img> : <VideoContainer ref={ref} autoPlay />}
+      {/* <UserLabel>{user.nickName}</UserLabel> */}
+      {/* {!user.host && user.isReady ? <h2>준비 완료</h2> : <></>} */}
     </Container>
   );
 };
