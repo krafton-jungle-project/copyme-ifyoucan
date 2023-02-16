@@ -4,8 +4,9 @@ import styled, { css } from 'styled-components';
 import MyVideo from './MyVideo';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../app/store';
-import WebRTC from './WebRTC';
-import { useEffect, useState } from 'react';
+import ConnectWebRTC from '../lobby/ConnectWebRTC';
+import type { WebRTCProps } from '../lobby/ConnectWebRTC';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { initializeUser } from '../../modules/user';
 import ReadyButton from '../inGame/waiting/ReadyButton';
@@ -60,12 +61,15 @@ interface IProps {
 }
 
 //todo socket, roomId, nickName 등 전역 관리 필요
-function Game({ socket, roomId, nickName }: IProps) {
+function InGame({ socket, roomId, nickName }: WebRTCProps) {
   const dispatch = useDispatch();
   const otherUsers = useSelector((state: RootState) => state.users);
 
+  ConnectWebRTC({ socket, roomId, nickName });
+
   useEffect(() => {
     return () => {
+      // 방에서 나갈 시 otherUser 정보 초기화
       dispatch(initializeUser());
     };
   }, []);
@@ -101,4 +105,4 @@ function Game({ socket, roomId, nickName }: IProps) {
   );
 }
 
-export default Game;
+export default InGame;

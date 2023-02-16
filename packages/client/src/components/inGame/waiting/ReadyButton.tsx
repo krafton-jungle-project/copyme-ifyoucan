@@ -1,5 +1,4 @@
-import { useNavigate } from 'react-router-dom';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import type { Socket } from 'socket.io-client';
 import type { RootState } from '../../../app/store';
 import { useSelector } from 'react-redux';

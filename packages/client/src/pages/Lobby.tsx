@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import { useEffect } from 'react';
 import { atom, useAtom } from 'jotai';
 import Loading from '../components/lobby/Loading';
+import { stream, detector } from '../utils/tfjs-movenet';
 
 // const SOCKET_SERVER_URL = 'http://localhost:8081';
 const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
@@ -20,27 +21,31 @@ const Logo = styled.img`
 `;
 
 function Lobby() {
-  const [isLoaded] = useAtom(isLoadedAtom);
+  const [isLoaded, setIsLoaded] = useAtom(isLoadedAtom);
   const socket = io(SOCKET_SERVER_URL);
 
   useEffect(() => {
     return () => {
       socket.disconnect();
+      console.log('lobby socket disconnected.');
     };
   }, []);
 
-  console.log('lobby 소켓 연결');
+  if (isLoaded && (!stream || !detector)) {
+    setIsLoaded(false);
+    console.log('error: stream & detector is reloaded.');
+  }
 
   return (
     <>
-      {isLoaded ? (
+      {!isLoaded ? (
+        <Loading />
+      ) : (
         <div>
           <Logo src={logo} />
           <hr />
           <RoomList socket={socket} />
         </div>
-      ) : (
-        <Loading />
       )}
     </>
   );

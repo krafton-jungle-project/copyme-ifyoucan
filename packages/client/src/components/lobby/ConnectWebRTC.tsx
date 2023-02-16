@@ -16,22 +16,21 @@ const pc_config = {
   ],
 };
 
-interface WebRTCProps {
+export interface WebRTCProps {
   socket: Socket;
   roomId: string;
   nickName: string;
 }
 
 //todo 주소로 직접 접근 시 홈(로그인)/로비 페이지로 redirect
-const WebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
+const ConnectWebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
   //todo useRef를 써야할까? 일반 변수로 바꿔서 테스트 및 Ref로 해야한다면 왜 그런지 알아보자
-
   const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection }>({}); // 상대 유저의 RTCPeerConnection 저장
   const myStreamRef = useRef<MediaStream>(); // 유저 자신의 스트림 ref
   const otherUsers = useSelector((state: RootState) => state.users);
 
   const dispatch = useDispatch();
-  const navigator = useNavigate();
+  const navigate = useNavigate();
 
   // 인자로 받은 유저와 peerConnection을 생성하는 함수
   const makeConnection = useCallback((userId: string, nickName: string, host: boolean) => {
@@ -70,7 +69,7 @@ const WebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
   useEffect(() => {
     if (!roomId || !nickName || !socket) {
       console.log('방 정보 없음');
-      navigator('/');
+      navigate('/');
     }
 
     //! 유저 자신 비디오 스트림 얻기
@@ -182,10 +181,11 @@ const WebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
         delete pcsRef.current[user.socketId];
       });
       dispatch(outRoom());
-      navigator('/');
+      navigate('/');
     };
   }, [makeConnection]);
 
   return null;
 };
-export default WebRTC;
+
+export default ConnectWebRTC;

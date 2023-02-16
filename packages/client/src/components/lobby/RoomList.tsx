@@ -82,8 +82,8 @@ export default function RoomList({ socket }: { socket: Socket }) {
   }, []);
 
   useEffect(() => {
-    socket.on('connect', () => console.log('lobby: socket connection complete.'));
-    socket.on('error', () => console.log('lobby: socket connection error occur.'));
+    socket.on('connect', () => console.log('lobby socket connection complete.'));
+    socket.on('error', () => console.log('lobby socket connection error occur.'));
   }, []);
 
   const [rooms, setRooms] = useState<{
