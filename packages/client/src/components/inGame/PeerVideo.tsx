@@ -5,16 +5,15 @@ import type { RootState } from '../../app/store';
 
 const Container = styled.div`
   position: relative;
-  display: inline-block;
-  width: 240px;
-  height: 270px;
-  margin: 5px;
+  width: 400;
+  height: 300;
 `;
 
 const VideoContainer = styled.video`
-  width: 240px;
-  height: 240px;
-  background-color: black;
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  width: 400;
+  height: 300;
 `;
 
 const UserLabel = styled.p`
@@ -43,10 +42,10 @@ const PeerVideo = ({ user }: { user: IProps }) => {
 
   return (
     <Container>
-      {user.host ? <p>방장</p> : <p></p>}
-      {user.imgSrc ? <img ref={imgRef}></img> : <VideoContainer ref={ref} autoPlay />}
-      <UserLabel>{user.nickName}</UserLabel>
-      {!user.host && user.isReady ? <h2>준비 완료</h2> : <></>}
+      {/* {user.host ? <p>방장</p> : <p></p>} */}
+      {user.imgSrc ? <img ref={imgRef} alt="xowns97"></img> : <VideoContainer ref={ref} autoPlay />}
+      {/* <UserLabel>{user.nickName}</UserLabel> */}
+      {/* {!user.host && user.isReady ? <h2>준비 완료</h2> : <></>} */}
     </Container>
   );
 };
