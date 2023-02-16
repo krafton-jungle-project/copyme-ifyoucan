@@ -184,6 +184,14 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // Lobby 유저에게 Romm 정보 전달
     this.server.sockets.emit('get_rooms', this.rooms);
 
+    //채팅 메시지 날려보기
+    // const roomId = this.userToRoom[socket.id];
+    console.log('소켓연결');
+    const userInfo = this.rooms[roomId].users.filter((user) => user.id === socket.id);
+    socket.to(roomId).emit('message', {
+      message: `${userInfo[0].nickName}가 들어왔습니다.`,
+    });
+
     this.logger.log(`nickName: ${nickName}, userId: ${socket.id}, join_room : ${roomId}`);
   }
 
@@ -213,5 +221,18 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       candidateSendID: data.candidateSendID,
     });
     this.logger.log(`ice from ${data.candidateSendID} to ${data.candidateReceiveID}`);
+  }
+
+  @SubscribeMessage('message')
+  handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() message: string) {
+    // socket.broadcast.emit('message', { username: socket.id, message });
+    // const roomId = this.userToRoom[socket.id];
+    const roomId = this.userToRoom[socket.id];
+    // const userInfo = this.rooms[roomId].users.filter((user) => user.id === socket.id);
+    // socket.broadcast.to(roomId).emit('message', { username: socket.id, message });
+    const userInfo = this.rooms[roomId].users.filter((user) => user.id === socket.id);
+    socket.to(roomId).emit('message', { username: userInfo[0].nickName, message });
+    // socket.to(roomId).emit('message', { username: socket.id, message });
+    return { username: socket.id, message };
   }
 }
