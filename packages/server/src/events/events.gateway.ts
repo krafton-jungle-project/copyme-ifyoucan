@@ -17,7 +17,8 @@ import {
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import type * as poseDetection from '@tensorflow-models/pose-detection';
-type ServerToClientSocket = Socket<ServerToClientEvents>;
+
+type ClientToServerSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
 
 @WebSocketGateway(8081, {
   cors: {
@@ -43,12 +44,12 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   server: Server<ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData>;
 
   //!소켓 연결
-  handleConnection(@ConnectedSocket() socket: ServerToClientSocket): void {
+  handleConnection(@ConnectedSocket() socket: ClientToServerSocket): void {
     this.logger.log(`socketId: ${socket.id} 소켓 연결`);
   }
 
   //!소켓 연결 해제
-  handleDisconnect(@ConnectedSocket() socket: ServerToClientSocket): void {
+  handleDisconnect(@ConnectedSocket() socket: ClientToServerSocket): void {
     const roomId = this.userToRoom[socket.id];
     if (!roomId) return;
 
@@ -72,14 +73,14 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 방 조회
   @SubscribeMessage('rooms')
-  getRooms(@ConnectedSocket() socket: ServerToClientSocket): void {
+  getRooms(@ConnectedSocket() socket: ClientToServerSocket): void {
     this.server.to(socket.id).emit('get_rooms', this.rooms);
   }
 
   //! 방 생성
   @SubscribeMessage('create_room')
   createRoom(
-    @ConnectedSocket() socket: ServerToClientSocket,
+    @ConnectedSocket() socket: ClientToServerSocket,
     @MessageBody() roomName: string,
   ): void {
     const roomId = uuidv4();
@@ -97,7 +98,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 준비
   @SubscribeMessage('ready')
-  ready(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() roomId: string): void {
+  ready(@ConnectedSocket() socket: ClientToServerSocket, @MessageBody() roomId: string): void {
     this.rooms[roomId].readyCount += 1;
 
     // 방에 다른 유저들에게 준비 했다고 알려줌
@@ -107,7 +108,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //! 준비 취소
   @SubscribeMessage('unready')
   cancleReady(
-    @ConnectedSocket() socket: ServerToClientSocket,
+    @ConnectedSocket() socket: ClientToServerSocket,
     @MessageBody() roomId: string,
   ): void {
     this.rooms[roomId].readyCount -= 1;
@@ -119,7 +120,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //! imgae 전송(공격이 끝났을 시 이벤트를 받는다)
   @SubscribeMessage('image')
   imageHandle(
-    @ConnectedSocket() socket: ServerToClientSocket,
+    @ConnectedSocket() socket: ClientToServerSocket,
     @MessageBody() data: { pose: poseDetection.Pose; imgSrc: string },
   ): void {
     const roomId = this.userToRoom[socket.id];
@@ -130,7 +131,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 수비가 끝났을 시 이벤트를 받는다
   @SubscribeMessage('image_reset')
-  resetImage(@ConnectedSocket() socket: ServerToClientSocket): void {
+  resetImage(@ConnectedSocket() socket: ClientToServerSocket): void {
     const roomId = this.userToRoom[socket.id];
     socket.to(roomId).emit('get_image_reset');
   }
@@ -146,14 +147,14 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 공격 시작
   @SubscribeMessage('attack')
-  attack(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() roomId: string): void {
+  attack(@ConnectedSocket() socket: ClientToServerSocket, @MessageBody() roomId: string): void {
     // 공격자가 공격을 시작하면 수비자들에게 공격이 시작되었다는 이벤트 발생
     socket.to(roomId).emit('get_attack');
   }
 
   //! 게임 끝
   @SubscribeMessage('finish')
-  finish(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() roomId: string): void {
+  finish(@ConnectedSocket() socket: ClientToServerSocket, @MessageBody() roomId: string): void {
     // 방에 모든 유저들에게 게임이 끝났다고 알려줌
     socket.to(roomId).emit('get_finish');
   }
@@ -161,7 +162,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //! 방에 새로운 유저 join
   @SubscribeMessage('join_room')
   joinRoom(
-    @ConnectedSocket() socket: ServerToClientSocket,
+    @ConnectedSocket() socket: ClientToServerSocket,
     @MessageBody() data: { roomId: string; nickName: string },
   ): void {
     const { roomId, nickName } = data;
@@ -226,7 +227,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('message')
-  handleMessage(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() message: string) {
+  handleMessage(@ConnectedSocket() socket: ClientToServerSocket, @MessageBody() message: string) {
     const roomId = this.userToRoom[socket.id];
     const userInfo = this.rooms[roomId].users.filter((user) => user.id === socket.id);
     socket.to(roomId).emit('message', { username: userInfo[0].nickName, message });
