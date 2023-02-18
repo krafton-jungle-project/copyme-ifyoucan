@@ -3,33 +3,51 @@
  * 추가타입 반영시 yarn install 하여 패키지의 업데이트 사항을 반영해야한다.
  * @see https://socket.io/docs/v4/typescript/
  */
+import type * as poseDetection from '@tensorflow-models/pose-detection';
+
 export interface ServerToClientEvents {
   full: () => void;
-  other_users: (
-    otherUsers: {
-      id: string;
-      nickName: string;
-    }[],
-  ) => void;
-  get_answer: (offer: any) => void;
+  get_rooms: (rooms: any) => void;
+  new_room: (roomId: string) => void;
+  get_ready: () => void;
+  get_unready: () => void;
+  get_image_reset: () => void;
+  get_image: (pose: poseDetection.Pose, imgSrc: string) => void;
+  get_start: () => void;
+  get_attack: () => void;
+  get_finish: () => void;
+  peer: (data: { id: string; nickName: string }) => void;
+  greeting: (data: { message: string }) => void;
+  get_offer: (offer: any) => void;
+  get_answer: (answer: any) => void;
+  get_ice: (offer: any) => void;
+  message: (data: { username: string; message: string }) => void;
+  user_exit: () => void;
 }
 
 export interface ClientToServerEvents {
+  rooms: () => void;
   create_room: (roomName: string) => void;
-  user_exit: (socketId: string) => void;
-  get_ice: (offer: any) => void;
-  get_offer: (offer: any) => void;
+  join_room: (data: { roomId: string; nickName: string }) => void;
+  ready: (roomId: string) => void;
+  unready: (roomId: string) => void;
+  start: (roomId: string) => void;
+  image: (data: { pose: poseDetection.Pose; imgSrc: string }) => void;
+  image_reset: () => void;
+  offer: (data: any) => void;
+  answer: (data: any) => void;
+  ice: (data: any) => void;
+  message: (message: string) => void;
 }
 
 export interface InterServerEvents {
-  get_rooms: (room: any) => void;
+  get_rooms: (rooms: any) => void;
   new_room: (roomId: string) => void;
-  other_users: (
-    otherUsers: {
-      id: string;
-      nickName: string;
-    }[],
-  ) => void;
+  get_start: () => void;
+  peer: (data: { id: string; nickName: string }) => void;
+  get_offer: (offer: any) => void;
+  get_answer: (answer: any) => void;
+  get_ice: (offer: any) => void;
   error: () => void;
   full: () => void;
 }
