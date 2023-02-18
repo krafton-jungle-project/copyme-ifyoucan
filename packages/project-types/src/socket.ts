@@ -22,6 +22,7 @@ export interface ClientToServerEvents {
 }
 
 export interface InterServerEvents {
+  get_offer: (offer: any) => void;
   get_rooms: (room: any) => void;
   new_room: (roomId: string) => void;
   other_users: (
@@ -31,7 +32,10 @@ export interface InterServerEvents {
     }[],
   ) => void;
   error: () => void;
+  peer: (otherUsers: { id: string; nickName: string }) => void;
   full: () => void;
+  message: (msg: any) => void;
+  user_exit: () => void;
 }
 
 export interface SocketData {

@@ -16,7 +16,7 @@ import {
 } from 'project-types';
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-type ClientToServerSocket = Socket<ClientToServerEvents>;
+type ClientToServerSocket = Socket<ClientToServerEvents, InterServerEvents>;
 
 @WebSocketGateway(8081, {
   cors: {
@@ -191,6 +191,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     // 유저에게 이미 방에 있는 다른 유저 정보 주기
     if (otherUsers.length === 0) return;
+    // socket.emit('')
     this.server.sockets.to(socket.id).emit('peer', otherUsers[0]);
 
     //채팅 메시지 날려보기
