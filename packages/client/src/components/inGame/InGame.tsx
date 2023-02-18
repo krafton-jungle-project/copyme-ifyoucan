@@ -1,4 +1,3 @@
-import type { Socket } from 'socket.io-client';
 import PeerVideo from './PeerVideo';
 import styled, { css } from 'styled-components';
 import MyVideo from './MyVideo';
@@ -21,6 +20,7 @@ import * as poseDetection from '@tensorflow-models/pose-detection';
 import { hostAtom } from '../../app/atom';
 import { peerAtom } from '../../app/peer';
 import { useResetAtom } from 'jotai/utils';
+import type { WrappedSocket } from '../../types/socket';
 
 const position = [
   ['left', 'top'],
@@ -76,7 +76,7 @@ export const scoreAtom = atom<number>(0);
 // };
 
 //todo socket, roomId, nickName 등 전역 관리 필요
-function InGame({ socket }: { socket: Socket }) {
+function InGame({ socket }: { socket: WrappedSocket }) {
   const host = useAtomValue(hostAtom);
   const videoRef = useRef<HTMLVideoElement>(null);
   const peer = useAtomValue(peerAtom);

@@ -6,6 +6,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { hostAtom, nickNameAtom, roomIdAtom } from '../../app/atom';
 import { peerAtom } from '../../app/peer';
 import { useResetAtom } from 'jotai/utils';
+import type { WrappedSocket } from '../../types/socket';
 
 //! 스턴 서버 직접 생성 고려(임시)
 const pc_config = {
@@ -17,7 +18,7 @@ const pc_config = {
 };
 
 //todo 주소로 직접 접근 시 홈(로그인)/로비 페이지로 redirect
-const ConnectWebRTC = ({ socket }: { socket: Socket }) => {
+const ConnectWebRTC = ({ socket }: { socket: WrappedSocket }) => {
   //todo useRef를 써야할까? 일반 변수로 바꿔서 테스트 및 Ref로 해야한다면 왜 그런지 알아보자
   const pcRef = useRef<RTCPeerConnection>(); // 상대 유저의 RTCPeerConnection 저장
   const myStreamRef = useRef<MediaStream>(); // 유저 자신의 스트림 ref

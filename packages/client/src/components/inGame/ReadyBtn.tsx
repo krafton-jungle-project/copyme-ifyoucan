@@ -4,6 +4,7 @@ import type { Socket } from 'socket.io-client';
 import styled from 'styled-components';
 import { hostAtom, roomIdAtom } from '../../app/atom';
 import { peerAtom } from '../../app/peer';
+import type { WrappedSocket } from '../../types/socket';
 
 const Btn = styled.button`
   font-size: 20px;
@@ -19,7 +20,7 @@ const Btn = styled.button`
   box-shadow: 2.5px 2.5px 2.5px rgba(0, 0, 0, 0.3);
 `;
 
-function ReadyBtn({ socket }: { socket: Socket }) {
+function ReadyBtn({ socket }: { socket: WrappedSocket }) {
   const [ready, setReady] = useState(false);
   const host = useAtomValue(hostAtom);
   const roomId = useAtomValue(roomIdAtom);
@@ -38,7 +39,7 @@ function ReadyBtn({ socket }: { socket: Socket }) {
   }
 
   function start() {
-    socket.emit('game_start', roomId); //! 서버 쪽 코드 변경 있음
+    socket.emit('start', roomId); //! 서버 쪽 코드 변경 있음
     console.log('start');
   }
 
