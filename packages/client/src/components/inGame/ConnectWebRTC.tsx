@@ -1,11 +1,11 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import { stream } from '../../utils/tfjs-movenet';
-import { addUser, deleteUser } from '../../modules/user';
-import { behost, outRoom } from '../../modules/host';
 import type { Socket } from 'socket.io-client';
-import type { RootState } from '../../app/store';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { hostAtom, nickNameAtom, roomIdAtom } from '../../app/atom';
+import { peerAtom } from '../../app/peer';
+import { useResetAtom } from 'jotai/utils';
 
 //! 스턴 서버 직접 생성 고려(임시)
 const pc_config = {
@@ -16,20 +16,16 @@ const pc_config = {
   ],
 };
 
-export interface WebRTCProps {
-  socket: Socket;
-  roomId: string;
-  nickName: string;
-}
-
 //todo 주소로 직접 접근 시 홈(로그인)/로비 페이지로 redirect
-const ConnectWebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
+const ConnectWebRTC = ({ socket }: { socket: Socket }) => {
   //todo useRef를 써야할까? 일반 변수로 바꿔서 테스트 및 Ref로 해야한다면 왜 그런지 알아보자
-  const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection }>({}); // 상대 유저의 RTCPeerConnection 저장
+  const pcRef = useRef<RTCPeerConnection>(); // 상대 유저의 RTCPeerConnection 저장
   const myStreamRef = useRef<MediaStream>(); // 유저 자신의 스트림 ref
-  const otherUsers = useSelector((state: RootState) => state.users);
-
-  const dispatch = useDispatch();
+  const roomId = useAtomValue(roomIdAtom);
+  const nickName = useAtomValue(nickNameAtom);
+  const setPeer = useSetAtom(peerAtom);
+  const setHost = useSetAtom(hostAtom);
+  const resetPeer = useResetAtom(peerAtom);
   const navigate = useNavigate();
 
   // 인자로 받은 유저와 peerConnection을 생성하는 함수
@@ -49,9 +45,13 @@ const ConnectWebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
 
     //! 수정해야될 부분 dispatch
     peerConnection.addEventListener('track', (data) => {
-      dispatch(
-        addUser({ socketId: userId, nickName, host, stream: data.streams[0], isReady: false }),
-      );
+      console.log('track event');
+      setPeer((prev) => ({
+        ...prev,
+        socketId: userId,
+        nickName: nickName,
+        stream: data.streams[0],
+      }));
     });
 
     if (myStreamRef.current) {
@@ -81,27 +81,24 @@ const ConnectWebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
       nickName,
     });
 
-    //! 서버에서 다른 유저들의 정보를 받는다
-    socket.on('other_users', (otherUsers: Array<{ id: string; nickName: string }>) => {
-      otherUsers.forEach(async (user, index) => {
-        // if (!myStreamRef.current) return;
-        const peerConnection = makeConnection(user.id, user.nickName, index === 0);
-        if (!peerConnection || !socket) return;
-        pcsRef.current = { ...pcsRef.current, [user.id]: peerConnection };
+    //! 서버에서 다른 유저의 정보를 받는다
+    socket.on('peer', async (peer: { id: string; nickName: string }) => {
+      const peerConnection = makeConnection(peer.id, peer.nickName, false);
+      if (!peerConnection || !socket) return;
+      pcRef.current = peerConnection;
 
-        try {
-          const offer = await peerConnection.createOffer();
-          peerConnection.setLocalDescription(new RTCSessionDescription(offer));
-          socket.emit('offer', {
-            sdp: offer,
-            offerSendID: socket.id,
-            offerSendNickName: nickName,
-            offerReceiveID: user.id,
-          });
-        } catch (e) {
-          console.log(e);
-        }
-      });
+      try {
+        const offer = await peerConnection.createOffer();
+        peerConnection.setLocalDescription(new RTCSessionDescription(offer));
+        socket.emit('offer', {
+          sdp: offer,
+          offerSendID: socket.id,
+          offerSendNickName: nickName,
+          offerReceiveID: peer.id,
+        });
+      } catch (e) {
+        console.log(e);
+      }
     });
 
     //! offer를 받은 유저는 answer를 보낸다
@@ -119,7 +116,7 @@ const ConnectWebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
         const peerConnection = makeConnection(offerSendID, offerSendNickName, false);
 
         if (!(peerConnection && socket)) return;
-        pcsRef.current = { ...pcsRef.current, [offerSendID]: peerConnection };
+        pcRef.current = peerConnection;
 
         try {
           await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
@@ -138,51 +135,34 @@ const ConnectWebRTC = ({ socket, roomId, nickName }: WebRTCProps) => {
     );
 
     //! answer에 대한 RTCSessionDescription을 얻는다.
-    socket.on('get_answer', (data: { sdp: RTCSessionDescription; answerSendID: string }) => {
-      const { sdp, answerSendID } = data;
-      pcsRef.current[answerSendID].setRemoteDescription(new RTCSessionDescription(sdp));
+    socket.on('get_answer', (sdp: RTCSessionDescription) => {
+      if (!pcRef.current) return;
+      pcRef.current.setRemoteDescription(new RTCSessionDescription(sdp));
     });
 
-    socket.on(
-      'get_ice',
-      async (data: { candidate: RTCIceCandidateInit; candidateSendID: string }) => {
-        try {
-          const { candidate, candidateSendID } = data;
-          await pcsRef.current[candidateSendID].addIceCandidate(new RTCIceCandidate(candidate));
-          console.log('candidate add success');
-        } catch (e) {
-          console.log(e);
-        }
-      },
-    );
+    socket.on('get_ice', async (candidate: RTCIceCandidateInit) => {
+      try {
+        if (!pcRef.current) return;
+        await pcRef.current.addIceCandidate(new RTCIceCandidate(candidate));
+        console.log('candidate add success');
+      } catch (e) {
+        console.log(e);
+      }
+    });
 
     //! 유저가 나갔을 시
-    socket.on('user_exit', (userId) => {
-      if (!pcsRef.current[userId]) return;
-      pcsRef.current[userId].close();
-      delete pcsRef.current[userId];
-      dispatch(deleteUser(userId));
-      
-      
-
-      // 더이상 방에 유저가 없으면 자신이 방장이 된다.
-      if (!otherUsers.length) {
-        dispatch(behost(userId));
-      }
+    socket.on('user_exit', () => {
+      if (!pcRef.current) return;
+      pcRef.current.close();
+      resetPeer();
+      setHost(true); // 유저가 나가면 자신이 방장이 된다.
     });
 
     return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-      otherUsers.forEach((user) => {
-        if (!pcsRef.current[user.socketId]) return;
-        // closes the current peer connection
-        pcsRef.current[user.socketId].close();
-        // pcsRef에서 user 삭제
-        delete pcsRef.current[user.socketId];
-      });
-      dispatch(outRoom());
+      if (!pcRef.current) return;
+
+      pcRef.current.close();
+      setHost(false);
       navigate('/');
     };
   }, [makeConnection]);

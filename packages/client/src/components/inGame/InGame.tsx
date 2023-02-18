@@ -2,15 +2,10 @@ import type { Socket } from 'socket.io-client';
 import PeerVideo from './PeerVideo';
 import styled, { css } from 'styled-components';
 import MyVideo from './MyVideo';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../app/store';
 import ConnectWebRTC from './ConnectWebRTC';
-import type { WebRTCProps } from './ConnectWebRTC';
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { initializeUser } from '../../modules/user';
 import { Timer, useInterval } from './useInterval';
-import { atom, useAtom } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 
 import GameSocket from './GameSocket';
 import StateBox from './StateBox';
@@ -23,6 +18,9 @@ import { capturePose } from '../../utils/capture-pose';
 import getPose from '../../utils/get-pose';
 import { comparePoses } from '../../utils/pose-similarity';
 import * as poseDetection from '@tensorflow-models/pose-detection';
+import { hostAtom } from '../../app/atom';
+import { peerAtom } from '../../app/peer';
+import { useResetAtom } from 'jotai/utils';
 
 const position = [
   ['left', 'top'],
@@ -78,21 +76,22 @@ export const scoreAtom = atom<number>(0);
 // };
 
 //todo socket, roomId, nickName 등 전역 관리 필요
-function InGame({ socket, roomId, nickName }: WebRTCProps) {
-  const dispatch = useDispatch();
-  const otherUsers = useSelector((state: RootState) => state.users);
-  const host = useSelector((state: RootState) => state.host);
-
+function InGame({ socket }: { socket: Socket }) {
+  const host = useAtomValue(hostAtom);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const peer = useAtomValue(peerAtom);
+  const resetPeer = useResetAtom(peerAtom);
+
   let cnt: number = 0;
 
   const [score, setScore] = useAtom(scoreAtom);
-  ConnectWebRTC({ socket, roomId, nickName });
+
+  ConnectWebRTC({ socket });
 
   useEffect(() => {
     return () => {
       // 방에서 나갈 시 otherUser 정보 초기화
-      dispatch(initializeUser());
+      resetPeer();
     };
   }, []);
 
@@ -165,15 +164,23 @@ function InGame({ socket, roomId, nickName }: WebRTCProps) {
           <StateBox></StateBox>
         </UserWrapper>
         <GameSocket socket={socket} />
-        {otherUsers.map((user, index) => (
+        {/* {otherUsers.map((user, index) => (
           <UserWrapper ps={index + 1}>
             <PeerVideo key={index} user={user} />
             <StateBox></StateBox>
           </UserWrapper>
-        ))}
+        ))} */}
+        {peer.stream ? (
+          <UserWrapper ps={1}>
+            <PeerVideo peer={peer} />
+            <StateBox></StateBox>
+          </UserWrapper>
+        ) : (
+          <></>
+        )}
         {/* <ReadyButton socket={socket} roomId={roomId} /> */}
         <AnnounceWrapper message={message}></AnnounceWrapper>
-        {mode === 'waiting' ? <ReadyBtn socket={socket} roomId={roomId}></ReadyBtn> : null}
+        {mode === 'waiting' ? <ReadyBtn socket={socket}></ReadyBtn> : null}
         {mode === 'waiting' ? <ExitRoom></ExitRoom> : null}
       </VideoWrapper>
     </div>

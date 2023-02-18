@@ -1,13 +1,12 @@
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../app/store';
+import { hostAtom } from '../../app/atom';
 import { stageAtom } from './InGame';
 import { useInterval } from './useInterval';
 
 function Message() {
   const [stage, setStage] = useAtom(stageAtom);
-  const host = useSelector((state: RootState) => state.host);
+  const host = useAtomValue(hostAtom);
   let message: string = '';
 
   let t: number = 0;

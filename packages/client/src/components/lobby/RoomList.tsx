@@ -111,7 +111,10 @@ export default function RoomList({ socket }: { socket: Socket }) {
   }, []);
 
   useEffect(() => {
-    socket.on('get_rooms', (rooms) => setRooms(rooms));
+    socket.on('get_rooms', (rooms) => {
+      console.log(rooms);
+      setRooms(rooms);
+    });
   }, [rooms]);
 
   const joinRoom = (roomId: string) => {
@@ -138,10 +141,10 @@ export default function RoomList({ socket }: { socket: Socket }) {
                 </div>
                 <RoomInfo>
                   <RoomName>
-                    <RoomCnt>{room[1].users.length} / 4</RoomCnt>
+                    <RoomCnt>{room[1].users.length} / 2</RoomCnt>
                     {room[1].roomName}
                   </RoomName>
-                  <JoinBtn onClick={() => joinRoom(room[0])} disabled={room[1].users.length >= 4}>
+                  <JoinBtn onClick={() => joinRoom(room[0])} disabled={room[1].users.length >= 2}>
                     드루와
                   </JoinBtn>
                 </RoomInfo>
