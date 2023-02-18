@@ -30,7 +30,7 @@ const LINE_WIDTH = 2; // key point의 둘레 및 골격의 두께
 export let stream: MediaStream;
 export let detector: poseDetection.PoseDetector;
 export let camera: Camera;
-let rafId: number | null = null;
+export let rafId: number;
 
 class Camera {
   video: HTMLVideoElement;
@@ -197,7 +197,7 @@ async function renderDetection() {
 }
 
 // 웹캠 스트림을 생성하여 반환하는 함수
-function getMyStream(param: { width: number; height: number }): Promise<MediaStream> {
+export async function getMyStream(param: { width: number; height: number }) {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     throw new Error('Browser API navigator.mediaDevices.getUserMedia not available');
   }
@@ -209,38 +209,18 @@ function getMyStream(param: { width: number; height: number }): Promise<MediaStr
       height: param.height,
     },
   };
-
-  return navigator.mediaDevices.getUserMedia(videoConfig);
+  stream = await navigator.mediaDevices.getUserMedia(videoConfig);
 }
 
 // Pose Detector를 생성하여 반환하는 함수
-async function createDetector(): Promise<poseDetection.PoseDetector> {
-  return poseDetection.createDetector(POSE_DETECTION_MODEL, {
+export async function createDetector() {
+  detector = await poseDetection.createDetector(POSE_DETECTION_MODEL, {
     modelType: POSE_DETECTION_MODEL_TYPE,
   });
 }
 
 export async function canvasRender(movenetParam: MovenetParam) {
-  //temp MyVideo 컴포넌트가 렌더링되지 않을 때 cancel 하도록 수정해야 한다.
-  //temp (방을 나갈 때, 튜토리얼 창에서 방생성 창으로 갈 때 등)
-  if (rafId !== null) {
-    cancelAnimationFrame(rafId);
-  }
-
-  // '가장 처음'으로 MyVideo 컴포넌트가 렌더링 될 때, stream 및 detector를 초기화 해준다.
-  if (stream === undefined) {
-    stream = await getMyStream(movenetParam.size);
-    console.log('webcam stream is ready.');
-  }
-
-  // detector가 생성되지 않았어도 먼저 canvas 뒤에 비디오를 출력한다.
   camera = await Camera.setupCamera(movenetParam);
-
-  if (detector === undefined) {
-    detector = await createDetector();
-    console.log('pose detector is ready.');
-  }
-
   // detector가 생성된 이후에 자세를 추정하여 인식된 랜드마크와 골격을 canvas에 그린다.
   renderDetection();
 }

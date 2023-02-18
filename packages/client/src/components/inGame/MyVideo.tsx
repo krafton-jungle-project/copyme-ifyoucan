@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import * as moveNet from '../utils/tfjs-movenet';
+import * as moveNet from '../../utils/tfjs-movenet';
 
 const CanvasWrapper = styled.div`
   position: relative;
+  margin-bottom: 3px;
 `;
 
 const Video = styled.video`
@@ -13,12 +14,12 @@ const Video = styled.video`
 `;
 
 const Canvas = styled.canvas`
-  position: relative;
+  position: absolute;
 `;
 
-function MyVideo() {
+function MyVideo({ inheritRef }: { inheritRef: React.RefObject<HTMLVideoElement> }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = inheritRef;
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -32,16 +33,22 @@ function MyVideo() {
     };
 
     moveNet.canvasRender({
-      size: { width: 640, height: 480 },
+      size: { width: 400, height: 300 }, // TODO: 임시 수정
       element: elements,
     });
+
+    return () => {
+      cancelAnimationFrame(moveNet.rafId);
+    };
   }, []);
 
   return (
-    <CanvasWrapper ref={wrapperRef}>
-      <Video ref={videoRef}></Video>
-      <Canvas ref={canvasRef}></Canvas>
-    </CanvasWrapper>
+    <div>
+      <CanvasWrapper ref={wrapperRef}>
+        <Video ref={videoRef}></Video>
+        <Canvas ref={canvasRef}></Canvas>
+      </CanvasWrapper>
+    </div>
   );
 }
 

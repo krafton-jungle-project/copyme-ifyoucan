@@ -1,11 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Lobby from './pages/lobby';
-import Room from './pages/room';
-import Login from './pages/login';
-import SignUp from './pages/signup';
+import Lobby from './pages/Lobby';
+import Room from './pages/Room';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
 
 function App() {
-
   return (
     <div className="App">
       <BrowserRouter>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+//todo 모달 창으로 변경 필요
 export default function SignUp() {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
