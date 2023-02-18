@@ -79,12 +79,12 @@ export default function RoomList({ socket }: { socket: Socket }) {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     socket.on('connect', () => console.log('lobby socket connection complete.'));
     socket.on('error', () => console.log('lobby socket connection error occur.'));
-  }, []);
+  }, [socket]);
 
   const [rooms, setRooms] = useState<{
     [key: string]: {
@@ -108,14 +108,13 @@ export default function RoomList({ socket }: { socket: Socket }) {
 
   useEffect(() => {
     socket.emit('rooms');
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     socket.on('get_rooms', (rooms) => {
-      console.log(rooms);
       setRooms(rooms);
     });
-  }, [rooms]);
+  }, [socket, rooms, setRooms]);
 
   const joinRoom = (roomId: string) => {
     navigate('/room', {

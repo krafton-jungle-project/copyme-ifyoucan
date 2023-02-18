@@ -18,26 +18,29 @@ const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
 
 function Room() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [, setIsLoaded] = useAtom(isLoadedAtom);
   const setNickName = useSetAtom(nickNameAtom);
   const setRoomId = useSetAtom(roomIdAtom);
+  const socket: Socket = io(SOCKET_SERVER_URL);
   const resetPeer = useResetAtom(peerAtom);
 
   useEffect(() => {
-    if (!stream || !detector) {
+    if (location.state === null) {
+      alert('잘못된 접근입니다.');
+      navigate('/', { replace: true });
+    } else if (!stream || !detector) {
       alert('비디오 연결이 종료되어 다시 로딩합니다.');
       console.log('error: stream & detector is reloaded.');
       setIsLoaded(false);
       navigate('/', { replace: true });
     }
-  }, []);
+  }, [setIsLoaded, navigate, location.state, setNickName, setRoomId]);
 
-  const location = useLocation();
-  setRoomId(location.state.roomId);
-  setNickName(location.state.nickName);
-
-  const socket: Socket = io(SOCKET_SERVER_URL);
-  console.log('room socket connection complete.');
+  if (location.state) {
+    setRoomId(location.state.roomId);
+    setNickName(location.state.nickName);
+  }
 
   useEffect(() => {
     return () => {
@@ -45,13 +48,9 @@ function Room() {
       socket.disconnect();
       console.log('room socket disconnected.');
     };
-  }, []);
+  }, [resetPeer, socket]);
 
-  return (
-    <>
-      <InGame socket={socket} />
-    </>
-  );
+  return <InGame socket={socket} />;
 }
 
 export default Room;
