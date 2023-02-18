@@ -53,7 +53,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         delete this.rooms[roomId];
         this.logger.log(`roomId: ${roomId} 삭제`);
       } else {
-        socket.to(roomId).emit('user_exit', socket.id); //방장이 될 사람의 id 보내기
+        socket.to(roomId).emit('user_exit'); //방장이 될 사람의 id 보내기
       }
     }
 
@@ -82,7 +82,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     };
     console.log(socket.id);
     this.server.sockets.to(socket.id).emit('new_room', roomId);
-    this.server.sockets.emit('get_rooms', this.rooms);
 
     this.logger.log(`create room roomname: ${roomName} by user:${socket.id} `);
   }
@@ -93,7 +92,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.rooms[roomId].readyCount += 1;
 
     // 방에 다른 유저들에게 준비 했다고 알려줌
-    socket.to(roomId).emit('get_ready', socket.id);
+    socket.to(roomId).emit('get_ready');
   }
 
   //! 준비 취소
@@ -102,7 +101,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.rooms[roomId].readyCount -= 1;
 
     // 방에 다른 유저들에게 준비 취소했다고 알려줌
-    socket.to(roomId).emit('get_unready', socket.id);
+    socket.to(roomId).emit('get_unready');
   }
 
   //! imgae 전송(공격이 끝났을 시 이벤트를 받는다)
@@ -114,14 +113,14 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const roomId = this.userToRoom[socket.id];
 
     // 다른 유저들에게 공격자의 image와 포즈 데이터 전송
-    socket.to(roomId).emit('get_image', socket.id, data.pose, data.imgSrc);
+    socket.to(roomId).emit('get_image', data.pose, data.imgSrc);
   }
 
   //! 수비가 끝났을 시 이벤트를 받는다
   @SubscribeMessage('image_reset')
   resetImage(@ConnectedSocket() socket: Socket): void {
     const roomId = this.userToRoom[socket.id];
-    socket.to(roomId).emit('get_image_reset', socket.id);
+    socket.to(roomId).emit('get_image_reset');
   }
 
   //! 게임 시작
@@ -175,21 +174,18 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 방에 연결
     socket.join(roomId);
 
-    const otherUsers = this.rooms[roomId].users.filter((user) => user.id !== socket.id);
-    console.log(otherUsers);
-
-    // 유저에게 이미 방에 있는 다른 유저 정보 주기
-    this.server.sockets.to(socket.id).emit('other_users', otherUsers);
-
-    // Lobby 유저에게 Romm 정보 전달
+    // Lobby 유저에게 Room 정보 전달
     this.server.sockets.emit('get_rooms', this.rooms);
 
+    const otherUsers = this.rooms[roomId].users.filter((user) => user.id !== socket.id);
+
+    // 유저에게 이미 방에 있는 다른 유저 정보 주기
+    if (otherUsers.length === 0) return;
+    this.server.sockets.to(socket.id).emit('peer', otherUsers[0]);
+
     //채팅 메시지 날려보기
-    // const roomId = this.userToRoom[socket.id];
-    console.log('소켓연결');
-    const userInfo = this.rooms[roomId].users.filter((user) => user.id === socket.id);
     socket.to(roomId).emit('message', {
-      message: `${userInfo[0].nickName}가 들어왔습니다.`,
+      message: `${otherUsers[0].nickName}가 들어왔습니다.`,
     });
 
     this.logger.log(`nickName: ${nickName}, userId: ${socket.id}, join_room : ${roomId}`);
@@ -207,19 +203,13 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('answer')
   answer(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
-    socket.to(data.answerReceiveID).emit('get_answer', {
-      sdp: data.sdp,
-      answerSendID: data.answerSendID,
-    });
+    socket.to(data.answerReceiveID).emit('get_answer', data.sdp);
     this.logger.log(`answer from ${data.answerSendID} to ${data.answerReceiveID}`);
   }
 
   @SubscribeMessage('ice')
   ice(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
-    socket.to(data.candidateReceiveID).emit('get_ice', {
-      candidate: data.candidate,
-      candidateSendID: data.candidateSendID,
-    });
+    socket.to(data.candidateReceiveID).emit('get_ice', data.candidate);
     this.logger.log(`ice from ${data.candidateSendID} to ${data.candidateReceiveID}`);
   }
 

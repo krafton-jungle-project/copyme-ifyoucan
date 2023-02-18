@@ -1,9 +1,6 @@
 import { useAtom } from 'jotai';
 import { stageAtom } from './InGame';
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../app/store';
-import { Socket } from 'socket.io-client';
 
 /* setInterval 안에서 setState 쓰려면 setInterval 대신에 이 함수 사용 */
 export function useInterval(callback: any, delay: number) {

@@ -2,17 +2,12 @@ import { Button, Modal } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Socket } from 'socket.io-client';
-import { useDispatch } from 'react-redux';
-import { behost } from '../../../modules/host';
+import { useSetAtom } from 'jotai';
+import { hostAtom } from '../../../app/atom';
 
-interface Props {
-  nickName: string;
-  socket: Socket;
-}
-
-export default function CreateRoom({ nickName, socket }: Props) {
+export default function CreateRoom({ socket, nickName }: { socket: Socket; nickName: string }) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const setHost = useSetAtom(hostAtom);
   const [open, setOpen] = useState<boolean>(false);
 
   let roomName: string = '';
@@ -20,7 +15,7 @@ export default function CreateRoom({ nickName, socket }: Props) {
   const joinRoom = () => {
     socket.on('new_room', (roomId: string) => {
       // 방 생성자는 호스트가 된다.
-      dispatch(behost());
+      setHost(true);
 
       navigate('/room', {
         state: {

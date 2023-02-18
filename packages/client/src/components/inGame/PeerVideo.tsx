@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import type { RootState } from '../../app/store';
+import type { PeerState } from '../../app/peer';
 
 const Container = styled.div`
   position: relative;
@@ -30,18 +29,18 @@ export interface IProps {
   imgSrc?: null | string;
 }
 
-const PeerVideo = ({ user }: { user: IProps }) => {
+const PeerVideo = ({ peer }: { peer: PeerState }) => {
   // const PeerVideo = ({ stream, nickName }: Props) => {
   const ref = useRef<HTMLVideoElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
-    if (ref.current) ref.current.srcObject = user.stream;
-    if (imgRef.current && user.imgSrc) imgRef.current.src = user.imgSrc;
-  }, [user.stream, user.imgSrc]);
+    if (ref.current) ref.current.srcObject = peer.stream;
+    if (imgRef.current && peer.imgSrc) imgRef.current.src = peer.imgSrc;
+  }, [peer.stream, peer.imgSrc]);
 
   return (
     <Container>
-      {user.imgSrc ? (
+      {peer.imgSrc ? (
         <OffendImg ref={imgRef} alt="xowns97" width="400" height="300"></OffendImg>
       ) : (
         <VideoContainer ref={ref} autoPlay />
