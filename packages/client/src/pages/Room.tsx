@@ -9,6 +9,8 @@ import { useAtom, useSetAtom } from 'jotai';
 import { nickNameAtom, roomIdAtom } from '../app/atom';
 import { peerAtom } from '../app/peer';
 import { useResetAtom } from 'jotai/utils';
+import ConnectWebRTC from '../components/inGame/ConnectWebRTC';
+import GameSocket from '../components/inGame/GameSocket';
 
 // const SOCKET_SERVER_URL = 'http://localhost:8081';
 const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
@@ -35,11 +37,13 @@ function Room() {
       setIsLoaded(false);
       navigate('/', { replace: true });
     }
-  }, [setIsLoaded, navigate, location.state, setNickName, setRoomId]);
+  }, [setIsLoaded, navigate, location.state]);
 
   if (location.state) {
     setRoomId(location.state.roomId);
     setNickName(location.state.nickName);
+    ConnectWebRTC({ socket });
+    GameSocket({ socket });
   }
 
   useEffect(() => {

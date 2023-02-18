@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import * as moveNet from '../../utils/tfjs-movenet';
 
@@ -40,7 +40,7 @@ function MyVideo({ inheritRef }: { inheritRef: React.RefObject<HTMLVideoElement>
     return () => {
       cancelAnimationFrame(moveNet.rafId);
     };
-  }, []);
+  }, [videoRef]);
 
   return (
     <div>

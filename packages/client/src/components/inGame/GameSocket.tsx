@@ -2,12 +2,11 @@ import { useEffect } from 'react';
 import type { Socket } from 'socket.io-client';
 import type * as poseDetection from '@tensorflow-models/pose-detection';
 import { useSetAtom } from 'jotai';
-import { modeAtom } from './InGame';
 import { peerAtom } from '../../app/peer';
 
 const GameSocket = ({ socket }: { socket: Socket }) => {
-  const setMode = useSetAtom(modeAtom);
   const setPeer = useSetAtom(peerAtom);
+
   useEffect(() => {
     socket.on('get_ready', () => {
       console.log('get_ready');
@@ -35,11 +34,11 @@ const GameSocket = ({ socket }: { socket: Socket }) => {
     //! 구현 필요
     socket.on('get_start', () => {
       console.log('get_start');
-      setMode('game');
+      // setMode('game');
     });
 
     socket.on('get_attack', () => {});
-  }, [setMode, setPeer, socket]);
+  }, [setPeer, socket]);
 
   return null;
 };
