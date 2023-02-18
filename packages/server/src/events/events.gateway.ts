@@ -213,10 +213,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('answer')
   answer(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
-    socket.to(data.answerReceiveID).emit('get_answer', {
-      sdp: data.sdp,
-      answerSendID: data.answerSendID,
-    });
+    socket.to(data.answerReceiveID).emit('get_answer', data.sdp);
     this.logger.log(`answer from ${data.answerSendID} to ${data.answerReceiveID}`);
   }
 
