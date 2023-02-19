@@ -88,7 +88,7 @@ function InGame({ socket, roomId, nickName }: WebRTCProps) {
           {/* <UserLabel>{nickName}</UserLabel> */}
           <StateBox></StateBox>
         </UserWrapper>
-        <WebRTC socket={socket} nickName={nickName} roomId={roomId} />
+        {/* <WebRTC socket={socket} nickName={nickName} roomId={roomId} /> */}
         <GameSocket socket={socket} />
         {otherUsers.map((user, index) => (
           <UserWrapper ps={index + 1}>
