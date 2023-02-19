@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Poro from '../../assets/images/arcadePoro.png';
 import CreateRoom from '../lobby/roomList/CreateRoom';
 import type { WrappedSocket } from '../../types/socket';
+import { useClientSocket } from '../../module/client-socket';
 
 const RoomContainerWrapper = styled.div`
   display: flex;
@@ -71,19 +72,10 @@ const RoomCnt = styled.span`
   font-weight: 600;
 `;
 
-export default function RoomList({ socket }: { socket: WrappedSocket }) {
+export default function RoomList() {
   const navigate = useNavigate();
+  const { socket } = useClientSocket();
   const nickName = '정태욱'; //temp
-
-  useEffect(() => {
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    socket.on('connect', () => console.log('lobby socket connection complete.'));
-  }, []);
 
   const [rooms, setRooms] = useState<{
     [key: string]: {
@@ -105,12 +97,16 @@ export default function RoomList({ socket }: { socket: WrappedSocket }) {
     return () => window.removeEventListener('beforeunload', preventClose);
   }, []);
 
+  // ! 이 부분도 공통스테이트로 빼면 좋을 것 같습니다 - @minhoyooDEV
   useEffect(() => {
     socket.emit('rooms');
   }, []);
 
   useEffect(() => {
-    socket.on('get_rooms', (rooms) => setRooms(rooms));
+    socket.on('get_rooms', (rooms) => {
+      console.log(rooms);
+      setRooms(rooms);
+    });
   }, [rooms]);
 
   const joinRoom = (roomId: string) => {

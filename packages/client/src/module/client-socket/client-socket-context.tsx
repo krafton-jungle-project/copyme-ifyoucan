@@ -19,6 +19,7 @@ const ClientSocketContextProvider = ({ children }: ClientSocketContextProviderPr
     socket.on('connect', () => {
       console.info('[🔌] 클라이언트의 소켓이 연결되었어요.');
     });
+
     return () => {
       socket.disconnect();
       console.info('[🔌] 클라이언트의 소켓이 끊어졌어요.');
