@@ -29,10 +29,10 @@ function Room() {
 
   useEffect(() => {
     if (location.state === null) {
-      alert('잘못된 접근입니다.');
+      console.log('잘못된 접근입니다.');
       navigate('/', { replace: true });
     } else if (!stream || !detector) {
-      alert('비디오 연결이 종료되어 다시 로딩합니다.');
+      console.log('비디오 연결이 종료되어 다시 로딩합니다.');
       console.log('error: stream & detector is reloaded.');
       setIsLoaded(false);
       navigate('/', { replace: true });
@@ -54,7 +54,7 @@ function Room() {
     };
   }, [resetPeer, socket]);
 
-  return <InGame socket={socket} />;
+  return <InGame />;
 }
 
 export default Room;

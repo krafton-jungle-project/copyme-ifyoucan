@@ -29,7 +29,7 @@ function Lobby() {
       socket.disconnect();
       console.log('lobby socket disconnected.');
     };
-  }, []);
+  }, [socket]);
 
   if (isLoaded && (!stream || !detector)) {
     setIsLoaded(false);

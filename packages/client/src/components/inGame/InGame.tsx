@@ -1,18 +1,17 @@
-import type { Socket } from 'socket.io-client';
-import PeerVideo from './PeerVideo';
+import Announcer from './Announcer';
 import MyVideo from './MyVideo';
-import { useRef } from 'react';
-import { useAtomValue } from 'jotai';
-import { peerAtom } from '../../app/peer';
+import MyCanvas from './MyCanvas';
+import PeerVideo from './PeerVideo';
+import PeerCanvas from './PeerCanvas';
 
-function InGame({ socket }: { socket: Socket }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const peer = useAtomValue(peerAtom);
-
+function InGame() {
   return (
     <>
-      <MyVideo inheritRef={videoRef} />
-      {peer.stream ? <PeerVideo peer={peer} /> : <></>}
+      <MyVideo />
+      <MyCanvas />
+      <PeerVideo />
+      <PeerCanvas />
+      <Announcer />
     </>
   );
 }
