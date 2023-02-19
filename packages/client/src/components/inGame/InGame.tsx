@@ -15,12 +15,12 @@ function InGame() {
 
   return (
     <>
+      <Announcer />
       <MyVideo />
       <MyCanvas />
+      <MyScoreBar />
       <PeerVideo />
       <PeerCanvas />
-      <Announcer />
-      <MyScoreBar />
       <PeerScoreBar />
       {host ? <StartButton /> : <ReadyButton />}
     </>
