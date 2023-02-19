@@ -12,7 +12,7 @@ export interface PeerState {
   pose: null | poseDetection.Pose;
 }
 
-const initialState = {
+const initialState: PeerState = {
   socketId: '',
   nickName: '',
   stream: null,
@@ -22,5 +22,4 @@ const initialState = {
   pose: null,
 };
 
-// Atoms
-export const peerAtom = atomWithReset<PeerState>(initialState);
+export const peerAtom = atomWithReset(initialState);

@@ -1,14 +1,11 @@
 import RoomList from '../components/lobby/RoomList';
 import logo from '../assets/images/logo.png'; //temp
 import styled from 'styled-components';
-import { io } from 'socket.io-client';
-import { useEffect } from 'react';
-import { atom, useAtom } from 'jotai';
+import { atom, useAtom, useSetAtom } from 'jotai';
 import Loading from '../components/lobby/Loading';
 import { stream, detector } from '../utils/tfjs-movenet';
-
-// const SOCKET_SERVER_URL = 'http://localhost:8081';
-const SOCKET_SERVER_URL = 'http://15.165.237.195:8081';
+import { nickNameAtom } from '../app/atom';
+import { useEffect } from 'react';
 
 export const isLoadedAtom = atom(false);
 
@@ -19,18 +16,15 @@ const Logo = styled.img`
   height: auto;
   text-align: center;
 `;
+const nickName = '정태욱';
 
 function Lobby() {
   const [isLoaded, setIsLoaded] = useAtom(isLoadedAtom);
-  const socket = io(SOCKET_SERVER_URL);
-
+  //temp
+  const setNickName = useSetAtom(nickNameAtom);
   useEffect(() => {
-    return () => {
-      socket.disconnect();
-      console.log('lobby socket disconnected.');
-    };
-  }, [socket]);
-
+    setNickName(nickName);
+  }, []);
   if (isLoaded && (!stream || !detector)) {
     setIsLoaded(false);
     console.log('error: stream & detector is reloaded.');
@@ -44,7 +38,7 @@ function Lobby() {
         <div>
           <Logo src={logo} />
           <hr />
-          <RoomList socket={socket} />
+          <RoomList />
         </div>
       )}
     </>

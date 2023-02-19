@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import type { Socket } from 'socket.io-client';
 import type * as poseDetection from '@tensorflow-models/pose-detection';
 import { useSetAtom } from 'jotai';
 import { peerAtom } from '../../app/peer';
+import { useClientSocket } from '../../module/client-socket';
 
-const GameSocket = ({ socket }: { socket: Socket }) => {
+const GameSocket = () => {
   const setPeer = useSetAtom(peerAtom);
+  const { socket } = useClientSocket();
 
   useEffect(() => {
     socket.on('get_ready', () => {
