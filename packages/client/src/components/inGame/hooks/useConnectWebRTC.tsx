@@ -1,12 +1,11 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { stream } from '../../utils/tfjs-movenet';
-import type { Socket } from 'socket.io-client';
+import { stream } from '../../../utils/tfjs-movenet';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { hostAtom, nickNameAtom, roomIdAtom } from '../../app/atom';
-import { peerAtom } from '../../app/peer';
+import { hostAtom, nickNameAtom, roomIdAtom } from '../../../app/atom';
+import { peerAtom } from '../../../app/peer';
 import { useResetAtom } from 'jotai/utils';
-import type { WrappedSocket } from '../../types/socket';
+import { useClientSocket } from '../../../module/client-socket';
 
 //! 스턴 서버 직접 생성 고려(임시)
 const pc_config = {
@@ -17,13 +16,17 @@ const pc_config = {
   ],
 };
 
+// ! 보통 컴포넌트의 렌더주기만 이용할때는 hooks라는 패턴으로 작성합니다. 그리고 관례적으로 use로 시작합니다. (확인시 제거) - @minhoyooDEV
 //todo 주소로 직접 접근 시 홈(로그인)/로비 페이지로 redirect
-const ConnectWebRTC = ({ socket }: { socket: WrappedSocket }) => {
+type UseConnectWebRTCProps = {
+  roomId: string;
+  nickName: string;
+};
+const useConnectWebRTC = ({ roomId, nickName }: UseConnectWebRTCProps) => {
+  const { socket } = useClientSocket();
   //todo useRef를 써야할까? 일반 변수로 바꿔서 테스트 및 Ref로 해야한다면 왜 그런지 알아보자
   const pcRef = useRef<RTCPeerConnection>(); // 상대 유저의 RTCPeerConnection 저장
   const myStreamRef = useRef<MediaStream>(); // 유저 자신의 스트림 ref
-  const roomId = useAtomValue(roomIdAtom);
-  const nickName = useAtomValue(nickNameAtom);
   const setPeer = useSetAtom(peerAtom);
   const setHost = useSetAtom(hostAtom);
   const resetPeer = useResetAtom(peerAtom);
@@ -171,4 +174,4 @@ const ConnectWebRTC = ({ socket }: { socket: WrappedSocket }) => {
   return null;
 };
 
-export default ConnectWebRTC;
+export default useConnectWebRTC;
