@@ -19,7 +19,7 @@ function Loading() {
     async function mediaLoad() {
       // Login하여 처음 Lobby로 이동 시, stream 및 detector를 초기화 해준다.
 
-      await movenet.getMyStream({ width: 400, height: 300 }); // TODO: 임시 수정
+      await movenet.getMyStream({ width: 640, height: 480 });
       console.log('webcam stream is ready.');
 
       await movenet.createDetector();
@@ -28,11 +28,11 @@ function Loading() {
       setIsLoaded(true);
     }
     if (!isLoaded) mediaLoad();
-  }, []);
+  }, [isLoaded, setIsLoaded]);
 
   return (
     <LoadingContainer>
-      <img src={loadingImg} />
+      <img alt="Loading" src={loadingImg} />
       <h1>로딩중입니다. </h1>
       <h1>잠시만 기다려주세요</h1>
     </LoadingContainer>

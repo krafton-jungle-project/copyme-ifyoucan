@@ -1,53 +1,29 @@
+import { useAtomValue } from 'jotai';
 import { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import type { RootState } from '../../app/store';
+import { peerAtom } from '../../app/peer';
 
-const Container = styled.div`
-  position: relative;
-  width: 400;
-  height: 300;
-`;
-
-const VideoContainer = styled.video`
+const Video = styled.video`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
-  width: 400;
-  height: 300;
-`;
-
-const UserLabel = styled.p`
-  display: inline-block;
   position: absolute;
-  top: 230px;
-  left: 0px;
+  box-sizing: border-box;
+  border: 5px solid blue;
+  bottom: 5%;
+  right: 5%;
+  width: 15%;
+  aspect-ratio: 4/3;
 `;
-export interface IProps {
-  socketId: string;
-  nickName: string;
-  host: boolean;
-  stream: MediaStream;
-  isReady: boolean;
-  imgSrc?: null | string;
-}
 
-const PeerVideo = ({ user }: { user: IProps }) => {
-  // const PeerVideo = ({ stream, nickName }: Props) => {
-  const ref = useRef<HTMLVideoElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
+const PeerVideo = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const peer = useAtomValue(peerAtom);
+
   useEffect(() => {
-    if (ref.current) ref.current.srcObject = user.stream;
-    if (imgRef.current && user.imgSrc) imgRef.current.src = user.imgSrc;
-  }, [user.stream, user.imgSrc]);
+    if (videoRef.current) videoRef.current.srcObject = peer.stream;
+  }, [peer]);
 
-  return (
-    <Container>
-      {/* {user.host ? <p>방장</p> : <p></p>} */}
-      {user.imgSrc ? <img ref={imgRef} alt="xowns97"></img> : <VideoContainer ref={ref} autoPlay />}
-      {/* <UserLabel>{user.nickName}</UserLabel> */}
-      {/* {!user.host && user.isReady ? <h2>준비 완료</h2> : <></>} */}
-    </Container>
-  );
+  return <Video ref={videoRef} autoPlay />;
 };
 
 export default PeerVideo;

@@ -1,38 +1,45 @@
 import { useEffect } from 'react';
-import type { Socket } from 'socket.io-client';
-import { useDispatch } from 'react-redux';
-import { ready, unready, getAttackerInfo, resetAttackerInfo } from '../../modules/user';
 import type * as poseDetection from '@tensorflow-models/pose-detection';
+import { useSetAtom } from 'jotai';
+import { peerAtom } from '../../app/peer';
+import { useClientSocket } from '../../module/client-socket';
 
-const GameSocket = ({ socket }: { socket: Socket }) => {
-  const dispatch = useDispatch();
+const GameSocket = () => {
+  const setPeer = useSetAtom(peerAtom);
+  const { socket } = useClientSocket();
+
   useEffect(() => {
-    socket.on('get_ready', (socketId: string) => {
-      console.log(`get_ready: ${socket.id}`);
-      dispatch(ready(socketId));
+    socket.on('get_ready', () => {
+      console.log('get_ready');
+      setPeer((prev) => ({ ...prev, isReady: true }));
     });
 
-    socket.on('get_unready', (socketId: string) => {
-      console.log(`get_unready: ${socket.id}`);
-      dispatch(unready(socketId));
+    socket.on('get_unready', () => {
+      console.log('get_unready');
+      setPeer((prev) => ({ ...prev, isReady: false }));
     });
 
     //! 공격자의 이미지와 포즈 정보를 받는다
-    socket.on('get_image', (socketId: string, pose: poseDetection.Pose, imgSrc: string) => {
+    socket.on('get_image', (pose: poseDetection.Pose, imgSrc: string) => {
       // 공격자 이미지 저장
-      dispatch(getAttackerInfo({ socketId, imgSrc, pose }));
+      setPeer((prev) => ({ ...prev, pose, imgSrc }));
     });
 
     //! 공격자의 이미지가 리셋된다
-    socket.on('get_image_reset', (socketId: string) => {
+    socket.on('get_image_reset', () => {
       // 공격자 이미지 리셋
-      dispatch(resetAttackerInfo(socketId));
+      console.log('get_image_reset');
+      setPeer((prev) => ({ ...prev, pose: null, imgSrc: null }));
     });
 
     //! 구현 필요
-    socket.on('get_start', () => {});
+    socket.on('get_start', () => {
+      console.log('get_start');
+      // setMode('game');
+    });
+
     socket.on('get_attack', () => {});
-  }, [dispatch, socket]);
+  }, [setPeer, socket]);
 
   return null;
 };
