@@ -7,10 +7,10 @@ interface MovenetParam {
     height: number;
   };
   element: {
-    wrapper: HTMLDivElement;
     video: HTMLVideoElement;
     canvas: HTMLCanvasElement;
   };
+  peerStream?: MediaStream;
 }
 
 const POSE_DETECTION_MODEL = poseDetection.SupportedModels.MoveNet; // 이미지로 부터 자세를 추정하는 모델: TensorFlow Movenet
@@ -29,8 +29,12 @@ const LINE_WIDTH = 2; // key point의 둘레 및 골격의 두께
 
 export let stream: MediaStream;
 export let detector: poseDetection.PoseDetector;
-export let camera: Camera;
-export let rafId: number;
+
+export let myCamera: Camera;
+export let peerCamera: Camera;
+
+export let myRafId: number;
+export let peerRafId: number;
 
 class Camera {
   video: HTMLVideoElement;
@@ -45,7 +49,12 @@ class Camera {
 
   static async setupCamera(movenetParam: MovenetParam) {
     const camera = new Camera(movenetParam.element.video, movenetParam.element.canvas);
-    camera.video.srcObject = stream; // webcam live stream
+
+    if (!movenetParam.peerStream) {
+      camera.video.srcObject = stream; // webcam live stream
+    } else {
+      camera.video.srcObject = movenetParam.peerStream;
+    }
 
     await new Promise((resolve) => {
       // video의 metadata가 load 완료되면
@@ -53,17 +62,7 @@ class Camera {
         resolve(camera.video);
       };
     });
-
     camera.video.play(); // video를 재생
-
-    // 가장 처음에 detector가 load되지 않아서 canvas가 그려지지 않을 때만 video를 화면에 출력한다.
-    //temp 현재는 처음 MyVideo 렌더링 시에는 캔버스 뒤에서 비디오가 출력 중이다(더 좋은 방법 찾아 최적화 해야 함)
-    //temp 이후 렌더링에서는 캔버스 뒤에서도 비디오는 hidden 상태
-    if (detector === undefined) {
-      camera.video.style.visibility = 'visible';
-    } else {
-      camera.video.style.visibility = 'hidden';
-    }
 
     // 재생하는 video(영상)의 너비와 높이
     const videoWidth: number = movenetParam.size.width;
@@ -77,10 +76,6 @@ class Camera {
     // html canvas 요소의 너비와 높이
     camera.canvas.width = videoWidth;
     camera.canvas.height = videoHeight;
-
-    const canvasContainer: HTMLDivElement = movenetParam.element.wrapper;
-    canvasContainer.style.width = `${videoWidth}px`;
-    canvasContainer.style.height = `${videoHeight}px`;
 
     // Because the image from camera is mirrored, need to flip horizontally.
     camera.ctx.translate(camera.video.videoWidth, 0);
@@ -165,7 +160,7 @@ class Camera {
 }
 
 // 비디오에서 인식된 자세를 바탕으로 캔버스 위에 해당 프레임과 인식된 점 및 골격을 그려주는 함수
-async function renderResult() {
+async function renderResult(camera: Camera) {
   // readyState가 2 이상이면 현재 한 frame이 재생 가능하다.
   if (camera.video.readyState < 2) {
     // 아직 frame에 대한 data가 도달하지 않았다면
@@ -191,9 +186,26 @@ async function renderResult() {
   }
 }
 
-async function renderDetection() {
-  await renderResult(); // 한 프레임을 캔버스에 그려준다
-  rafId = requestAnimationFrame(renderDetection); // 재귀 호출을 통해 실시간으로 renderDetection을 실행
+async function myRenderDetection() {
+  await renderResult(myCamera); // 한 프레임을 캔버스에 그려준다
+  myRafId = requestAnimationFrame(myRenderDetection); // 재귀 호출을 통해 실시간으로 renderDetection을 실행
+}
+
+async function peerRenderDetection() {
+  await renderResult(peerCamera); // 한 프레임을 캔버스에 그려준다
+  peerRafId = requestAnimationFrame(peerRenderDetection); // 재귀 호출을 통해 실시간으로 renderDetection을 실행
+}
+
+export async function myCanvasRender(movenetParam: MovenetParam) {
+  myCamera = await Camera.setupCamera(movenetParam);
+  // detector가 생성된 이후에 자세를 추정하여 인식된 랜드마크와 골격을 canvas에 그린다.
+  myRenderDetection();
+}
+
+export async function peerCanvasRender(movenetParam: MovenetParam) {
+  peerCamera = await Camera.setupCamera(movenetParam);
+  // detector가 생성된 이후에 자세를 추정하여 인식된 랜드마크와 골격을 canvas에 그린다.
+  peerRenderDetection();
 }
 
 // 웹캠 스트림을 생성하여 반환하는 함수
@@ -217,10 +229,4 @@ export async function createDetector() {
   detector = await poseDetection.createDetector(POSE_DETECTION_MODEL, {
     modelType: POSE_DETECTION_MODEL_TYPE,
   });
-}
-
-export async function canvasRender(movenetParam: MovenetParam) {
-  camera = await Camera.setupCamera(movenetParam);
-  // detector가 생성된 이후에 자세를 추정하여 인식된 랜드마크와 골격을 canvas에 그린다.
-  renderDetection();
 }

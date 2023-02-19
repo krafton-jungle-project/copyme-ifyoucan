@@ -22,5 +22,4 @@ const initialState: PeerState = {
   pose: null,
 };
 
-//!  이니셜타입에 해당 타입을 명시하면 추론이 가능하게 되어있네요 - @minhoyooDEV
 export const peerAtom = atomWithReset(initialState);

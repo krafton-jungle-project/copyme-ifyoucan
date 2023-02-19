@@ -45,7 +45,6 @@ const ConnectWebRTC = () => {
 
     //! 수정해야될 부분 dispatch
     peerConnection.addEventListener('track', (data) => {
-      console.log('datastreadm', data.streams[0]);
       console.log('track event');
       setPeer((prev) => ({
         ...prev,

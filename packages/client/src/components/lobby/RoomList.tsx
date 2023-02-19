@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CreateRoom from '../lobby/roomList/CreateRoom';
@@ -38,7 +37,6 @@ const RoomHeader = styled.h2`
 `;
 
 export default function RoomList() {
-  const navigate = useNavigate();
   const { socket } = useClientSocket();
 
   const [rooms, setRooms] = useState<{
@@ -64,14 +62,13 @@ export default function RoomList() {
   // ! 이 부분도 공통스테이트로 빼면 좋을 것 같습니다 - @minhoyooDEV
   useEffect(() => {
     socket.emit('rooms');
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     socket.on('get_rooms', (rooms) => {
-      // console.log(rooms);
       setRooms(rooms);
     });
-  }, [rooms]);
+  }, [socket, rooms]);
 
   //! 방 하나 하나를 component화 필요
   return (

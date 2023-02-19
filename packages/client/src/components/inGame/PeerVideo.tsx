@@ -1,52 +1,29 @@
+import { useAtomValue } from 'jotai';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import type { PeerState } from '../../app/peer';
+import { peerAtom } from '../../app/peer';
 
-const Container = styled.div`
-  position: relative;
-  width: 400;
-  height: 300;
-`;
-
-const VideoContainer = styled.video`
+const Video = styled.video`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
-  width: 400;
-  height: 300;
+  position: absolute;
+  box-sizing: border-box;
+  border: 5px solid blue;
+  bottom: 5%;
+  right: 5%;
+  width: 15%;
+  aspect-ratio: 4/3;
 `;
 
-const OffendImg = styled.img`
-  -webkit-transform: scaleX(-1);
-  transform: scaleX(-1);
-`;
+const PeerVideo = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const peer = useAtomValue(peerAtom);
 
-export interface IProps {
-  socketId: string;
-  nickName: string;
-  host: boolean;
-  stream: MediaStream;
-  isReady: boolean;
-  imgSrc?: null | string;
-}
-
-const PeerVideo = ({ peer }: { peer: PeerState }) => {
-  // const PeerVideo = ({ stream, nickName }: Props) => {
-  const ref = useRef<HTMLVideoElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
-    if (ref.current) ref.current.srcObject = peer.stream;
-    if (imgRef.current && peer.imgSrc) imgRef.current.src = peer.imgSrc;
-  }, [peer.stream, peer.imgSrc]);
+    if (videoRef.current) videoRef.current.srcObject = peer.stream;
+  }, [peer]);
 
-  return (
-    <Container>
-      {peer.imgSrc ? (
-        <OffendImg ref={imgRef} alt="xowns97" width="400" height="300"></OffendImg>
-      ) : (
-        <VideoContainer ref={ref} autoPlay />
-      )}
-    </Container>
-  );
+  return <Video ref={videoRef} autoPlay />;
 };
 
 export default PeerVideo;
