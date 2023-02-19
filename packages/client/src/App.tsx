@@ -3,19 +3,26 @@ import Lobby from './pages/Lobby';
 import Room from './pages/Room';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+// !
+import * as Jotai from 'jotai';
+import { ClientSocketContextProvider } from './module/client-socket';
 
 function App() {
   return (
-    <div className="App">
+    <Jotai.Provider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Lobby />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/room" element={<Room />} />
-        </Routes>
+        <ClientSocketContextProvider>
+          <div className="App">
+            <Routes>
+              <Route path="/" element={<Lobby />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/room" element={<Room />} />
+            </Routes>
+          </div>
+        </ClientSocketContextProvider>
       </BrowserRouter>
-    </div>
+    </Jotai.Provider>
   );
 }
 
