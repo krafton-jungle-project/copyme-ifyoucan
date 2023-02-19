@@ -20,7 +20,7 @@ import * as poseDetection from '@tensorflow-models/pose-detection';
 import { hostAtom } from '../../app/atom';
 import { peerAtom } from '../../app/peer';
 import { useResetAtom } from 'jotai/utils';
-import type { WrappedSocket } from '../../types/socket';
+import { useClientSocket } from '../../module/client-socket';
 
 const position = [
   ['left', 'top'],
@@ -76,7 +76,8 @@ export const scoreAtom = atom<number>(0);
 // };
 
 //todo socket, roomId, nickName 등 전역 관리 필요
-function InGame({ socket }: { socket: WrappedSocket }) {
+function InGame() {
+  const { socket } = useClientSocket();
   const host = useAtomValue(hostAtom);
   const videoRef = useRef<HTMLVideoElement>(null);
   const peer = useAtomValue(peerAtom);
