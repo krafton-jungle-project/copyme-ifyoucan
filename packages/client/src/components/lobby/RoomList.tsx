@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import Poro from '../../assets/images/arcadePoro.png';
 import CreateRoom from '../lobby/roomList/CreateRoom';
-import type { WrappedSocket } from '../../types/socket';
 import { useClientSocket } from '../../module/client-socket';
+import useRoomAtom from '../../app/room';
 
 const RoomContainerWrapper = styled.div`
   display: flex;
@@ -77,14 +77,7 @@ export default function RoomList() {
   const { socket } = useClientSocket();
   const nickName = '정태욱'; //temp
 
-  const [rooms, setRooms] = useState<{
-    [key: string]: {
-      roomName: string;
-      users: { id: string; nickName: string }[];
-      started: boolean;
-      readyCount: number;
-    };
-  }>({});
+  const { rooms, updateRooms } = useRoomAtom();
 
   useEffect(() => {
     // 사이트에서 나가는 시도(새로고침, 브라우저 닫기)를 할 때 경고창 띄우기
@@ -96,19 +89,19 @@ export default function RoomList() {
     return () => window.removeEventListener('beforeunload', preventClose);
   }, []);
 
-  // ! 이 부분도 공통스테이트로 빼면 좋을 것 같습니다 - @minhoyooDEV
   useEffect(() => {
     socket.emit('rooms');
   }, []);
 
   useEffect(() => {
     socket.on('get_rooms', (rooms) => {
+      updateRooms(rooms);
       console.log(rooms);
-      setRooms(rooms);
     });
-  }, [rooms]);
+  }, [updateRooms]);
 
   const joinRoom = (roomId: string) => {
+    // console.log(roomId, nickName);
     navigate('/room', {
       state: {
         roomId: roomId,

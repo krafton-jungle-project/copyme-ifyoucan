@@ -1,7 +1,6 @@
 import PeerVideo from './PeerVideo';
 import styled, { css } from 'styled-components';
 import MyVideo from './MyVideo';
-import ConnectWebRTC from './ConnectWebRTC';
 import { useEffect, useRef, useState } from 'react';
 import { Timer, useInterval } from './useInterval';
 import { atom, useAtom, useAtomValue } from 'jotai';
@@ -21,6 +20,7 @@ import { hostAtom } from '../../app/atom';
 import { peerAtom } from '../../app/peer';
 import { useResetAtom } from 'jotai/utils';
 import { useClientSocket } from '../../module/client-socket';
+import { useConnectWebRTC } from './hooks';
 
 const position = [
   ['left', 'top'],
@@ -75,19 +75,23 @@ export const scoreAtom = atom<number>(0);
 //   return () => onMountStageAtom(0);
 // };
 
+interface InGameProps {
+  roomId: string;
+  nickName: string;
+}
 //todo socket, roomId, nickName 등 전역 관리 필요
-function InGame() {
+function InGame({ roomId, nickName }: InGameProps) {
   const { socket } = useClientSocket();
   const host = useAtomValue(hostAtom);
   const videoRef = useRef<HTMLVideoElement>(null);
   const peer = useAtomValue(peerAtom);
   const resetPeer = useResetAtom(peerAtom);
 
+  useConnectWebRTC({ roomId, nickName });
+
   let cnt: number = 0;
 
   const [score, setScore] = useAtom(scoreAtom);
-
-  ConnectWebRTC({ socket });
 
   useEffect(() => {
     return () => {
