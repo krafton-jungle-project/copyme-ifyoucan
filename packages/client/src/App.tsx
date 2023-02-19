@@ -6,20 +6,23 @@ import SignUp from './pages/SignUp';
 // !
 import * as Jotai from 'jotai';
 import { ClientSocketContextProvider } from './module/client-socket';
+import { MovenetStreamContextProvider } from './module/movenet-stream';
 
 function App() {
   return (
     <Jotai.Provider>
       <BrowserRouter>
         <ClientSocketContextProvider>
-          <div className="App">
-            <Routes>
-              <Route path="/" element={<Lobby />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/room" element={<Room />} />
-            </Routes>
-          </div>
+          <MovenetStreamContextProvider>
+            <div className="App">
+              <Routes>
+                <Route path="/" element={<Lobby />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/room" element={<Room />} />
+              </Routes>
+            </div>
+          </MovenetStreamContextProvider>
         </ClientSocketContextProvider>
       </BrowserRouter>
     </Jotai.Provider>

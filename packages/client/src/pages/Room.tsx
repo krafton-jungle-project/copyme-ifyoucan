@@ -7,16 +7,12 @@ import { useAtom, useSetAtom } from 'jotai';
 import { nickNameAtom, roomIdAtom } from '../app/atom';
 import { peerAtom } from '../app/peer';
 import { useResetAtom } from 'jotai/utils';
-import { useClientSocket } from '../module/client-socket';
 
 //todo 주소로 직접 접근 시 홈(로그인)/로비 페이지로 redirect
 //todo stream이나 detector가 없다면 로비로 redirect
 
 function Room() {
   const navigate = useNavigate();
-
-  const { socket } = useClientSocket();
-
   const location = useLocation();
 
   const [, setIsLoaded] = useAtom(isLoadedAtom);

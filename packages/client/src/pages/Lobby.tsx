@@ -1,9 +1,9 @@
 import RoomList from '../components/lobby/RoomList';
 import logo from '../assets/images/logo.png'; //temp
 import styled from 'styled-components';
-import { atom, useAtom } from 'jotai';
+import { atom } from 'jotai';
 import Loading from '../components/lobby/Loading';
-import { stream, detector } from '../utils/tfjs-movenet';
+import { useMovenetStream } from '../module/movenet-stream';
 
 export const isLoadedAtom = atom(false);
 
@@ -16,16 +16,11 @@ const Logo = styled.img`
 `;
 
 function Lobby() {
-  const [isLoaded, setIsLoaded] = useAtom(isLoadedAtom);
-
-  if (isLoaded && (!stream || !detector)) {
-    setIsLoaded(false);
-    console.log('error: stream & detector is reloaded.');
-  }
+  const { isStreamReady } = useMovenetStream();
 
   return (
     <>
-      {!isLoaded ? (
+      {!isStreamReady ? (
         <Loading />
       ) : (
         <div>

@@ -210,6 +210,8 @@ export async function getMyStream(param: { width: number; height: number }) {
     },
   };
   stream = await navigator.mediaDevices.getUserMedia(videoConfig);
+
+  return stream;
 }
 
 // Pose Detector를 생성하여 반환하는 함수
@@ -217,10 +219,12 @@ export async function createDetector() {
   detector = await poseDetection.createDetector(POSE_DETECTION_MODEL, {
     modelType: POSE_DETECTION_MODEL_TYPE,
   });
+  return detector;
 }
 
 export async function canvasRender(movenetParam: MovenetParam) {
   camera = await Camera.setupCamera(movenetParam);
   // detector가 생성된 이후에 자세를 추정하여 인식된 랜드마크와 골격을 canvas에 그린다.
   renderDetection();
+  return camera;
 }

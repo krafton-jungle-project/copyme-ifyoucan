@@ -86,13 +86,12 @@ export default function RoomList() {
     };
   }>({});
 
-  // 사이트에서 나가는 시도(새로고침, 브라우저 닫기)를 할 때 경고창 띄우기
-  const preventClose = (e: BeforeUnloadEvent) => {
-    e.preventDefault();
-    e.returnValue = ''; // chrome에서는 return value 설정 필요
-  };
-
   useEffect(() => {
+    // 사이트에서 나가는 시도(새로고침, 브라우저 닫기)를 할 때 경고창 띄우기
+    const preventClose = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = ''; // chrome에서는 return value 설정 필요
+    };
     (() => window.addEventListener('beforeunload', preventClose))();
     return () => window.removeEventListener('beforeunload', preventClose);
   }, []);
