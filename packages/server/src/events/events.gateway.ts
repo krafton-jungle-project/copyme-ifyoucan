@@ -204,7 +204,15 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('offer')
-  offer(@MessageBody() data: any): void {
+  offer(
+    @MessageBody()
+    data: {
+      sdp: RTCSessionDescription;
+      offerSendID: string;
+      offerSendNickName: string;
+      offerReceiveID: string;
+    },
+  ): void {
     this.server.to(data.offerReceiveID).emit('get_offer', {
       sdp: data.sdp,
       offerSendID: data.offerSendID,
@@ -214,13 +222,27 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('answer')
-  answer(@MessageBody() data: any) {
+  answer(
+    @MessageBody()
+    data: {
+      sdp: RTCSessionDescription;
+      answerSendID: string;
+      answerReceiveID: string;
+    },
+  ) {
     this.server.to(data.answerReceiveID).emit('get_answer', data.sdp);
     this.logger.log(`answer from ${data.answerSendID} to ${data.answerReceiveID}`);
   }
 
   @SubscribeMessage('ice')
-  ice(@MessageBody() data: any) {
+  ice(
+    @MessageBody()
+    data: {
+      candidate: RTCIceCandidate;
+      candidateSendID: string;
+      candidateReceiveID: string;
+    },
+  ) {
     this.server.to(data.candidateReceiveID).emit('get_ice', data.candidate);
     this.logger.log(`ice from ${data.candidateSendID} to ${data.candidateReceiveID}`);
   }

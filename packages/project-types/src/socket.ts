@@ -4,10 +4,17 @@
  * @see https://socket.io/docs/v4/typescript/
  */
 import type * as poseDetection from '@tensorflow-models/pose-detection';
-
+interface Irooms {
+  [key: string]: {
+    roomName: string;
+    users: { id: string; nickName: string }[];
+    started: boolean;
+    readyCount: number;
+  };
+}
 export interface ServerToClientEvents {
   full: () => void;
-  get_rooms: (rooms: any) => void;
+  get_rooms: (rooms: Irooms) => void;
   new_room: (roomId: string) => void;
   get_ready: () => void;
   get_unready: () => void;
@@ -18,9 +25,13 @@ export interface ServerToClientEvents {
   get_finish: () => void;
   peer: (data: { id: string; nickName: string }) => void;
   greeting: (data: { message: string }) => void;
-  get_offer: (offer: any) => void;
-  get_answer: (answer: any) => void;
-  get_ice: (offer: any) => void;
+  get_offer: (data: {
+    sdp: RTCSessionDescription;
+    offerSendID: string;
+    offerSendNickName: string;
+  }) => void;
+  get_answer: (answer: RTCSessionDescription) => void;
+  get_ice: (data: RTCIceCandidate) => void;
   message: (data: { username: string; message: string }) => void;
   user_exit: () => void;
 }
@@ -34,20 +45,37 @@ export interface ClientToServerEvents {
   start: (roomId: string) => void;
   image: (data: { pose: poseDetection.Pose; imgSrc: string }) => void;
   image_reset: () => void;
-  offer: (data: any) => void;
-  answer: (data: any) => void;
-  ice: (data: any) => void;
+  offer: (data: {
+    sdp: RTCSessionDescriptionInit;
+    offerSendID: string;
+    offerSendNickName: string;
+    offerReceiveID: string;
+  }) => void;
+  answer: (data: {
+    sdp: RTCSessionDescriptionInit;
+    answerSendID: string;
+    answerReceiveID: string;
+  }) => void;
+  ice: (data: {
+    candidate: RTCIceCandidate;
+    candidateSendID: string;
+    candidateReceiveID: string;
+  }) => void;
   message: (message: string) => void;
 }
 
 export interface InterServerEvents {
-  get_rooms: (rooms: any) => void;
+  get_rooms: (rooms: Irooms) => void;
   new_room: (roomId: string) => void;
   get_start: () => void;
   peer: (data: { id: string; nickName: string }) => void;
-  get_offer: (offer: any) => void;
-  get_answer: (answer: any) => void;
-  get_ice: (offer: any) => void;
+  get_offer: (offer: {
+    sdp: RTCSessionDescription;
+    offerSendID: string;
+    offerSendNickName: string;
+  }) => void;
+  get_answer: (answer: RTCSessionDescription) => void;
+  get_ice: (data: RTCIceCandidate) => void;
   error: () => void;
   full: () => void;
 }
