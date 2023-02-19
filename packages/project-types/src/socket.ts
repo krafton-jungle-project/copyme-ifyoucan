@@ -4,14 +4,9 @@
  * @see https://socket.io/docs/v4/typescript/
  */
 import type * as poseDetection from '@tensorflow-models/pose-detection';
-interface Irooms {
-  [key: string]: {
-    roomName: string;
-    users: { id: string; nickName: string }[];
-    started: boolean;
-    readyCount: number;
-  };
-}
+
+import type { Irooms } from './rooms';
+
 export interface ServerToClientEvents {
   full: () => void;
   get_rooms: (rooms: Irooms) => void;
