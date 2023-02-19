@@ -7,22 +7,23 @@ const Video = styled.video`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
   position: absolute;
+  box-sizing: border-box;
   border: 5px solid blue;
   bottom: 5%;
   right: 5%;
   width: 15%;
-  height: auto;
+  aspect-ratio: 4/3;
 `;
 
 const PeerVideo = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const peer = useAtomValue(peerAtom);
-  const ref = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (ref.current) ref.current.srcObject = peer.stream;
+    if (videoRef.current) videoRef.current.srcObject = peer.stream;
   }, [peer]);
 
-  return <Video ref={ref} autoPlay />;
+  return <Video ref={videoRef} autoPlay />;
 };
 
 export default PeerVideo;

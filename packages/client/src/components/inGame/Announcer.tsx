@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import VSimg from '../../assets/images/vs.png';
-import RSimg from '../../assets/images/ready-button.png';
 
 const Div = styled.div`
   position: absolute;
@@ -27,21 +26,14 @@ const Div = styled.div`
 //   height: ${35 * (3 / 4) * (16 / 9)}%;
 // `;
 
+
 const VS = styled.img`
   position: absolute;
   top: 30%;
   left: 42.5%;
   width: 15%;
   height: auto;
-`;
-
-const RSButton = styled.img`
-  position: absolute;
-  bottom: 10%;
-  left: 40%;
-  width: 20%;
-  height: 10%;
-`;
+  `;
 
 function Announcer() {
   return (
@@ -49,7 +41,6 @@ function Announcer() {
       <Div>준비가 되었으면 왼손 올려</Div>
       {/* <PeerVideo /> */}
       <VS src={VSimg} />
-      <RSButton src={RSimg} />
     </>
   );
 }

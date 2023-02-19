@@ -197,8 +197,7 @@ export function comparePoses(pose1: poseDetection.Pose, pose3: poseDetection.Pos
   // resizing된 점들을 토대로 그리기 때문에 제대로 그려지지 않음
 
   // 일단 기준 포즈와 채점
-  // pose1 = stdPose;
-
+  pose1 = stdPose;
   let pose2 = JSON.parse(JSON.stringify(pose3));
   resizePose(pose1);
   resizePose(pose2);
@@ -221,7 +220,7 @@ export function comparePoses(pose1: poseDetection.Pose, pose3: poseDetection.Pos
   // totalDistance / 17
   let averageDistance = totalDistance / alignedPose1.keypoints.length;
 
-  return Math.ceil(100 - 100 * averageDistance);
+  return Math.ceil(averageDistance >= 1 ? 0 : 100 - 100 * averageDistance);
 }
 
 // 각 스트림에서 추출한 pose object 넣으시면 됩니다 ㅎㅎ;

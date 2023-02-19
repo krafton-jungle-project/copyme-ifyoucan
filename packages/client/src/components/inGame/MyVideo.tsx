@@ -6,11 +6,12 @@ const Video = styled.video`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
   position: absolute;
-  border: 5px solid blue;
+  box-sizing: border-box;
+  border: 5px solid red;
   bottom: 5%;
   left: 5%;
   width: 15%;
-  height: auto;
+  aspect-ratio: 4/3;
 `;
 
 function MyVideo() {

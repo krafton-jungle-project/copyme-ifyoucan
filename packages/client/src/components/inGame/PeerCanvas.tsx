@@ -5,22 +5,30 @@ import { useAtomValue } from 'jotai';
 import { peerAtom } from '../../app/peer';
 
 const Video = styled.video`
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  object-fit: cover;
   position: absolute;
   visibility: hidden;
-  border: 5px solid blue;
-  top: 20%;
-  right: 7.5%;
-  width: 35%;
-  height: auto;
+  width: 100%;
+  height: 100%;
 `;
 
 const Canvas = styled.canvas`
+  position: relative;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+`;
+
+const Container = styled.div`
   position: absolute;
+  box-sizing: border-box;
   border: 5px solid blue;
   top: 20%;
   right: 10%;
   width: 35%;
-  height: auto;
+  aspect-ratio: 4/3;
 `;
 
 function PeerCanvas() {
@@ -47,10 +55,10 @@ function PeerCanvas() {
   }, [peer.stream]);
 
   return (
-    <>
+    <Container>
       <Video ref={videoRef}></Video>
       <Canvas ref={canvasRef}></Canvas>
-    </>
+    </Container>
   );
 }
 
