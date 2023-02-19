@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Btn = styled.button`
@@ -11,7 +12,11 @@ const Btn = styled.button`
 `;
 
 function ExitRoom() {
-  return <Btn>나가기</Btn>;
+  const navigate = useNavigate();
+  const exitRoom = () => {
+    navigate('/', { replace: true });
+  };
+  return <Btn onClick={exitRoom}>나가기</Btn>;
 }
 
 export default ExitRoom;

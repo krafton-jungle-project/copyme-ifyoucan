@@ -203,6 +203,29 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`nickName: ${nickName}, userId: ${socket.id}, join_room : ${roomId}`);
   }
 
+  //! 방에서 유저 exit
+  @SubscribeMessage('exit_room')
+  exitRoom(@ConnectedSocket() socket: ServerToClientSocket): void {
+    const roomId = this.userToRoom[socket.id];
+    if (!roomId) return;
+    socket.leave(roomId);
+    // 유저 정보 업데이트
+    if (this.rooms[roomId]) {
+      this.rooms[roomId].users = this.rooms[roomId].users.filter((user) => user.id !== socket.id);
+      if (this.rooms[roomId].users.length === 0) {
+        // 방 삭제
+        delete this.rooms[roomId];
+        this.logger.log(`roomId: ${roomId} 삭제`);
+      } else {
+        socket.to(roomId).emit('user_exit');
+      }
+    }
+    // 모든 클라이언트에게 업데이트 된 방 정보 전달
+    this.server.emit('get_rooms', this.rooms);
+
+    this.logger.log(`socketId: ${socket.id} exit `);
+  }
+
   @SubscribeMessage('offer')
   offer(
     @MessageBody()

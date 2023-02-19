@@ -4,11 +4,12 @@ import type * as poseDetection from '@tensorflow-models/pose-detection';
 import { useSetAtom } from 'jotai';
 import { modeAtom } from './InGame';
 import { peerAtom } from '../../app/peer';
-import type { WrappedSocket } from '../../types/socket';
-
-const GameSocket = ({ socket }: { socket: WrappedSocket }) => {
+import { useClientSocket } from '../../module/client-socket';
+const GameSocket = () => {
   const setMode = useSetAtom(modeAtom);
   const setPeer = useSetAtom(peerAtom);
+
+  const { socket } = useClientSocket();
 
   useEffect(() => {
     socket.on('get_ready', () => {

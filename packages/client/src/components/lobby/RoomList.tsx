@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Poro from '../../assets/images/arcadePoro.png';
 import CreateRoom from '../lobby/roomList/CreateRoom';
-import type { WrappedSocket } from '../../types/socket';
+import { useClientSocket } from '../../module/client-socket';
+import RoomCard from './roomList/RoomCard';
 
 const RoomContainerWrapper = styled.div`
   display: flex;
@@ -37,53 +37,9 @@ const RoomHeader = styled.h2`
   margin-top: 20px;
 `;
 
-const RoomName = styled.span`
-  font-size: 23px;
-  font-weight: 700;
-`;
-
-const PoroImg = styled.img`
-  width: 140px;
-  height: 140px;
-`;
-
-const RoomInfo = styled.div`
-  margin-left: 10px;
-  position: relative;
-  width: 230px;
-  height: 160px;
-`;
-
-const JoinBtn = styled.button`
-  position: absolute;
-  width: 80px;
-  height: 50px;
-  font-size: 23px;
-  bottom: 0;
-  right: 0;
-`;
-
-const RoomCnt = styled.span`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  font-size: 23px;
-  font-weight: 600;
-`;
-
-export default function RoomList({ socket }: { socket: WrappedSocket }) {
+export default function RoomList() {
   const navigate = useNavigate();
-  const nickName = '정태욱'; //temp
-
-  useEffect(() => {
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    socket.on('connect', () => console.log('lobby socket connection complete.'));
-  }, []);
+  const { socket } = useClientSocket();
 
   const [rooms, setRooms] = useState<{
     [key: string]: {
@@ -105,45 +61,29 @@ export default function RoomList({ socket }: { socket: WrappedSocket }) {
     return () => window.removeEventListener('beforeunload', preventClose);
   }, []);
 
+  // ! 이 부분도 공통스테이트로 빼면 좋을 것 같습니다 - @minhoyooDEV
   useEffect(() => {
     socket.emit('rooms');
   }, []);
 
   useEffect(() => {
-    socket.on('get_rooms', (rooms) => setRooms(rooms));
-  }, [rooms]);
-
-  const joinRoom = (roomId: string) => {
-    navigate('/room', {
-      state: {
-        roomId: roomId,
-        nickName: nickName,
-      },
+    socket.on('get_rooms', (rooms) => {
+      // console.log(rooms);
+      setRooms(rooms);
     });
-  };
+  }, [rooms]);
 
   //! 방 하나 하나를 component화 필요
   return (
     <div className="play">
-      <CreateRoom nickName={nickName} socket={socket}></CreateRoom>
+      <CreateRoom></CreateRoom>
       <RoomHeader>방 목록</RoomHeader>
       <RoomContainerWrapper>
         <RoomContainer>
           {Object.entries(rooms).map((room) => {
             return (
               <RoomBox key={room[0]}>
-                <div>
-                  <PoroImg src={Poro} />
-                </div>
-                <RoomInfo>
-                  <RoomName>
-                    <RoomCnt>{room[1].users.length} / 2</RoomCnt>
-                    {room[1].roomName}
-                  </RoomName>
-                  <JoinBtn onClick={() => joinRoom(room[0])} disabled={room[1].users.length >= 2}>
-                    드루와
-                  </JoinBtn>
-                </RoomInfo>
+                <RoomCard roomId={room[0]} roomInfo={room[1]} />
               </RoomBox>
             );
           })}
