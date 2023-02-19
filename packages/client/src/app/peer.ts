@@ -12,7 +12,7 @@ export interface PeerState {
   pose: null | poseDetection.Pose;
 }
 
-const initialState = {
+const initialState: PeerState = {
   socketId: '',
   nickName: '',
   stream: null,
@@ -22,5 +22,5 @@ const initialState = {
   pose: null,
 };
 
-// Atoms
-export const peerAtom = atomWithReset<PeerState>(initialState);
+//!  이니셜타입에 해당 타입을 명시하면 추론이 가능하게 되어있네요 - @minhoyooDEV
+export const peerAtom = atomWithReset(initialState);

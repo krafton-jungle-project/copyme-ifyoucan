@@ -37,6 +37,11 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
+  /**
+   * rooms
+   * 방리스트에 대한 데이터를 요청합니다.
+   * 서버에서는 get_rooms 이벤트를 통해 응답합니다.
+   */
   rooms: () => void;
   create_room: (roomName: string) => void;
   join_room: (data: { roomId: string; nickName: string }) => void;

@@ -10,7 +10,8 @@ import mongoose from 'mongoose';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGODB_URI, {
+    // MongooseModule.forRoot(process.env.MONGODB_URI, {
+    MongooseModule.forRoot('mongodb://localhost', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }),
