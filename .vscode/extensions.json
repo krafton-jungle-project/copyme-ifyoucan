@@ -9,6 +9,7 @@
     "styled-components.vscode-styled-components",
     "gruntfuggly.todo-tree",
     "orta.vscode-twoslash-queries",
-    "xyz.local-history"
+    "xyz.local-history",
+    "usernamehw.errorlens"
   ]
 }
