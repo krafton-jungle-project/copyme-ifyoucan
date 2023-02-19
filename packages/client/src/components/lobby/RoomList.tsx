@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import type { Socket } from 'socket.io-client';
 import styled from 'styled-components';
 import Poro from '../../assets/images/arcadePoro.png';
 import CreateRoom from '../lobby/roomList/CreateRoom';
+import type { WrappedSocket } from '../../types/socket';
 
 const RoomContainerWrapper = styled.div`
   display: flex;
@@ -71,7 +71,7 @@ const RoomCnt = styled.span`
   font-weight: 600;
 `;
 
-export default function RoomList({ socket }: { socket: Socket }) {
+export default function RoomList({ socket }: { socket: WrappedSocket }) {
   const navigate = useNavigate();
   const nickName = '정태욱'; //temp
 
@@ -83,7 +83,6 @@ export default function RoomList({ socket }: { socket: Socket }) {
 
   useEffect(() => {
     socket.on('connect', () => console.log('lobby socket connection complete.'));
-    socket.on('error', () => console.log('lobby socket connection error occur.'));
   }, []);
 
   const [rooms, setRooms] = useState<{
@@ -111,10 +110,7 @@ export default function RoomList({ socket }: { socket: Socket }) {
   }, []);
 
   useEffect(() => {
-    socket.on('get_rooms', (rooms) => {
-      console.log(rooms);
-      setRooms(rooms);
-    });
+    socket.on('get_rooms', (rooms) => setRooms(rooms));
   }, [rooms]);
 
   const joinRoom = (roomId: string) => {

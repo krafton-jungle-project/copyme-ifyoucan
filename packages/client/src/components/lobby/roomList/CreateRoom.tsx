@@ -1,11 +1,17 @@
 import { Button, Modal } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Socket } from 'socket.io-client';
 import { useSetAtom } from 'jotai';
 import { hostAtom } from '../../../app/atom';
+import type { WrappedSocket } from '../../../types/socket';
 
-export default function CreateRoom({ socket, nickName }: { socket: Socket; nickName: string }) {
+export default function CreateRoom({
+  socket,
+  nickName,
+}: {
+  socket: WrappedSocket;
+  nickName: string;
+}) {
   const navigate = useNavigate();
   const setHost = useSetAtom(hostAtom);
   const [open, setOpen] = useState<boolean>(false);
