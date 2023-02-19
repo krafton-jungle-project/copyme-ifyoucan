@@ -1,10 +1,9 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import InGame from '../components/inGame/InGame';
 import { stream, detector } from '../utils/tfjs-movenet';
 import { isLoadedAtom } from './Lobby';
-import { useAtom, useSetAtom } from 'jotai';
-import { nickNameAtom, roomIdAtom } from '../app/atom';
+import { useAtom } from 'jotai';
 import { peerAtom } from '../app/peer';
 import { useResetAtom } from 'jotai/utils';
 import { useClientSocket } from '../module/client-socket';
@@ -15,14 +14,9 @@ import { useClientSocket } from '../module/client-socket';
 function Room() {
   const navigate = useNavigate();
 
-  const { socket } = useClientSocket();
-
-  const location = useLocation();
-
   const [, setIsLoaded] = useAtom(isLoadedAtom);
-  const setNickName = useSetAtom(nickNameAtom);
-  const setRoomId = useSetAtom(roomIdAtom);
   const resetPeer = useResetAtom(peerAtom);
+  const { socket } = useClientSocket();
 
   useEffect(() => {
     if (!stream || !detector) {
@@ -33,16 +27,10 @@ function Room() {
     }
     return () => {
       resetPeer();
+      socket.emit('exit_room');
+      window.location.reload();
     };
   }, []);
-
-  useEffect(() => {
-    setNickName(location.state.nickName);
-  }, [location.state.nickName, setNickName]);
-
-  useEffect(() => {
-    setRoomId(location.state.roomId);
-  }, [location.state.roomId, setRoomId]);
 
   return <InGame />;
 }

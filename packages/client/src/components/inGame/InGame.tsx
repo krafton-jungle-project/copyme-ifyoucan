@@ -87,7 +87,7 @@ function InGame() {
 
   const [score, setScore] = useAtom(scoreAtom);
 
-  ConnectWebRTC({ socket });
+  ConnectWebRTC();
 
   useEffect(() => {
     return () => {
@@ -164,7 +164,7 @@ function InGame() {
           <MyVideo inheritRef={videoRef} />
           <StateBox></StateBox>
         </UserWrapper>
-        <GameSocket socket={socket} />
+        <GameSocket />
         {/* {otherUsers.map((user, index) => (
           <UserWrapper ps={index + 1}>
             <PeerVideo key={index} user={user} />
@@ -181,7 +181,7 @@ function InGame() {
         )}
         {/* <ReadyButton socket={socket} roomId={roomId} /> */}
         <AnnounceWrapper message={message}></AnnounceWrapper>
-        {mode === 'waiting' ? <ReadyBtn socket={socket}></ReadyBtn> : null}
+        {mode === 'waiting' ? <ReadyBtn></ReadyBtn> : null}
         {mode === 'waiting' ? <ExitRoom></ExitRoom> : null}
       </VideoWrapper>
     </div>

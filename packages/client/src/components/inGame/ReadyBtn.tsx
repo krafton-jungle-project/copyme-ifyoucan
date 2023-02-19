@@ -1,10 +1,9 @@
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
-import type { Socket } from 'socket.io-client';
 import styled from 'styled-components';
 import { hostAtom, roomIdAtom } from '../../app/atom';
 import { peerAtom } from '../../app/peer';
-import type { WrappedSocket } from '../../types/socket';
+import { useClientSocket } from '../../module/client-socket';
 
 const Btn = styled.button`
   font-size: 20px;
@@ -20,7 +19,8 @@ const Btn = styled.button`
   box-shadow: 2.5px 2.5px 2.5px rgba(0, 0, 0, 0.3);
 `;
 
-function ReadyBtn({ socket }: { socket: WrappedSocket }) {
+function ReadyBtn() {
+  const { socket } = useClientSocket();
   const [ready, setReady] = useState(false);
   const host = useAtomValue(hostAtom);
   const roomId = useAtomValue(roomIdAtom);
