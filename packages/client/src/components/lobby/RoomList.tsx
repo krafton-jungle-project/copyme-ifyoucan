@@ -110,10 +110,7 @@ export default function RoomList({ socket }: { socket: WrappedSocket }) {
   }, []);
 
   useEffect(() => {
-    socket.on('get_rooms', (rooms) => {
-      console.log(rooms);
-      setRooms(rooms);
-    });
+    socket.on('get_rooms', (rooms) => setRooms(rooms));
   }, [rooms]);
 
   const joinRoom = (roomId: string) => {
