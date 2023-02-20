@@ -1,29 +1,78 @@
+import { useAtomValue } from 'jotai';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { gameAtom, GameStage, GameStatus, myPoseAtom } from '../../app/game';
+import { comparePoses } from '../../utils/pose-similarity';
+import { detector } from '../../utils/tfjs-movenet';
 
 const Container = styled.div`
   position: absolute;
   background-color: blue;
-  box-sizing: border-box;
   border: 5px solid blue;
-  top: 20%;
-  right: 5%;
-  width: 4%;
+  box-sizing: border-box;
+  right: 0%;
+  width: calc(100% * (1 / 8) * (4 / 5));
   aspect-ratio: 16/105;
 `;
 
-const ScoreBar = styled.div<{ score: number }>`
-  position: absolute;
-  background-color: gray;
+const ScoreBar = styled.div<{ isInit: boolean; isStart: boolean; score: number }>`
+  background-color: #5d5c78;
   width: 100%;
   height: ${(props) => `${(100 - props.score).toString()}%`};
   transition-property: height;
-  transition-duration: 0.5s;
+  transition-delay: ${(props) => (props.isInit ? '1.2s' : '0s')};
+  transition-duration: ${(props) => (props.isInit ? '0.7s' : '0.5s')};
 `;
 
-function PeerScoreBar() {
+function PeerScoreBar({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoElement> }) {
+  // const [score, setScore] = useState(0);
+  const game = useAtomValue(gameAtom);
+  const [isStart, setIsStart] = useState(false);
+  const [isInit, setIsInit] = useState(true);
+  // const myPose = useAtomValue(myPoseAtom);
+  let score = 0; //temp
+
+  // useEffect(() => {
+  //   const getPeerPose = async () => {
+  //     if (peerVideoRef.current) {
+  //       const myPoses = await detector.estimatePoses(peerVideoRef.current);
+  //       if (myPoses && myPoses.length > 0) {
+  //         return myPoses[0];
+  //       }
+  //     }
+  //   };
+
+  //   const getMyScore = async () => {
+  //     const peerPose = await getPeerPose();
+  //     if (myPose && peerPose) {
+  //       setScore(comparePoses(myPose, peerPose));
+  //     }
+  //   };
+
+  //   let intervalId;
+
+  //   if (game.isOffender && game.stage === GameStage.DEFEND_COUNTDOWN) {
+  //     intervalId = setInterval(getMyScore, 500);
+  //   } else {
+  //     clearInterval(intervalId);
+  //   }
+  // }, [game.stage]);
+
+  useEffect(() => {
+    if (game.status === GameStatus.WAITING) {
+      setIsStart(false);
+      setIsInit(true);
+    } else if (game.status === GameStatus.GAME) {
+      setIsStart(true);
+      if (game.stage === GameStage.DEFEND_COUNTDOWN) {
+        setIsInit(false);
+      }
+    }
+  }, [game.status, game.stage]);
+
   return (
     <Container>
-      <ScoreBar score={50} />
+      <ScoreBar isInit={isInit} isStart={isStart} score={isStart ? score : 100} />
     </Container>
   );
 }

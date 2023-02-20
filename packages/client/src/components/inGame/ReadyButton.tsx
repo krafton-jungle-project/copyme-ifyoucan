@@ -1,20 +1,23 @@
 import { useAtomValue } from 'jotai';
-import { useState } from 'react';
-import type { Socket } from 'socket.io-client';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { hostAtom, roomIdAtom } from '../../app/atom';
-import { peerAtom } from '../../app/peer';
-import RSimg from '../../assets/images/ready-button.png';
+import { roomIdAtom } from '../../app/atom';
+import { gameAtom, GameStatus } from '../../app/game';
+import ReadyButtonImg from '../../assets/images/ready-button-activated.png';
+import UnReadyButtonImg from '../../assets/images/ready-button-deactivated.png';
+import { useClientSocket } from '../../module/client-socket';
 
-const Button = styled.button`
-  background-color: #652a2a;
+const Button = styled.button<{ isReady: boolean; isStart: boolean }>`
+  background-color: ${(props) => (props.isReady ? 'grey' : '#652a2a')};
   background-position: 0px 0px;
   position: absolute;
   border-radius: 10px;
-  bottom: 10%;
+  bottom: ${(props) => (props.isStart ? '-10%' : '10%')};
   left: 40%;
   width: 20%;
   height: 10%;
+  transition-property: bottom;
+  transition-duration: 0.5s;
 `;
 
 const ButtonImg = styled.img`
@@ -24,22 +27,29 @@ const ButtonImg = styled.img`
 
 function ReadyButton() {
   const [isReady, setIsReady] = useState(false);
-  // const roomId = useAtomValue(roomIdAtom);
+  const { socket } = useClientSocket();
+  const roomId = useAtomValue(roomIdAtom);
+  const game = useAtomValue(gameAtom);
+  const [isStart, setIsStart] = useState(false);
+
+  useEffect(() => {
+    setIsStart(game.status !== GameStatus.WAITING);
+  }, [game.status]);
 
   function onReady() {
     if (isReady) {
-      // socket.emit('unready', roomId);
+      socket.emit('unready', roomId);
       console.log('unready!');
     } else {
-      // socket.emit('ready', roomId);
+      socket.emit('ready', roomId);
       console.log('ready!');
     }
     setIsReady(!isReady);
   }
 
   return (
-    <Button onClick={onReady}>
-      <ButtonImg alt="Ready Button" src={RSimg} />
+    <Button onClick={onReady} isReady={isReady} isStart={isStart}>
+      <ButtonImg alt="Ready Button" src={isReady ? UnReadyButtonImg : ReadyButtonImg} />
     </Button>
   );
 }

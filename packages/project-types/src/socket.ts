@@ -21,6 +21,7 @@ export interface ServerToClientEvents {
   get_image_reset: () => void;
   get_image: (pose: poseDetection.Pose, imgSrc: string) => void;
   get_start: () => void;
+  get_count_down: (count: number, stage: string) => void;
   get_attack: () => void;
   get_finish: () => void;
   peer: (data: { id: string; nickName: string }) => void;
@@ -51,6 +52,7 @@ export interface ClientToServerEvents {
   start: (roomId: string) => void;
   image: (data: { pose: poseDetection.Pose; imgSrc: string }) => void;
   image_reset: () => void;
+  count_down: (stage: string) => void;
   offer: (data: {
     sdp: RTCSessionDescriptionInit;
     offerSendID: string;
