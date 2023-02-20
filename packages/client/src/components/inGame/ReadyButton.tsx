@@ -6,6 +6,7 @@ import { gameAtom, GameStatus } from '../../app/game';
 import ReadyButtonImg from '../../assets/images/ready-button-activated.png';
 import UnReadyButtonImg from '../../assets/images/ready-button-deactivated.png';
 import { useClientSocket } from '../../module/client-socket';
+import SetReadyState from './SetReadyState';
 import { gunReload } from '../../utils/sound';
 
 const Button = styled.button<{ isReady: boolean; isStart: boolean }>`
@@ -49,6 +50,8 @@ function ReadyButton() {
     }
     setIsReady(!isReady);
   }
+
+  SetReadyState(isReady, setIsReady);
 
   return (
     <Button onClick={onReady} isReady={isReady} isStart={isStart}>
