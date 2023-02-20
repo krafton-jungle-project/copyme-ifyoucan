@@ -8,16 +8,12 @@ import { capturePose } from '../../utils/capture-pose';
 import * as movenet from '../../utils/tfjs-movenet';
 import PeerScoreBar from './PeerScoreBar';
 
-const Container = styled.div<{ isStart: boolean }>`
+const Container = styled.div`
   position: absolute;
   box-sizing: border-box;
-  top: 20%;
-  right: ${(props) => (props.isStart ? '5%' : '-40%')};
-  width: 40%; /* 35% * (8 / 7) */
-  aspect-ratio: 32/21; /* 4 * (8 / 7) : 3 */
-  transition-property: right;
-  transition-delay: 0.5s;
-  transition-duration: 0.5s;
+  right: calc(100% * (1 / 8));
+  width: calc(100% * (7 / 8));
+  aspect-ratio: 4 / 3;
 `;
 
 const Video = styled.video`
@@ -28,17 +24,17 @@ const Video = styled.video`
   object-fit: cover;
   position: absolute;
   /* visibility: hidden; */
-  right: calc(100% * (1 / 8));
-  width: calc(100% * (7 / 8));
+  width: 100%;
   height: 100%;
 `;
 
-const Canvas = styled.canvas`
+const Canvas = styled.canvas<{ isStart: boolean }>`
   position: absolute;
+  box-sizing: border-box;
   object-fit: cover;
+  border: 5px solid blue;
   visibility: hidden;
-  right: calc(100% * (1 / 8));
-  width: calc(100% * (7 / 8));
+  width: 100%;
   height: 100%;
 `;
 
@@ -49,18 +45,17 @@ const CapturedPose = styled.canvas`
   box-sizing: border-box;
   position: absolute;
   object-fit: cover;
-  right: calc(100% * (1 / 8));
-  width: calc(100% * (7 / 8));
+  width: 100%;
   height: 100%;
 `;
 
-function PeerCanvas() {
-  const videoRef = useRef<HTMLVideoElement>(null);
+function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoElement> }) {
+  const videoRef = peerVideoRef;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const capturedPoseRef = useRef<HTMLCanvasElement>(null);
 
   const peer = useAtomValue(peerAtom);
-  const [game, setGame] = useAtom(gameAtom);
+  const game = useAtomValue(gameAtom);
   const setPeerPose = useSetAtom(peerPoseAtom);
   const [isStart, setIsStart] = useState(false);
 
@@ -76,9 +71,6 @@ function PeerCanvas() {
       element: elements,
       peerStream: peer.stream,
     });
-
-    canvasRef.current.width = 640;
-    canvasRef.current.height = 480;
 
     return () => {
       cancelAnimationFrame(moveNet.peerRafId);
@@ -117,11 +109,10 @@ function PeerCanvas() {
   }, [game.status]);
 
   return (
-    <Container isStart={isStart}>
+    <Container>
       <Video ref={videoRef} />
-      <Canvas ref={canvasRef} />
+      <Canvas isStart={isStart} ref={canvasRef} />
       <CapturedPose ref={capturedPoseRef} />
-      <PeerScoreBar peerVideoRef={videoRef} />
     </Container>
   );
 }

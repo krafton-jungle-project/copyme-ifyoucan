@@ -1,8 +1,6 @@
 import Announcer from './Announcer';
 import MyVideo from './MyVideo';
-import MyCanvas from './MyCanvas';
 import PeerVideo from './PeerVideo';
-import PeerCanvas from './PeerCanvas';
 import ReadyButton from './ReadyButton';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { hostAtom } from '../../app/atom';
@@ -10,6 +8,8 @@ import StartButton from './StartButton';
 import Versus from './Versus';
 import { gameAtom } from '../../app/game';
 import { useEffect } from 'react';
+import PeerGameBox from './PeerGameBox';
+import MyGameBox from './MyGameBox';
 import Chat from './waiting/Chat';
 
 function InGame() {
@@ -27,10 +27,10 @@ function InGame() {
     <>
       <Announcer />
       <MyVideo />
-      <MyCanvas />
+      <MyGameBox />
       {/* <Chat /> */}
       <PeerVideo />
-      <PeerCanvas />
+      <PeerGameBox />
       <Versus />
       {host ? <StartButton /> : <ReadyButton />}
     </>
