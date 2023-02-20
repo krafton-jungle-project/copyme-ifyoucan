@@ -45,9 +45,6 @@ function PeerScoreBar({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVide
   useInterval(async () => {
     const peerPose = await getPeerPose();
     if (myPose && peerPose) {
-      if (game.stage !== GameStage.DEFEND_COUNTDOWN) {
-        setDelay(null);
-      }
       setScore(comparePoses(myPose, peerPose));
     }
   }, delay);
@@ -55,6 +52,10 @@ function PeerScoreBar({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVide
   useEffect(() => {
     if (game.isOffender && game.stage === GameStage.DEFEND_COUNTDOWN) {
       setDelay(500);
+    } else {
+      if (game.stage !== GameStage.DEFEND_COUNTDOWN) {
+        setDelay(null);
+      }
     }
   }, [game.isOffender, game.stage]);
 

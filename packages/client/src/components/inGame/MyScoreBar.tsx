@@ -45,9 +45,6 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
   useInterval(async () => {
     const myPose = await getMyPose();
     if (myPose && peerPose) {
-      if (game.stage !== GameStage.DEFEND_COUNTDOWN) {
-        setDelay(null);
-      }
       setScore(comparePoses(myPose, peerPose));
       console.log('상대 방어');
     }
@@ -56,6 +53,10 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
   useEffect(() => {
     if (!game.isOffender && game.stage === GameStage.DEFEND_COUNTDOWN) {
       setDelay(500);
+    } else {
+      if (game.stage !== GameStage.DEFEND_COUNTDOWN) {
+        setDelay(null);
+      }
     }
   }, [game.isOffender, game.stage]);
 
