@@ -9,6 +9,7 @@ const Video = styled.video<{ isStart: boolean }>`
   transform: scaleX(-1);
   position: absolute;
   box-sizing: border-box;
+  background-color: red;
   border: 5px solid red;
   bottom: 5%;
   left: ${(props) => (props.isStart ? '-15%' : '5%')};

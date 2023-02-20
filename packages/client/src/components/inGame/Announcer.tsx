@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import { hostAtom, nickNameAtom } from '../../app/atom';
 import { gameAtom, GameStage, GameStatus, messageAtom } from '../../app/game';
@@ -8,7 +8,8 @@ import { useClientSocket } from '../../module/client-socket';
 
 const Div = styled.div`
   position: absolute;
-  border: 5px solid green;
+  border: 5px solid yellow;
+  background-color: #bfbf3042;
   top: 5%;
   left: 20%;
   width: 60%;

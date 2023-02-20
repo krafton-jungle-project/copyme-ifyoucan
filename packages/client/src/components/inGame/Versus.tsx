@@ -9,7 +9,7 @@ const VS = styled.img<{ isStart: boolean }>`
   top: ${(props) => (props.isStart ? '30%' : '40%')};
   left: ${(props) => (props.isStart ? '42.5%' : '50%')};
   width: ${(props) => (props.isStart ? '15%' : '0%')};
-  height: ${(props) => (props.isStart ? '20%' : '0%')};
+  height: ${(props) => (props.isStart ? 'auto' : '0%')};
   transition-property: top, left, width, height;
   transition-delay: 1s;
   transition-duration: 0.5s, 0.5s, 0.5s, 0.5s;

@@ -11,7 +11,6 @@ import PeerScoreBar from './PeerScoreBar';
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
   box-sizing: border-box;
-  border: 5px solid blue;
   top: 20%;
   right: ${(props) => (props.isStart ? '5%' : '-40%')};
   width: 40%; /* 35% * (8 / 7) */
@@ -24,6 +23,8 @@ const Container = styled.div<{ isStart: boolean }>`
 const Video = styled.video`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
+  border: 5px solid blue;
+  box-sizing: border-box;
   object-fit: cover;
   position: absolute;
   /* visibility: hidden; */
@@ -44,6 +45,8 @@ const Canvas = styled.canvas`
 const CapturedPose = styled.canvas`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
+  border: 5px solid blue;
+  box-sizing: border-box;
   position: absolute;
   object-fit: cover;
   right: calc(100% * (1 / 8));
