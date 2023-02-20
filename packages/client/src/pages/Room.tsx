@@ -11,6 +11,7 @@ import GameSocket from '../components/inGame/GameSocket';
 
 import { useClientSocket } from '../module/client-socket';
 import { nickNameAtom, roomIdAtom } from '../app/atom';
+import { gameAtom } from '../app/game';
 
 //todo 주소로 직접 접근 시 홈(로그인)/로비 페이지로 redirect
 //todo stream이나 detector가 없다면 로비로 redirect
@@ -20,6 +21,7 @@ function Room() {
 
   const [, setIsLoaded] = useAtom(isLoadedAtom);
   const resetPeer = useResetAtom(peerAtom);
+  const resetGame = useResetAtom(gameAtom);
   const { socket } = useClientSocket();
 
   const nickName = useAtomValue(nickNameAtom);
@@ -43,10 +45,11 @@ function Room() {
   useEffect(() => {
     return () => {
       resetPeer();
+      resetGame();
       socket.emit('exit_room');
       window.location.reload();
     };
-  }, [resetPeer, socket]);
+  }, [resetPeer, resetGame, socket]);
 
   return <InGame />;
 }
