@@ -6,9 +6,7 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class UsersRepository {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-  ) {}
+  constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
 
   //request 유저에 저장할때 패스워드만 빼고 저장
   async findUserByIdWithoutPassword(userId: string): Promise<User | null> {
