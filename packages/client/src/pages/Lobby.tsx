@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { getUser } from '../utils/local-storage';
 import { removeUser } from '../utils/localstorage';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export const isLoadedAtom = atom(false);
 
@@ -19,19 +20,47 @@ const Logo = styled.img`
   height: auto;
   text-align: center;
 `;
-const nickName = '정태욱';
 
+//! for test
+const nickNameArr = [
+  '정태욱',
+  '조제희',
+  '박주환',
+  '김태준',
+  '홀란드',
+  '덕배',
+  '메시',
+  '호날두',
+  '소니',
+];
+
+const randomIdx = Math.floor(Math.random() * 10);
+let nickName = nickNameArr[randomIdx];
 function Lobby() {
   const [isLoaded, setIsLoaded] = useAtom(isLoadedAtom);
-  //temp
   const setNickName = useSetAtom(nickNameAtom);
-  // const [isAuthenticated, setIsAuthenticated] = useState<string | null>(
-  //   sessionStorage.getItem('isAuthenticated'),
-  // );
   const navigate = useNavigate();
-  // const userInfo = getUser();
+
+  const getUserInfo = async () => {
+    if (document.cookie) {
+      const token = document.cookie.split('=')[1];
+      try {
+        // const res = await axios.get('http://localhost:5001/users/', {
+        const res = await axios.post('http://15.165.237.195:5001/users/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res) {
+          nickName = res.data.data.name;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
 
   useEffect(() => {
+    getUserInfo();
+    console.log(nickName);
     setNickName(nickName);
   }, []);
   if (isLoaded && (!stream || !detector)) {
