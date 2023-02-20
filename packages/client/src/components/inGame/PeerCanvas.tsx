@@ -18,10 +18,10 @@ const Container = styled.div`
 const Video = styled.video`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
+  position: absolute;
   border: 5px solid blue;
   box-sizing: border-box;
   object-fit: cover;
-  position: absolute;
   /* visibility: hidden; */
   width: 100%;
   height: 100%;
@@ -29,9 +29,9 @@ const Video = styled.video`
 
 const Canvas = styled.canvas<{ isStart: boolean }>`
   position: absolute;
+  border: 5px solid blue;
   box-sizing: border-box;
   object-fit: cover;
-  border: 5px solid blue;
   visibility: hidden;
   width: 100%;
   height: 100%;
@@ -40,9 +40,9 @@ const Canvas = styled.canvas<{ isStart: boolean }>`
 const CapturedPose = styled.canvas`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
+  position: absolute;
   border: 5px solid blue;
   box-sizing: border-box;
-  position: absolute;
   object-fit: cover;
   width: 100%;
   height: 100%;

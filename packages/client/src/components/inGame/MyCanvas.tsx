@@ -9,6 +9,7 @@ import * as movenet from '../../utils/tfjs-movenet';
 const Container = styled.div`
   position: absolute;
   box-sizing: border-box;
+  left: 0%;
   width: calc(100% * (7 / 8));
   height: 100%;
 `;
@@ -16,10 +17,10 @@ const Container = styled.div`
 const Video = styled.video`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
+  position: absolute;
   border: 5px solid red;
   box-sizing: border-box;
   object-fit: cover;
-  position: absolute;
   /* visibility: hidden; */
   width: 100%;
   height: 100%;
@@ -27,9 +28,9 @@ const Video = styled.video`
 
 const Canvas = styled.canvas`
   position: absolute;
+  border: 5px solid red;
   box-sizing: border-box;
   object-fit: cover;
-  border: 5px solid red;
   visibility: hidden;
   width: 100%;
   height: 100%;
@@ -40,8 +41,8 @@ const CapturedPose = styled.canvas`
   transform: scaleX(-1);
   border: 5px solid red;
   box-sizing: border-box;
-  position: absolute;
   object-fit: cover;
+  position: absolute;
   width: 100%;
   height: 100%;
 `;

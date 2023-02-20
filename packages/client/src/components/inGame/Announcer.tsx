@@ -104,6 +104,7 @@ function Announcer() {
           setMessage('모두 준비가 완료되면 게임을 시작해주세요');
         } else {
           setMessage('준비가 완료되면 READY 버튼을 눌러주세요');
+          setMessage('');
         }
         break;
       case GameStatus.GAME:

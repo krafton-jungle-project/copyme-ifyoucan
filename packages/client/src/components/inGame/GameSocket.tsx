@@ -5,7 +5,7 @@ import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
 import { gameAtom, GameStage, GameStatus, messageAtom } from '../../app/game';
 import { useNavigate } from 'react-router-dom';
-import { Bell, countDown, gameMusic, gunReload } from '../../utils/sound';
+import { Bell, cameraClick, countDown, gameMusic, gunReload } from '../../utils/sound';
 
 const GameSocket = () => {
   const setPeer = useSetAtom(peerAtom);
@@ -63,6 +63,7 @@ const GameSocket = () => {
       }
 
       if (count === 0) {
+        cameraClick.play();
         if (stage === 'offend') {
           setGame((prev) => ({ ...prev, stage: GameStage.DEFEND_ANNOUNCEMENT }));
         } else if (stage === 'defend') {
