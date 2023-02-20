@@ -196,8 +196,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(socket.id).emit('peer', otherUsers[0]);
 
     //채팅 메시지 날려보기
-    socket.to(roomId).emit('greeting', {
-      message: `${otherUsers[0].nickName}가 들어왔습니다.`,
+    socket.to(roomId).emit('message', {
+      message: `${nickName}가 들어왔습니다.`,
+      username: '',
     });
 
     this.logger.log(`nickName: ${nickName}, userId: ${socket.id}, join_room : ${roomId}`);

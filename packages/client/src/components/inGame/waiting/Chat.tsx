@@ -1,11 +1,9 @@
 import classNames from 'classnames';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-// import { io } from 'socket.io-client';
 import styled from '@emotion/styled';
-import type { Socket } from 'socket.io-client';
+import { useClientSocket } from '../../../module/client-socket';
 
-// const socket = io('http://localhost:4000/chat');
 const ChatContainer = styled.div`
   display: flex;
   width: 300px;
@@ -43,10 +41,11 @@ const MessageBox = styled.div`
 
 const Message = styled.span`
   margin-bottom: 0.5rem;
-  background: #fff;
+  background: white;
   width: fit-content;
   padding: 12px;
   border-radius: 0.5rem;
+  color: black;
 `;
 
 const MessageForm = styled.form`
@@ -58,15 +57,16 @@ const MessageForm = styled.form`
     margin-right: 1rem;
   }
 `;
-interface IChat {
+export interface IChat {
   username: string;
   message: string;
 }
 
-const Chat = ({ socket }: { socket: Socket }) => {
+const Chat = () => {
   const [chats, setChats] = useState<IChat[]>([]);
   const [message, setMessage] = useState<string>('');
   const chatContainerEl = useRef<HTMLDivElement>(null);
+  const { socket } = useClientSocket();
 
   // 채팅이 길어지면(chats.length) 스크롤이 생성되므로, 스크롤의 위치를 최근 메시지에 위치시키기 위함
   useEffect(() => {
@@ -84,7 +84,6 @@ const Chat = ({ socket }: { socket: Socket }) => {
   useEffect(() => {
     const messageHandler = (chat: IChat) => setChats((prevChats) => [...prevChats, chat]);
     socket.on('message', messageHandler);
-
     return () => {
       socket.off('message', messageHandler);
     };

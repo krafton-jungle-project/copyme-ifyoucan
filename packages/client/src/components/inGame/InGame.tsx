@@ -10,6 +10,7 @@ import StartButton from './StartButton';
 import Versus from './Versus';
 import { gameAtom } from '../../app/game';
 import { useEffect } from 'react';
+import Chat from './waiting/Chat';
 
 function InGame() {
   const host = useAtomValue(hostAtom);
@@ -27,6 +28,7 @@ function InGame() {
       <Announcer />
       <MyVideo />
       <MyCanvas />
+      {/* <Chat /> */}
       <PeerVideo />
       <PeerCanvas />
       <Versus />
