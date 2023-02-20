@@ -6,10 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly usersRepository: UsersRepository,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private readonly usersRepository: UsersRepository, private jwtService: JwtService) {}
   async jwtLogIn(data: LoginRequestDto) {
     const { loginid, password } = data;
 
@@ -20,10 +17,7 @@ export class AuthService {
     }
 
     //password가 일치한지 검사하기
-    const isPasswordValidated: boolean = await bcrypt.compare(
-      password,
-      user.password,
-    );
+    const isPasswordValidated: boolean = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValidated) {
       throw new UnauthorizedException('아이디와 비밀번호를 확인해주세요');
