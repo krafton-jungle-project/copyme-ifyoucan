@@ -7,6 +7,8 @@ import { roomIdAtom } from '../../app/atom';
 import { useClientSocket } from '../../module/client-socket';
 import { gameAtom, GameStatus } from '../../app/game';
 import { useEffect, useState } from 'react';
+import SetReadyState from './SetReadyState';
+import SetPeerReadyState from './SetReadyState';
 
 const Button = styled.button<{ isReady: boolean; isStart: boolean }>`
   background-color: ${(props) => (props.isReady ? '#652a2a' : 'grey')};
@@ -41,6 +43,8 @@ function StartButton() {
     socket.emit('start', roomId);
     console.log('start');
   }
+
+  SetReadyState();
 
   return (
     <Button onClick={onStart} disabled={!peer.isReady} isReady={peer.isReady} isStart={isStart}>
