@@ -11,15 +11,16 @@ const Div = styled.div`
   border: 5px solid yellow;
   background-color: #bfbf3042;
   top: 5%;
-  left: 20%;
-  width: 60%;
-  height: 10%;
-
+  left: 10%;
+  width: 80%;
+  height: 15%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 40px;
+  font-size: 60px;
   font-weight: 800;
+  transition-property: top;
+  transition-duration: 1s;
 `;
 
 let messageOrder: number;

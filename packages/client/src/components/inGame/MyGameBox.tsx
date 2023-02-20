@@ -8,11 +8,10 @@ import MyScoreBar from './MyScoreBar';
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
   box-sizing: border-box;
-  border: 5px solid orange;
-  top: 20%;
-  left: ${(props) => (props.isStart ? '5%' : '-40%')};
-  width: 40%; /* 35% * (8 / 7) */
-  aspect-ratio: 32/21; /* 4 * (8 / 7) : 3 */
+  border: 5px solid yellowgreen;
+  left: ${(props) => (props.isStart ? '0%' : '-50%')};
+  height: 100%;
+  aspect-ratio: 8/7;
   transition-property: left;
   transition-delay: 0.5s;
   transition-duration: 0.5s;

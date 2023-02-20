@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as moveNet from '../../utils/tfjs-movenet';
 import styled from 'styled-components';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { gameAtom, GameStage, myPoseAtom } from '../../app/game';
 import { capturePose } from '../../utils/capture-pose';
 import * as movenet from '../../utils/tfjs-movenet';
@@ -9,9 +9,8 @@ import * as movenet from '../../utils/tfjs-movenet';
 const Container = styled.div`
   position: absolute;
   box-sizing: border-box;
-  left: calc(100% * (1 / 8));
   width: calc(100% * (7 / 8));
-  aspect-ratio: 4 / 3;
+  height: 100%;
 `;
 
 const Video = styled.video`
