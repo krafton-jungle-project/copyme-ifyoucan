@@ -53,7 +53,11 @@ export default function Login() {
       setCookie('accessJwtToken', jwtToken);
       const decodedUserInfo = jwt_decode(jwtToken); // 토큰 decode
       localStorage.setItem('userInfo', JSON.stringify(decodedUserInfo)); //토큰에 저장되어있는 userInfo 저장
+      //로그인 해야지만 다음 이동 가능하게
+      sessionStorage.setItem('isAuthenticated', 'true');
+      // 메인으로 이동
       navigate('/'); // 성공시 이동될 url 적용하기
+
       return res;
     } catch (error) {
       alert('로그인에 실패했습니다.');
