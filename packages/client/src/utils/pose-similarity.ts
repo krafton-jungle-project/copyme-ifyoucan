@@ -192,19 +192,20 @@ function alignPose(pose1: poseDetection.Pose, pose2: poseDetection.Pose): poseDe
   return pose2;
 }
 
-export function comparePoses(pose1: poseDetection.Pose, pose3: poseDetection.Pose): number {
+export function comparePoses(pose1: poseDetection.Pose, pose2: poseDetection.Pose): number {
   // Deep copy 후 cmpPose 진행, shallow copy 진행 시, 캔버스에 skelton을 그릴 때
   // resizing된 점들을 토대로 그리기 때문에 제대로 그려지지 않음
 
   // 일단 기준 포즈와 채점
-  pose1 = stdPose;
-  let pose2 = JSON.parse(JSON.stringify(pose3));
-  resizePose(pose1);
-  resizePose(pose2);
+  // pose1 = stdPose;
+  let myPose = JSON.parse(JSON.stringify(pose1));
+  let peerPose = JSON.parse(JSON.stringify(pose2));
+  resizePose(myPose);
+  resizePose(peerPose);
 
   // 어깨와 골반 총 4개의 점을 이용하여 몸통의 중심을 기준으로 pose를 align함
-  let alignedPose1 = alignPose(pose1, pose1);
-  let alignedPose2 = alignPose(pose1, pose2);
+  let alignedPose1 = alignPose(myPose, myPose);
+  let alignedPose2 = alignPose(myPose, peerPose);
 
   // align 후에 같은 신체 부위의 점들의 차의 평균 거리를 구함
   // 포즈 1의 한 점과 포즈 2의 한 점의 유클리디안 거리를 구해서 totalDistance 합함

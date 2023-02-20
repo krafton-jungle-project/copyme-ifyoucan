@@ -1,15 +1,17 @@
 import { useEffect } from 'react';
 import type * as poseDetection from '@tensorflow-models/pose-detection';
-import { useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
 import { gameAtom, GameStage, GameStatus, messageAtom } from '../../app/game';
+import { useNavigate } from 'react-router-dom';
 
 const GameSocket = () => {
   const setPeer = useSetAtom(peerAtom);
   const { socket } = useClientSocket();
-  const setGame = useSetAtom(gameAtom);
+  const [game, setGame] = useAtom(gameAtom);
   const setMessage = useSetAtom(messageAtom);
+  const navigate = useNavigate();
 
   useEffect(() => {
     socket.on('get_ready', () => {
@@ -60,6 +62,15 @@ const GameSocket = () => {
       }
     });
   }, [setPeer, socket]);
+
+  useEffect(() => {
+    socket.on('user_exit', () => {
+      console.log('user_exit');
+      if (game.status !== GameStatus.WAITING) {
+        navigate('/');
+      }
+    });
+  }, [game.status, socket]);
 
   return null;
 };

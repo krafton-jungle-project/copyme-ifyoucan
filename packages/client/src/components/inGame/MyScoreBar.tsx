@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { gameAtom, GameStage, GameStatus, peerPoseAtom } from '../../app/game';
 import { comparePoses } from '../../utils/pose-similarity';
 import { detector } from '../../utils/tfjs-movenet';
+import { useInterval } from './hooks/useInterval';
 
 const Container = styled.div`
   position: absolute;
@@ -25,38 +26,39 @@ const ScoreBar = styled.div<{ isInit: boolean; isStart: boolean; score: number }
 `;
 
 function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement> }) {
-  // const [score, setScore] = useState(0);
   const game = useAtomValue(gameAtom);
+  const peerPose = useAtomValue(peerPoseAtom);
+  const [score, setScore] = useState(0);
+  const [delay, setDelay] = useState<number | null>(null);
   const [isStart, setIsStart] = useState(false);
   const [isInit, setIsInit] = useState(true);
-  // const peerPose = useAtomValue(peerPoseAtom);
-  let score = 0; //temp
 
-  // useEffect(() => {
-  //   const getMyPose = async () => {
-  //     if (myVideoRef.current) {
-  //       const myPoses = await detector.estimatePoses(myVideoRef.current);
-  //       if (myPoses && myPoses.length > 0) {
-  //         return myPoses[0];
-  //       }
-  //     }
-  //   };
+  const getMyPose = async () => {
+    if (myVideoRef.current) {
+      const myPoses = await detector.estimatePoses(myVideoRef.current);
+      if (myPoses && myPoses.length > 0) {
+        return myPoses[0];
+      }
+    }
+  };
 
-  //   const getMyScore = async () => {
-  //     const myPose = await getMyPose();
-  //     if (myPose && peerPose) {
-  //       setScore(comparePoses(myPose, peerPose));
-  //     }
-  //   };
+  useInterval(async () => {
+    const myPose = await getMyPose();
+    if (myPose && peerPose) {
+      setScore(comparePoses(myPose, peerPose));
+      console.log('상대 방어');
+    }
+  }, delay);
 
-  //   let intervalId;
-
-  //   if (!game.isOffender && game.stage === GameStage.DEFEND_COUNTDOWN) {
-  //     intervalId = setInterval(getMyScore, 500);
-  //   } else {
-  //     clearInterval(intervalId);
-  //   }
-  // }, [game.stage]);
+  useEffect(() => {
+    if (!game.isOffender && game.stage === GameStage.DEFEND_COUNTDOWN) {
+      setDelay(500);
+    } else {
+      if (game.stage !== GameStage.DEFEND_COUNTDOWN) {
+        setDelay(null);
+      }
+    }
+  }, [game.isOffender, game.stage]);
 
   useEffect(() => {
     if (game.status === GameStatus.WAITING) {

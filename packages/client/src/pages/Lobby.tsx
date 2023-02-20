@@ -46,7 +46,7 @@ function Lobby() {
       const token = document.cookie.split('=')[1];
       try {
         // const res = await axios.get('http://localhost:5001/users/', {
-        const res = await axios.post('http://15.165.237.195:5001/users/', {
+        const res = await axios.get('http://15.165.237.195:5001/users/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res) {
