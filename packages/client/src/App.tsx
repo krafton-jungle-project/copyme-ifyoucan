@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Lobby from './pages/Lobby';
 import Room from './pages/Room';
 import Login from './pages/Login';
-import SignUp from './pages/SignUp';
 // !
 import * as Jotai from 'jotai';
 import { ClientSocketContextProvider } from './module/client-socket';
