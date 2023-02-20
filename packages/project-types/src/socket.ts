@@ -4,6 +4,12 @@
  * @see https://socket.io/docs/v4/typescript/
  */
 import type * as poseDetection from '@tensorflow-models/pose-detection';
+// import { IChat } from '../../client/src/components/inGame/waiting/Chat';
+export interface IChat {
+  username: string;
+  message: string;
+}
+
 export interface Rooms {
   [key: string]: {
     roomName: string;
@@ -33,7 +39,7 @@ export interface ServerToClientEvents {
   }) => void;
   get_answer: (answer: RTCSessionDescription) => void;
   get_ice: (data: RTCIceCandidate) => void;
-  message: (data: { username: string; message: string }) => void;
+  message: (chat: IChat) => void;
   user_exit: () => void;
 }
 
@@ -69,7 +75,7 @@ export interface ClientToServerEvents {
     candidateSendID: string;
     candidateReceiveID: string;
   }) => void;
-  message: (message: string) => void;
+  message: (message: string, callback: (chat: IChat) => void) => void;
 }
 
 export interface InterServerEvents {
