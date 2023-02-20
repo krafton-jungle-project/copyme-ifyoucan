@@ -4,7 +4,25 @@ import React, { useEffect, useState } from 'react';
 import { Button, Modal, Form, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
+import styled from 'styled-components';
 
+const CompleteButton = styled(Button)`
+  width: 100%;
+  height: 48px;
+  border: none;
+  font-weight: bold;
+  border-radius: 64px;
+  background-color: #9e30f4;
+  color: white;
+  margin-bottom: 16px;
+  cursor: pointer;
+`;
+
+const ErrorMessageWrap = styled.div`
+  margin-top: 8px;
+  color: #ef0000;
+  font-size: 12px;
+`;
 const SignUpModal = ({ show, onHide }: { show: boolean; onHide: any }) => {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
@@ -12,7 +30,7 @@ const SignUpModal = ({ show, onHide }: { show: boolean; onHide: any }) => {
   const [idValid, setIdValid] = useState(false);
   const [pwValid, setPwValid] = useState(false);
   const [notAllow, setNotAllow] = useState(true);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     if (idValid && pwValid) {
@@ -58,7 +76,9 @@ const SignUpModal = ({ show, onHide }: { show: boolean; onHide: any }) => {
         console.log('asd');
         console.log(res.data.data);
         // 토큰을 받아서 저장 (local storage 또는 쿠키?)
-        navigate('/login');
+        alert('회원가입이 완료되었습니다.');
+        window.location.reload();
+        // navigate('/login');
         return res;
       })
       .catch((error) => {
@@ -83,9 +103,9 @@ const SignUpModal = ({ show, onHide }: { show: boolean; onHide: any }) => {
             <Form.Group className="mb-3">
               <Form.Label>아이디</Form.Label>
               <Form.Control type="text" placeholder="abcd1234" value={id} onChange={handleId} />
-              {/* <div className="errorMessageWrap">
+              <ErrorMessageWrap>
                 {!idValid && id.length > 0 && <div>올바른 아이디을 입력해주세요.</div>}
-              </div> */}
+              </ErrorMessageWrap>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -96,25 +116,24 @@ const SignUpModal = ({ show, onHide }: { show: boolean; onHide: any }) => {
                 value={pw}
                 onChange={handlePw}
               />
-              {/* <div className="errorMessageWrap">
+              <ErrorMessageWrap>
                 {!pwValid && pw.length > 0 && <div>영문, 숫자를 입력해주세요.</div>}
-              </div> */}
+              </ErrorMessageWrap>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>닉네임</Form.Label>
               <Form.Control type="text" placeholder="홀란드" value={name} onChange={handleName} />
             </Form.Group>
 
-            <Button
+            <CompleteButton
               // block
               variant="info"
               type="button"
               onClick={onClickConfirmButton}
               disabled={notAllow}
-              className="CompleteButton"
             >
               가입하기
-            </Button>
+            </CompleteButton>
           </Form>
         </Modal.Body>
       </Container>

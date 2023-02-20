@@ -9,6 +9,7 @@ import { gameAtom } from '../../app/game';
 import { useEffect } from 'react';
 import HardPoses from './HardPoses';
 import GameBox from './GameBox';
+import Chat from './waiting/Chat';
 
 function InGame() {
   const host = useAtomValue(hostAtom);
@@ -26,6 +27,7 @@ function InGame() {
       <Announcer />
       <MyVideo />
       <PeerVideo />
+      {/* <Chat /> */}
       {host ? <StartButton /> : <ReadyButton />}
       <GameBox />
       <HardPoses />
