@@ -5,6 +5,7 @@ import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
 import { gameAtom, GameStage, GameStatus, messageAtom } from '../../app/game';
 import { useNavigate } from 'react-router-dom';
+import { Bell, countDown, gameMusic, gunReload } from '../../utils/sound';
 
 const GameSocket = () => {
   const setPeer = useSetAtom(peerAtom);
@@ -15,11 +16,13 @@ const GameSocket = () => {
 
   useEffect(() => {
     socket.on('get_ready', () => {
+      gunReload.play();
       console.log('get_ready');
       setPeer((prev) => ({ ...prev, isReady: true }));
     });
 
     socket.on('get_unready', () => {
+      gunReload.play();
       console.log('get_unready');
       setPeer((prev) => ({ ...prev, isReady: false }));
     });
@@ -40,12 +43,24 @@ const GameSocket = () => {
     //! 게임 Status를 waiting에서 game으로 바꾼다
     socket.on('get_start', () => {
       console.log('get_start');
+
+      setTimeout(() => {
+        Bell.play();
+      }, 500);
+
+      setTimeout(() => {
+        gameMusic.play();
+      }, 1500);
+
       setGame((prev) => ({ ...prev, status: GameStatus.GAME }));
     });
 
     socket.on('get_count_down', (count: number, stage: string) => {
       console.log(count, stage);
       setMessage(count.toString());
+      if (count === 5) {
+        countDown.play();
+      }
 
       if (count === 0) {
         if (stage === 'offend') {
