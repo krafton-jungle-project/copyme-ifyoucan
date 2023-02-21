@@ -1,16 +1,16 @@
 import { atom } from 'jotai';
 
-export const nickNameAtom = atom('');
-nickNameAtom.onMount = (onMountnickNameAtom) => {
-  return () => onMountnickNameAtom('');
+export const myNickNameAtom = atom('');
+myNickNameAtom.onMount = (onMountMyNickNameAtom) => {
+  return () => onMountMyNickNameAtom('');
 };
 
-export const hostAtom = atom(false);
-hostAtom.onMount = (onMounthostAtom) => {
-  return () => onMounthostAtom(false);
+export const imHostAtom = atom(false);
+imHostAtom.onMount = (onMountImHostAtom) => {
+  return () => onMountImHostAtom(false);
 };
 
 export const roomIdAtom = atom('');
-roomIdAtom.onMount = (onMountroomIdAtom) => {
-  return () => onMountroomIdAtom('');
+roomIdAtom.onMount = (onMountRoomIdAtom) => {
+  return () => onMountRoomIdAtom('');
 };

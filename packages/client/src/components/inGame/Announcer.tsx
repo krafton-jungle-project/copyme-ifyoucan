@@ -1,33 +1,28 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { hostAtom, nickNameAtom } from '../../app/atom';
+import { imHostAtom, myNickNameAtom } from '../../app/atom';
 import { gameAtom, GameStage, GameStatus, messageAtom } from '../../app/game';
 import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
 
-const Div = styled.div`
+const Container = styled.div`
   position: absolute;
-  border: 5px solid yellow;
-  background-color: #bfbf3042;
-  top: 5%;
-  left: 10%;
-  width: 80%;
-  height: 15%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 60px;
+  left: 15%;
+  width: 70%;
+  height: 100%;
+  font-size: 50px;
   font-weight: 800;
-  transition-property: top;
-  transition-duration: 1s;
 `;
 
 let messageOrder: number;
 
 function Announcer() {
-  const host = useAtomValue(hostAtom);
-  const myNickName = useAtomValue(nickNameAtom);
+  const imHost = useAtomValue(imHostAtom);
+  const myNickName = useAtomValue(myNickNameAtom);
   const peerNickName = useAtomValue(peerAtom).nickName;
   const { socket } = useClientSocket();
 
@@ -69,7 +64,7 @@ function Announcer() {
             stage: GameStage.OFFEND_COUNTDOWN,
           }));
 
-          if (host) {
+          if (imHost) {
             socket.emit('count_down', 'offend');
           }
         }
@@ -86,7 +81,7 @@ function Announcer() {
             stage: GameStage.DEFEND_COUNTDOWN,
           }));
 
-          if (host) {
+          if (imHost) {
             socket.emit('count_down', 'defend');
             console.log('emit count down');
           }
@@ -100,10 +95,10 @@ function Announcer() {
   useEffect(() => {
     switch (game.status) {
       case GameStatus.WAITING:
-        if (host) {
-          setMessage('모두 준비가 완료되면 게임을 시작해주세요');
+        if (imHost) {
+          setMessage('준비가 완료되면 게임을 시작해주세요');
         } else {
-          setMessage('준비가 완료되면 READY 버튼을 눌러주세요');
+          setMessage('준비가 되면 READY 버튼을 눌러주세요');
         }
         break;
       case GameStatus.GAME:
@@ -117,7 +112,7 @@ function Announcer() {
     }
   }, [game.stage, game.status]);
 
-  return <Div>{message}</Div>;
+  return <Container>{message}</Container>;
 }
 
 export default Announcer;

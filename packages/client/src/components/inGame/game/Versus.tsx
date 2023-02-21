@@ -1,8 +1,7 @@
 import { useAtomValue } from 'jotai';
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { gameAtom, GameStatus } from '../../../app/game';
 import VersusImg from '../../../assets/images/versus.png';
+import { isStartAtom } from '../InGame';
 
 const VS = styled.img<{ isStart: boolean }>`
   position: absolute;
@@ -16,12 +15,7 @@ const VS = styled.img<{ isStart: boolean }>`
 `;
 
 function Versus() {
-  const game = useAtomValue(gameAtom);
-  const [isStart, setIsStart] = useState(false);
-
-  useEffect(() => {
-    setIsStart(game.status !== GameStatus.WAITING);
-  }, [game.status]);
+  const isStart = useAtomValue(isStartAtom);
 
   return <VS alt="VS" src={VersusImg} isStart={isStart} />;
 }

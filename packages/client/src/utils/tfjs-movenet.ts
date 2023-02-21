@@ -199,13 +199,13 @@ async function peerRenderDetection() {
 export async function myCanvasRender(movenetParam: MovenetParam) {
   myCamera = await Camera.setupCamera(movenetParam);
   // detector가 생성된 이후에 자세를 추정하여 인식된 랜드마크와 골격을 canvas에 그린다.
-  myRenderDetection();
+  // myRenderDetection();
 }
 
 export async function peerCanvasRender(movenetParam: MovenetParam) {
   peerCamera = await Camera.setupCamera(movenetParam);
   // detector가 생성된 이후에 자세를 추정하여 인식된 랜드마크와 골격을 canvas에 그린다.
-  peerRenderDetection();
+  // peerRenderDetection();
 }
 
 // 웹캠 스트림을 생성하여 반환하는 함수

@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 import loadingImg from '../../assets/images/loading.gif';
 import { isLoadedAtom } from '../../pages/Lobby';
-import * as movenet from '../../utils/tfjs-movenet';
+import * as moveNet from '../../utils/tfjs-movenet';
 
 const LoadingContainer = styled.div`
   margin-top: 150px;
@@ -19,10 +19,10 @@ function Loading() {
     async function mediaLoad() {
       // Login하여 처음 Lobby로 이동 시, stream 및 detector를 초기화 해준다.
 
-      await movenet.getMyStream({ width: 640, height: 480 });
+      await moveNet.getMyStream({ width: 640, height: 480 });
       console.log('webcam stream is ready.');
 
-      await movenet.createDetector();
+      await moveNet.createDetector();
       console.log('pose detector is ready.');
 
       setIsLoaded(true);
