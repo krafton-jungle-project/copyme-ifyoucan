@@ -44,15 +44,6 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     }
   };
 
-  //! 기존 코드
-  // useInterval(async () => {
-  //   const myPose = await getMyPose();
-  //   if (myPose && peerPose) {
-  //     setScore(comparePoses(myPose, peerPose));
-  //     console.log('상대 방어');
-  //   }
-  // }, delay);
-
   useInterval(async () => {
     const myPose = await getMyPose();
     if (myPose && peerPose) {
