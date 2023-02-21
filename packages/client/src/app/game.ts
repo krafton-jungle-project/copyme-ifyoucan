@@ -29,7 +29,7 @@ const initialState: GameState = {
   status: GameStatus.WAITING,
   isOffender: false,
   stage: GameStage.INITIAL_ANNOUNCEMENT,
-  round: 1,
+  round: 0,
 };
 
 export const gameAtom = atomWithReset(initialState);

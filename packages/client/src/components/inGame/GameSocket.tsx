@@ -71,6 +71,7 @@ const GameSocket = () => {
             ...prev,
             isOffender: !prev.isOffender,
             stage: GameStage.OFFEND_ANNOUNCEMENT,
+            round: prev.round + 0.5,
           }));
         } else {
           console.log('카운트다운 오류', 'count:', count, 'stage:', stage);

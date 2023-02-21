@@ -58,19 +58,27 @@ function Announcer() {
         }
         break;
       case GameStage.OFFEND_ANNOUNCEMENT:
-        if (messageOrder < offenderMessages.length) {
-          setMessage(offenderMessages[messageOrder++]);
-          setTimeout(gameMessage, 2000);
-        } else {
-          messageOrder = 0;
-
+        if (game.round >= 3) {
+          console.log('round 끝');
           setGame((prev) => ({
             ...prev,
-            stage: GameStage.OFFEND_COUNTDOWN,
+            status: GameStatus.RESULT,
           }));
+        } else {
+          if (messageOrder < offenderMessages.length) {
+            setMessage(offenderMessages[messageOrder++]);
+            setTimeout(gameMessage, 2000);
+          } else {
+            messageOrder = 0;
 
-          if (host) {
-            socket.emit('count_down', 'offend');
+            setGame((prev) => ({
+              ...prev,
+              stage: GameStage.OFFEND_COUNTDOWN,
+            }));
+
+            if (host) {
+              socket.emit('count_down', 'offend');
+            }
           }
         }
         break;
@@ -111,6 +119,7 @@ function Announcer() {
         gameMessage();
         break;
       case GameStatus.RESULT:
+        setMessage('게임 결과');
         break;
       default:
         break; //temp
