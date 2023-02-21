@@ -33,6 +33,7 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
   const [delay, setDelay] = useState<number | null>(null);
   const [isStart, setIsStart] = useState(false);
   const [isInit, setIsInit] = useState(true);
+  const [isDefender, setIsDefender] = useState(false);
   const { socket } = useClientSocket();
 
   const getMyPose = async () => {
@@ -44,35 +45,27 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     }
   };
 
-  //! 기존 코드
-  // useInterval(async () => {
-  //   const myPose = await getMyPose();
-  //   if (myPose && peerPose) {
-  //     setScore(comparePoses(myPose, peerPose));
-  //     console.log('상대 방어');
-  //   }
-  // }, delay);
-
   useInterval(async () => {
     const myPose = await getMyPose();
     if (myPose && peerPose) {
-      const myScore = comparePoses(myPose, peerPose);
-      socket.emit('score', myScore);
-      setScore(myScore);
-      console.log('상대 방어');
+      const tempScore = comparePoses(myPose, peerPose);
+      socket.emit('score', tempScore);
+      setScore(tempScore);
     }
   }, delay);
 
   useEffect(() => {
     if (!game.isOffender && game.stage === GameStage.DEFEND_COUNTDOWN) {
       setDelay(500);
+      setIsDefender(true);
     } else {
-      if (game.stage !== GameStage.DEFEND_COUNTDOWN) {
+      if (game.stage === GameStage.OFFEND_ANNOUNCEMENT && isDefender) {
         setDelay(null);
         socket.emit('round_score', score);
+        setIsDefender(false);
       }
     }
-  }, [game.isOffender, game.stage]);
+  }, [game.stage]);
 
   useEffect(() => {
     if (game.status === GameStatus.WAITING) {

@@ -4,10 +4,13 @@ import type { Socket } from 'socket.io-client';
 import { useClientSocket } from '../module/client-socket';
 
 let data: [string, string] = ['', ''];
-
+let count = 0;
 // 이미지와 keypoints 데이터 보내는 이벤트는 캡처할 때 밖에 없으므로 여기서 소켓 통신까지 함
 async function emitDataToDefender(imgSrc: string, flag: number, socket: Socket) {
-  data[flag] = imgSrc;
+  if (count) {
+    data[flag] = imgSrc;
+  }
+  count++;
   if (data[0] !== '' && data[1] !== '') {
     socket.emit('image', data);
     data = ['', ''];

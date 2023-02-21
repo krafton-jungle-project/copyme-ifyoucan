@@ -58,6 +58,7 @@ export interface ClientToServerEvents {
   unready: (roomId: string) => void;
   start: (roomId: string) => void;
   score: (score: number) => void;
+  round_score: (score: number) => void;
   image: (data: { pose: poseDetection.Pose; imgSrc: string }) => void;
   image_reset: () => void;
   count_down: (stage: string) => void;

@@ -34,6 +34,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       users: { id: string; nickName: string }[];
       started: boolean;
       readyCount: number;
+      images: [string, string][];
+      scores: number[];
     };
   } = {};
 
@@ -88,6 +90,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       users: [],
       started: false,
       readyCount: 0,
+      images: [],
+      scores: [],
     };
 
     this.server.to(socket.id).emit('new_room', roomId);
@@ -120,12 +124,17 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('image')
   imageHandle(
     @ConnectedSocket() socket: ServerToClientSocket,
-    @MessageBody() data: { pose: poseDetection.Pose; imgSrc: string },
+    @MessageBody() data: [string, string],
   ): void {
     const roomId = this.userToRoom[socket.id];
+    this.rooms[roomId].images.push(data);
+  }
 
-    // 다른 유저들에게 공격자의 image와 포즈 데이터 전송
-    socket.to(roomId).emit('get_image', data.pose, data.imgSrc);
+  //! score 저장
+  @SubscribeMessage('round_score')
+  scoreHandle(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() score: number): void {
+    const roomId = this.userToRoom[socket.id];
+    this.rooms[roomId].scores.push(score);
   }
 
   //! 수비가 끝났을 시 이벤트를 받는다
@@ -171,7 +180,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   getScore(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() score: number): void {
     // 공격자가 공격을 시작하면 수비자들에게 공격이 시작되었다는 이벤트 발생
     const roomId = this.userToRoom[socket.id];
-    console.log(score);
     socket.to(roomId).emit('get_score', score);
   }
 

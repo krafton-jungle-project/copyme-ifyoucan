@@ -88,7 +88,11 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
         capturedPoseRef.current.style.visibility = 'visible';
 
         getMyPose();
-        capturePose(videoRef.current, capturedPoseRef.current, 0); //temp
+        if (host) {
+          capturePose(videoRef.current, capturedPoseRef.current, 0, socket); //temp
+        } else {
+          capturePose(videoRef.current, capturedPoseRef.current, 0); //temp
+        }
 
         capturedPoseRef.current.width = videoRef.current.width;
         capturedPoseRef.current.height = videoRef.current.height;
