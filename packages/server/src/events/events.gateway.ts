@@ -171,7 +171,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   getScore(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() score: number): void {
     // 공격자가 공격을 시작하면 수비자들에게 공격이 시작되었다는 이벤트 발생
     const roomId = this.userToRoom[socket.id];
-    console.log(score);
     socket.to(roomId).emit('get_score', score);
   }
 
