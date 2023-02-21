@@ -7,6 +7,7 @@ import ReadyButtonImg from '../../assets/images/ready-button-activated.png';
 import UnReadyButtonImg from '../../assets/images/ready-button-deactivated.png';
 import { useClientSocket } from '../../module/client-socket';
 import SetReadyState from './SetReadyState';
+import { gunReload } from '../../utils/sound';
 
 const Button = styled.button<{ isReady: boolean; isStart: boolean }>`
   background-color: ${(props) => (props.isReady ? 'grey' : '#652a2a')};
@@ -39,16 +40,18 @@ function ReadyButton() {
 
   function onReady() {
     if (isReady) {
+      gunReload.play();
       socket.emit('unready', roomId);
       console.log('unready!');
     } else {
+      gunReload.play();
       socket.emit('ready', roomId);
       console.log('ready!');
     }
     setIsReady(!isReady);
   }
 
-  SetReadyState(isReady, setIsReady);
+  // SetReadyState(isReady, setIsReady);
 
   return (
     <Button onClick={onReady} isReady={isReady} isStart={isStart}>

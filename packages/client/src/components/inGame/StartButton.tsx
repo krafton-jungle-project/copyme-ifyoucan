@@ -44,7 +44,7 @@ function StartButton() {
     console.log('start');
   }
 
-  SetReadyState();
+  // SetReadyState();
 
   return (
     <Button onClick={onStart} disabled={!peer.isReady} isReady={peer.isReady} isStart={isStart}>

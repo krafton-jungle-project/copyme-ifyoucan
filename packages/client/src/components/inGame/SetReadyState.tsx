@@ -6,6 +6,7 @@ import { gameAtom, GameStatus, myPoseAtom } from '../../app/game';
 import { peerAtom } from '../../app/peer';
 import { useInterval } from './hooks/useInterval';
 import { hostAtom, roomIdAtom } from '../../app/atom';
+import { gunReload } from '../../utils/sound';
 
 function SetReadyState(isReady?: boolean, setIsReady?: any) {
   const { socket } = useClientSocket();
@@ -40,12 +41,14 @@ function SetReadyState(isReady?: boolean, setIsReady?: any) {
             // 왼손 들면
             if (isLeftHandUp(pose, 50)) {
               if (!isReady) {
+                gunReload.play();
                 flag = 1;
               }
             }
             // 손 내리면
             else {
               if (isReady) {
+                gunReload.play();
                 flag = 1;
               }
             }

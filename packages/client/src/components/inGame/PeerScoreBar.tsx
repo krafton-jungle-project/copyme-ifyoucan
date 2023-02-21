@@ -11,9 +11,9 @@ const Container = styled.div`
   background-color: blue;
   border: 5px solid blue;
   box-sizing: border-box;
-  right: 0%;
+  left: 0%;
   width: calc(100% * (1 / 8) * (4 / 5));
-  aspect-ratio: 16/105;
+  height: 100%;
 `;
 
 const ScoreBar = styled.div<{ isInit: boolean; isStart: boolean; score: number }>`

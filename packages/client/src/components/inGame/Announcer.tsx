@@ -11,15 +11,16 @@ const Div = styled.div`
   border: 5px solid yellow;
   background-color: #bfbf3042;
   top: 5%;
-  left: 20%;
-  width: 60%;
-  height: 10%;
-
+  left: 10%;
+  width: 80%;
+  height: 15%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 40px;
+  font-size: 60px;
   font-weight: 800;
+  transition-property: top;
+  transition-duration: 1s;
 `;
 
 let messageOrder: number;
@@ -35,7 +36,6 @@ function Announcer() {
 
   const initialMessages: string[] = [
     '게임을 시작합니다',
-    '화면에 전신이 보이도록 서주세요',
     '첫 번째 공격이 시작됩니다!',
     '공격자의 자세를 정확히 따라해주세요!',
   ];
@@ -60,7 +60,7 @@ function Announcer() {
       case GameStage.OFFEND_ANNOUNCEMENT:
         if (messageOrder < offenderMessages.length) {
           setMessage(offenderMessages[messageOrder++]);
-          setTimeout(gameMessage, 1500);
+          setTimeout(gameMessage, 2000);
         } else {
           messageOrder = 0;
 
@@ -77,7 +77,7 @@ function Announcer() {
       case GameStage.DEFEND_ANNOUNCEMENT:
         if (messageOrder < defenderMessages.length) {
           setMessage(defenderMessages[messageOrder++]);
-          setTimeout(gameMessage, 1500);
+          setTimeout(gameMessage, 2000);
         } else {
           messageOrder = 0;
 

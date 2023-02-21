@@ -1,28 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import * as moveNet from '../../utils/tfjs-movenet';
 import styled from 'styled-components';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { peerAtom } from '../../app/peer';
 import { gameAtom, GameStage, GameStatus, peerPoseAtom } from '../../app/game';
 import { capturePose } from '../../utils/capture-pose';
 import * as movenet from '../../utils/tfjs-movenet';
-import PeerScoreBar from './PeerScoreBar';
 
 const Container = styled.div`
   position: absolute;
   box-sizing: border-box;
-  right: calc(100% * (1 / 8));
+  right: 0%;
   width: calc(100% * (7 / 8));
-  aspect-ratio: 4 / 3;
+  height: 100%;
 `;
 
 const Video = styled.video`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
+  position: absolute;
   border: 5px solid blue;
   box-sizing: border-box;
   object-fit: cover;
-  position: absolute;
   /* visibility: hidden; */
   width: 100%;
   height: 100%;
@@ -30,9 +29,9 @@ const Video = styled.video`
 
 const Canvas = styled.canvas<{ isStart: boolean }>`
   position: absolute;
+  border: 5px solid blue;
   box-sizing: border-box;
   object-fit: cover;
-  border: 5px solid blue;
   visibility: hidden;
   width: 100%;
   height: 100%;
@@ -41,9 +40,9 @@ const Canvas = styled.canvas<{ isStart: boolean }>`
 const CapturedPose = styled.canvas`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
+  position: absolute;
   border: 5px solid blue;
   box-sizing: border-box;
-  position: absolute;
   object-fit: cover;
   width: 100%;
   height: 100%;
