@@ -69,6 +69,7 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     } else {
       if (game.stage !== GameStage.DEFEND_COUNTDOWN) {
         setDelay(null);
+        socket.emit('round_score', score);
       }
     }
   }, [game.isOffender, game.stage]);
