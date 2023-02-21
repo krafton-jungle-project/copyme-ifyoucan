@@ -151,6 +151,30 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     socket.to(roomId).emit('get_attack');
   }
 
+  //! 카운트 다운 시작
+  @SubscribeMessage('count_down')
+  countDown(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() stage: string): void {
+    const roomId = this.userToRoom[socket.id];
+    let count = 5;
+    const intervalId = setInterval(() => {
+      if (count >= 0) {
+        this.server.in(roomId).emit('get_count_down', count--, stage);
+        console.log('countDown', count);
+      } else {
+        clearInterval(intervalId);
+      }
+    }, 1000);
+  }
+
+  //! 점수를 공격자에게 전송
+  @SubscribeMessage('score')
+  getScore(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() score: number): void {
+    // 공격자가 공격을 시작하면 수비자들에게 공격이 시작되었다는 이벤트 발생
+    const roomId = this.userToRoom[socket.id];
+    console.log(score);
+    socket.to(roomId).emit('get_score', score);
+  }
+
   //! 게임 끝
   @SubscribeMessage('finish')
   finish(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() roomId: string): void {

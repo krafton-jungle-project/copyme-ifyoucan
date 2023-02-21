@@ -27,6 +27,7 @@ export interface ServerToClientEvents {
   get_image_reset: () => void;
   get_image: (pose: poseDetection.Pose, imgSrc: string) => void;
   get_start: () => void;
+  get_score: (score: number) => void;
   get_count_down: (count: number, stage: string) => void;
   get_attack: () => void;
   get_finish: () => void;
@@ -56,6 +57,7 @@ export interface ClientToServerEvents {
   ready: (roomId: string) => void;
   unready: (roomId: string) => void;
   start: (roomId: string) => void;
+  score: (score: number) => void;
   image: (data: { pose: poseDetection.Pose; imgSrc: string }) => void;
   image_reset: () => void;
   count_down: (stage: string) => void;
@@ -83,6 +85,7 @@ export interface InterServerEvents {
   new_room: (roomId: string) => void;
   get_start: () => void;
   peer: (data: { id: string; nickName: string }) => void;
+  get_count_down: (count: number, stage: string) => void;
   get_offer: (offer: {
     sdp: RTCSessionDescription;
     offerSendID: string;
