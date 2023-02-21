@@ -6,6 +6,8 @@ import { peerAtom } from '../../app/peer';
 import { gameAtom, GameStage, GameStatus, peerPoseAtom } from '../../app/game';
 import { capturePose } from '../../utils/capture-pose';
 import * as movenet from '../../utils/tfjs-movenet';
+import { hostAtom } from '../../app/atom';
+import { useClientSocket } from '../../module/client-socket';
 
 const Container = styled.div`
   position: absolute;
@@ -53,6 +55,8 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const capturedPoseRef = useRef<HTMLCanvasElement>(null);
 
+  const { socket } = useClientSocket();
+  const host = useAtomValue(hostAtom);
   const peer = useAtomValue(peerAtom);
   const game = useAtomValue(gameAtom);
   const setPeerPose = useSetAtom(peerPoseAtom);
@@ -104,7 +108,11 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
 
     if (game.isOffender && game.stage === GameStage.OFFEND_ANNOUNCEMENT) {
       if (videoRef.current !== null && capturedPoseRef.current !== null) {
-        capturePose(videoRef.current, capturedPoseRef.current, 1);
+        if (host) {
+          capturePose(videoRef.current, capturedPoseRef.current, 1, socket);
+        } else {
+          capturePose(videoRef.current, capturedPoseRef.current, 1);
+        }
         capturedPoseRef.current.style.visibility = 'hidden'; // 임시로 캡처하고 바로 가려버림
       }
     }

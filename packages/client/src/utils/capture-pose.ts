@@ -1,13 +1,12 @@
 import type * as poseDetection from '@tensorflow-models/pose-detection';
-import type { Socket } from 'socket.io-client';
 import html2canvas from 'html2canvas';
+import type { Socket } from 'socket.io-client';
 import { useClientSocket } from '../module/client-socket';
 
 let data: [string, string] = ['', ''];
 
 // 이미지와 keypoints 데이터 보내는 이벤트는 캡처할 때 밖에 없으므로 여기서 소켓 통신까지 함
-async function emitDataToDefender(imgSrc: string, flag: number) {
-  const { socket } = useClientSocket();
+async function emitDataToDefender(imgSrc: string, flag: number, socket: Socket) {
   data[flag] = imgSrc;
   if (data[0] !== '' && data[1] !== '') {
     socket.emit('image', data);
@@ -26,6 +25,7 @@ export async function capturePose(
   toCapture: HTMLVideoElement,
   toDraw: HTMLCanvasElement,
   flag: number,
+  socket?: Socket,
 ) {
   if (toCapture !== null) {
     // 캡처할 html 요소를 넣으면 return 값이 'HTMLCanvasElement'로 나옴
@@ -33,8 +33,10 @@ export async function capturePose(
       const ctx = toDraw.getContext('2d') as CanvasRenderingContext2D;
       ctx.drawImage(canvas, 0, 0, 640, 480);
 
-      let imgSrc: string = canvas.toDataURL('image/webp', 0.5);
-      emitDataToDefender(imgSrc, flag);
+      if (socket) {
+        let imgSrc: string = canvas.toDataURL('image/webp', 0.5);
+        emitDataToDefender(imgSrc, flag, socket);
+      }
     });
   }
 }
