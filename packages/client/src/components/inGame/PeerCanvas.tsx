@@ -88,7 +88,7 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
         capturedPoseRef.current.style.visibility = 'visible';
 
         getPeerPose();
-        capturePose(videoRef.current, capturedPoseRef.current); //temp
+        capturePose(videoRef.current, capturedPoseRef.current, 0); //temp
 
         capturedPoseRef.current.width = videoRef.current.width;
         capturedPoseRef.current.height = videoRef.current.height;
@@ -101,6 +101,14 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
         capturedPoseRef.current.style.visibility = 'hidden';
       }
     }
+
+    if (game.isOffender && game.stage === GameStage.OFFEND_ANNOUNCEMENT) {
+      if (videoRef.current !== null && capturedPoseRef.current !== null) {
+        capturePose(videoRef.current, capturedPoseRef.current, 1);
+        capturedPoseRef.current.style.visibility = 'hidden'; // 임시로 캡처하고 바로 가려버림
+      }
+    }
+    // 사진 잠깐 보여주는 GameStage 요망
   }, [game.stage]);
 
   useEffect(() => {

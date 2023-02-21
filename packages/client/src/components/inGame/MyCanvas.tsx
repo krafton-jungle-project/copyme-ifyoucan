@@ -84,7 +84,7 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
         capturedPoseRef.current.style.visibility = 'visible';
 
         getMyPose();
-        capturePose(videoRef.current, capturedPoseRef.current); //temp
+        capturePose(videoRef.current, capturedPoseRef.current, 0); //temp
 
         capturedPoseRef.current.width = videoRef.current.width;
         capturedPoseRef.current.height = videoRef.current.height;
@@ -95,6 +95,13 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
     ) {
       if (capturedPoseRef.current !== null) {
         capturedPoseRef.current.style.visibility = 'hidden';
+      }
+    }
+
+    if (!game.isOffender && game.stage === GameStage.OFFEND_ANNOUNCEMENT) {
+      if (videoRef.current !== null && capturedPoseRef.current !== null) {
+        capturePose(videoRef.current, capturedPoseRef.current, 1);
+        capturedPoseRef.current.style.visibility = 'hidden'; // 임시로 사진 보내고 바로 가려버림
       }
     }
   }, [game.stage]);
