@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { gameAtom, GameStatus } from '../../app/game';
+import { gameAtom, GameStatus } from '../../../app/game';
 import MyGameBox from './MyGameBox';
 import PeerGameBox from './PeerGameBox';
 import Versus from './Versus';

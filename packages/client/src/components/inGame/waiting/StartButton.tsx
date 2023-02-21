@@ -1,14 +1,13 @@
 import styled from 'styled-components';
-import StartButtonImg from '../../assets/images/start-button-activated.png';
-import DeStartButtonImg from '../../assets/images/start-button-deactivated.png';
+import StartButtonImg from '../../../assets/images/start-button-activated.png';
+import DeStartButtonImg from '../../../assets/images/start-button-deactivated.png';
 import { useAtomValue } from 'jotai';
-import { peerAtom } from '../../app/peer';
-import { roomIdAtom } from '../../app/atom';
-import { useClientSocket } from '../../module/client-socket';
-import { gameAtom, GameStatus } from '../../app/game';
+import { peerAtom } from '../../../app/peer';
+import { roomIdAtom } from '../../../app/atom';
+import { useClientSocket } from '../../../module/client-socket';
+import { gameAtom, GameStatus } from '../../../app/game';
 import { useEffect, useState } from 'react';
 import SetReadyState from './SetReadyState';
-import SetPeerReadyState from './SetReadyState';
 
 const Button = styled.button<{ isReady: boolean; isStart: boolean }>`
   background-color: ${(props) => (props.isReady ? '#652a2a' : 'grey')};

@@ -1,23 +1,23 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { gameAtom, GameStage, GameStatus, myPoseAtom } from '../../app/game';
-import { comparePoses } from '../../utils/pose-similarity';
-import { detector } from '../../utils/tfjs-movenet';
-import { useInterval } from './hooks/useInterval';
+import { gameAtom, GameStage, GameStatus, peerPoseAtom } from '../../../app/game';
+import { comparePoses } from '../../../utils/pose-similarity';
+import { detector } from '../../../utils/tfjs-movenet';
+import { useInterval } from '../hooks/useInterval';
 
 const Container = styled.div`
   position: absolute;
-  background-color: blue;
-  border: 5px solid blue;
+  background-color: red;
+  border: 5px solid red;
   box-sizing: border-box;
-  left: 0%;
+  left: calc(100% * (7 / 8) + 100% * (1 / 8) * (1 / 5));
   width: calc(100% * (1 / 8) * (4 / 5));
   height: 100%;
 `;
 
 const ScoreBar = styled.div<{ isInit: boolean; isStart: boolean; score: number }>`
-  background-color: #5d5c78;
+  background-color: #a66868;
   width: 100%;
   height: ${(props) => `${(100 - props.score).toString()}%`};
   transition-property: height;
@@ -25,17 +25,17 @@ const ScoreBar = styled.div<{ isInit: boolean; isStart: boolean; score: number }
   transition-duration: ${(props) => (props.isInit ? '0.7s' : '0.5s')};
 `;
 
-function PeerScoreBar({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoElement> }) {
+function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement> }) {
   const game = useAtomValue(gameAtom);
-  const myPose = useAtomValue(myPoseAtom);
+  const peerPose = useAtomValue(peerPoseAtom);
   const [score, setScore] = useState(0);
   const [delay, setDelay] = useState<number | null>(null);
   const [isStart, setIsStart] = useState(false);
   const [isInit, setIsInit] = useState(true);
 
-  const getPeerPose = async () => {
-    if (peerVideoRef.current) {
-      const myPoses = await detector.estimatePoses(peerVideoRef.current);
+  const getMyPose = async () => {
+    if (myVideoRef.current) {
+      const myPoses = await detector.estimatePoses(myVideoRef.current);
       if (myPoses && myPoses.length > 0) {
         return myPoses[0];
       }
@@ -43,14 +43,15 @@ function PeerScoreBar({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVide
   };
 
   useInterval(async () => {
-    const peerPose = await getPeerPose();
+    const myPose = await getMyPose();
     if (myPose && peerPose) {
       setScore(comparePoses(myPose, peerPose));
+      console.log('상대 방어');
     }
   }, delay);
 
   useEffect(() => {
-    if (game.isOffender && game.stage === GameStage.DEFEND_COUNTDOWN) {
+    if (!game.isOffender && game.stage === GameStage.DEFEND_COUNTDOWN) {
       setDelay(500);
     } else {
       if (game.stage !== GameStage.DEFEND_COUNTDOWN) {
@@ -78,4 +79,4 @@ function PeerScoreBar({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVide
   );
 }
 
-export default PeerScoreBar;
+export default MyScoreBar;

@@ -1,23 +1,23 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { gameAtom, GameStatus } from '../../app/game';
-import MyCanvas from './MyCanvas';
-import MyScoreBar from './MyScoreBar';
+import { gameAtom, GameStatus } from '../../../app/game';
+import PeerCanvas from './PeerCanvas';
+import PeerScoreBar from './PeerScoreBar';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
   box-sizing: border-box;
   border: 5px solid yellowgreen;
-  left: ${(props) => (props.isStart ? '0%' : '-50%')};
+  right: ${(props) => (props.isStart ? '0%' : '-50%')};
   height: 100%;
-  aspect-ratio: 8/7;
-  transition-property: left;
+  aspect-ratio: 8/7; /* 4 * (8 / 7) : 3 */
+  transition-property: right;
   transition-delay: 0.5s;
   transition-duration: 0.5s;
 `;
 
-function MyGameBox() {
+function PeerGameBox() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const game = useAtomValue(gameAtom);
   const [isStart, setIsStart] = useState(false);
@@ -28,10 +28,10 @@ function MyGameBox() {
 
   return (
     <Container isStart={isStart}>
-      <MyCanvas myVideoRef={videoRef} />
-      <MyScoreBar myVideoRef={videoRef} />
+      <PeerCanvas peerVideoRef={videoRef} />
+      <PeerScoreBar peerVideoRef={videoRef} />
     </Container>
   );
 }
 
-export default MyGameBox;
+export default PeerGameBox;

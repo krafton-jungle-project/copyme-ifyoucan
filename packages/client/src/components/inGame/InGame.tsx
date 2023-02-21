@@ -1,14 +1,14 @@
 import Announcer from './Announcer';
 import MyVideo from './MyVideo';
 import PeerVideo from './PeerVideo';
-import ReadyButton from './ReadyButton';
+import ReadyButton from './waiting/ReadyButton';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { hostAtom } from '../../app/atom';
-import StartButton from './StartButton';
+import StartButton from './waiting/StartButton';
 import { gameAtom } from '../../app/game';
 import { useEffect } from 'react';
-import HardPoses from './HardPoses';
-import GameBox from './GameBox';
+import HardPoses from './game/HardPoses';
+import GameBox from './game/GameBox';
 import Chat from './waiting/Chat';
 
 function InGame() {

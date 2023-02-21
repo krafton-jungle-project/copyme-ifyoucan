@@ -1,8 +1,8 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { gameAtom, GameStatus } from '../../app/game';
-import HardPosesImg from '../../assets/images/hard-poses-white.png';
+import { gameAtom, GameStatus } from '../../../app/game';
+import HardPosesImg from '../../../assets/images/hard-poses-white.png';
 
 const Img = styled.img<{ isStart: boolean }>`
   position: absolute;

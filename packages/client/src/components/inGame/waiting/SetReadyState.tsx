@@ -1,12 +1,12 @@
-import * as movenet from '../../utils/tfjs-movenet';
-import { useClientSocket } from '../../module/client-socket';
-import { isLeftHandUp } from '../../utils/pose-recognition';
+import * as movenet from '../../../utils/tfjs-movenet';
+import { useClientSocket } from '../../../module/client-socket';
+import { isLeftHandUp } from '../../../utils/pose-recognition';
 import { useAtom, useAtomValue } from 'jotai';
-import { gameAtom, GameStatus, myPoseAtom } from '../../app/game';
-import { peerAtom } from '../../app/peer';
-import { useInterval } from './hooks/useInterval';
-import { hostAtom, roomIdAtom } from '../../app/atom';
-import { gunReload } from '../../utils/sound';
+import { gameAtom, GameStatus, myPoseAtom } from '../../../app/game';
+import { peerAtom } from '../../../app/peer';
+import { useInterval } from '../hooks/useInterval';
+import { hostAtom, roomIdAtom } from '../../../app/atom';
+import { gunReload } from '../../../utils/sound';
 
 function SetReadyState(isReady?: boolean, setIsReady?: any) {
   const { socket } = useClientSocket();

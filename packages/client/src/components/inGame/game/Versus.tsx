@@ -1,8 +1,8 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { gameAtom, GameStatus } from '../../app/game';
-import VersusImg from '../../assets/images/versus.png';
+import { gameAtom, GameStatus } from '../../../app/game';
+import VersusImg from '../../../assets/images/versus.png';
 
 const VS = styled.img<{ isStart: boolean }>`
   position: absolute;

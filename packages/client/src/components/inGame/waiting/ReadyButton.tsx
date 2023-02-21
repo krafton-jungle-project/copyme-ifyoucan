@@ -1,13 +1,13 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { roomIdAtom } from '../../app/atom';
-import { gameAtom, GameStatus } from '../../app/game';
-import ReadyButtonImg from '../../assets/images/ready-button-activated.png';
-import UnReadyButtonImg from '../../assets/images/ready-button-deactivated.png';
-import { useClientSocket } from '../../module/client-socket';
+import { roomIdAtom } from '../../../app/atom';
+import { gameAtom, GameStatus } from '../../../app/game';
+import ReadyButtonImg from '../../../assets/images/ready-button-activated.png';
+import UnReadyButtonImg from '../../../assets/images/ready-button-deactivated.png';
+import { useClientSocket } from '../../../module/client-socket';
 import SetReadyState from './SetReadyState';
-import { gunReload } from '../../utils/sound';
+import { gunReload } from '../../../utils/sound';
 
 const Button = styled.button<{ isReady: boolean; isStart: boolean }>`
   background-color: ${(props) => (props.isReady ? 'grey' : '#652a2a')};

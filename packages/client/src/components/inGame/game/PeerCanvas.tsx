@@ -1,15 +1,16 @@
-import { useEffect, useRef } from 'react';
-import * as moveNet from '../../utils/tfjs-movenet';
+import { useEffect, useRef, useState } from 'react';
+import * as moveNet from '../../../utils/tfjs-movenet';
 import styled from 'styled-components';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { gameAtom, GameStage, myPoseAtom } from '../../app/game';
-import { capturePose } from '../../utils/capture-pose';
-import * as movenet from '../../utils/tfjs-movenet';
+import { peerAtom } from '../../../app/peer';
+import { gameAtom, GameStage, GameStatus, peerPoseAtom } from '../../../app/game';
+import { capturePose } from '../../../utils/capture-pose';
+import * as movenet from '../../../utils/tfjs-movenet';
 
 const Container = styled.div`
   position: absolute;
   box-sizing: border-box;
-  left: 0%;
+  right: 0%;
   width: calc(100% * (7 / 8));
   height: 100%;
 `;
@@ -18,7 +19,7 @@ const Video = styled.video`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
   position: absolute;
-  border: 5px solid red;
+  border: 5px solid blue;
   box-sizing: border-box;
   object-fit: cover;
   /* visibility: hidden; */
@@ -26,9 +27,9 @@ const Video = styled.video`
   height: 100%;
 `;
 
-const Canvas = styled.canvas`
+const Canvas = styled.canvas<{ isStart: boolean }>`
   position: absolute;
-  border: 5px solid red;
+  border: 5px solid blue;
   box-sizing: border-box;
   object-fit: cover;
   visibility: hidden;
@@ -39,51 +40,54 @@ const Canvas = styled.canvas`
 const CapturedPose = styled.canvas`
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
-  border: 5px solid red;
+  position: absolute;
+  border: 5px solid blue;
   box-sizing: border-box;
   object-fit: cover;
-  position: absolute;
   width: 100%;
   height: 100%;
 `;
 
-function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement> }) {
-  const videoRef = myVideoRef;
+function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoElement> }) {
+  const videoRef = peerVideoRef;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const capturedPoseRef = useRef<HTMLCanvasElement>(null);
 
+  const peer = useAtomValue(peerAtom);
   const game = useAtomValue(gameAtom);
-  const setMyPose = useSetAtom(myPoseAtom);
+  const setPeerPose = useSetAtom(peerPoseAtom);
+  const [isStart, setIsStart] = useState(false);
 
   useEffect(() => {
-    if (videoRef.current === null || canvasRef.current === null) return;
+    if (videoRef.current === null || canvasRef.current === null || peer.stream === null) return;
 
     const elements = {
       video: videoRef.current,
       canvas: canvasRef.current,
     };
-
-    moveNet.myCanvasRender({
+    moveNet.peerCanvasRender({
       size: { width: 640, height: 480 },
       element: elements,
+      peerStream: peer.stream,
     });
 
     return () => {
-      cancelAnimationFrame(moveNet.myRafId);
+      cancelAnimationFrame(moveNet.peerRafId);
     };
-  }, []);
+  }, [peer.stream]);
 
   useEffect(() => {
-    const getMyPose = async () => {
-      const poses = await movenet.detector.estimatePoses(movenet.myCamera.video);
-      setMyPose(poses[0]);
+    const getPeerPose = async () => {
+      const poses = await movenet.detector.estimatePoses(movenet.peerCamera.video);
+      // setGame((prev) => ({ ...prev, capturedPose: poses[0] }));
+      setPeerPose(poses[0]);
     };
 
-    if (game.isOffender && game.stage === GameStage.DEFEND_ANNOUNCEMENT) {
+    if (!game.isOffender && game.stage === GameStage.DEFEND_ANNOUNCEMENT) {
       if (videoRef.current !== null && capturedPoseRef.current !== null) {
         capturedPoseRef.current.style.visibility = 'visible';
 
-        getMyPose();
+        getPeerPose();
         capturePose(videoRef.current, capturedPoseRef.current); //temp
 
         capturedPoseRef.current.width = videoRef.current.width;
@@ -99,13 +103,17 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
     }
   }, [game.stage]);
 
+  useEffect(() => {
+    setIsStart(game.status !== GameStatus.WAITING);
+  }, [game.status]);
+
   return (
     <Container>
-      <Video ref={videoRef}></Video>
-      <Canvas ref={canvasRef}></Canvas>
+      <Video ref={videoRef} />
+      <Canvas isStart={isStart} ref={canvasRef} />
       <CapturedPose ref={capturedPoseRef} />
     </Container>
   );
 }
 
-export default MyCanvas;
+export default PeerCanvas;
