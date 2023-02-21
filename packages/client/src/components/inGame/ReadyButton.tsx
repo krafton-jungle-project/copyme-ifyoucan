@@ -51,7 +51,7 @@ function ReadyButton() {
     setIsReady(!isReady);
   }
 
-  SetReadyState(isReady, setIsReady);
+  // SetReadyState(isReady, setIsReady);
 
   return (
     <Button onClick={onReady} isReady={isReady} isStart={isStart}>
