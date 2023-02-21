@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { gameAtom, GameStage, GameStatus, peerPoseAtom } from '../../app/game';
+import { useClientSocket } from '../../module/client-socket';
 import { comparePoses } from '../../utils/pose-similarity';
 import { detector } from '../../utils/tfjs-movenet';
 import { useInterval } from './hooks/useInterval';
@@ -32,6 +33,7 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
   const [delay, setDelay] = useState<number | null>(null);
   const [isStart, setIsStart] = useState(false);
   const [isInit, setIsInit] = useState(true);
+  const { socket } = useClientSocket();
 
   const getMyPose = async () => {
     if (myVideoRef.current) {
@@ -42,10 +44,21 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     }
   };
 
+  //! 기존 코드
+  // useInterval(async () => {
+  //   const myPose = await getMyPose();
+  //   if (myPose && peerPose) {
+  //     setScore(comparePoses(myPose, peerPose));
+  //     console.log('상대 방어');
+  //   }
+  // }, delay);
+
   useInterval(async () => {
     const myPose = await getMyPose();
     if (myPose && peerPose) {
-      setScore(comparePoses(myPose, peerPose));
+      const myScore = comparePoses(myPose, peerPose);
+      socket.emit('score', myScore);
+      setScore(myScore);
       console.log('상대 방어');
     }
   }, delay);
