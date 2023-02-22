@@ -15,7 +15,7 @@ interface MovenetParam {
 
 const POSE_DETECTION_MODEL = poseDetection.SupportedModels.MoveNet; // 이미지로 부터 자세를 추정하는 모델: TensorFlow Movenet
 const POSE_DETECTION_MODEL_TYPE = poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING; // 모델 상세 타입: Single Pose(한 명), Lightning(정확도 보단 인식 속도에 중점)
-const SCORE_THRESSHOLD = 0.3; // key point의 score(인식 정확도)의 최소 인정 기준 (score: 0 ~ 1)
+export const SCORE_THRESSHOLD = 0.3; // key point의 score(인식 정확도)의 최소 인정 기준 (score: 0 ~ 1)
 
 const KEYPOINT_COLOR_ROUND = 'white'; // 원으로 표현되는 key point의 둘레 색상
 const SKELEOTON_COLOR = 'white'; // 골격의 색상

@@ -8,8 +8,7 @@ import { peerAtom } from '../../../app/peer';
 import MyVideo from './MyVideo';
 import PeerVideo from './PeerVideo';
 import Chatting from './Chatting';
-import ReadyButton, { imReadyAtom } from './ReadyButton';
-import StartButton from './StartButton';
+import { imReadyAtom } from '../Logo';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -90,7 +89,6 @@ function WaitingBox() {
         </ReadyState>
       </Wrapper>
       {/* <Chatting /> */}
-      {imHost ? <StartButton /> : <ReadyButton />} {/* temp */}
     </Container>
   );
 }
