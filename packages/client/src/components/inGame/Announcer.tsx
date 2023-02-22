@@ -15,7 +15,18 @@ const Container = styled.div`
   width: 70%;
   height: 100%;
   font-size: 50px;
-  font-weight: 800;
+  font-weight: 400;
+
+  border: 0.2rem solid #fff;
+  border-radius: 2rem;
+  padding: 0.4em;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
+    0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
+
+  color: #fff;
+  text-shadow: /* White glow */ 0 0 5px #fff, 0 0 20px #fff, 0 0 50px #fff,
+    /* Green glow */ 0 0 42px #bc13fe, 0 0 120px #bc13fe, 0 0 92px #bc13fe, 0 0 102px #bc13fe,
+    0 0 151px #bc13fe;
 `;
 
 let messageOrder: number;

@@ -11,11 +11,7 @@ const Container = styled.div`
 `;
 
 function Logo() {
-  return (
-    <Container>
-      <h2>LOGO</h2> {/* temp */}
-    </Container>
-  );
+  return <Container></Container>;
 }
 
 export default Logo;

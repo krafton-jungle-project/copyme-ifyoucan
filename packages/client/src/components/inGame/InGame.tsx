@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { gameAtom, GameStatus } from '../../app/game';
 import { useEffect } from 'react';
+import SetReadyState from './waiting/SetReadyState';
 
 const Container = styled.div`
   position: absolute;
