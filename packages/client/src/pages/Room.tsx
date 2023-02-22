@@ -7,7 +7,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import { peerAtom } from '../app/peer';
 import { useResetAtom } from 'jotai/utils';
 import ConnectWebRTC from '../components/inGame/ConnectWebRTC';
-import GameSocket from '../components/inGame/GameSocket';
+import GameSocket from '../components/inGame/GameEventHandler';
 
 import { useClientSocket } from '../module/client-socket';
 import { myNickNameAtom, roomIdAtom } from '../app/atom';

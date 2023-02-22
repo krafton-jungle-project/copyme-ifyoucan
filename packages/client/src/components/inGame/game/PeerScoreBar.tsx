@@ -63,20 +63,22 @@ const ScorePercent = styled.div`
   color: #3366ff;
 `;
 
-function PeerScoreBar({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoElement> }) {
+function PeerScoreBar() {
   const game = useAtomValue(gameAtom);
   const peer = useAtomValue(peerAtom);
   const isStart = useAtomValue(isStartAtom);
   const [isInit, setIsInit] = useState(true);
 
-  //todo: 시작 때 스코어바 움직이기 더 쉬운 방법으로..
+  //todo: 조금 더 효율적으로 할 방법 생각(게임 시작 시 스코어바 이펙트)
   useEffect(() => {
+    // 초기화(시작 이펙트)
     if (game.status === GameStatus.WAITING) {
       setIsInit(true);
-    } else if (game.status === GameStatus.GAME) {
-      if (game.stage === GameStage.DEFEND_COUNTDOWN) {
-        setIsInit(false);
-      }
+    }
+
+    // 게임중에는 빠르게 변화
+    if (game.stage !== GameStage.INITIAL) {
+      setIsInit(false);
     }
   }, [game.status, game.stage]);
 

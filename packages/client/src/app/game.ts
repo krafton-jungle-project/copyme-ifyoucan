@@ -9,33 +9,29 @@ export enum GameStatus {
 }
 
 export enum GameStage {
-  GAME_SETTING,
-  INITIAL_ANNOUNCEMENT,
-  OFFEND_ANNOUNCEMENT,
-  OFFEND_COUNTDOWN,
-  DEFEND_ANNOUNCEMENT,
-  DEFEND_COUNTDOWN,
+  INITIAL,
+  ROUND,
+  OFFEND,
+  DEFEND,
 }
 
 // Standard interface and functions
 export interface GameState {
   status: GameStatus;
-  isOffender: boolean;
-  stage: number;
   round: number;
+  stage: number;
+  isOffender: boolean;
 }
 
 const initialState: GameState = {
   status: GameStatus.WAITING,
+  round: 1,
+  stage: GameStage.INITIAL,
   isOffender: false,
-  stage: GameStage.INITIAL_ANNOUNCEMENT,
-  round: 0,
 };
 
 export const gameAtom = atomWithReset(initialState);
-
 export const messageAtom = atom('');
-
-export const myPoseAtom = atom<Pose | undefined>(undefined);
-
 export const peerPoseAtom = atom<Pose | undefined>(undefined);
+export const countDownAtom = atom(-1);
+export const myScoreAtom = atom(0);

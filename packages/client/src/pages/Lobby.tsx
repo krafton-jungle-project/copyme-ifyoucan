@@ -29,8 +29,9 @@ const nickNameArr = [
   '홀란드',
   '덕배',
   '메시',
-  '호날두',
+  '즐라탄',
   '소니',
+  '모드리치'
 ];
 
 const randomIdx = Math.floor(Math.random() * 10);

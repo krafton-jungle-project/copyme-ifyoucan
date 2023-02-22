@@ -2,8 +2,7 @@ import styled from 'styled-components';
 import { useEffect, useRef } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { peerAtom } from '../../../app/peer';
-import { gameAtom, GameStage, peerPoseAtom } from '../../../app/game';
-import { isStartAtom } from '../InGame';
+import { countDownAtom, gameAtom, GameStage, peerPoseAtom } from '../../../app/game';
 import * as moveNet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
 import { imHostAtom } from '../../../app/atom';
@@ -56,9 +55,9 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
   const peer = useAtomValue(peerAtom);
   const game = useAtomValue(gameAtom);
   const host = useAtomValue(imHostAtom);
-  // const isStart = useAtomValue(isStartAtom);
   const setPeerPose = useSetAtom(peerPoseAtom);
   const { socket } = useClientSocket();
+  const countDown = useAtomValue(countDownAtom);
 
   useEffect(() => {
     if (videoRef.current === null || canvasRef.current === null || peer.stream === null) return;
@@ -82,48 +81,48 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
   useEffect(() => {
     const getPeerPose = async () => {
       const poses = await moveNet.detector.estimatePoses(moveNet.peerCamera.video);
-      // setGame((prev) => ({ ...prev, capturedPose: poses[0] }));
       setPeerPose(poses[0]);
     };
 
-    if (!game.isOffender && game.stage === GameStage.DEFEND_ANNOUNCEMENT) {
-      if (videoRef.current !== null && capturedPoseRef.current !== null) {
-        capturedPoseRef.current.style.visibility = 'visible';
+    // 카운트다운 0초일 때,
+    if (countDown === 0) {
+      // 공격 스테이지에서, 내가 수비자면 상대 공격을 캡쳐 또는
+      // 수비 스테이지에서, 내가 공격자면 상대 수비를 캡쳐
+      if (
+        (game.stage === GameStage.OFFEND && !game.isOffender) ||
+        (game.stage === GameStage.DEFEND && game.isOffender)
+      ) {
+        if (videoRef.current !== null && capturedPoseRef.current !== null) {
+          // 내 수비 점수 확인을 위한 공격자(상대) 포즈 추정
+          if (!game.isOffender) {
+            getPeerPose();
+          }
 
-        getPeerPose();
-        if (host) {
-          // 호스트가 수비자일 때 peer의 공격을 캡쳐
-          capturePose(videoRef.current, capturedPoseRef.current, 0, socket); //temp
-        } else {
-          // 호스트가 아닌 플레이어가 수비자일 때 peer의 공격을 캡쳐
-          capturePose(videoRef.current, capturedPoseRef.current, 0); //temp
+          //todo: 제희만 믿는다...2
+          if (host) {
+            capturePose(videoRef.current, capturedPoseRef.current, game.isOffender ? 1 : 0, socket);
+          } else {
+            capturePose(videoRef.current, capturedPoseRef.current, game.isOffender ? 1 : 0);
+          }
+
+          capturedPoseRef.current.width = videoRef.current.width;
+          capturedPoseRef.current.height = videoRef.current.height;
+          capturedPoseRef.current.style.visibility = 'visible';
         }
-
-        capturedPoseRef.current.width = videoRef.current.width;
-        capturedPoseRef.current.height = videoRef.current.height;
       }
-    } else if (
-      game.stage !== GameStage.DEFEND_ANNOUNCEMENT &&
-      game.stage !== GameStage.DEFEND_COUNTDOWN
-    ) {
-      if (capturedPoseRef.current !== null) {
-        capturedPoseRef.current.style.visibility = 'hidden';
+
+      //todo: 캡쳐한 수비사진을, 공격자의 캡쳐한 사진과 짧게 비교
+      if (game.stage === GameStage.DEFEND) {
+        //todo: 공수 비교 이펙트
+        setTimeout(() => {
+          if (videoRef.current !== null && capturedPoseRef.current !== null) {
+            //todo: 공수 비교 이펙트 끝나고 다시 사진 감추기
+            capturedPoseRef.current.style.visibility = 'hidden';
+          }
+        }, 1000);
       }
     }
-
-    if (!game.isOffender && game.stage === GameStage.OFFEND_ANNOUNCEMENT) {
-      if (videoRef.current !== null && capturedPoseRef.current !== null) {
-        if (host) {
-          // 호스트가 공격자고 수비가 끝났을 때 peer의 수비를 캡쳐
-          capturePose(videoRef.current, capturedPoseRef.current, 1, socket);
-        } else {
-          // 호스트가 아닌 플레이어가 공격자고, peer의 수비를 캡쳐
-          capturePose(videoRef.current, capturedPoseRef.current, 1);
-        }
-        capturedPoseRef.current.style.visibility = 'hidden'; // 임시로 캡처하고 바로 가려버림
-      }
-    }
-  }, [game.stage]);
+  }, [countDown]);
 
   return (
     <Container>
