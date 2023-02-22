@@ -160,7 +160,6 @@ export default function Login() {
   };
 
   // const registerButton = () => {
-  //   console.log('asaa');
   //   return <SignUpModal show={signUpModalOn} onHide={() => setSignUpModalOn(false)} />;
   //   // navigate('/signup');
   // };

@@ -20,11 +20,7 @@ function ExitButton() {
     navigate('/', { replace: true });
   };
 
-  return (
-    <Container onClick={exitRoom}>
-      <h2>EXIT</h2> {/* temp */}
-    </Container>
-  );
+  return <Container onClick={exitRoom}></Container>;
 }
 
 export default ExitButton;
