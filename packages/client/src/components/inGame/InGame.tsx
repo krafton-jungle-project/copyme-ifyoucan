@@ -8,9 +8,10 @@ import { useEffect } from 'react';
 
 const Container = styled.div`
   position: absolute;
-  top: 5%;
-  left: 2.5%;
-  width: 95%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
   height: 90%;
 `;
 
