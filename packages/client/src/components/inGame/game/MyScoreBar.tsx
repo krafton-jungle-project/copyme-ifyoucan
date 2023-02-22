@@ -6,6 +6,7 @@ import { comparePoses } from '../../../utils/pose-similarity';
 import { detector } from '../../../utils/tfjs-movenet';
 import { useInterval } from '../hooks/useInterval';
 import { isStartAtom } from '../InGame';
+import { useClientSocket } from '../../../module/client-socket';
 
 const Container = styled.div`
   position: absolute;
@@ -72,6 +73,8 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
   const [delay, setDelay] = useState<number | null>(null);
   const isStart = useAtomValue(isStartAtom);
   const [isInit, setIsInit] = useState(true);
+  const [isDefender, setIsDefender] = useState(false);
+  const { socket } = useClientSocket();
 
   const getMyPose = async () => {
     if (myVideoRef.current) {
@@ -85,21 +88,24 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
   useInterval(async () => {
     const myPose = await getMyPose();
     if (myPose && peerPose) {
-      setScore(comparePoses(myPose, peerPose));
-      console.log('상대 방어');
+      const tempScore = comparePoses(myPose, peerPose);
+      socket.emit('score', tempScore);
+      setScore(tempScore);
     }
   }, delay);
 
-  //todo: 시작 때 스코어바 움직이기 더 쉬운 방법으로..
   useEffect(() => {
     if (!game.isOffender && game.stage === GameStage.DEFEND_COUNTDOWN) {
       setDelay(500);
+      setIsDefender(true);
     } else {
-      if (game.stage !== GameStage.DEFEND_COUNTDOWN) {
+      if (game.stage === GameStage.OFFEND_ANNOUNCEMENT && isDefender) {
         setDelay(null);
+        socket.emit('round_score', score);
+        setIsDefender(false);
       }
     }
-  }, [game.isOffender, game.stage]);
+  }, [game.stage]);
 
   useEffect(() => {
     if (game.status === GameStatus.WAITING) {

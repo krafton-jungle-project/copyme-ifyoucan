@@ -72,12 +72,15 @@ function Announcer() {
             }
           }
         } else {
+          // 게임 끝
           console.log('round 끝');
-          setGame((prev) => ({
-            ...prev,
-            // status: GameStatus.RESULT,
-            status: GameStatus.WAITING,
-          }));
+          setTimeout(() => {
+            setGame((prev) => ({
+              ...prev,
+              // status: GameStatus.RESULT,
+              status: GameStatus.WAITING,
+            }));
+          }, 1000);
         }
         break;
       case GameStage.DEFEND_ANNOUNCEMENT:

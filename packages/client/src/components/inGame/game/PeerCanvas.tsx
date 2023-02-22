@@ -6,6 +6,8 @@ import { gameAtom, GameStage, peerPoseAtom } from '../../../app/game';
 import { isStartAtom } from '../InGame';
 import * as moveNet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
+import { imHostAtom } from '../../../app/atom';
+import { useClientSocket } from '../../../module/client-socket';
 
 const Container = styled.div`
   position: absolute;
@@ -53,8 +55,10 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
 
   const peer = useAtomValue(peerAtom);
   const game = useAtomValue(gameAtom);
-  const isStart = useAtomValue(isStartAtom);
+  const host = useAtomValue(imHostAtom);
+  // const isStart = useAtomValue(isStartAtom);
   const setPeerPose = useSetAtom(peerPoseAtom);
+  const { socket } = useClientSocket();
 
   useEffect(() => {
     if (videoRef.current === null || canvasRef.current === null || peer.stream === null) return;
@@ -87,7 +91,13 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
         capturedPoseRef.current.style.visibility = 'visible';
 
         getPeerPose();
-        capturePose(videoRef.current, capturedPoseRef.current); //temp
+        if (host) {
+          // 호스트가 수비자일 때 peer의 공격을 캡쳐
+          capturePose(videoRef.current, capturedPoseRef.current, 0, socket); //temp
+        } else {
+          // 호스트가 아닌 플레이어가 수비자일 때 peer의 공격을 캡쳐
+          capturePose(videoRef.current, capturedPoseRef.current, 0); //temp
+        }
 
         capturedPoseRef.current.width = videoRef.current.width;
         capturedPoseRef.current.height = videoRef.current.height;
@@ -98,6 +108,19 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
     ) {
       if (capturedPoseRef.current !== null) {
         capturedPoseRef.current.style.visibility = 'hidden';
+      }
+    }
+
+    if (game.isOffender && game.stage === GameStage.OFFEND_ANNOUNCEMENT) {
+      if (videoRef.current !== null && capturedPoseRef.current !== null) {
+        if (host) {
+          // 호스트가 공격자고 수비가 끝났을 때 peer의 수비를 캡쳐
+          capturePose(videoRef.current, capturedPoseRef.current, 1, socket);
+        } else {
+          // 호스트가 아닌 플레이어가 공격자고, peer의 수비를 캡쳐
+          capturePose(videoRef.current, capturedPoseRef.current, 1);
+        }
+        capturedPoseRef.current.style.visibility = 'hidden'; // 임시로 캡처하고 바로 가려버림
       }
     }
   }, [game.stage]);
