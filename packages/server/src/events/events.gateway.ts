@@ -150,6 +150,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   gameStart(@MessageBody() roomId: string): void {
     if (!this.rooms[roomId].started) {
       // 게임이 시작하면 모든 유저들에게 게임이 시작됐다는 이벤트 발생
+      console.log('start');
       this.rooms[roomId].started = true;
       this.server.in(roomId).emit('get_start');
     }
@@ -291,16 +292,16 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         clearInterval(intervalId);
       }
     }, 2000);
-
-    //! 게임 시작 상태 변경
-    this.rooms[roomId].started = false;
   }
 
   //! 게임 끝
   @SubscribeMessage('finish')
-  finish(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() roomId: string): void {
+  finish(@ConnectedSocket() socket: ServerToClientSocket): void {
     // 방에 모든 유저들에게 게임이 끝났다고 알려줌
-    socket.to(roomId).emit('get_finish');
+    const roomId = this.userToRoom[socket.id];
+    //! 게임 시작 상태 변경
+    this.rooms[roomId].started = false;
+    this.server.to(roomId).emit('get_finish');
   }
 
   //! 방에 새로운 유저 join

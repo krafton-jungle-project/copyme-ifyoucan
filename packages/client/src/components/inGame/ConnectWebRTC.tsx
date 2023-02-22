@@ -152,7 +152,7 @@ const ConnectWebRTC = () => {
 
     //! 유저가 나갔을 시
     socket.on('user_exit', () => {
-      console.log('user_exit');
+      // console.log('user_exit');
       if (!pcRef.current) return;
       pcRef.current.close();
       resetPeer();
