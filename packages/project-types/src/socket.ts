@@ -53,7 +53,7 @@ export interface ClientToServerEvents {
   rooms: () => void;
   create_room: (roomName: string) => void;
   join_room: (data: { roomId: string; nickName: string }) => void;
-  exit_room: () => void;
+  exit_room: (nickName: string) => void;
   ready: (roomId: string) => void;
   unready: (roomId: string) => void;
   start: (roomId: string) => void;

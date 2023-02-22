@@ -46,7 +46,7 @@ function Room() {
     return () => {
       resetPeer();
       resetGame();
-      socket.emit('exit_room');
+      socket.emit('exit_room', nickName);
       window.location.reload();
     };
   }, [resetPeer, resetGame, socket]);

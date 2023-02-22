@@ -301,7 +301,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 방에서 유저 exit
   @SubscribeMessage('exit_room')
-  exitRoom(@ConnectedSocket() socket: ServerToClientSocket): void {
+  exitRoom(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() nickName: string): void {
     const roomId = this.userToRoom[socket.id];
     if (!roomId) return;
     socket.leave(roomId);
@@ -314,6 +314,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.logger.log(`roomId: ${roomId} 삭제`);
       } else {
         socket.to(roomId).emit('user_exit');
+        socket.to(roomId).emit('message', {
+          userId: '',
+          message: `${nickName}가 나갔습니다.`,
+          isImg: false,
+        });
       }
     }
     // 모든 클라이언트에게 업데이트 된 방 정보 전달
