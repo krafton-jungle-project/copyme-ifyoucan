@@ -1,52 +1,47 @@
-import { useEffect, useRef } from 'react';
-import * as moveNet from '../../utils/tfjs-movenet';
 import styled from 'styled-components';
+import { useEffect, useRef } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { gameAtom, GameStage, myPoseAtom } from '../../app/game';
-import { capturePose } from '../../utils/capture-pose';
-import * as movenet from '../../utils/tfjs-movenet';
-import { hostAtom } from '../../app/atom';
-import { useClientSocket } from '../../module/client-socket';
+import { gameAtom, GameStage, myPoseAtom } from '../../../app/game';
+import * as moveNet from '../../../utils/tfjs-movenet';
+import { capturePose } from '../../../utils/capture-pose';
 
 const Container = styled.div`
   position: absolute;
-  box-sizing: border-box;
-  left: 0%;
-  width: calc(100% * (7 / 8));
-  height: 100%;
+  top: 50%;
+  transform: translate(0, -50%);
+  width: 100%;
+  height: 80%;
+  border-radius: 20px;
 `;
 
 const Video = styled.video`
+  position: absolute;
+  object-fit: cover;
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
-  position: absolute;
-  border: 5px solid red;
-  box-sizing: border-box;
-  object-fit: cover;
   /* visibility: hidden; */
   width: 100%;
   height: 100%;
+  border-radius: 20px;
 `;
 
 const Canvas = styled.canvas`
   position: absolute;
-  border: 5px solid red;
-  box-sizing: border-box;
   object-fit: cover;
   visibility: hidden;
   width: 100%;
   height: 100%;
+  border-radius: 20px;
 `;
 
 const CapturedPose = styled.canvas`
+  object-fit: cover;
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
-  border: 5px solid red;
-  box-sizing: border-box;
-  object-fit: cover;
   position: absolute;
   width: 100%;
   height: 100%;
+  border-radius: 20px;
 `;
 
 function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement> }) {
@@ -56,8 +51,6 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
 
   const game = useAtomValue(gameAtom);
   const setMyPose = useSetAtom(myPoseAtom);
-  const host = useAtomValue(hostAtom);
-  const { socket } = useClientSocket();
 
   useEffect(() => {
     if (videoRef.current === null || canvasRef.current === null) return;
@@ -79,7 +72,7 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
 
   useEffect(() => {
     const getMyPose = async () => {
-      const poses = await movenet.detector.estimatePoses(movenet.myCamera.video);
+      const poses = await moveNet.detector.estimatePoses(moveNet.myCamera.video);
       setMyPose(poses[0]);
     };
 
@@ -88,11 +81,7 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
         capturedPoseRef.current.style.visibility = 'visible';
 
         getMyPose();
-        if (host) {
-          capturePose(videoRef.current, capturedPoseRef.current, 0, socket); //temp
-        } else {
-          capturePose(videoRef.current, capturedPoseRef.current, 0); //temp
-        }
+        capturePose(videoRef.current, capturedPoseRef.current); //temp
 
         capturedPoseRef.current.width = videoRef.current.width;
         capturedPoseRef.current.height = videoRef.current.height;
@@ -103,17 +92,6 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
     ) {
       if (capturedPoseRef.current !== null) {
         capturedPoseRef.current.style.visibility = 'hidden';
-      }
-    }
-
-    if (!game.isOffender && game.stage === GameStage.OFFEND_ANNOUNCEMENT) {
-      if (videoRef.current !== null && capturedPoseRef.current !== null) {
-        if (host) {
-          capturePose(videoRef.current, capturedPoseRef.current, 1, socket);
-        } else {
-          capturePose(videoRef.current, capturedPoseRef.current, 1);
-        }
-        capturedPoseRef.current.style.visibility = 'hidden'; // 임시로 사진 보내고 바로 가려버림
       }
     }
   }, [game.stage]);

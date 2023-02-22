@@ -10,7 +10,7 @@ import ConnectWebRTC from '../components/inGame/ConnectWebRTC';
 import GameSocket from '../components/inGame/GameSocket';
 
 import { useClientSocket } from '../module/client-socket';
-import { nickNameAtom, roomIdAtom } from '../app/atom';
+import { myNickNameAtom, roomIdAtom } from '../app/atom';
 import { gameAtom } from '../app/game';
 
 //todo 주소로 직접 접근 시 홈(로그인)/로비 페이지로 redirect
@@ -24,7 +24,7 @@ function Room() {
   const resetGame = useResetAtom(gameAtom);
   const { socket } = useClientSocket();
 
-  const nickName = useAtomValue(nickNameAtom);
+  const nickName = useAtomValue(myNickNameAtom);
   const roomId = useAtomValue(roomIdAtom);
 
   ConnectWebRTC();

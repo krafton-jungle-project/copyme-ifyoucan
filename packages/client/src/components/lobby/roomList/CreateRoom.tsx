@@ -2,13 +2,13 @@ import { Button, Modal } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSetAtom } from 'jotai';
-import { hostAtom, roomIdAtom } from '../../../app/atom';
+import { imHostAtom, roomIdAtom } from '../../../app/atom';
 import { useClientSocket } from '../../../module/client-socket';
 
 export default function CreateRoom() {
   const { socket } = useClientSocket();
   const navigate = useNavigate();
-  const setHost = useSetAtom(hostAtom);
+  const setImHost = useSetAtom(imHostAtom);
   const setRoomId = useSetAtom(roomIdAtom);
 
   const [open, setOpen] = useState<boolean>(false);
@@ -19,7 +19,7 @@ export default function CreateRoom() {
     socket.on('new_room', (roomId: string) => {
       // 방 생성자는 호스트가 된다.
       setRoomId(roomId);
-      setHost(true);
+      setImHost(true);
       navigate('/room');
     });
   };
