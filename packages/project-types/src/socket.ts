@@ -4,10 +4,10 @@
  * @see https://socket.io/docs/v4/typescript/
  */
 import type * as poseDetection from '@tensorflow-models/pose-detection';
-// import { IChat } from '../../client/src/components/inGame/waiting/Chat';
 export interface IChat {
-  username: string;
+  userId: string;
   message: string;
+  isImg: boolean;
 }
 
 export interface Rooms {
@@ -59,8 +59,7 @@ export interface ClientToServerEvents {
   start: (roomId: string) => void;
   score: (score: number) => void;
   round_score: (score: number) => void;
-  image: (data: { pose: poseDetection.Pose; imgSrc: string }) => void;
-  image_reset: () => void;
+  result: () => void;
   count_down: (stage: string) => void;
   offer: (data: {
     sdp: RTCSessionDescriptionInit;
@@ -96,6 +95,7 @@ export interface InterServerEvents {
   get_ice: (data: RTCIceCandidate) => void;
   error: () => void;
   full: () => void;
+  message: (chat: IChat) => void;
 }
 
 export interface SocketData {

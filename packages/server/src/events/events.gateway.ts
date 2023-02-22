@@ -126,6 +126,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() socket: ServerToClientSocket,
     @MessageBody() data: [string, string],
   ): void {
+    console.log('image');
     const roomId = this.userToRoom[socket.id];
     this.rooms[roomId].images.push(data);
   }
@@ -135,6 +136,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   scoreHandle(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() score: number): void {
     const roomId = this.userToRoom[socket.id];
     this.rooms[roomId].scores.push(score);
+    console.log(this.rooms[roomId].scores);
   }
 
   //! 수비가 끝났을 시 이벤트를 받는다
@@ -149,7 +151,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   gameStart(@MessageBody() roomId: string): void {
     if (this.rooms[roomId].readyCount === this.rooms[roomId].users.length - 1) {
       // 게임이 시작하면 모든 유저들에게 게임이 시작됐다는 이벤트 발생
-      this.server.in(roomId).emit('get_start'); //todo: 확인필요
+      this.server.in(roomId).emit('get_start');
     }
   }
 
@@ -181,6 +183,66 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 공격자가 공격을 시작하면 수비자들에게 공격이 시작되었다는 이벤트 발생
     const roomId = this.userToRoom[socket.id];
     socket.to(roomId).emit('get_score', score);
+  }
+
+  //! 게임 끝
+  @SubscribeMessage('result')
+  gameResult(@ConnectedSocket() socket: ServerToClientSocket): void {
+    // 방에 모든 유저들에게 게임이 끝났다고 알려줌
+    const roomId = this.userToRoom[socket.id];
+    const scores = this.rooms[roomId].scores;
+    const maxScore = Math.max.apply(null, scores);
+    const minScore = Math.min.apply(null, scores);
+    const bestIdx = scores.indexOf(maxScore);
+    const worstIdx = scores.indexOf(minScore);
+    const resultImg = [];
+    console.log('bestIdx', bestIdx);
+    console.log('worstIdx', worstIdx);
+    console.log(this.rooms[roomId].images.length);
+    this.rooms[roomId].images[bestIdx].forEach((img) => resultImg.push(img));
+    this.rooms[roomId].images[worstIdx].forEach((img) => resultImg.push(img));
+    const users = this.rooms[roomId].users;
+    let idx = 0;
+    const intervalId = setInterval(() => {
+      if (idx < resultImg.length) {
+        if (idx < 2) {
+          if (bestIdx % 2 == 0) {
+            // socket.to(roomId).emit('message', {
+            this.server.in(roomId).emit('message', {
+              userId: users[idx].id,
+              message: resultImg[idx],
+              isImg: true,
+            });
+          } else {
+            // socket.to(roomId).emit('message', {
+            this.server.in(roomId).emit('message', {
+              userId: users[(idx + 1) % 2].id,
+              message: resultImg[idx],
+              isImg: true,
+            });
+          }
+        } else {
+          if (worstIdx % 2 == 0) {
+            // socket.to(roomId).emit('message', {
+            this.server.in(roomId).emit('message', {
+              userId: users[idx % 2].id,
+              message: resultImg[idx],
+              isImg: true,
+            });
+          } else {
+            // socket.to(roomId).emit('message', {
+            this.server.in(roomId).emit('message', {
+              userId: users[(idx + 1) % 2].id,
+              message: resultImg[idx],
+              isImg: true,
+            });
+          }
+        }
+        idx++;
+      } else {
+        clearInterval(intervalId);
+      }
+    }, 2000);
   }
 
   //! 게임 끝
@@ -230,7 +292,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     //채팅 메시지 날려보기
     socket.to(roomId).emit('message', {
       message: `${nickName}가 들어왔습니다.`,
-      username: '',
+      userId: '',
+      isImg: false,
     });
 
     this.logger.log(`nickName: ${nickName}, userId: ${socket.id}, join_room : ${roomId}`);
@@ -306,8 +369,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('message')
   handleMessage(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() message: string) {
     const roomId = this.userToRoom[socket.id];
-    const userInfo = this.rooms[roomId].users.filter((user) => user.id === socket.id);
-    socket.to(roomId).emit('message', { username: userInfo[0].nickName, message });
-    return { username: socket.id, message };
+    socket.to(roomId).emit('message', { userId: socket.id, message, isImg: false });
+    return { userId: socket.id, message, isImg: false };
   }
 }

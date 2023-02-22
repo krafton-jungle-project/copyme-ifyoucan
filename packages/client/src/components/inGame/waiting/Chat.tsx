@@ -58,8 +58,9 @@ const MessageForm = styled.form`
   }
 `;
 export interface IChat {
-  username: string;
+  userId: string;
   message: string;
+  isImg: boolean;
 }
 
 const Chat = () => {
@@ -67,6 +68,7 @@ const Chat = () => {
   const [message, setMessage] = useState<string>('');
   const chatContainerEl = useRef<HTMLDivElement>(null);
   const { socket } = useClientSocket();
+  const imgRef = useRef<HTMLImageElement>(null);
 
   // 채팅이 길어지면(chats.length) 스크롤이 생성되므로, 스크롤의 위치를 최근 메시지에 위치시키기 위함
   useEffect(() => {
@@ -110,18 +112,30 @@ const Chat = () => {
     <>
       <h1>Chat</h1>
       <ChatContainer ref={chatContainerEl}>
-        {chats.map((chat, index) => (
-          <MessageBox
-            key={index}
-            className={classNames({
-              my_message: socket.id === chat.username,
-              alarm: !chat.username,
-            })}
-          >
-            <span>{chat.username ? (socket.id === chat.username ? '' : chat.username) : ''}</span>
-            <Message className="message">{chat.message}</Message>
-          </MessageBox>
-        ))}
+        {chats.map((chat, index) => {
+          console.log(index);
+          console.log(chat.message);
+          if (chat.isImg && imgRef.current) {
+            imgRef.current.src = chat.message;
+            imgRef.current.style.width = '200px';
+            imgRef.current.style.height = '200px';
+          }
+          return (
+            <MessageBox
+              key={index}
+              className={classNames({
+                my_message: socket.id !== chat.userId,
+                alarm: !chat.userId,
+              })}
+            >
+              {chat.isImg ? (
+                <img ref={imgRef} alt="aa"></img>
+              ) : (
+                <Message className="message">{chat.message}</Message>
+              )}
+            </MessageBox>
+          );
+        })}
       </ChatContainer>
       <MessageForm onSubmit={onSendMessage}>
         <input type="text" onChange={onChange} value={message} />
