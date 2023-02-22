@@ -102,7 +102,7 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
         capturedPoseRef.current.style.visibility = 'hidden';
       }
     }
-    if (!game.isOffender && game.stage === GameStage.OFFEND_ANNOUNCEMENT) {
+    if (game.isOffender && game.stage === GameStage.OFFEND_ANNOUNCEMENT) {
       if (videoRef.current !== null && capturedPoseRef.current !== null) {
         if (host) {
           capturePose(videoRef.current, capturedPoseRef.current, 1, socket);

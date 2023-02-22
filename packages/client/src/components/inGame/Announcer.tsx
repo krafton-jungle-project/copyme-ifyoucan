@@ -122,12 +122,12 @@ function Announcer() {
         gameMessage();
         break;
       case GameStatus.RESULT:
-        // setMessage('게임 결과');
-        // if (host) {
-        //   setTimeout(() => {
-        //     socket.emit('result');
-        //   }, 2000);
-        // }
+        setMessage('게임 결과');
+        if (imHost) {
+          setTimeout(() => {
+            socket.emit('result');
+          }, 2000);
+        }
         break;
       default:
         break; //temp

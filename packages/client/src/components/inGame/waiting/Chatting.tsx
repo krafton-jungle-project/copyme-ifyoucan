@@ -67,6 +67,13 @@ const MessageForm = styled.form`
     margin-right: 1rem;
   }
 `;
+
+const ImgTag = styled.img`
+  width: 200px;
+  height: 200px;
+  transform: scaleX(-1);
+`;
+
 export interface IChat {
   userId: string;
   message: string;
@@ -122,11 +129,6 @@ const Chat = () => {
     <Container>
       <ChatContainer ref={chatContainerEl}>
         {chats.map((chat, index) => {
-          if (chat.isImg && imgRef.current) {
-            imgRef.current.src = chat.message;
-            imgRef.current.style.width = '200px';
-            imgRef.current.style.height = '200px';
-          }
           return (
             <MessageBox
               key={index}
@@ -136,7 +138,7 @@ const Chat = () => {
               })}
             >
               {chat.isImg ? (
-                <img ref={imgRef} alt="aa"></img>
+                <ImgTag src={chat.message} alt="aa" />
               ) : (
                 <Message className="message">{chat.message}</Message>
               )}

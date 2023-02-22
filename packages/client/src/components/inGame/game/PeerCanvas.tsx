@@ -111,7 +111,7 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
       }
     }
 
-    if (game.isOffender && game.stage === GameStage.OFFEND_ANNOUNCEMENT) {
+    if (!game.isOffender && game.stage === GameStage.OFFEND_ANNOUNCEMENT) {
       if (videoRef.current !== null && capturedPoseRef.current !== null) {
         if (host) {
           // 호스트가 공격자고 수비가 끝났을 때 peer의 수비를 캡쳐

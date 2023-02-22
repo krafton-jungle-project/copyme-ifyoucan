@@ -204,36 +204,84 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const users = this.rooms[roomId].users;
     let idx = 0;
     const intervalId = setInterval(() => {
-      if (idx < resultImg.length) {
-        if (idx < 2) {
+      if (idx < 10) {
+        if (idx === 0) {
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '베스트',
+            isImg: false,
+          });
+        } else if (idx === 5) {
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '워스트',
+            isImg: false,
+          });
+        } else if (idx === 1 || idx === 6) {
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '공격',
+            isImg: false,
+          });
+        } else if (idx === 3 || idx === 8) {
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '수비',
+            isImg: false,
+          });
+        } else if (idx == 2) {
           if (bestIdx % 2 == 0) {
-            // socket.to(roomId).emit('message', {
             this.server.in(roomId).emit('message', {
-              userId: users[idx].id,
-              message: resultImg[idx],
+              userId: users[0].id,
+              message: resultImg[0],
               isImg: true,
             });
           } else {
-            // socket.to(roomId).emit('message', {
             this.server.in(roomId).emit('message', {
-              userId: users[(idx + 1) % 2].id,
-              message: resultImg[idx],
+              userId: users[1].id,
+              message: resultImg[0],
               isImg: true,
             });
           }
-        } else {
-          if (worstIdx % 2 == 0) {
-            // socket.to(roomId).emit('message', {
+        } else if (idx == 4) {
+          if (bestIdx % 2 == 0) {
             this.server.in(roomId).emit('message', {
-              userId: users[idx % 2].id,
-              message: resultImg[idx],
+              userId: users[1].id,
+              message: resultImg[1],
               isImg: true,
             });
           } else {
-            // socket.to(roomId).emit('message', {
             this.server.in(roomId).emit('message', {
-              userId: users[(idx + 1) % 2].id,
-              message: resultImg[idx],
+              userId: users[0].id,
+              message: resultImg[1],
+              isImg: true,
+            });
+          }
+        } else if (idx == 7) {
+          if (worstIdx % 2 == 0) {
+            this.server.in(roomId).emit('message', {
+              userId: users[0].id,
+              message: resultImg[2],
+              isImg: true,
+            });
+          } else {
+            this.server.in(roomId).emit('message', {
+              userId: users[1].id,
+              message: resultImg[2],
+              isImg: true,
+            });
+          }
+        } else if (idx == 9) {
+          if (worstIdx % 2 == 0) {
+            this.server.in(roomId).emit('message', {
+              userId: users[1].id,
+              message: resultImg[3],
+              isImg: true,
+            });
+          } else {
+            this.server.in(roomId).emit('message', {
+              userId: users[0].id,
+              message: resultImg[3],
               isImg: true,
             });
           }
