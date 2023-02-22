@@ -84,6 +84,7 @@ export interface ClientToServerEvents {
 
   change_stage: (stage: number) => void;
   change_status: (status: number) => void;
+  finish: () => void;
 }
 
 export interface InterServerEvents {
@@ -105,6 +106,7 @@ export interface InterServerEvents {
 
   get_change_stage: (stage: number) => void;
   get_change_status: (stage: number) => void;
+  get_finish: () => void;
 }
 
 export interface SocketData {
