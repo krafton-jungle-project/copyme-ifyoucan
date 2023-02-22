@@ -1,11 +1,8 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { gameAtom, GameStage, GameStatus, myPoseAtom } from '../../app/game';
+import { gameAtom, GameStage, GameStatus } from '../../app/game';
 import { peerAtom } from '../../app/peer';
-import { comparePoses } from '../../utils/pose-similarity';
-import { detector } from '../../utils/tfjs-movenet';
-import { useInterval } from './hooks/useInterval';
 
 const Container = styled.div`
   position: absolute;
@@ -29,7 +26,6 @@ const ScoreBar = styled.div<{ isInit: boolean; isStart: boolean; score: number }
 function PeerScoreBar({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoElement> }) {
   const game = useAtomValue(gameAtom);
   const peer = useAtomValue(peerAtom);
-
   const [isStart, setIsStart] = useState(false);
   const [isInit, setIsInit] = useState(true);
 

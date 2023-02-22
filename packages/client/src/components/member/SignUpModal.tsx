@@ -29,16 +29,17 @@ const SignUpModal = ({ show, onHide }: { show: boolean; onHide: any }) => {
   const [name, setName] = useState('');
   const [idValid, setIdValid] = useState(false);
   const [pwValid, setPwValid] = useState(false);
+  const [nameValid, setNameValid] = useState(false);
   const [notAllow, setNotAllow] = useState(true);
   // const navigate = useNavigate();
 
   useEffect(() => {
-    if (idValid && pwValid) {
+    if (idValid && pwValid && nameValid) {
       setNotAllow(false);
       return;
     }
     setNotAllow(true);
-  }, [idValid, pwValid]);
+  }, [idValid, pwValid, nameValid]);
 
   const handleId = (e: React.ChangeEvent<HTMLInputElement>) => {
     setId(e.target.value);
@@ -61,6 +62,12 @@ const SignUpModal = ({ show, onHide }: { show: boolean; onHide: any }) => {
 
   const handleName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+    const regex = /^.{0,6}$/;
+    if (regex.test(e.target.value)) {
+      setNameValid(true);
+    } else {
+      setNameValid(false);
+    }
   };
 
   const onClickConfirmButton = () => {
@@ -123,6 +130,9 @@ const SignUpModal = ({ show, onHide }: { show: boolean; onHide: any }) => {
             <Form.Group className="mb-3">
               <Form.Label>닉네임</Form.Label>
               <Form.Control type="text" placeholder="홀란드" value={name} onChange={handleName} />
+              <ErrorMessageWrap>
+                {!nameValid && name.length > 0 && <div>6자 이하로 작성해주세요.</div>}
+              </ErrorMessageWrap>
             </Form.Group>
 
             <CompleteButton
