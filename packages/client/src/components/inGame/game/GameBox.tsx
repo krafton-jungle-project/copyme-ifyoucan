@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import { useRef } from 'react';
+import styled, { css } from 'styled-components';
+import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { gameAtom } from '../../../app/game';
+import { countDownAtom, gameAtom, GameStage } from '../../../app/game';
 import { myNickNameAtom } from '../../../app/atom';
 import { isStartAtom } from '../InGame';
 import { peerAtom } from '../../../app/peer';
@@ -63,6 +63,56 @@ const GameRole = styled.div`
   color: #ffff99;
 `;
 
+const CameraFocus = styled.div<{ focus: string; light: boolean }>`
+  position: absolute;
+  left: ${(props) => (props.focus === 'noMe' ? '-2%' : 'none')};
+  right: ${(props) => (props.focus === 'noPeer' ? '-2%' : 'none')};
+  width: 48%;
+  height: 100%;
+  border-radius: 20px;
+
+  ${(props) =>
+    (props.focus === 'noMe' || props.focus === 'noPeer') &&
+    css`
+      visibility: 'hidden';
+      box-shadow: 0;
+    `}
+  ${(props) =>
+    props.focus === 'me' &&
+    props.light &&
+    css`
+      left: -2%;
+      box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #ff3131, 0 0 0.8rem #ff3131,
+        0 0 2.8rem #ff3131, inset 0 0 1.3rem #ff3131;
+    `}
+  ${(props) =>
+    props.focus === 'me' &&
+    !props.light &&
+    css`
+      left: -2%;
+      box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 1rem #ff3131, 0 0 0.4rem #ff3131,
+        0 0 1.4rem #ff3131, inset 0 0 0.6rem #ff3131;
+    `}
+  ${(props) =>
+    props.focus === 'peer' &&
+    props.light &&
+    css`
+      right: -2%;
+      box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #1f51ff, 0 0 0.8rem #1f51ff,
+        0 0 2.8rem #1f51ff, inset 0 0 1.3rem #1f51ff;
+    `}
+  ${(props) =>
+    props.focus === 'peer' &&
+    !props.light &&
+    css`
+      right: -2%;
+      box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 1rem #1f51ff, 0 0 0.4rem #1f51ff,
+        0 0 1.4rem #1f51ff, inset 0 0 0.6rem #1f51ff;
+    `}
+
+  transition: 1s;
+`;
+
 function GameBox() {
   const game = useAtomValue(gameAtom);
   const myNickName = useAtomValue(myNickNameAtom);
@@ -72,8 +122,40 @@ function GameBox() {
   const myVideoRef = useRef<HTMLVideoElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null);
 
+  const [focus, setFocus] = useState('noMe');
+  const countDown = useAtomValue(countDownAtom);
+
+  useEffect(() => {
+    if (
+      (game.stage === GameStage.OFFEND && game.isOffender) ||
+      (game.stage === GameStage.DEFEND && !game.isOffender)
+    ) {
+      if (countDown !== 0) {
+        setFocus('me');
+      } else {
+        setTimeout(() => {
+          setFocus('noMe');
+        }, 500);
+      }
+    } else if (
+      (game.stage === GameStage.OFFEND && !game.isOffender) ||
+      (game.stage === GameStage.DEFEND && game.isOffender)
+    ) {
+      if (countDown !== 0) {
+        setFocus('peer');
+      } else {
+        setTimeout(() => {
+          setFocus('noPeer');
+        }, 500);
+      }
+    } else {
+      setFocus('noPeer');
+    }
+  }, [game.stage, countDown]);
+
   return (
     <Container isStart={isStart}>
+      <CameraFocus focus={focus} light={countDown % 2 === 1} />
       <Wrapper isMe={true} isStart={isStart}>
         <CameraWrapper isMe={true}>
           <NickNameBox>{myNickName}</NickNameBox>
