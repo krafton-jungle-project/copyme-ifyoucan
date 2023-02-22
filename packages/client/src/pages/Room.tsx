@@ -12,6 +12,7 @@ import GameSocket from '../components/inGame/GameSocket';
 import { useClientSocket } from '../module/client-socket';
 import { myNickNameAtom, roomIdAtom } from '../app/atom';
 import { gameAtom } from '../app/game';
+import MotionReady from '../components/inGame/waiting/MotionReady';
 
 //todo 주소로 직접 접근 시 홈(로그인)/로비 페이지로 redirect
 //todo stream이나 detector가 없다면 로비로 redirect
@@ -29,6 +30,7 @@ function Room() {
 
   ConnectWebRTC();
   GameSocket();
+  MotionReady();
 
   useEffect(() => {
     if (!nickName || !roomId) {

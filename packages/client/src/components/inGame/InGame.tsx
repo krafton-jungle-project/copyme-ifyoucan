@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { gameAtom, GameStatus } from '../../app/game';
 import { useEffect } from 'react';
+import { imValidBodyAtom, motionReadyDelayAtom } from './waiting/MotionReady';
 
 const Container = styled.div`
   position: absolute;
@@ -15,6 +16,7 @@ const Container = styled.div`
   height: 90%;
 `;
 
+//todo: 한 곳에 모으기(Game Handler)
 export const isStartAtom = atom(false);
 isStartAtom.onMount = (setAtom) => {
   setAtom(false);
@@ -26,12 +28,20 @@ isStartAtom.onMount = (setAtom) => {
 function InGame() {
   const game = useAtomValue(gameAtom);
   const setIsStart = useSetAtom(isStartAtom);
+  const setMotionReadyDelay = useSetAtom(motionReadyDelayAtom);
+  const setImValidBody = useSetAtom(imValidBodyAtom);
 
+  //todo: 한 곳에 모으기(Game Handler)
   useEffect(() => {
-    setIsStart(game.status !== GameStatus.WAITING);
+    setImValidBody(false);
+    if (game.status === GameStatus.WAITING) {
+      setIsStart(false);
+      setMotionReadyDelay(500);
+    } else {
+      setIsStart(true);
+      setMotionReadyDelay(null);
+    }
   }, [game.status]);
-
-  // SetReadyState();
 
   return (
     <Container>
