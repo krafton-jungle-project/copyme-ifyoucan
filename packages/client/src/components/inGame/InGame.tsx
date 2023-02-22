@@ -1,37 +1,44 @@
-import Announcer from './Announcer';
-import MyVideo from './MyVideo';
-import PeerVideo from './PeerVideo';
-import ReadyButton from './ReadyButton';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { hostAtom } from '../../app/atom';
-import StartButton from './StartButton';
-import { gameAtom } from '../../app/game';
+import RoomHeader from './RoomHeader';
+import WaitingBox from './waiting/WaitingBox';
+import GameBox from './game/GameBox';
+import styled from 'styled-components';
+import { atom, useAtomValue, useSetAtom } from 'jotai';
+import { gameAtom, GameStatus } from '../../app/game';
 import { useEffect } from 'react';
-import HardPoses from './HardPoses';
-import GameBox from './GameBox';
-import Chat from './waiting/Chat';
+
+const Container = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 90%;
+`;
+
+export const isStartAtom = atom(false);
+isStartAtom.onMount = (setAtom) => {
+  setAtom(false);
+  return () => {
+    setAtom(false);
+  };
+};
 
 function InGame() {
-  const host = useAtomValue(hostAtom);
-  const setGame = useSetAtom(gameAtom);
+  const game = useAtomValue(gameAtom);
+  const setIsStart = useSetAtom(isStartAtom);
 
   useEffect(() => {
-    if (host) {
-      setGame((prev) => ({ ...prev, isOffender: true }));
-      console.log('여기는 한번만 실행되어야함');
-    }
-  }, [host, setGame]);
+    setIsStart(game.status !== GameStatus.WAITING);
+  }, [game.status]);
+
+  // SetReadyState();
 
   return (
-    <>
-      <Announcer />
-      <MyVideo />
-      <PeerVideo />
-      {/* <Chat /> */}
-      {host ? <StartButton /> : <ReadyButton />}
+    <Container>
+      <RoomHeader />
+      <WaitingBox />
       <GameBox />
-      <HardPoses />
-    </>
+    </Container>
   );
 }
 

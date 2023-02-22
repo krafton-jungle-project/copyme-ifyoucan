@@ -220,7 +220,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     //채팅 메시지 날려보기
     socket.to(roomId).emit('message', {
-      message: `${nickName}가 들어왔습니다.`,
+      message: `${nickName}님이 입장했습니다.`,
       username: '',
     });
 

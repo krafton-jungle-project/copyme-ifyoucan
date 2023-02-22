@@ -4,6 +4,16 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useClientSocket } from '../../../module/client-socket';
 
+const Container = styled.div`
+  position: absolute;
+  border: 5px solid yellow;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40%;
+  height: 100%;
+`;
+
 const ChatContainer = styled.div`
   display: flex;
   width: 300px;
@@ -62,7 +72,7 @@ export interface IChat {
   message: string;
 }
 
-const Chat = () => {
+const Chatting = () => {
   const [chats, setChats] = useState<IChat[]>([]);
   const [message, setMessage] = useState<string>('');
   const chatContainerEl = useRef<HTMLDivElement>(null);
@@ -107,18 +117,17 @@ const Chat = () => {
   );
 
   return (
-    <>
-      <h1>Chat</h1>
+    <Container>
       <ChatContainer ref={chatContainerEl}>
         {chats.map((chat, index) => (
           <MessageBox
             key={index}
             className={classNames({
-              my_message: socket.id === chat.username,
+              my_message: socket.id !== chat.username,
               alarm: !chat.username,
             })}
           >
-            <span>{chat.username ? (socket.id === chat.username ? '' : chat.username) : ''}</span>
+            {/* <span>{chat.username ? (socket.id === chat.username ? '' : chat.username) : ''}</span> */}
             <Message className="message">{chat.message}</Message>
           </MessageBox>
         ))}
@@ -127,8 +136,8 @@ const Chat = () => {
         <input type="text" onChange={onChange} value={message} />
         <button>보내기</button>
       </MessageForm>
-    </>
+    </Container>
   );
 };
 
-export default Chat;
+export default Chatting;

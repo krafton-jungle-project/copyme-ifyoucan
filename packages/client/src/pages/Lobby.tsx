@@ -1,12 +1,11 @@
 import RoomList from '../components/lobby/RoomList';
-import logo from '../assets/images/logo.png'; //temp
+import logo from '../assets/images/logo.png';
 import styled from 'styled-components';
 import { atom, useAtom, useSetAtom } from 'jotai';
 import Loading from '../components/lobby/Loading';
 import { stream, detector } from '../utils/tfjs-movenet';
-import { nickNameAtom } from '../app/atom';
+import { myNickNameAtom } from '../app/atom';
 import { useEffect } from 'react';
-import { getUser } from '../utils/local-storage';
 import { removeUser } from '../utils/localstorage';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -38,15 +37,15 @@ const randomIdx = Math.floor(Math.random() * 10);
 let nickName = nickNameArr[randomIdx];
 function Lobby() {
   const [isLoaded, setIsLoaded] = useAtom(isLoadedAtom);
-  const setNickName = useSetAtom(nickNameAtom);
+  const setNickName = useSetAtom(myNickNameAtom);
   const navigate = useNavigate();
 
   const getUserInfo = async () => {
     if (document.cookie) {
       const token = document.cookie.split('=')[1];
       try {
-        // const res = await axios.get('http://localhost:5001/users/', {
-        const res = await axios.get('http://15.165.237.195:5001/users/', {
+        const res = await axios.get('http://localhost:5001/users/', {
+          // const res = await axios.get('http://15.165.237.195:5001/users/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res) {

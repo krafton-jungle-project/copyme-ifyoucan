@@ -2,7 +2,7 @@ import { useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { stream } from '../../utils/tfjs-movenet';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { hostAtom, nickNameAtom, roomIdAtom } from '../../app/atom';
+import { imHostAtom, myNickNameAtom, roomIdAtom } from '../../app/atom';
 import { peerAtom } from '../../app/peer';
 import { useResetAtom } from 'jotai/utils';
 import { useClientSocket } from '../../module/client-socket';
@@ -22,9 +22,9 @@ const ConnectWebRTC = () => {
   const pcRef = useRef<RTCPeerConnection>(); // 상대 유저의 RTCPeerConnection 저장
   const myStreamRef = useRef<MediaStream>(); // 유저 자신의 스트림 ref
   const roomId = useAtomValue(roomIdAtom);
-  const nickName = useAtomValue(nickNameAtom);
+  const nickName = useAtomValue(myNickNameAtom);
   const setPeer = useSetAtom(peerAtom);
-  const setHost = useSetAtom(hostAtom);
+  const setImHost = useSetAtom(imHostAtom);
   const resetPeer = useResetAtom(peerAtom);
   const navigate = useNavigate();
 
@@ -156,7 +156,7 @@ const ConnectWebRTC = () => {
       if (!pcRef.current) return;
       pcRef.current.close();
       resetPeer();
-      setHost(true); // 유저가 나가면 자신이 방장이 된다.
+      setImHost(true); // 유저가 나가면 자신이 방장이 된다.
     });
 
     return () => {
@@ -164,7 +164,7 @@ const ConnectWebRTC = () => {
 
       pcRef.current.close();
       resetPeer();
-      setHost(false);
+      setImHost(false);
     };
   }, [makeConnection]);
 
