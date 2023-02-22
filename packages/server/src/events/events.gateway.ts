@@ -16,7 +16,6 @@ import {
 } from 'project-types';
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import type * as poseDetection from '@tensorflow-models/pose-detection';
 type ServerToClientSocket = Socket<ServerToClientEvents>;
 
 @WebSocketGateway(8081, {
@@ -149,8 +148,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //! 게임 시작
   @SubscribeMessage('start')
   gameStart(@MessageBody() roomId: string): void {
-    if (this.rooms[roomId].readyCount === this.rooms[roomId].users.length - 1) {
+    if (!this.rooms[roomId].started) {
       // 게임이 시작하면 모든 유저들에게 게임이 시작됐다는 이벤트 발생
+      this.rooms[roomId].started = true;
       this.server.in(roomId).emit('get_start');
     }
   }
@@ -291,6 +291,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         clearInterval(intervalId);
       }
     }, 2000);
+
+    //! 게임 시작 상태 변경
+    this.rooms[roomId].started = false;
   }
 
   //! 게임 끝
@@ -424,5 +427,17 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const roomId = this.userToRoom[socket.id];
     socket.to(roomId).emit('message', { userId: socket.id, message, isImg: false });
     return { userId: socket.id, message, isImg: false };
+  }
+
+  @SubscribeMessage('change_stage')
+  handleGameStage(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() stage: number) {
+    const roomId = this.userToRoom[socket.id];
+    this.server.to(roomId).emit('get_change_stage', stage);
+  }
+
+  @SubscribeMessage('change_status')
+  handleGameStatus(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() status: number) {
+    const roomId = this.userToRoom[socket.id];
+    this.server.to(roomId).emit('get_change_status', status);
   }
 }

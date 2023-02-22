@@ -1,12 +1,12 @@
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import { imHostAtom, myNickNameAtom } from '../../app/atom';
-import { gameAtom, GameStage, GameStatus, messageAtom } from '../../app/game';
+import { gameAtom, GameStage, GameStatus, messageAtom, myScoreAtom } from '../../app/game';
 import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
 import { imValidBodyAtom } from './waiting/MotionReady';
-import { imReadyAtom } from './Logo'
+import { imReadyAtom } from './Logo';
 
 const Container = styled.div`
   position: absolute;
@@ -36,12 +36,13 @@ let messageOrder: number;
 function Announcer() {
   const imHost = useAtomValue(imHostAtom);
   const myNickName = useAtomValue(myNickNameAtom);
-  const peer = useAtomValue(peerAtom);
+  const [peer, setPeer] = useAtom(peerAtom);
   const { socket } = useClientSocket();
-  const [game, setGame] = useAtom(gameAtom);
+  const game = useAtomValue(gameAtom);
   const [message, setMessage] = useAtom(messageAtom);
   const imValidBody = useAtomValue(imValidBodyAtom);
   const imReady = useAtomValue(imReadyAtom);
+  const setMyScore = useSetAtom(myScoreAtom);
 
   const initialMessages: string[] = [
     '게임을 시작합니다',
@@ -54,33 +55,40 @@ function Announcer() {
 
   const gameMessage = () => {
     switch (game.stage) {
-      case GameStage.INITIAL_ANNOUNCEMENT:
+      case GameStage.INITIAL:
         if (messageOrder < initialMessages.length) {
           setMessage(initialMessages[messageOrder++]);
           setTimeout(gameMessage, 1500);
         } else {
           messageOrder = 0;
-          setGame((prev) => ({
-            ...prev,
-            stage: GameStage.OFFEND_ANNOUNCEMENT,
-          }));
+          if (imHost) {
+            socket.emit('change_stage', GameStage.ROUND);
+          }
         }
         break;
-      case GameStage.OFFEND_ANNOUNCEMENT:
-        if (game.round < 3) {
+      //temp
+      case GameStage.ROUND:
+        setMessage(`ROUND ${game.round} START!`);
+
+        // 라운드 시작 시 점수 초기화
+        setTimeout(() => {
+          setMyScore(0);
+          setPeer((prev) => ({ ...prev, score: 0 }));
+        }, 1500);
+
+        setTimeout(() => {
+          if (imHost) {
+            socket.emit('change_stage', GameStage.OFFEND);
+          }
+        }, 3000);
+        break;
+      case GameStage.OFFEND:
+        if (game.round <= 3) {
           if (messageOrder < offenderMessages.length) {
-            setTimeout(() => {
-              setMessage(offenderMessages[messageOrder++]);
-              setTimeout(gameMessage, 2000);
-            }, 1000);
+            setMessage(offenderMessages[messageOrder++]);
+            setTimeout(gameMessage, 2000);
           } else {
             messageOrder = 0;
-
-            setGame((prev) => ({
-              ...prev,
-              stage: GameStage.OFFEND_COUNTDOWN,
-            }));
-
             if (imHost) {
               socket.emit('count_down', 'offend');
             }
@@ -88,29 +96,18 @@ function Announcer() {
         } else {
           // 게임 끝
           console.log('round 끝');
-          setTimeout(() => {
-            setGame((prev) => ({
-              ...prev,
-              // status: GameStatus.RESULT,
-              status: GameStatus.WAITING,
-            }));
-          }, 1000);
+          if (imHost) {
+            socket.emit('change_status', GameStatus.WAITING); //temp
+            // socket.emit('change_status', GameStatus.RESULT);
+          }
         }
         break;
-      case GameStage.DEFEND_ANNOUNCEMENT:
+      case GameStage.DEFEND:
         if (messageOrder < defenderMessages.length) {
-          setTimeout(() => {
-            setMessage(defenderMessages[messageOrder++]);
-            setTimeout(gameMessage, 2000);
-          }, 1000);
+          setMessage(defenderMessages[messageOrder++]);
+          setTimeout(gameMessage, 2000);
         } else {
           messageOrder = 0;
-
-          setGame((prev) => ({
-            ...prev,
-            stage: GameStage.DEFEND_COUNTDOWN,
-          }));
-
           if (imHost) {
             socket.emit('count_down', 'defend');
           }
@@ -175,6 +172,11 @@ function Announcer() {
         break;
       case GameStatus.RESULT:
         setMessage('게임 결과');
+
+        //todo: 게임 종료 사운드
+        //todo: 게임 종료 안내 멘트(game over)
+        //todo: 등등 추가 필요
+
         if (imHost) {
           setTimeout(() => {
             socket.emit('result');

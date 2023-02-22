@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useEffect, useRef } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { gameAtom, GameStage, myPoseAtom } from '../../../app/game';
+import { useAtomValue } from 'jotai';
+import { countDownAtom, gameAtom, GameStage } from '../../../app/game';
 import * as moveNet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
 import { imHostAtom } from '../../../app/atom';
@@ -52,9 +52,9 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
   const capturedPoseRef = useRef<HTMLCanvasElement>(null);
 
   const game = useAtomValue(gameAtom);
-  const setMyPose = useSetAtom(myPoseAtom);
   const host = useAtomValue(imHostAtom);
   const { socket } = useClientSocket();
+  const countDown = useAtomValue(countDownAtom);
 
   useEffect(() => {
     if (videoRef.current === null || canvasRef.current === null) return;
@@ -75,44 +75,40 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
   }, []);
 
   useEffect(() => {
-    const getMyPose = async () => {
-      const poses = await moveNet.detector.estimatePoses(moveNet.myCamera.video);
-      setMyPose(poses[0]);
-    };
+    // 카운트다운 0초일 때,
+    if (countDown === 0) {
+      // 공격 스테이지에서, 내가 공격자면 내 공격을 캡쳐 또는
+      // 수비 스테이지에서, 내가 수비자면 내 수비를 캡쳐
+      if (
+        (game.stage === GameStage.OFFEND && game.isOffender) ||
+        (game.stage === GameStage.DEFEND && !game.isOffender)
+      ) {
+        if (videoRef.current !== null && capturedPoseRef.current !== null) {
+          //todo: 제희만 믿는다...
+          if (host) {
+            capturePose(videoRef.current, capturedPoseRef.current, game.isOffender ? 0 : 1, socket);
+          } else {
+            capturePose(videoRef.current, capturedPoseRef.current, game.isOffender ? 0 : 1);
+          }
 
-    if (game.isOffender && game.stage === GameStage.DEFEND_ANNOUNCEMENT) {
-      if (videoRef.current !== null && capturedPoseRef.current !== null) {
-        capturedPoseRef.current.style.visibility = 'visible';
-
-        getMyPose();
-        if (host) {
-          capturePose(videoRef.current, capturedPoseRef.current, 0, socket); //temp
-        } else {
-          capturePose(videoRef.current, capturedPoseRef.current, 0); //temp
-        } //temp
-
-        capturedPoseRef.current.width = videoRef.current.width;
-        capturedPoseRef.current.height = videoRef.current.height;
-      }
-    } else if (
-      game.stage !== GameStage.DEFEND_ANNOUNCEMENT &&
-      game.stage !== GameStage.DEFEND_COUNTDOWN
-    ) {
-      if (capturedPoseRef.current !== null) {
-        capturedPoseRef.current.style.visibility = 'hidden';
-      }
-    }
-    if (game.isOffender && game.stage === GameStage.OFFEND_ANNOUNCEMENT) {
-      if (videoRef.current !== null && capturedPoseRef.current !== null) {
-        if (host) {
-          capturePose(videoRef.current, capturedPoseRef.current, 1, socket);
-        } else {
-          capturePose(videoRef.current, capturedPoseRef.current, 1);
+          capturedPoseRef.current.width = videoRef.current.width;
+          capturedPoseRef.current.height = videoRef.current.height;
+          capturedPoseRef.current.style.visibility = 'visible';
         }
-        capturedPoseRef.current.style.visibility = 'hidden'; // 임시로 사진 보내고 바로 가려버림
+      }
+
+      //todo: 캡쳐한 수비사진을, 공격자의 캡쳐한 사진과 짧게 비교
+      if (game.stage === GameStage.DEFEND) {
+        //todo: 공수 비교 이펙트
+        setTimeout(() => {
+          if (videoRef.current !== null && capturedPoseRef.current !== null) {
+            //todo: 공수 비교 이펙트 끝나고 다시 사진 감추기
+            capturedPoseRef.current.style.visibility = 'hidden';
+          }
+        }, 1000);
       }
     }
-  }, [game.stage]);
+  }, [countDown]);
 
   return (
     <Container>
