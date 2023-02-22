@@ -19,8 +19,8 @@ const ScoreBarWrapper = styled.div`
   transform: translate(-50%, -50%);
   width: 80%;
   height: 80%;
-  border: 5px solid blue;
-  background-color: blue;
+  border: 5px solid #1f51ff;
+  background-color: #1f51ff;
   border-radius: 20px;
 `;
 
@@ -46,7 +46,7 @@ const ScoreInfo = styled.div`
   height: 10%;
   font-size: 25px;
   font-weight: bold;
-  color: #3366ff;
+  color: #1f51ff;
 `;
 
 const ScorePercent = styled.div`
@@ -60,7 +60,7 @@ const ScorePercent = styled.div`
   height: 10%;
   font-size: 30px;
   font-weight: bold;
-  color: #3366ff;
+  color: #1f51ff;
 `;
 
 function PeerScoreBar() {

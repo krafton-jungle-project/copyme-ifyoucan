@@ -29,8 +29,8 @@ const ScoreBarWrapper = styled.div`
   transform: translate(-50%, -50%);
   width: 80%;
   height: 80%;
-  border: 5px solid red;
-  background-color: red;
+  border: 5px solid #ff3131;
+  background-color: #ff3131;
   border-radius: 20px;
 `;
 
@@ -56,7 +56,7 @@ const ScoreInfo = styled.div`
   height: 10%;
   font-size: 25px;
   font-weight: bold;
-  color: #ff6666;
+  color: #ff3131;
 `;
 
 const ScorePercent = styled.div`
@@ -70,7 +70,7 @@ const ScorePercent = styled.div`
   height: 10%;
   font-size: 30px;
   font-weight: bold;
-  color: #ff6666;
+  color: #ff3131;
 `;
 
 function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement> }) {

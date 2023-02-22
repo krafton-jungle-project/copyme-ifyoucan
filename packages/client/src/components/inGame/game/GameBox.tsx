@@ -46,7 +46,7 @@ const NickNameBox = styled.div`
   top: 0%;
   width: 100%;
   height: 10%;
-  font-size: 30px;
+  font-size: 35px;
   font-weight: bold;
 `;
 
@@ -58,7 +58,7 @@ const GameRole = styled.div`
   bottom: 0%;
   width: 100%;
   height: 10%;
-  font-size: 30px;
+  font-size: 35px;
   font-weight: bold;
   color: #ffff99;
 `;
