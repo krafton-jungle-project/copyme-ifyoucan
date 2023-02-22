@@ -59,7 +59,7 @@ function Announcer() {
       case GameStage.INITIAL:
         if (messageOrder < initialMessages.length) {
           setMessage(initialMessages[messageOrder++]);
-          setTimeout(gameMessage, 1500);
+          setTimeout(gameMessage, 2000);
         } else {
           messageOrder = 0;
           if (imHost) {

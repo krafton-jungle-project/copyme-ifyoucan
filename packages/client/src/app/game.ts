@@ -33,5 +33,5 @@ const initialState: GameState = {
 export const gameAtom = atomWithReset(initialState);
 export const messageAtom = atom('');
 export const peerPoseAtom = atom<Pose | undefined>(undefined);
-export const countDownAtom = atom(-1);
+export const countDownAtom = atom(0);
 export const myScoreAtom = atom(0);

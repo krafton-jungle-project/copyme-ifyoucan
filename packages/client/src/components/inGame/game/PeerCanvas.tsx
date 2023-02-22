@@ -7,6 +7,7 @@ import * as moveNet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
 import { imHostAtom } from '../../../app/atom';
 import { useClientSocket } from '../../../module/client-socket';
+import CountDown from './CountDown';
 
 const Container = styled.div`
   position: absolute;
@@ -129,6 +130,7 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
       <Video ref={videoRef} />
       <Canvas ref={canvasRef} />
       <CapturedPose ref={capturedPoseRef} />
+      <CountDown isMe={false}/>
     </Container>
   );
 }

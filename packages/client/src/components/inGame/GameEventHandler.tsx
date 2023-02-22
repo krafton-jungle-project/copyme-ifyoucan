@@ -68,7 +68,6 @@ const GameSocket = () => {
 
     socket.on('get_count_down', (count: number, stage: string) => {
       console.log(count, stage);
-      setMessage(count.toString()); //todo: 카운트다운 분리 후 삭제
       setCountDown(count);
 
       if (count === 3) {
