@@ -75,20 +75,20 @@ function GameBox() {
   return (
     <Container isStart={isStart}>
       <Wrapper isMe={true} isStart={isStart}>
+        <MyScoreBar myVideoRef={myVideoRef} />
         <CameraWrapper isMe={true}>
           <NickNameBox>{myNickName}</NickNameBox>
-          <MyCanvas myVideoRef={myVideoRef} />
           <GameRole>{game.isOffender ? '공격자' : '수비자'}</GameRole>
+          <MyCanvas myVideoRef={myVideoRef} />
         </CameraWrapper>
-        <MyScoreBar myVideoRef={myVideoRef} />
       </Wrapper>
       <Wrapper isMe={false} isStart={isStart}>
+        <PeerScoreBar />
         <CameraWrapper isMe={false}>
           <NickNameBox>{peerNickName}</NickNameBox>
-          <PeerCanvas peerVideoRef={peerVideoRef} />
           <GameRole>{game.isOffender ? '수비자' : '공격자'}</GameRole>
+          <PeerCanvas peerVideoRef={peerVideoRef} />
         </CameraWrapper>
-        <PeerScoreBar />
       </Wrapper>
       <Versus />
     </Container>
