@@ -5,9 +5,8 @@ import { imHostAtom, myNickNameAtom } from '../../app/atom';
 import { gameAtom, GameStage, GameStatus, messageAtom } from '../../app/game';
 import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
-import { isValidBody } from '../common/PoseRecognition';
 import { imValidBodyAtom } from './waiting/MotionReady';
-import { imReadyAtom } from './waiting/ReadyButton';
+import { imReadyAtom } from './Logo'
 
 const Container = styled.div`
   position: absolute;
@@ -102,7 +101,6 @@ function Announcer() {
 
           if (imHost) {
             socket.emit('count_down', 'defend');
-            console.log('emit count down');
           }
         }
         break;
@@ -168,7 +166,7 @@ function Announcer() {
       default:
         break; //temp
     }
-  }, [game.status, imReady, peer.socketId, peer.isReady, imValidBody]);
+  }, [game.status, game.stage, imReady, peer.socketId, peer.isReady, imValidBody]);
 
   return <Container>{message}</Container>;
 }

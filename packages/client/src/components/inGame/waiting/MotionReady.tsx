@@ -6,7 +6,7 @@ import { peerAtom } from '../../../app/peer';
 import { useInterval } from '../hooks/useInterval';
 import { imHostAtom, roomIdAtom } from '../../../app/atom';
 import { gunReload } from '../../../utils/sound';
-import { imReadyAtom } from './ReadyButton';
+import { imReadyAtom } from '../Logo'
 
 //todo: 한 곳에 모으기(Game Handler)
 export const motionReadyDelayAtom = atom<number | null>(null);
@@ -23,7 +23,6 @@ function MotionReady() {
   const [imValidBody, setImValidAtom] = useAtom(imValidBodyAtom);
 
   useInterval(async () => {
-    console.log(11111);
     // peer가 있어야 레디를 하든가 말든가 시작을 하든가 말든가
     if (peer.nickName !== '' && peer.stream !== null) {
       let poses = await moveNet.detector.estimatePoses(moveNet.myCamera.video);

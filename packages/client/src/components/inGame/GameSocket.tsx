@@ -46,7 +46,7 @@ const GameSocket = () => {
 
       setTimeout(() => {
         Bell.play();
-      }, 500);
+      }, 800);
 
       setTimeout(() => {
         gameMusic.play();
