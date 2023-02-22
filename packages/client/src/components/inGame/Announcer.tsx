@@ -69,41 +69,40 @@ function Announcer() {
         break;
       //temp
       case GameStage.ROUND:
-        if (game.round === 1) roundOne.play();
-        else if (game.round === 2) roundTwo.play();
-        else if (game.round === 3) roundThree.play();
+        if (game.round < 4) {
+          if (game.round === 1) roundOne.play();
+          else if (game.round === 2) roundTwo.play();
+          else if (game.round === 3) roundThree.play();
 
-        setMessage(`ROUND ${game.round} START!`);
+          setMessage(`ROUND ${game.round} START!`);
 
-        // 라운드 시작 시 점수 초기화
-        setTimeout(() => {
-          setMyScore(0);
-          setPeer((prev) => ({ ...prev, score: 0 }));
-        }, 1500);
+          // 라운드 시작 시 점수 초기화
+          setTimeout(() => {
+            setMyScore(0);
+            setPeer((prev) => ({ ...prev, score: 0 }));
+          }, 1500);
 
-        setTimeout(() => {
-          if (imHost) {
-            socket.emit('change_stage', GameStage.OFFEND);
-          }
-        }, 3000);
-        break;
-      case GameStage.OFFEND:
-        if (game.round <= 3) {
-          if (messageOrder < offenderMessages.length) {
-            setMessage(offenderMessages[messageOrder++]);
-            setTimeout(gameMessage, 2000);
-          } else {
-            messageOrder = 0;
+          setTimeout(() => {
             if (imHost) {
-              socket.emit('count_down', 'offend');
+              socket.emit('change_stage', GameStage.OFFEND);
             }
-          }
+          }, 3000);
         } else {
           // 게임 끝
-          console.log('round 끝');
+          console.log('finish');
           if (imHost) {
-            socket.emit('change_status', GameStatus.WAITING); //temp
-            // socket.emit('change_status', GameStatus.RESULT);
+            socket.emit('finish');
+          }
+        }
+        break;
+      case GameStage.OFFEND:
+        if (messageOrder < offenderMessages.length) {
+          setMessage(offenderMessages[messageOrder++]);
+          setTimeout(gameMessage, 2000);
+        } else {
+          messageOrder = 0;
+          if (imHost) {
+            socket.emit('count_down', 'offend');
           }
         }
         break;

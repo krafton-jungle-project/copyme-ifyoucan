@@ -3,17 +3,27 @@ import type * as poseDetection from '@tensorflow-models/pose-detection';
 import { useAtom, useSetAtom } from 'jotai';
 import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
-import { countDownAtom, gameAtom, GameStage, GameStatus, messageAtom } from '../../app/game';
+import {
+  countDownAtom,
+  gameAtom,
+  GameStage,
+  GameStatus,
+  messageAtom,
+  myScoreAtom,
+} from '../../app/game';
 import { useNavigate } from 'react-router-dom';
 import { Bell, cameraClick, countDown, gameMusic, gunReload } from '../../utils/sound';
+import { useResetAtom } from 'jotai/utils';
 
 const GameSocket = () => {
   const setPeer = useSetAtom(peerAtom);
   const { socket } = useClientSocket();
   const [game, setGame] = useAtom(gameAtom);
+  const resetGame = useResetAtom(gameAtom);
   const setMessage = useSetAtom(messageAtom);
   const navigate = useNavigate();
   const setCountDown = useSetAtom(countDownAtom);
+  const setMyScore = useSetAtom(myScoreAtom);
 
   useEffect(() => {
     socket.on('get_ready', () => {
@@ -95,17 +105,6 @@ const GameSocket = () => {
   }, [setPeer, socket]);
 
   useEffect(() => {
-    socket.on('user_exit', () => {
-      console.log('user_exit');
-      console.log(game.status);
-      if (game.status !== GameStatus.WAITING) {
-        //todo
-        // navigate('/');
-      }
-    });
-  }, [game.status, socket]);
-
-  useEffect(() => {
     socket.on('get_change_stage', (stage: number) => {
       console.log('change stage to:', stage);
       setGame((prev) => ({ ...prev, stage }));
@@ -114,6 +113,21 @@ const GameSocket = () => {
     socket.on('get_change_status', (status: number) => {
       console.log('change status to:', status);
       setGame((prev) => ({ ...prev, status }));
+    });
+
+    socket.on('get_finish', () => {
+      console.log('get_finish');
+      resetGame();
+      setMyScore(0);
+      setPeer((prev) => ({ ...prev, score: 0 }));
+    });
+
+    socket.on('user_exit', () => {
+      console.log('user_exit');
+      if (game.status !== GameStatus.WAITING) {
+        //todo
+        navigate('/');
+      }
     });
   }, []);
 
