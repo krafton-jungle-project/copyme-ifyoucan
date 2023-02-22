@@ -166,7 +166,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('count_down')
   countDown(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() stage: string): void {
     const roomId = this.userToRoom[socket.id];
-    let count = 5;
+    let count = 3;
     const intervalId = setInterval(() => {
       if (count >= 0) {
         this.server.in(roomId).emit('get_count_down', count--, stage);
