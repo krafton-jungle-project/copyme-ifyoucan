@@ -114,7 +114,7 @@ const Chat = () => {
           <MessageBox
             key={index}
             className={classNames({
-              my_message: socket.id === chat.username,
+              my_message: socket.id !== chat.username,
               alarm: !chat.username,
             })}
           >

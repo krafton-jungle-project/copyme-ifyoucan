@@ -27,7 +27,7 @@ function InGame() {
       <Announcer />
       <MyVideo />
       <PeerVideo />
-      {/* <Chat /> */}
+      <Chat />
       {host ? <StartButton /> : <ReadyButton />}
       <GameBox />
       <HardPoses />
