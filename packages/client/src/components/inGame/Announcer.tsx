@@ -67,22 +67,34 @@ function Announcer() {
         }
         break;
       case GameStage.OFFEND_ANNOUNCEMENT:
-        if (messageOrder < offenderMessages.length) {
-          setTimeout(() => {
-            setMessage(offenderMessages[messageOrder++]);
-            setTimeout(gameMessage, 2000);
-          }, 1000);
-        } else {
-          messageOrder = 0;
+        if (game.round < 3) {
+          if (messageOrder < offenderMessages.length) {
+            setTimeout(() => {
+              setMessage(offenderMessages[messageOrder++]);
+              setTimeout(gameMessage, 2000);
+            }, 1000);
+          } else {
+            messageOrder = 0;
 
-          setGame((prev) => ({
-            ...prev,
-            stage: GameStage.OFFEND_COUNTDOWN,
-          }));
+            setGame((prev) => ({
+              ...prev,
+              stage: GameStage.OFFEND_COUNTDOWN,
+            }));
 
-          if (imHost) {
-            socket.emit('count_down', 'offend');
+            if (imHost) {
+              socket.emit('count_down', 'offend');
+            }
           }
+        } else {
+          // 게임 끝
+          console.log('round 끝');
+          setTimeout(() => {
+            setGame((prev) => ({
+              ...prev,
+              // status: GameStatus.RESULT,
+              status: GameStatus.WAITING,
+            }));
+          }, 1000);
         }
         break;
       case GameStage.DEFEND_ANNOUNCEMENT:
@@ -162,6 +174,12 @@ function Announcer() {
         gameMessage();
         break;
       case GameStatus.RESULT:
+        // setMessage('게임 결과');
+        // if (host) {
+        //   setTimeout(() => {
+        //     socket.emit('result');
+        //   }, 2000);
+        // }
         break;
       default:
         break; //temp

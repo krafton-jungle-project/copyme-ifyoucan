@@ -1,11 +1,9 @@
 import styled from 'styled-components';
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
-import { gameAtom, GameStage, GameStatus, myPoseAtom } from '../../../app/game';
-import { comparePoses } from '../../../utils/pose-similarity';
-import { detector } from '../../../utils/tfjs-movenet';
-import { useInterval } from '../hooks/useInterval';
+import { gameAtom, GameStage, GameStatus } from '../../../app/game';
 import { isStartAtom } from '../InGame';
+import { peerAtom } from '../../../app/peer';
 
 const Container = styled.div`
   position: absolute;
@@ -67,37 +65,9 @@ const ScorePercent = styled.div`
 
 function PeerScoreBar({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoElement> }) {
   const game = useAtomValue(gameAtom);
-  const myPose = useAtomValue(myPoseAtom);
-  const [score, setScore] = useState(0);
-  const [delay, setDelay] = useState<number | null>(null);
+  const peer = useAtomValue(peerAtom);
   const isStart = useAtomValue(isStartAtom);
   const [isInit, setIsInit] = useState(true);
-
-  const getPeerPose = async () => {
-    if (peerVideoRef.current) {
-      const myPoses = await detector.estimatePoses(peerVideoRef.current);
-      if (myPoses && myPoses.length > 0) {
-        return myPoses[0];
-      }
-    }
-  };
-
-  useInterval(async () => {
-    const peerPose = await getPeerPose();
-    if (myPose && peerPose) {
-      setScore(comparePoses(myPose, peerPose));
-    }
-  }, delay);
-
-  useEffect(() => {
-    if (game.isOffender && game.stage === GameStage.DEFEND_COUNTDOWN) {
-      setDelay(500);
-    } else {
-      if (game.stage !== GameStage.DEFEND_COUNTDOWN) {
-        setDelay(null);
-      }
-    }
-  }, [game.isOffender, game.stage]);
 
   //todo: 시작 때 스코어바 움직이기 더 쉬운 방법으로..
   useEffect(() => {
@@ -114,9 +84,9 @@ function PeerScoreBar({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVide
     <Container>
       <ScoreInfo>유사도</ScoreInfo>
       <ScoreBarWrapper>
-        <ScoreBar isInit={isInit} score={isStart ? score : 100} />
+        <ScoreBar isInit={isInit} score={isStart ? peer.score : 100} />
       </ScoreBarWrapper>
-      <ScorePercent>{score}</ScorePercent>
+      <ScorePercent>{peer.score}</ScorePercent>
     </Container>
   );
 }
