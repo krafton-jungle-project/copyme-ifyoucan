@@ -61,8 +61,7 @@ const GameSocket = () => {
       setMessage(count.toString()); //todo: 카운트다운 분리 후 삭제
       setCountDown(count);
 
-      //todo: 3초 음악으로 변경
-      if (count === 5) {
+      if (count === 3) {
         countDown.play();
       }
 

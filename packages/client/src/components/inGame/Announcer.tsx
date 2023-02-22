@@ -7,6 +7,7 @@ import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
 import { imValidBodyAtom } from './waiting/MotionReady';
 import { imReadyAtom } from './Logo';
+import { roundOne, roundThree, roundTwo } from '../../utils/sound';
 
 const Container = styled.div`
   position: absolute;
@@ -16,7 +17,7 @@ const Container = styled.div`
   left: 15%;
   width: 70%;
   height: 100%;
-  font-size: 50px;
+  font-size: 3vw;
   font-weight: 400;
 
   border: 0.2rem solid #fff;
@@ -68,6 +69,10 @@ function Announcer() {
         break;
       //temp
       case GameStage.ROUND:
+        if (game.round === 1) roundOne.play();
+        else if (game.round === 2) roundTwo.play();
+        else if (game.round === 3) roundThree.play();
+
         setMessage(`ROUND ${game.round} START!`);
 
         // 라운드 시작 시 점수 초기화
