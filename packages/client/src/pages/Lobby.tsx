@@ -68,9 +68,11 @@ function Lobby() {
   }
 
   const logoutHandler = () => {
-    alert('로그아웃 하시겠습니까?');
-    removeUser();
-    navigate('/login');
+    const check = window.confirm('로그아웃 하시겠습니까?');
+    if (check) {
+      removeUser();
+      navigate('/login');
+    }
   };
 
   return (

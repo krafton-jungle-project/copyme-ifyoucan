@@ -77,6 +77,10 @@ const GameSocket = () => {
         }
       }
     });
+
+    socket.on('get_score', (score: number) => {
+      setPeer((prev) => ({ ...prev, score }));
+    });
   }, [setPeer, socket]);
 
   useEffect(() => {

@@ -10,6 +10,7 @@ export interface PeerState {
   isReady: boolean;
   imgSrc: null | string;
   pose: null | poseDetection.Pose;
+  score: number;
 }
 
 const initialState: PeerState = {
@@ -20,6 +21,7 @@ const initialState: PeerState = {
   isReady: false,
   imgSrc: null,
   pose: null,
+  score: 0,
 };
 
 export const peerAtom = atomWithReset(initialState);

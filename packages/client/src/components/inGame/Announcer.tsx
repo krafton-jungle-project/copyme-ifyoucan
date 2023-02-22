@@ -54,8 +54,10 @@ function Announcer() {
         break;
       case GameStage.OFFEND_ANNOUNCEMENT:
         if (messageOrder < offenderMessages.length) {
-          setMessage(offenderMessages[messageOrder++]);
-          setTimeout(gameMessage, 2000);
+          setTimeout(() => {
+            setMessage(offenderMessages[messageOrder++]);
+            setTimeout(gameMessage, 2000);
+          }, 1000);
         } else {
           messageOrder = 0;
 
@@ -71,8 +73,10 @@ function Announcer() {
         break;
       case GameStage.DEFEND_ANNOUNCEMENT:
         if (messageOrder < defenderMessages.length) {
-          setMessage(defenderMessages[messageOrder++]);
-          setTimeout(gameMessage, 2000);
+          setTimeout(() => {
+            setMessage(defenderMessages[messageOrder++]);
+            setTimeout(gameMessage, 2000);
+          }, 1000);
         } else {
           messageOrder = 0;
 
