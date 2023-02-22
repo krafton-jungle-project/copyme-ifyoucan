@@ -1,7 +1,14 @@
 import styled from 'styled-components';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
-import { gameAtom, GameStage, GameStatus, peerPoseAtom } from '../../../app/game';
+import {
+  countDownAtom,
+  gameAtom,
+  GameStage,
+  GameStatus,
+  myScoreAtom,
+  peerPoseAtom,
+} from '../../../app/game';
 import { comparePoses } from '../../../utils/pose-similarity';
 import { detector } from '../../../utils/tfjs-movenet';
 import { useInterval } from '../hooks/useInterval';
@@ -69,12 +76,12 @@ const ScorePercent = styled.div`
 function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement> }) {
   const game = useAtomValue(gameAtom);
   const peerPose = useAtomValue(peerPoseAtom);
-  const [score, setScore] = useState(0);
+  const [myScore, setMyScore] = useAtom(myScoreAtom);
   const [delay, setDelay] = useState<number | null>(null);
   const isStart = useAtomValue(isStartAtom);
   const [isInit, setIsInit] = useState(true);
-  const [isDefender, setIsDefender] = useState(false);
   const { socket } = useClientSocket();
+  const countDown = useAtomValue(countDownAtom);
 
   const getMyPose = async () => {
     if (myVideoRef.current) {
@@ -90,30 +97,38 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     if (myPose && peerPose) {
       const tempScore = comparePoses(myPose, peerPose);
       socket.emit('score', tempScore);
-      setScore(tempScore);
+      setMyScore(tempScore);
     }
   }, delay);
 
   useEffect(() => {
-    if (!game.isOffender && game.stage === GameStage.DEFEND_COUNTDOWN) {
-      setDelay(500);
-      setIsDefender(true);
-    } else {
-      if (game.stage === GameStage.OFFEND_ANNOUNCEMENT && isDefender) {
+    // 내가 수비자이고 수비 스테이지일 때
+    if (!game.isOffender && game.stage === GameStage.DEFEND) {
+      // 수비 카운트 다운이 시작되면
+      if (countDown === 3) {
+        // 실시간 점수 계산 시작(0.5초 간격)
+        setDelay(500);
+      }
+      // 수비가 종료되면
+      else if (countDown === 0) {
+        // 실시간 점수 계산을 멈추고, 자신의 최종 점수를 서버로 보낸다
+
         setDelay(null);
-        socket.emit('round_score', score);
-        setIsDefender(false);
+        socket.emit('round_score', myScore);
       }
     }
-  }, [game.stage]);
+  }, [countDown]);
 
+  //todo: 조금 더 효율적으로 할 방법 생각(게임 시작 시 스코어바 이펙트)
   useEffect(() => {
+    // 초기화(시작 이펙트)
     if (game.status === GameStatus.WAITING) {
       setIsInit(true);
-    } else if (game.status === GameStatus.GAME) {
-      if (game.stage === GameStage.DEFEND_COUNTDOWN) {
-        setIsInit(false);
-      }
+    }
+
+    // 게임중에는 빠르게 변화
+    if (game.stage !== GameStage.INITIAL) {
+      setIsInit(false);
     }
   }, [game.status, game.stage]);
 
@@ -121,9 +136,9 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     <Container>
       <ScoreInfo>유사도</ScoreInfo>
       <ScoreBarWrapper>
-        <ScoreBar isInit={isInit} score={isStart ? score : 100} />
+        <ScoreBar isInit={isInit} score={isStart ? myScore : 100} />
       </ScoreBarWrapper>
-      <ScorePercent>{score}</ScorePercent>
+      <ScorePercent>{myScore}</ScorePercent>
     </Container>
   );
 }

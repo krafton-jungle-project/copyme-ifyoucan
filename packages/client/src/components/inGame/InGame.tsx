@@ -36,7 +36,7 @@ function InGame() {
     setImValidBody(false);
     if (game.status === GameStatus.WAITING) {
       setIsStart(false);
-      setMotionReadyDelay(500);
+      setMotionReadyDelay(1000);
     } else {
       setIsStart(true);
       setMotionReadyDelay(null);

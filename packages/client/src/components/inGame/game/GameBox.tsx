@@ -88,7 +88,7 @@ function GameBox() {
           <PeerCanvas peerVideoRef={peerVideoRef} />
           <GameRole>{game.isOffender ? '수비자' : '공격자'}</GameRole>
         </CameraWrapper>
-        <PeerScoreBar peerVideoRef={peerVideoRef} />
+        <PeerScoreBar />
       </Wrapper>
       <Versus />
     </Container>

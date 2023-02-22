@@ -16,7 +16,6 @@ import {
 } from 'project-types';
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import type * as poseDetection from '@tensorflow-models/pose-detection';
 type ServerToClientSocket = Socket<ServerToClientEvents>;
 
 @WebSocketGateway(8081, {
@@ -149,8 +148,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //! 게임 시작
   @SubscribeMessage('start')
   gameStart(@MessageBody() roomId: string): void {
-    if (this.rooms[roomId].readyCount === this.rooms[roomId].users.length - 1) {
+    if (!this.rooms[roomId].started) {
       // 게임이 시작하면 모든 유저들에게 게임이 시작됐다는 이벤트 발생
+      this.rooms[roomId].started = true;
       this.server.in(roomId).emit('get_start');
     }
   }
@@ -204,36 +204,84 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const users = this.rooms[roomId].users;
     let idx = 0;
     const intervalId = setInterval(() => {
-      if (idx < resultImg.length) {
-        if (idx < 2) {
+      if (idx < 10) {
+        if (idx === 0) {
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '베스트',
+            isImg: false,
+          });
+        } else if (idx === 5) {
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '워스트',
+            isImg: false,
+          });
+        } else if (idx === 1 || idx === 6) {
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '공격',
+            isImg: false,
+          });
+        } else if (idx === 3 || idx === 8) {
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '수비',
+            isImg: false,
+          });
+        } else if (idx == 2) {
           if (bestIdx % 2 == 0) {
-            // socket.to(roomId).emit('message', {
             this.server.in(roomId).emit('message', {
-              userId: users[idx].id,
-              message: resultImg[idx],
+              userId: users[0].id,
+              message: resultImg[0],
               isImg: true,
             });
           } else {
-            // socket.to(roomId).emit('message', {
             this.server.in(roomId).emit('message', {
-              userId: users[(idx + 1) % 2].id,
-              message: resultImg[idx],
+              userId: users[1].id,
+              message: resultImg[0],
               isImg: true,
             });
           }
-        } else {
-          if (worstIdx % 2 == 0) {
-            // socket.to(roomId).emit('message', {
+        } else if (idx == 4) {
+          if (bestIdx % 2 == 0) {
             this.server.in(roomId).emit('message', {
-              userId: users[idx % 2].id,
-              message: resultImg[idx],
+              userId: users[1].id,
+              message: resultImg[1],
               isImg: true,
             });
           } else {
-            // socket.to(roomId).emit('message', {
             this.server.in(roomId).emit('message', {
-              userId: users[(idx + 1) % 2].id,
-              message: resultImg[idx],
+              userId: users[0].id,
+              message: resultImg[1],
+              isImg: true,
+            });
+          }
+        } else if (idx == 7) {
+          if (worstIdx % 2 == 0) {
+            this.server.in(roomId).emit('message', {
+              userId: users[0].id,
+              message: resultImg[2],
+              isImg: true,
+            });
+          } else {
+            this.server.in(roomId).emit('message', {
+              userId: users[1].id,
+              message: resultImg[2],
+              isImg: true,
+            });
+          }
+        } else if (idx == 9) {
+          if (worstIdx % 2 == 0) {
+            this.server.in(roomId).emit('message', {
+              userId: users[1].id,
+              message: resultImg[3],
+              isImg: true,
+            });
+          } else {
+            this.server.in(roomId).emit('message', {
+              userId: users[0].id,
+              message: resultImg[3],
               isImg: true,
             });
           }
@@ -243,6 +291,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         clearInterval(intervalId);
       }
     }, 2000);
+
+    //! 게임 시작 상태 변경
+    this.rooms[roomId].started = false;
   }
 
   //! 게임 끝
@@ -301,7 +352,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 방에서 유저 exit
   @SubscribeMessage('exit_room')
-  exitRoom(@ConnectedSocket() socket: ServerToClientSocket): void {
+  exitRoom(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() nickName: string): void {
     const roomId = this.userToRoom[socket.id];
     if (!roomId) return;
     socket.leave(roomId);
@@ -314,6 +365,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.logger.log(`roomId: ${roomId} 삭제`);
       } else {
         socket.to(roomId).emit('user_exit');
+        socket.to(roomId).emit('message', {
+          userId: '',
+          message: `${nickName}가 나갔습니다.`,
+          isImg: false,
+        });
       }
     }
     // 모든 클라이언트에게 업데이트 된 방 정보 전달
@@ -371,5 +427,17 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const roomId = this.userToRoom[socket.id];
     socket.to(roomId).emit('message', { userId: socket.id, message, isImg: false });
     return { userId: socket.id, message, isImg: false };
+  }
+
+  @SubscribeMessage('change_stage')
+  handleGameStage(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() stage: number) {
+    const roomId = this.userToRoom[socket.id];
+    this.server.to(roomId).emit('get_change_stage', stage);
+  }
+
+  @SubscribeMessage('change_status')
+  handleGameStatus(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() status: number) {
+    const roomId = this.userToRoom[socket.id];
+    this.server.to(roomId).emit('get_change_status', status);
   }
 }

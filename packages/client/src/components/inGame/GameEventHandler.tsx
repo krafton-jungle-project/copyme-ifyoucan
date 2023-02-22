@@ -3,7 +3,7 @@ import type * as poseDetection from '@tensorflow-models/pose-detection';
 import { useAtom, useSetAtom } from 'jotai';
 import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
-import { gameAtom, GameStage, GameStatus, messageAtom } from '../../app/game';
+import { countDownAtom, gameAtom, GameStage, GameStatus, messageAtom } from '../../app/game';
 import { useNavigate } from 'react-router-dom';
 import { Bell, cameraClick, countDown, gameMusic, gunReload } from '../../utils/sound';
 
@@ -13,6 +13,7 @@ const GameSocket = () => {
   const [game, setGame] = useAtom(gameAtom);
   const setMessage = useSetAtom(messageAtom);
   const navigate = useNavigate();
+  const setCountDown = useSetAtom(countDownAtom);
 
   useEffect(() => {
     socket.on('get_ready', () => {
@@ -57,25 +58,35 @@ const GameSocket = () => {
 
     socket.on('get_count_down', (count: number, stage: string) => {
       console.log(count, stage);
-      setMessage(count.toString());
+      setMessage(count.toString()); //todo: 카운트다운 분리 후 삭제
+      setCountDown(count);
+
+      //todo: 3초 음악으로 변경
       if (count === 5) {
         countDown.play();
       }
 
       if (count === 0) {
         cameraClick.play();
-        if (stage === 'offend') {
-          setGame((prev) => ({ ...prev, stage: GameStage.DEFEND_ANNOUNCEMENT }));
-        } else if (stage === 'defend') {
-          setGame((prev) => ({
-            ...prev,
-            isOffender: !prev.isOffender,
-            stage: GameStage.OFFEND_ANNOUNCEMENT,
-            round: prev.round + 0.5,
-          }));
-        } else {
-          console.log('카운트다운 오류', 'count:', count, 'stage:', stage);
-        }
+
+        //todo
+        //todo
+        //todo
+
+        setTimeout(() => {
+          if (stage === 'offend') {
+            setGame((prev) => ({ ...prev, stage: GameStage.DEFEND }));
+          } else if (stage === 'defend') {
+            setGame((prev) => ({
+              ...prev,
+              isOffender: !prev.isOffender, // 공수전환
+              stage: Number.isInteger(prev.round + 0.5) ? GameStage.ROUND : GameStage.OFFEND,
+              round: prev.round + 0.5,
+            }));
+          } else {
+            console.log('카운트다운 오류', 'count:', count, 'stage:', stage);
+          }
+        }, 1000);
       }
     });
 
@@ -87,11 +98,25 @@ const GameSocket = () => {
   useEffect(() => {
     socket.on('user_exit', () => {
       console.log('user_exit');
+      console.log(game.status);
       if (game.status !== GameStatus.WAITING) {
-        navigate('/');
+        //todo
+        // navigate('/');
       }
     });
   }, [game.status, socket]);
+
+  useEffect(() => {
+    socket.on('get_change_stage', (stage: number) => {
+      console.log('change stage to:', stage);
+      setGame((prev) => ({ ...prev, stage }));
+    });
+
+    socket.on('get_change_status', (status: number) => {
+      console.log('change status to:', status);
+      setGame((prev) => ({ ...prev, status }));
+    });
+  }, []);
 
   return null;
 };

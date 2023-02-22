@@ -42,6 +42,9 @@ export interface ServerToClientEvents {
   get_ice: (data: RTCIceCandidate) => void;
   message: (chat: IChat) => void;
   user_exit: () => void;
+
+  get_change_stage: (stage: number) => void;
+  get_change_status: (stage: number) => void;
 }
 
 export interface ClientToServerEvents {
@@ -53,7 +56,7 @@ export interface ClientToServerEvents {
   rooms: () => void;
   create_room: (roomName: string) => void;
   join_room: (data: { roomId: string; nickName: string }) => void;
-  exit_room: () => void;
+  exit_room: (nickName: string) => void;
   ready: (roomId: string) => void;
   unready: (roomId: string) => void;
   start: (roomId: string) => void;
@@ -78,6 +81,9 @@ export interface ClientToServerEvents {
     candidateReceiveID: string;
   }) => void;
   message: (message: string, callback: (chat: IChat) => void) => void;
+
+  change_stage: (stage: number) => void;
+  change_status: (status: number) => void;
 }
 
 export interface InterServerEvents {
@@ -96,6 +102,9 @@ export interface InterServerEvents {
   error: () => void;
   full: () => void;
   message: (chat: IChat) => void;
+
+  get_change_stage: (stage: number) => void;
+  get_change_status: (stage: number) => void;
 }
 
 export interface SocketData {
