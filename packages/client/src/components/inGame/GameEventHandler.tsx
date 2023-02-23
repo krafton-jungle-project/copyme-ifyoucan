@@ -3,16 +3,9 @@ import type * as poseDetection from '@tensorflow-models/pose-detection';
 import { useAtom, useSetAtom } from 'jotai';
 import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
-import {
-  countDownAtom,
-  gameAtom,
-  GameStage,
-  GameStatus,
-  messageAtom,
-  myScoreAtom,
-} from '../../app/game';
+import { countDownAtom, gameAtom, GameStage, GameStatus, myScoreAtom } from '../../app/game';
 import { useNavigate } from 'react-router-dom';
-import { Bell, cameraClick, countDown, gameMusic, gunReload } from '../../utils/sound';
+import { Bell, CameraClick, CountDown3s, GameMusic, GunReload, Swish } from '../../utils/sound';
 import { useResetAtom } from 'jotai/utils';
 
 const GameSocket = () => {
@@ -20,20 +13,19 @@ const GameSocket = () => {
   const { socket } = useClientSocket();
   const [game, setGame] = useAtom(gameAtom);
   const resetGame = useResetAtom(gameAtom);
-  const setMessage = useSetAtom(messageAtom);
   const navigate = useNavigate();
   const setCountDown = useSetAtom(countDownAtom);
   const setMyScore = useSetAtom(myScoreAtom);
 
   useEffect(() => {
     socket.on('get_ready', () => {
-      gunReload.play();
+      GunReload.play();
       console.log('get_ready');
       setPeer((prev) => ({ ...prev, isReady: true }));
     });
 
     socket.on('get_unready', () => {
-      gunReload.play();
+      GunReload.play();
       console.log('get_unready');
       setPeer((prev) => ({ ...prev, isReady: false }));
     });
@@ -55,12 +47,14 @@ const GameSocket = () => {
     socket.on('get_start', () => {
       console.log('get_start');
 
-      setTimeout(() => {
-        Bell.play();
-      }, 800);
+      Swish.play();
 
       setTimeout(() => {
-        gameMusic.play();
+        Bell.play();
+      }, 1000);
+
+      setTimeout(() => {
+        GameMusic.play();
       }, 1500);
 
       setGame((prev) => ({ ...prev, status: GameStatus.GAME }));
@@ -68,16 +62,14 @@ const GameSocket = () => {
 
     socket.on('get_count_down', (count: number, stage: string) => {
       console.log(count, stage);
-      setMessage(count.toString()); //todo: 카운트다운 분리 후 삭제
       setCountDown(count);
 
-      //todo: 3초 음악으로 변경
-      if (count === 5) {
-        countDown.play();
+      if (count === 3) {
+        CountDown3s.play();
       }
 
       if (count === 0) {
-        cameraClick.play();
+        CameraClick.play();
 
         //todo
         //todo
@@ -96,7 +88,7 @@ const GameSocket = () => {
           } else {
             console.log('카운트다운 오류', 'count:', count, 'stage:', stage);
           }
-        }, 1000);
+        }, 3000);
       }
     });
 
@@ -117,6 +109,8 @@ const GameSocket = () => {
     });
 
     socket.on('get_finish', () => {
+      GameMusic.currentTime = 0;
+      GameMusic.pause();
       console.log('get_finish');
       resetGame();
       setMyScore(0);

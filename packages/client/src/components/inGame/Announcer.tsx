@@ -7,6 +7,7 @@ import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
 import { imValidBodyAtom } from './waiting/MotionReady';
 import { imReadyAtom } from './Logo';
+import { RoundOne, RoundThree, RoundTwo, Transition } from '../../utils/sound';
 
 const Container = styled.div`
   position: absolute;
@@ -16,7 +17,7 @@ const Container = styled.div`
   left: 15%;
   width: 70%;
   height: 100%;
-  font-size: 50px;
+  font-size: 3vw;
   font-weight: 400;
 
   border: 0.2rem solid #fff;
@@ -50,7 +51,10 @@ function Announcer() {
     '공격자의 자세를 정확히 따라해주세요!',
   ];
 
-  const offenderMessages: string[] = [`${game.isOffender ? myNickName : peer.nickName}님의 공격!`];
+  const offenderMessages: string[] = [
+    '공격 수비 전환',
+    `${game.isOffender ? myNickName : peer.nickName}님의 공격!`,
+  ];
   const defenderMessages: string[] = [`${game.isOffender ? peer.nickName : myNickName}님의 수비!`];
 
   const gameMessage = () => {
@@ -58,7 +62,7 @@ function Announcer() {
       case GameStage.INITIAL:
         if (messageOrder < initialMessages.length) {
           setMessage(initialMessages[messageOrder++]);
-          setTimeout(gameMessage, 1500);
+          setTimeout(gameMessage, 2000);
         } else {
           messageOrder = 0;
           if (imHost) {
@@ -66,9 +70,12 @@ function Announcer() {
           }
         }
         break;
-      //temp
       case GameStage.ROUND:
         if (game.round < 4) {
+          if (game.round === 1) RoundOne.play();
+          else if (game.round === 2) RoundTwo.play();
+          else if (game.round === 3) RoundThree.play();
+
           setMessage(`ROUND ${game.round} START!`);
 
           // 라운드 시작 시 점수 초기화
@@ -91,6 +98,15 @@ function Announcer() {
         }
         break;
       case GameStage.OFFEND:
+        // 공수 전환
+        if (messageOrder === 0) {
+          if (game.round % 1 !== 0) {
+            Transition.play();
+          } else {
+            messageOrder = 1;
+          }
+        }
+
         if (messageOrder < offenderMessages.length) {
           setMessage(offenderMessages[messageOrder++]);
           setTimeout(gameMessage, 2000);

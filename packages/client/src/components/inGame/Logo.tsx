@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { imHostAtom, roomIdAtom } from '../../app/atom';
 import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
-import { gunReload } from '../../utils/sound';
+import { GunReload } from '../../utils/sound';
 import { isStartAtom } from './InGame';
 
 const Container = styled.div`
@@ -48,11 +48,11 @@ function Logo() {
 
   function onReady() {
     if (imReady) {
-      gunReload.play();
+      GunReload.play();
       socket.emit('unready', roomId);
       console.log('unready!');
     } else {
-      gunReload.play();
+      GunReload.play();
       socket.emit('ready', roomId);
       console.log('ready!');
     }

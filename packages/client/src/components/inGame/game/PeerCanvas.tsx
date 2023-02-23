@@ -7,6 +7,7 @@ import * as moveNet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
 import { imHostAtom } from '../../../app/atom';
 import { useClientSocket } from '../../../module/client-socket';
+import CountDown from './CountDown';
 import Grade from './Grade';
 
 const Container = styled.div`
@@ -26,7 +27,7 @@ const Video = styled.video`
   /* visibility: hidden; */
   width: 100%;
   height: 100%;
-  border-radius: 10px 25px;
+  border-radius: 20px;
 `;
 
 const Canvas = styled.canvas`
@@ -39,34 +40,29 @@ const Canvas = styled.canvas`
 `;
 
 const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
-  visibility: hidden;
+  position: absolute;
   object-fit: cover;
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
-  position: absolute;
+  right: 0%;
   width: 100%;
   height: 100%;
-  outline: 7px solid;
+  box-sizing: border-box;
   border-radius: 20px;
+  visibility: hidden;
+
+  border: 0.2rem solid #fff;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff, 0 0 0.8rem #fff, 0 0 2.8rem #fff,
+    inset 0 0 1.3rem #fff;
+
   ${(props) =>
     props.isCaptured &&
     css`
-      /* -webkit-transform: scaleX(-1)                                                                                 ;
-      transform: scaleX(-1); */
-      position: absolute;
-      transform: scaleX(-1) scale(1.3);
+      transform: scaleX(-1.2) scaleY(1.25);
       right: 10%;
-      transition: 0.7s;
     `}
 
-  ${(props) =>
-    !props.isCaptured &&
-    css`
-      position: absolute;
-      transform: scaleX(-1) scale(1);
-      right: 0%;
-      transition: 0.7s;
-    `}
+  transition: 0.7s;
 `;
 
 function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoElement> }) {
@@ -135,24 +131,26 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
         }
       }
 
-      //todo: 캡쳐한 수비사진을, 공격자의 캡쳐한 사진과 짧게 비교
+      // 캡쳐한 수비사진을, 공격자의 캡쳐한 사진과 짧게 비교
       if (game.stage === GameStage.DEFEND) {
-        //todo: 공수 비교 이펙트
-        setIsCaptured(true);
+        // 공수 비교 이펙트
+        setTimeout(() => {
+          setIsCaptured(true);
+          if (game.isOffender) {
+            setTimeout(() => {
+              setGradable(true);
+            }, 1000);
+          }
+        }, 1000);
 
-        if (game.isOffender) {
-          setTimeout(() => {
-            setGradable(true);
-          }, 1000);
-        }
         setTimeout(() => {
           if (videoRef.current !== null && capturedPoseRef.current !== null) {
-            //todo: 공수 비교 이펙트 끝나고 다시 사진 감추기
+            // 공수 비교 이펙트 끝나고 다시 사진 감추기
             capturedPoseRef.current.style.visibility = 'hidden';
             setIsCaptured(false);
             setGradable(false);
           }
-        }, 2000);
+        }, 3000);
       }
     }
   }, [countDown]);
@@ -162,7 +160,8 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
       <Video ref={videoRef} />
       <Canvas ref={canvasRef} />
       <CapturedPose ref={capturedPoseRef} isCaptured={isCaptured} />
-      {gradable ? <Grade score={peer.score} isMine={false} /> : null}
+      {gradable ? <Grade score={peer.score} isMe={false} /> : null}
+      <CountDown isMe={false} />
     </Container>
   );
 }

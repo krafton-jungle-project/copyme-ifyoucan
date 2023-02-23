@@ -170,8 +170,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let count = 3;
     const intervalId = setInterval(() => {
       if (count >= 0) {
-        this.server.in(roomId).emit('get_count_down', count--, stage);
         console.log('countDown', count);
+        this.server.in(roomId).emit('get_count_down', count--, stage);
       } else {
         clearInterval(intervalId);
       }
