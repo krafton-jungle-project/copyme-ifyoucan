@@ -48,8 +48,10 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  border: 7px solid white;
   border-radius: 20px;
+  border: 0.2rem solid #fff;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff, 0 0 0.8rem #fff, 0 0 2.8rem #fff,
+    inset 0 0 1.3rem #fff;
 
   ${(props) =>
     props.isCaptured &&

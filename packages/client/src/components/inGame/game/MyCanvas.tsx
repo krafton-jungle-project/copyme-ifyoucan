@@ -47,8 +47,10 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  border: 7px solid white;
   border-radius: 20px;
+  border: 0.2rem solid #fff;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff, 0 0 0.8rem #fff, 0 0 2.8rem #fff,
+    inset 0 0 1.3rem #fff;
 
   ${(props) =>
     props.isCaptured &&
@@ -56,7 +58,6 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
       position: absolute;
       transform: scaleX(-1) scale(1.3);
       left: 10%;
-      transition: 0.7s;
     `}
 
   ${(props) =>
@@ -65,8 +66,8 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
       position: absolute;
       transform: scaleX(-1) scale(1);
       left: 0%;
-      transition: 0.7s;
     `}
+      transition: 0.7s;
 `;
 
 function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement> }) {

@@ -133,9 +133,7 @@ function GameBox() {
       if (countDown !== 0) {
         setFocus('me');
       } else {
-        setTimeout(() => {
-          setFocus('noMe');
-        }, 500);
+        setFocus('noMe');
       }
     } else if (
       (game.stage === GameStage.OFFEND && !game.isOffender) ||
@@ -144,9 +142,7 @@ function GameBox() {
       if (countDown !== 0) {
         setFocus('peer');
       } else {
-        setTimeout(() => {
-          setFocus('noPeer');
-        }, 500);
+        setFocus('noPeer');
       }
     } else {
       setFocus('noPeer');

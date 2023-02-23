@@ -57,6 +57,36 @@ const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`
   color: ${(props) => (props.isHost ? 'yellow' : props.isReady ? 'red' : 'grey')};
 `;
 
+//temp
+const TempChattingBox = styled.div<{ isStart: boolean }>`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: ${(props) => (props.isStart ? '150%' : '50%')};
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 38%;
+  height: 100%;
+
+  font-size: 5vw;
+  font-weight: 400;
+
+  border: 0.2rem solid #fff;
+  border-radius: 2rem;
+  padding: 0.4em;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #ff1178, 0 0 0.8rem #ff1178,
+    0 0 2.8rem #ff1178, inset 0 0 1.3rem #ff1178;
+
+  color: #fff;
+  text-shadow: /* White glow */ 0 0 5px #fff, 0 0 20px #fff, 0 0 50px #fff,
+    /* Green glow */ 0 0 42px #ff1178, 0 0 120px #ff1178, 0 0 92px #ff1178, 0 0 102px #ff1178,
+    0 0 151px #ff1178;
+
+  transition-property: top;
+  transition-duration: 0.5s;
+`;
+
 function WaitingBox() {
   const setGame = useSetAtom(gameAtom);
   const myNickName = useAtomValue(myNickNameAtom);
@@ -88,7 +118,8 @@ function WaitingBox() {
           {imHost ? (peerNickName ? (peer.isReady ? 'READY' : 'NOT READY') : 'WAITING') : '👑 HOST'}
         </ReadyState>
       </Wrapper>
-      {/* <Chatting /> */}
+      <TempChattingBox isStart={isStart}>Chat Box</TempChattingBox>
+      {/* <Chatting />/ */}
     </Container>
   );
 }

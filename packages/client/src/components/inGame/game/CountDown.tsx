@@ -49,14 +49,10 @@ function CountDown({ isMe }: { isMe: boolean }) {
       if (countDown !== 0) {
         setVisibility(true);
       } else {
-        setTimeout(() => {
-          setVisibility(false);
-        }, 500);
+        setVisibility(false);
       }
     } else {
-      setTimeout(() => {
-        setVisibility(false);
-      }, 500);
+      setVisibility(false);
     }
   }, [game.stage, countDown]);
 
