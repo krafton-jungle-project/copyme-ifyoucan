@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { useEffect, useRef } from 'react';
+import styled, { css } from 'styled-components';
+import { useEffect, useRef, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { peerAtom } from '../../../app/peer';
 import { countDownAtom, gameAtom, GameStage, peerPoseAtom } from '../../../app/game';
@@ -8,6 +8,7 @@ import { capturePose } from '../../../utils/capture-pose';
 import { imHostAtom } from '../../../app/atom';
 import { useClientSocket } from '../../../module/client-socket';
 import CountDown from './CountDown';
+import Grade from './Grade';
 
 const Container = styled.div`
   position: absolute;
@@ -26,7 +27,7 @@ const Video = styled.video`
   /* visibility: hidden; */
   width: 100%;
   height: 100%;
-  border-radius: 20px;
+  border-radius: 10px 25px;
 `;
 
 const Canvas = styled.canvas`
@@ -38,14 +39,35 @@ const Canvas = styled.canvas`
   border-radius: 20px;
 `;
 
-const CapturedPose = styled.canvas`
-  position: absolute;
+const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
+  visibility: hidden;
+  object-fit: cover;
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
-  object-fit: cover;
+  position: absolute;
   width: 100%;
   height: 100%;
+  outline: 7px solid;
   border-radius: 20px;
+  ${(props) =>
+    props.isCaptured &&
+    css`
+      /* -webkit-transform: scaleX(-1)                                                                                 ;
+      transform: scaleX(-1); */
+      position: absolute;
+      transform: scaleX(-1) scale(1.3);
+      right: 10%;
+      transition: 0.7s;
+    `}
+
+  ${(props) =>
+    !props.isCaptured &&
+    css`
+      position: absolute;
+      transform: scaleX(-1) scale(1);
+      right: 0%;
+      transition: 0.7s;
+    `}
 `;
 
 function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoElement> }) {
@@ -59,6 +81,8 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
   const setPeerPose = useSetAtom(peerPoseAtom);
   const { socket } = useClientSocket();
   const countDown = useAtomValue(countDownAtom);
+  const [isCaptured, setIsCaptured] = useState(false);
+  const [gradable, setGradable] = useState(false);
 
   useEffect(() => {
     if (videoRef.current === null || canvasRef.current === null || peer.stream === null) return;
@@ -99,11 +123,11 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
             getPeerPose();
           }
 
-          //todo: 제희만 믿는다...2
+          // host 여부에 따라 소켓으로 이미지 전송 여부 결정
           if (host) {
             capturePose(videoRef.current, capturedPoseRef.current, game.isOffender ? 1 : 0, socket);
           } else {
-            capturePose(videoRef.current, capturedPoseRef.current, game.isOffender ? 1 : 0);
+            capturePose(videoRef.current, capturedPoseRef.current);
           }
 
           capturedPoseRef.current.width = videoRef.current.width;
@@ -115,12 +139,21 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
       //todo: 캡쳐한 수비사진을, 공격자의 캡쳐한 사진과 짧게 비교
       if (game.stage === GameStage.DEFEND) {
         //todo: 공수 비교 이펙트
+        setIsCaptured(true);
+
+        if (game.isOffender) {
+          setTimeout(() => {
+            setGradable(true);
+          }, 1000);
+        }
         setTimeout(() => {
           if (videoRef.current !== null && capturedPoseRef.current !== null) {
             //todo: 공수 비교 이펙트 끝나고 다시 사진 감추기
             capturedPoseRef.current.style.visibility = 'hidden';
+            setIsCaptured(false);
+            setGradable(false);
           }
-        }, 1000);
+        }, 2000);
       }
     }
   }, [countDown]);
@@ -129,8 +162,9 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
     <Container>
       <Video ref={videoRef} />
       <Canvas ref={canvasRef} />
-      <CapturedPose ref={capturedPoseRef} />
-      <CountDown isMe={false}/>
+      <CapturedPose ref={capturedPoseRef} isCaptured={isCaptured} />
+      {gradable ? <Grade score={peer.score} isMine={false} /> : null}
+      <CountDown isMe={false} />
     </Container>
   );
 }
