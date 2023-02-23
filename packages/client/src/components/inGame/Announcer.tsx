@@ -7,7 +7,7 @@ import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
 import { imValidBodyAtom } from './waiting/MotionReady';
 import { imReadyAtom } from './Logo';
-import { RoundOne, RoundThree, RoundTwo } from '../../utils/sound';
+import { RoundOne, RoundThree, RoundTwo, Transition } from '../../utils/sound';
 
 const Container = styled.div`
   position: absolute;
@@ -51,7 +51,10 @@ function Announcer() {
     '공격자의 자세를 정확히 따라해주세요!',
   ];
 
-  const offenderMessages: string[] = [`${game.isOffender ? myNickName : peer.nickName}님의 공격!`];
+  const offenderMessages: string[] = [
+    '공격 수비 전환',
+    `${game.isOffender ? myNickName : peer.nickName}님의 공격!`,
+  ];
   const defenderMessages: string[] = [`${game.isOffender ? peer.nickName : myNickName}님의 수비!`];
 
   const gameMessage = () => {
@@ -95,6 +98,15 @@ function Announcer() {
         }
         break;
       case GameStage.OFFEND:
+        // 공수 전환
+        if (messageOrder === 0) {
+          if (game.round % 1 !== 0) {
+            Transition.play();
+          } else {
+            messageOrder = 1;
+          }
+        }
+
         if (messageOrder < offenderMessages.length) {
           setMessage(offenderMessages[messageOrder++]);
           setTimeout(gameMessage, 2000);

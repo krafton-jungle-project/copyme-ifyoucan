@@ -88,7 +88,7 @@ const GameSocket = () => {
           } else {
             console.log('카운트다운 오류', 'count:', count, 'stage:', stage);
           }
-        }, 1000);
+        }, 3000);
       }
     });
 

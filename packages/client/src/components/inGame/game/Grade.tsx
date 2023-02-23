@@ -6,24 +6,24 @@ import perfect from '../../../assets/images/score/perfect.gif';
 import fail from '../../../assets/images/score/fail.gif';
 import { Fail, Stamp } from '../../../utils/sound';
 
-const GradeImg = styled.img<{ isMine: boolean }>`
+const GradeImg = styled.img<{ isMe: boolean }>`
   position: absolute;
 
   ${(props) =>
-    props.isMine &&
+    props.isMe &&
     css`
       top: 80%;
       left: 15%;
     `}
   ${(props) =>
-    !props.isMine &&
+    !props.isMe &&
     css`
       top: 80%;
       right: 14%;
     `}
 `;
 
-function Grade({ score, isMine }: { score: number; isMine: boolean }) {
+function Grade({ score, isMe }: { score: number; isMe: boolean }) {
   const [gradeImg, setGradeImg] = useState('');
 
   useEffect(() => {
@@ -42,7 +42,7 @@ function Grade({ score, isMine }: { score: number; isMine: boolean }) {
     }
   }, [score]);
 
-  return <GradeImg src={gradeImg} alt="grade" isMine={isMine} />;
+  return <GradeImg src={gradeImg} alt="grade" isMe={isMe} />;
 }
 
 export default Grade;
