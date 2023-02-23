@@ -46,13 +46,13 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
   position: absolute;
   width: 100%;
   height: 100%;
-  outline: 7px solid;
+  box-sizing: border-box;
+  border: 7px solid white;
   border-radius: 20px;
+
   ${(props) =>
     props.isCaptured &&
     css`
-      /* -webkit-transform: scaleX(-1)                                                                                 ;
-      transform: scaleX(-1); */
       position: absolute;
       transform: scaleX(-1) scale(1.3);
       left: 10%;
