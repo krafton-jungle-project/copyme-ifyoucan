@@ -110,7 +110,7 @@ const CameraFocus = styled.div<{ focus: string; light: boolean }>`
         0 0 1.4rem #1f51ff, inset 0 0 0.6rem #1f51ff;
     `}
 
-  transition: 1s;
+  transition: 0.5s;
 `;
 
 function GameBox() {
@@ -156,6 +156,7 @@ function GameBox() {
   return (
     <Container isStart={isStart}>
       <CameraFocus focus={focus} light={countDown % 2 === 1} />
+      <Versus />
       <Wrapper isMe={true} isStart={isStart}>
         <MyScoreBar myVideoRef={myVideoRef} />
         <CameraWrapper isMe={true}>
@@ -172,7 +173,6 @@ function GameBox() {
           <PeerCanvas peerVideoRef={peerVideoRef} />
         </CameraWrapper>
       </Wrapper>
-      <Versus />
     </Container>
   );
 }

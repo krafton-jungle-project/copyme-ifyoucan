@@ -27,7 +27,7 @@ const Video = styled.video`
   /* visibility: hidden; */
   width: 100%;
   height: 100%;
-  border-radius: 10px 25px;
+  border-radius: 20px;
 `;
 
 const Canvas = styled.canvas`

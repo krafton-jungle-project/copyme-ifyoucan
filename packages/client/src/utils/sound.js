@@ -11,6 +11,7 @@ import roomenter from '../assets/sounds/room-enter.mp3';
 import roomexit from '../assets/sounds/room-exit.mp3';
 import stamp from '../assets/sounds/stamp.mp3';
 import fail from '../assets/sounds/fail.mp3';
+import swish from '../assets/sounds/swish.mp3';
 
 const CountDown3s = new Audio(countdown);
 const GameMusic = new Audio(gamemusic);
@@ -25,6 +26,7 @@ const RoomEnter = new Audio(roomenter);
 const RoomExit = new Audio(roomexit);
 const Stamp = new Audio(stamp);
 const Fail = new Audio(fail);
+const Swish = new Audio(swish);
 
 export {
   CountDown3s,
@@ -40,4 +42,5 @@ export {
   RoomExit,
   Stamp,
   Fail,
+  Swish,
 };

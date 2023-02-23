@@ -26,7 +26,7 @@ const Video = styled.video`
   /* visibility: hidden; */
   width: 100%;
   height: 100%;
-  border-radius: 25px 5px;
+  border-radius: 20px;
 `;
 
 const Canvas = styled.canvas`
