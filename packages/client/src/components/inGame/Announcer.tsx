@@ -7,7 +7,7 @@ import { peerAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
 import { imValidBodyAtom } from './waiting/MotionReady';
 import { imReadyAtom } from './Logo';
-import { roundOne, roundThree, roundTwo } from '../../utils/sound';
+import { RoundOne, RoundThree, RoundTwo } from '../../utils/sound';
 
 const Container = styled.div`
   position: absolute;
@@ -67,12 +67,11 @@ function Announcer() {
           }
         }
         break;
-      //temp
       case GameStage.ROUND:
         if (game.round < 4) {
-          if (game.round === 1) roundOne.play();
-          else if (game.round === 2) roundTwo.play();
-          else if (game.round === 3) roundThree.play();
+          if (game.round === 1) RoundOne.play();
+          else if (game.round === 2) RoundTwo.play();
+          else if (game.round === 3) RoundThree.play();
 
           setMessage(`ROUND ${game.round} START!`);
 

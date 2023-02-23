@@ -12,7 +12,7 @@ import {
   myScoreAtom,
 } from '../../app/game';
 import { useNavigate } from 'react-router-dom';
-import { Bell, cameraClick, countDown, gameMusic, gunReload } from '../../utils/sound';
+import { Bell, CameraClick, CountDown3s, GameMusic, GunReload } from '../../utils/sound';
 import { useResetAtom } from 'jotai/utils';
 
 const GameSocket = () => {
@@ -27,13 +27,13 @@ const GameSocket = () => {
 
   useEffect(() => {
     socket.on('get_ready', () => {
-      gunReload.play();
+      GunReload.play();
       console.log('get_ready');
       setPeer((prev) => ({ ...prev, isReady: true }));
     });
 
     socket.on('get_unready', () => {
-      gunReload.play();
+      GunReload.play();
       console.log('get_unready');
       setPeer((prev) => ({ ...prev, isReady: false }));
     });
@@ -60,7 +60,7 @@ const GameSocket = () => {
       }, 800);
 
       setTimeout(() => {
-        gameMusic.play();
+        GameMusic.play();
       }, 1500);
 
       setGame((prev) => ({ ...prev, status: GameStatus.GAME }));
@@ -71,11 +71,11 @@ const GameSocket = () => {
       setCountDown(count);
 
       if (count === 3) {
-        countDown.play();
+        CountDown3s.play();
       }
 
       if (count === 0) {
-        cameraClick.play();
+        CameraClick.play();
 
         //todo
         //todo

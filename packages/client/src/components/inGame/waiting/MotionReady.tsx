@@ -5,8 +5,8 @@ import { atom, useAtom, useAtomValue } from 'jotai';
 import { peerAtom } from '../../../app/peer';
 import { useInterval } from '../hooks/useInterval';
 import { imHostAtom, roomIdAtom } from '../../../app/atom';
-import { gunReload } from '../../../utils/sound';
-import { imReadyAtom } from '../Logo'
+import { GunReload } from '../../../utils/sound';
+import { imReadyAtom } from '../Logo';
 
 //todo: 한 곳에 모으기(Game Handler)
 export const motionReadyDelayAtom = atom<number | null>(null);
@@ -46,14 +46,14 @@ function MotionReady() {
           else {
             // 레디 상태가 아닐 때, 왼손을 올리면 레디를 한다
             if (!imReady && isLeftHandUp(pose, 50)) {
-              gunReload.play();
+              GunReload.play();
               socket.emit('ready', roomId);
               console.log('ready!');
               setImReady(true);
             }
             // 레디 상태일 때, 왼손을 내리면 레디를 푼다
             else if (imReady && !isLeftHandUp(pose, 50)) {
-              gunReload.play();
+              GunReload.play();
               socket.emit('unready', roomId);
               console.log('unready!');
               setImReady(false);
