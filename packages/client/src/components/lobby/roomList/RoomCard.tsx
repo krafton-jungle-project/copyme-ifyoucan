@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Poro from '../../../assets/images/arcadePoro.png';
 import { useSetAtom } from 'jotai';
-import { roomIdAtom } from '../../../app/atom';
+import { roomInfoAtom } from '../../../app/room';
+
 const RoomInfo = styled.div`
   margin-left: 10px;
   position: relative;
@@ -38,16 +39,16 @@ const RoomCnt = styled.span`
 interface Props {
   roomName: string;
   users: { id: string; nickName: string }[];
-  started: boolean;
+  isStart: boolean;
   readyCount: number;
 }
 
 export default function RoomCard({ roomId, roomInfo }: { roomId: string; roomInfo: Props }) {
   const navigate = useNavigate();
-  const setRoomId = useSetAtom(roomIdAtom);
+  const setRoomInfo = useSetAtom(roomInfoAtom);
 
   const joinRoom = (roomId: string) => {
-    setRoomId(roomId);
+    setRoomInfo((prev) => ({ ...prev, roomId }));
     navigate('/room');
   };
 

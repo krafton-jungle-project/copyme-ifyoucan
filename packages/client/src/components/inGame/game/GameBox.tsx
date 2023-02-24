@@ -1,15 +1,14 @@
 import styled, { css } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { countDownAtom, gameAtom, GameStage } from '../../../app/game';
-import { myNickNameAtom } from '../../../app/atom';
-import { isStartAtom } from '../InGame';
-import { peerAtom } from '../../../app/peer';
+import { gameAtom, GameStage } from '../../../app/game';
+import { peerInfoAtom } from '../../../app/peer';
 import MyScoreBar from './MyScoreBar';
 import MyCanvas from './MyCanvas';
 import PeerCanvas from './PeerCanvas';
 import PeerScoreBar from './PeerScoreBar';
 import Versus from './Versus';
+import { myNickName } from '../../../pages/Lobby';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -115,31 +114,26 @@ const CameraFocus = styled.div<{ focus: string; light: boolean }>`
 
 function GameBox() {
   const game = useAtomValue(gameAtom);
-  const myNickName = useAtomValue(myNickNameAtom);
-  const peer = useAtomValue(peerAtom);
-  const peerNickName = peer.nickName;
-  const isStart = useAtomValue(isStartAtom);
+  const peerNickName = useAtomValue(peerInfoAtom).nickName;
   const myVideoRef = useRef<HTMLVideoElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null);
-
   const [focus, setFocus] = useState('noMe');
-  const countDown = useAtomValue(countDownAtom);
 
   useEffect(() => {
     if (
-      (game.stage === GameStage.OFFEND && game.isOffender) ||
-      (game.stage === GameStage.DEFEND && !game.isOffender)
+      (game.stage === GameStage.OFFEND && game.user.isOffender) ||
+      (game.stage === GameStage.DEFEND && !game.user.isOffender)
     ) {
-      if (countDown !== 0) {
+      if (game.countDown !== 0) {
         setFocus('me');
       } else {
         setFocus('noMe');
       }
     } else if (
-      (game.stage === GameStage.OFFEND && !game.isOffender) ||
-      (game.stage === GameStage.DEFEND && game.isOffender)
+      (game.stage === GameStage.OFFEND && !game.user.isOffender) ||
+      (game.stage === GameStage.DEFEND && game.user.isOffender)
     ) {
-      if (countDown !== 0) {
+      if (game.countDown !== 0) {
         setFocus('peer');
       } else {
         setFocus('noPeer');
@@ -147,25 +141,25 @@ function GameBox() {
     } else {
       setFocus('noPeer');
     }
-  }, [game.stage, countDown]);
+  }, [game.stage, game.countDown]);
 
   return (
-    <Container isStart={isStart}>
-      <CameraFocus focus={focus} light={countDown % 2 === 1} />
+    <Container isStart={game.isStart}>
+      <CameraFocus focus={focus} light={game.countDown % 2 === 1} />
       <Versus />
-      <Wrapper isMe={true} isStart={isStart}>
+      <Wrapper isMe={true} isStart={game.isStart}>
         <MyScoreBar myVideoRef={myVideoRef} />
         <CameraWrapper isMe={true}>
           <NickNameBox>{myNickName}</NickNameBox>
-          <GameRole>{game.isOffender ? '공격자' : '수비자'}</GameRole>
+          <GameRole>{game.user.isOffender ? '공격자' : '수비자'}</GameRole>
           <MyCanvas myVideoRef={myVideoRef} />
         </CameraWrapper>
       </Wrapper>
-      <Wrapper isMe={false} isStart={isStart}>
+      <Wrapper isMe={false} isStart={game.isStart}>
         <PeerScoreBar />
         <CameraWrapper isMe={false}>
           <NickNameBox>{peerNickName}</NickNameBox>
-          <GameRole>{game.isOffender ? '수비자' : '공격자'}</GameRole>
+          <GameRole>{game.user.isOffender ? '수비자' : '공격자'}</GameRole>
           <PeerCanvas peerVideoRef={peerVideoRef} />
         </CameraWrapper>
       </Wrapper>

@@ -43,21 +43,10 @@ export default function RoomList() {
     [key: string]: {
       roomName: string;
       users: { id: string; nickName: string }[];
-      started: boolean;
+      isStart: boolean;
       readyCount: number;
     };
   }>({});
-
-  // 사이트에서 나가는 시도(새로고침, 브라우저 닫기)를 할 때 경고창 띄우기
-  const preventClose = (e: BeforeUnloadEvent) => {
-    e.preventDefault();
-    e.returnValue = ''; // chrome에서는 return value 설정 필요
-  };
-
-  useEffect(() => {
-    (() => window.addEventListener('beforeunload', preventClose))();
-    return () => window.removeEventListener('beforeunload', preventClose);
-  }, []);
 
   // ! 이 부분도 공통스테이트로 빼면 좋을 것 같습니다 - @minhoyooDEV
   useEffect(() => {

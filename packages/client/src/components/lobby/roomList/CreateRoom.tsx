@@ -2,15 +2,13 @@ import { Button, Modal } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSetAtom } from 'jotai';
-import { imHostAtom, roomIdAtom } from '../../../app/atom';
 import { useClientSocket } from '../../../module/client-socket';
+import { roomInfoAtom } from '../../../app/room';
 
 export default function CreateRoom() {
   const { socket } = useClientSocket();
   const navigate = useNavigate();
-  const setImHost = useSetAtom(imHostAtom);
-  const setRoomId = useSetAtom(roomIdAtom);
-
+  const setRoomInfo = useSetAtom(roomInfoAtom);
   const [open, setOpen] = useState<boolean>(false);
 
   let roomName: string = '';
@@ -18,8 +16,10 @@ export default function CreateRoom() {
   const joinRoom = () => {
     socket.on('new_room', (roomId: string) => {
       // 방 생성자는 호스트가 된다.
-      setRoomId(roomId);
-      setImHost(true);
+      setRoomInfo(() => ({
+        roomId,
+        host: true,
+      }));
       navigate('/room');
     });
   };
@@ -48,10 +48,10 @@ export default function CreateRoom() {
       <Modal
         title="방 만들기"
         open={open}
+        okText="방 생성"
+        cancelText="취소"
         onOk={handleOk}
         onCancel={handleCancel}
-        cancelText="취소"
-        okText="방 생성"
       >
         <input
           type="text"

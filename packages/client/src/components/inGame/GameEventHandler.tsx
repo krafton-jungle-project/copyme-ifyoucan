@@ -1,68 +1,56 @@
 import { useEffect } from 'react';
-import type * as poseDetection from '@tensorflow-models/pose-detection';
-import { useAtom, useSetAtom } from 'jotai';
-import { peerAtom } from '../../app/peer';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useClientSocket } from '../../module/client-socket';
-import { countDownAtom, gameAtom, GameStage, GameStatus, myScoreAtom } from '../../app/game';
-import { useNavigate } from 'react-router-dom';
+import { gameAtom, GameStage, GameStatus } from '../../app/game';
 import { Bell, CameraClick, CountDown3s, GameMusic, GunReload, Swish } from '../../utils/sound';
 import { useResetAtom } from 'jotai/utils';
+import { roomInfoAtom } from '../../app/room';
 
-const GameSocket = () => {
-  const setPeer = useSetAtom(peerAtom);
+const GameEventHandler = () => {
   const { socket } = useClientSocket();
-  const [game, setGame] = useAtom(gameAtom);
+  const host = useAtomValue(roomInfoAtom).host;
+  const setGame = useSetAtom(gameAtom);
   const resetGame = useResetAtom(gameAtom);
-  const navigate = useNavigate();
-  const setCountDown = useSetAtom(countDownAtom);
-  const setMyScore = useSetAtom(myScoreAtom);
 
   useEffect(() => {
     socket.on('get_ready', () => {
       GunReload.play();
       console.log('get_ready');
-      setPeer((prev) => ({ ...prev, isReady: true }));
+      setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: true } }));
     });
 
     socket.on('get_unready', () => {
       GunReload.play();
       console.log('get_unready');
-      setPeer((prev) => ({ ...prev, isReady: false }));
-    });
-
-    //! 공격자의 이미지와 포즈 정보를 받는다
-    socket.on('get_image', (pose: poseDetection.Pose, imgSrc: string) => {
-      // 공격자 이미지 저장
-      setPeer((prev) => ({ ...prev, pose, imgSrc }));
-    });
-
-    //! 공격자의 이미지가 리셋된다
-    socket.on('get_image_reset', () => {
-      // 공격자 이미지 리셋
-      console.log('get_image_reset');
-      setPeer((prev) => ({ ...prev, pose: null, imgSrc: null }));
+      setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: false } }));
     });
 
     //! 게임 Status를 waiting에서 game으로 바꾼다
     socket.on('get_start', () => {
       console.log('get_start');
 
-      Swish.play();
+      setGame((prev) => ({
+        ...prev,
+        user: { ...prev.user, isOffender: host ? true : false },
+        isStart: true,
+        status: GameStatus.GAME,
+      }));
+
+      Swish.play(); // 비디오 휙 넘어가는 소리
 
       setTimeout(() => {
-        Bell.play();
+        Bell.play(); // 게임 시작 시 '땡땡땡' 복싱 벨 울리는 소리
       }, 1000);
 
       setTimeout(() => {
-        GameMusic.play();
+        GameMusic.play(); // 게임 배경음악
+        GameMusic.volume = 0.3;
       }, 1500);
-
-      setGame((prev) => ({ ...prev, status: GameStatus.GAME }));
     });
 
     socket.on('get_count_down', (count: number, stage: string) => {
       console.log(count, stage);
-      setCountDown(count);
+      setGame((prev) => ({ ...prev, countDown: count }));
 
       if (count === 3) {
         CountDown3s.play();
@@ -81,9 +69,9 @@ const GameSocket = () => {
           } else if (stage === 'defend') {
             setGame((prev) => ({
               ...prev,
-              isOffender: !prev.isOffender, // 공수전환
               stage: Number.isInteger(prev.round + 0.5) ? GameStage.ROUND : GameStage.OFFEND,
               round: prev.round + 0.5,
+              user: { ...prev.user, isOffender: !prev.user.isOffender }, // 공수전환
             }));
           } else {
             console.log('카운트다운 오류', 'count:', count, 'stage:', stage);
@@ -93,11 +81,9 @@ const GameSocket = () => {
     });
 
     socket.on('get_score', (score: number) => {
-      setPeer((prev) => ({ ...prev, score }));
+      setGame((prev) => ({ ...prev, peer: { ...prev.peer, score } }));
     });
-  }, [setPeer, socket]);
 
-  useEffect(() => {
     socket.on('get_change_stage', (stage: number) => {
       console.log('change stage to:', stage);
       setGame((prev) => ({ ...prev, stage }));
@@ -108,25 +94,16 @@ const GameSocket = () => {
       setGame((prev) => ({ ...prev, status }));
     });
 
+    // 게임이 끝났을 때
     socket.on('get_finish', () => {
       GameMusic.currentTime = 0;
       GameMusic.pause();
       console.log('get_finish');
       resetGame();
-      setMyScore(0);
-      setPeer((prev) => ({ ...prev, score: 0 }));
-    });
-
-    socket.on('user_exit', () => {
-      console.log('user_exit');
-      if (game.status !== GameStatus.WAITING) {
-        //todo
-        navigate('/');
-      }
     });
   }, []);
 
   return null;
 };
 
-export default GameSocket;
+export default GameEventHandler;

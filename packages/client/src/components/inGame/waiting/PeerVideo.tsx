@@ -1,9 +1,9 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { peerAtom } from '../../../app/peer';
+import { gameAtom } from '../../../app/game';
+import { peerInfoAtom } from '../../../app/peer';
 import DefaultProfileImg from '../../../assets/images/default-profile.png';
-import { isStartAtom } from '../InGame';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -38,12 +38,12 @@ const Video = styled.video`
 
 const PeerVideo = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const peer = useAtomValue(peerAtom);
-  const isStart = useAtomValue(isStartAtom);
+  const peerStream = useAtomValue(peerInfoAtom).stream;
+  const isStart = useAtomValue(gameAtom).isStart;
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.srcObject = peer.stream;
-  }, [peer.stream]);
+    if (videoRef.current) videoRef.current.srcObject = peerStream;
+  }, [peerStream]);
 
   return (
     <Container isStart={isStart}>

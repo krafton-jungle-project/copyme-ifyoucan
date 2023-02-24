@@ -3,7 +3,6 @@
  * 추가타입 반영시 yarn install 하여 패키지의 업데이트 사항을 반영해야한다.
  * @see https://socket.io/docs/v4/typescript/
  */
-import type * as poseDetection from '@tensorflow-models/pose-detection';
 export interface IChat {
   userId: string;
   message: string;
@@ -14,7 +13,7 @@ export interface Rooms {
   [key: string]: {
     roomName: string;
     users: { id: string; nickName: string }[];
-    started: boolean;
+    isStart: boolean;
     readyCount: number;
   };
 }
@@ -24,12 +23,9 @@ export interface ServerToClientEvents {
   new_room: (roomId: string) => void;
   get_ready: () => void;
   get_unready: () => void;
-  get_image_reset: () => void;
-  get_image: (pose: poseDetection.Pose, imgSrc: string) => void;
   get_start: () => void;
   get_score: (score: number) => void;
   get_count_down: (count: number, stage: string) => void;
-  get_attack: () => void;
   get_finish: () => void;
   peer: (data: { id: string; nickName: string }) => void;
   greeting: (data: { message: string }) => void;
@@ -41,8 +37,7 @@ export interface ServerToClientEvents {
   get_answer: (answer: RTCSessionDescription) => void;
   get_ice: (data: RTCIceCandidate) => void;
   message: (chat: IChat) => void;
-  user_exit: () => void;
-
+  user_exit: (isStart: boolean) => void;
   get_change_stage: (stage: number) => void;
   get_change_status: (stage: number) => void;
 }
@@ -81,7 +76,6 @@ export interface ClientToServerEvents {
     candidateReceiveID: string;
   }) => void;
   message: (message: string, callback: (chat: IChat) => void) => void;
-
   change_stage: (stage: number) => void;
   change_status: (status: number) => void;
   finish: () => void;
@@ -101,9 +95,8 @@ export interface InterServerEvents {
   get_answer: (answer: RTCSessionDescription) => void;
   get_ice: (data: RTCIceCandidate) => void;
   error: () => void;
-  full: () => void;
+  full: () => void; //todo
   message: (chat: IChat) => void;
-
   get_change_stage: (stage: number) => void;
   get_change_status: (stage: number) => void;
   get_finish: () => void;

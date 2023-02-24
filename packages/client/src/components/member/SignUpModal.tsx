@@ -1,8 +1,6 @@
-//todo: 회원가입 페이지 모달 컴포넌트로 변경mi
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Form, Container } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import styled from 'styled-components';
 

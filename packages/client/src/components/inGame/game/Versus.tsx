@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import styled, { css } from 'styled-components';
-import { isStartAtom } from '../InGame';
+import { gameAtom } from '../../../app/game';
 
 const VS = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -40,7 +40,7 @@ const VS = styled.div<{ isStart: boolean }>`
 `;
 
 function Versus() {
-  const isStart = useAtomValue(isStartAtom);
+  const isStart = useAtomValue(gameAtom).isStart;
 
   return <VS isStart={isStart}>VS</VS>;
 }
