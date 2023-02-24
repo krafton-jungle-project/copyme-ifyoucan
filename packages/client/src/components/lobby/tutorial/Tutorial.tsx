@@ -19,6 +19,10 @@ const CameraWrapper = styled.div`
   border: 2px solid yellow;
   width: 45%;
   height: 95%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
 `;
 
 function Tutorial() {
