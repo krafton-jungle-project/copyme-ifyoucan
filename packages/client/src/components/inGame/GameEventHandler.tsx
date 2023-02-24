@@ -49,7 +49,6 @@ const GameEventHandler = () => {
     });
 
     socket.on('get_count_down', (count: number, stage: string) => {
-      console.log(count, stage);
       setGame((prev) => ({ ...prev, countDown: count }));
 
       if (count === 3) {
@@ -58,10 +57,6 @@ const GameEventHandler = () => {
 
       if (count === 0) {
         CameraClick.play();
-
-        //todo
-        //todo
-        //todo
 
         setTimeout(() => {
           if (stage === 'offend') {

@@ -26,7 +26,7 @@ function Room() {
   usePreventExit(); //temp
   ConnectWebRTC();
   GameEventHandler();
-  // MotionReady();
+  MotionReady();
 
   useEffect(() => {
     if (!myNickName || !roomInfo.roomId) {
