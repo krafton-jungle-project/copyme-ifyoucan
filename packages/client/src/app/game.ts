@@ -1,37 +1,59 @@
 import type { Pose } from '@tensorflow-models/pose-detection';
-import { atom } from 'jotai';
 import { atomWithReset } from 'jotai/utils';
 
-export enum GameStatus {
+interface UserState {
+  isReady: boolean;
+  score: number;
+  isOffender: boolean;
+}
+
+interface PeerState {
+  isReady: boolean;
+  score: number;
+  pose: Pose | null;
+}
+
+enum GameStatus {
   WAITING,
   GAME,
   RESULT,
 }
 
-export enum GameStage {
+enum GameStage {
   INITIAL,
   ROUND,
   OFFEND,
   DEFEND,
 }
 
-// Standard interface and functions
-export interface GameState {
+interface GameState {
+  user: UserState;
+  peer: PeerState;
+  isStart: boolean;
   status: GameStatus;
-  round: number;
   stage: number;
-  isOffender: boolean;
+  round: number;
+  countDown: number;
 }
 
 const initialState: GameState = {
+  user: {
+    isReady: false,
+    score: 0,
+    isOffender: false,
+  },
+  peer: {
+    isReady: false,
+    score: 0,
+    pose: null,
+  },
+  isStart: false,
   status: GameStatus.WAITING,
-  round: 1,
   stage: GameStage.INITIAL,
-  isOffender: false,
+  round: 1,
+  countDown: 0,
 };
 
-export const gameAtom = atomWithReset(initialState);
-export const messageAtom = atom('');
-export const peerPoseAtom = atom<Pose | undefined>(undefined);
-export const countDownAtom = atom(0);
-export const myScoreAtom = atom(0);
+const gameAtom = atomWithReset(initialState);
+
+export { GameStatus, GameStage, gameAtom };

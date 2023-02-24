@@ -2,8 +2,6 @@ import styled from 'styled-components';
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import { gameAtom, GameStage, GameStatus } from '../../../app/game';
-import { isStartAtom } from '../InGame';
-import { peerAtom } from '../../../app/peer';
 
 const Container = styled.div`
   position: absolute;
@@ -65,10 +63,9 @@ const ScorePercent = styled.div`
 
 function PeerScoreBar() {
   const game = useAtomValue(gameAtom);
-  const peer = useAtomValue(peerAtom);
-  const isStart = useAtomValue(isStartAtom);
-  const [isInit, setIsInit] = useState(true);
+  const [isInit, setIsInit] = useState(true); //temp
 
+  //temp
   //todo: 조금 더 효율적으로 할 방법 생각(게임 시작 시 스코어바 이펙트)
   useEffect(() => {
     // 초기화(시작 이펙트)
@@ -86,9 +83,9 @@ function PeerScoreBar() {
     <Container>
       <ScoreInfo>유사도</ScoreInfo>
       <ScoreBarWrapper>
-        <ScoreBar isInit={isInit} score={isStart ? peer.score : 100} />
+        <ScoreBar isInit={isInit} score={game.isStart ? game.peer.score : 100} />
       </ScoreBarWrapper>
-      <ScorePercent>{peer.score}</ScorePercent>
+      <ScorePercent>{game.peer.score}</ScorePercent>
     </Container>
   );
 }

@@ -31,7 +31,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     [key: string]: {
       roomName: string;
       users: { id: string; nickName: string }[];
-      started: boolean;
+      isStart: boolean;
       readyCount: number;
       images: [string, string][];
       scores: number[];
@@ -61,7 +61,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         delete this.rooms[roomId];
         this.logger.log(`roomId: ${roomId} 삭제`);
       } else {
-        socket.to(roomId).emit('user_exit');
+        socket.to(roomId).emit('user_exit', this.rooms[roomId].isStart);
       }
     }
 
@@ -87,7 +87,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.rooms[roomId] = {
       roomName,
       users: [],
-      started: false,
+      isStart: false,
       readyCount: 0,
       images: [],
       scores: [],
@@ -138,29 +138,15 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(this.rooms[roomId].scores);
   }
 
-  //! 수비가 끝났을 시 이벤트를 받는다
-  @SubscribeMessage('image_reset')
-  resetImage(@ConnectedSocket() socket: ServerToClientSocket): void {
-    const roomId = this.userToRoom[socket.id];
-    socket.to(roomId).emit('get_image_reset');
-  }
-
   //! 게임 시작
   @SubscribeMessage('start')
   gameStart(@MessageBody() roomId: string): void {
-    if (!this.rooms[roomId].started) {
+    if (!this.rooms[roomId].isStart) {
       // 게임이 시작하면 모든 유저들에게 게임이 시작됐다는 이벤트 발생
       console.log('start');
-      this.rooms[roomId].started = true;
+      this.rooms[roomId].isStart = true;
       this.server.in(roomId).emit('get_start');
     }
-  }
-
-  //! 공격 시작
-  @SubscribeMessage('attack')
-  attack(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() roomId: string): void {
-    // 공격자가 공격을 시작하면 수비자들에게 공격이 시작되었다는 이벤트 발생
-    socket.to(roomId).emit('get_attack');
   }
 
   //! 카운트 다운 시작
@@ -300,7 +286,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 방에 모든 유저들에게 게임이 끝났다고 알려줌
     const roomId = this.userToRoom[socket.id];
     //! 게임 시작 상태 변경
-    this.rooms[roomId].started = false;
+    this.rooms[roomId].isStart = false;
     this.server.to(roomId).emit('get_finish');
   }
 
@@ -321,7 +307,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const countUsers = this.rooms[roomId].users.length;
     if (countUsers === 2) {
       //! 방 인원이 다 찼을 경우
-      this.server.to(socket.id).emit('full');
+      this.server.to(socket.id).emit('full'); //todo
       this.logger.log(`full users ${countUsers}`);
       return;
     } else {
@@ -357,6 +343,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const roomId = this.userToRoom[socket.id];
     if (!roomId) return;
     socket.leave(roomId);
+
     // 유저 정보 업데이트
     if (this.rooms[roomId]) {
       this.rooms[roomId].users = this.rooms[roomId].users.filter((user) => user.id !== socket.id);
@@ -365,7 +352,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         delete this.rooms[roomId];
         this.logger.log(`roomId: ${roomId} 삭제`);
       } else {
-        socket.to(roomId).emit('user_exit');
+        socket.to(roomId).emit('user_exit', this.rooms[roomId].isStart);
         socket.to(roomId).emit('message', {
           userId: '',
           message: `${nickName}가 나갔습니다.`,

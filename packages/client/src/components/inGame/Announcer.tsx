@@ -1,13 +1,13 @@
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { useEffect } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { imHostAtom, myNickNameAtom } from '../../app/atom';
-import { gameAtom, GameStage, GameStatus, messageAtom, myScoreAtom } from '../../app/game';
-import { peerAtom } from '../../app/peer';
+import { gameAtom, GameStage, GameStatus } from '../../app/game';
+import { peerInfoAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
 import { imValidBodyAtom } from './waiting/MotionReady';
-import { imReadyAtom } from './Logo';
 import { RoundOne, RoundThree, RoundTwo, Transition } from '../../utils/sound';
+import { roomInfoAtom } from '../../app/room';
+import { myNickName } from '../../pages/Lobby';
 
 const Container = styled.div`
   position: absolute;
@@ -35,15 +35,12 @@ const Container = styled.div`
 let messageOrder: number;
 
 function Announcer() {
-  const imHost = useAtomValue(imHostAtom);
-  const myNickName = useAtomValue(myNickNameAtom);
-  const [peer, setPeer] = useAtom(peerAtom);
+  const host = useAtomValue(roomInfoAtom).host;
+  const peerInfo = useAtomValue(peerInfoAtom);
   const { socket } = useClientSocket();
-  const game = useAtomValue(gameAtom);
-  const [message, setMessage] = useAtom(messageAtom);
+  const [game, setGame] = useAtom(gameAtom);
+  const [message, setMessage] = useState('');
   const imValidBody = useAtomValue(imValidBodyAtom);
-  const imReady = useAtomValue(imReadyAtom);
-  const setMyScore = useSetAtom(myScoreAtom);
 
   const initialMessages: string[] = [
     '게임을 시작합니다',
@@ -53,100 +50,106 @@ function Announcer() {
 
   const offenderMessages: string[] = [
     '공격 수비 전환',
-    `${game.isOffender ? myNickName : peer.nickName}님의 공격!`,
+    `${game.user.isOffender ? myNickName : peerInfo.nickName}님의 공격!`,
   ];
-  const defenderMessages: string[] = [`${game.isOffender ? peer.nickName : myNickName}님의 수비!`];
-
-  const gameMessage = () => {
-    switch (game.stage) {
-      case GameStage.INITIAL:
-        if (messageOrder < initialMessages.length) {
-          setMessage(initialMessages[messageOrder++]);
-          setTimeout(gameMessage, 2000);
-        } else {
-          messageOrder = 0;
-          if (imHost) {
-            socket.emit('change_stage', GameStage.ROUND);
-          }
-        }
-        break;
-      case GameStage.ROUND:
-        if (game.round < 4) {
-          if (game.round === 1) RoundOne.play();
-          else if (game.round === 2) RoundTwo.play();
-          else if (game.round === 3) RoundThree.play();
-
-          setMessage(`ROUND ${game.round} START!`);
-
-          // 라운드 시작 시 점수 초기화
-          setTimeout(() => {
-            setMyScore(0);
-            setPeer((prev) => ({ ...prev, score: 0 }));
-          }, 1500);
-
-          setTimeout(() => {
-            if (imHost) {
-              socket.emit('change_stage', GameStage.OFFEND);
-            }
-          }, 3000);
-        } else {
-          // 게임 끝
-          console.log('finish');
-          if (imHost) {
-            socket.emit('finish');
-          }
-        }
-        break;
-      case GameStage.OFFEND:
-        // 공수 전환
-        if (messageOrder === 0) {
-          if (game.round % 1 !== 0) {
-            Transition.play();
-          } else {
-            messageOrder = 1;
-          }
-        }
-
-        if (messageOrder < offenderMessages.length) {
-          setMessage(offenderMessages[messageOrder++]);
-          setTimeout(gameMessage, 2000);
-        } else {
-          messageOrder = 0;
-          if (imHost) {
-            socket.emit('count_down', 'offend');
-          }
-        }
-        break;
-      case GameStage.DEFEND:
-        if (messageOrder < defenderMessages.length) {
-          setMessage(defenderMessages[messageOrder++]);
-          setTimeout(gameMessage, 2000);
-        } else {
-          messageOrder = 0;
-          if (imHost) {
-            socket.emit('count_down', 'defend');
-          }
-        }
-        break;
-      default:
-        break;
-    }
-  };
+  const defenderMessages: string[] = [
+    `${game.user.isOffender ? peerInfo.nickName : myNickName}님의 수비!`,
+  ];
 
   useEffect(() => {
+    const gameMessage = () => {
+      switch (game.stage) {
+        case GameStage.INITIAL:
+          if (messageOrder < initialMessages.length) {
+            setMessage(initialMessages[messageOrder++]);
+            setTimeout(gameMessage, 2000);
+          } else {
+            messageOrder = 0;
+            if (host) {
+              socket.emit('change_stage', GameStage.ROUND);
+            }
+          }
+          break;
+        case GameStage.ROUND:
+          if (game.round < 4) {
+            if (game.round === 1) RoundOne.play();
+            else if (game.round === 2) RoundTwo.play();
+            else if (game.round === 3) RoundThree.play();
+
+            setMessage(`ROUND ${game.round}`);
+
+            // 라운드 시작 시 점수 초기화
+            setTimeout(() => {
+              setGame((prev) => ({
+                ...prev,
+                user: { ...prev.user, score: 0 },
+                peer: { ...prev.peer, score: 0 },
+              }));
+            }, 1500);
+
+            setTimeout(() => {
+              if (host) {
+                socket.emit('change_stage', GameStage.OFFEND);
+              }
+            }, 3000);
+          }
+          // 3(3.5) 라운드가 모두 끝났을 때,
+          else {
+            // 게임 끝
+            if (host) {
+              socket.emit('change_status', GameStatus.RESULT);
+            }
+          }
+          break;
+        case GameStage.OFFEND:
+          // 공수 전환
+          if (messageOrder === 0) {
+            if (game.round % 1 !== 0) {
+              Transition.play();
+            } else {
+              messageOrder = 1;
+            }
+          }
+
+          if (messageOrder < offenderMessages.length) {
+            setMessage(offenderMessages[messageOrder++]);
+            setTimeout(gameMessage, 2000);
+          } else {
+            messageOrder = 0;
+            if (host) {
+              socket.emit('count_down', 'offend');
+            }
+          }
+          break;
+        case GameStage.DEFEND:
+          if (messageOrder < defenderMessages.length) {
+            setMessage(defenderMessages[messageOrder++]);
+            setTimeout(gameMessage, 2000);
+          } else {
+            messageOrder = 0;
+            if (host) {
+              socket.emit('count_down', 'defend');
+            }
+          }
+          break;
+        default:
+          break;
+      }
+    };
+
     switch (game.status) {
       // 게임방 대기실에서
       case GameStatus.WAITING:
         // 내가 방장일 때
-        if (imHost) {
+        if (host) {
           // 아직 상대가 입장하지 않았으면
-          if (!peer.socketId) {
+          if (!peerInfo.socketId) {
             setMessage('상대방이 입장하지 않았습니다');
           }
           // 상대방이 입장했을 때
           else {
             // 상대방이 준비되지 않았으면
-            if (!peer.isReady) {
+            if (!game.peer.isReady) {
               setMessage('상대방이 아직 준비되지 않았습니다');
             }
             // 상대방이 준비되었으면
@@ -171,7 +174,7 @@ function Announcer() {
           // 내가 전신이 나오게 섰으면
           else {
             // 내가 왼손을 안올리고 있으면
-            if (!imReady) {
+            if (!game.user.isReady) {
               setMessage('준비가 되면 왼손을 올려주세요');
             }
             // 내가 왼손을 올리고 있으면
@@ -186,22 +189,37 @@ function Announcer() {
         gameMessage();
         break;
       case GameStatus.RESULT:
-        setMessage('게임 결과');
+        //temp
+        console.log('finish');
+        if (host) {
+          socket.emit('finish');
+        }
+
+        // setMessage('게임 결과');
 
         //todo: 게임 종료 사운드
         //todo: 게임 종료 안내 멘트(game over)
         //todo: 등등 추가 필요
 
-        if (imHost) {
-          setTimeout(() => {
-            socket.emit('result');
-          }, 2000);
-        }
+        // if (host) {
+        //   setTimeout(() => {
+        //     socket.emit('result');
+        //   }, 2000);
+        // }
         break;
       default:
-        break; //temp
+        break;
     }
-  }, [game.status, game.stage, imReady, peer.socketId, peer.isReady, imValidBody]);
+  }, [
+    game.status,
+    game.stage,
+    game.round,
+    host,
+    peerInfo.socketId,
+    game.user.isReady,
+    game.peer.isReady,
+    imValidBody,
+  ]);
 
   return <Container>{message}</Container>;
 }
