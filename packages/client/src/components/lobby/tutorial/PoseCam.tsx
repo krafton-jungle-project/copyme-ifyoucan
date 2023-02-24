@@ -1,6 +1,8 @@
 import type * as poseDetection from '@tensorflow-models/pose-detection';
+import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { tutorialContentAtom, tutorialPassAtom } from '../../../app/atom';
 import * as movenet from '../../../utils/tfjs-movenet';
 import {
   isLeftHandUp,
@@ -47,13 +49,13 @@ function PoseCam() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [delay, setDelay] = useState<number | null>(null);
-  const [content, setContent] = useState('튜토리얼에 오신 걸 환영합니다.');
   const [isBody, setIsBody] = useState(false);
   const [isLeft, setIsLeft] = useState(false);
   const [isRight, setIsRight] = useState(false);
   const [isT, setIsT] = useState(false);
   const [isSDR, setIsSDR] = useState(false);
-  const [isPass, setIsPass] = useState(false);
+  const [content, setContent] = useAtom(tutorialContentAtom);
+  const [isPass, setIsPass] = useAtom(tutorialPassAtom);
   useEffect(() => {
     if (!videoRef.current || !canvasRef.current) {
       return;
@@ -79,7 +81,6 @@ function PoseCam() {
       setDelay(null);
       canvasRef.current.style.display = 'none';
       setContent('수고하셨습니다.');
-      console.log('캔슬 했냐?');
       cancelAnimationFrame(movenet.myRafId);
     } else {
       setDelay(700);
@@ -95,20 +96,21 @@ function PoseCam() {
     }
 
     let pose = await getMyPose();
-    // if (!isBody) {
-    //   setIsBody(isValidBody(pose));
-    // }
-    if (pose && !isBody) {
+    if (!isBody) {
+      setContent(`전신이 나오게 서주세요.`);
+      setIsBody(isValidBody(pose));
+    }
+    if (pose && isBody) {
       if (!isLeft) {
         setContent(`왼손을 들어주세요.`);
         setIsLeft(isLeftHandUp(pose, 50));
       }
       if (isLeft && !isRight) {
-        setContent('오른손을 들어주세요.');
+        setContent(`오른손을 들어주세요.`);
         setIsRight(isRightHandUp(pose, 50));
       }
       if (isLeft && isRight && !isT) {
-        setContent('양팔 벌려 서주세요.');
+        setContent(`양팔 벌려 서주세요.`);
         setIsT(isTPose(pose, 65));
       }
       if (isLeft && isRight && isT && !isSDR) {
@@ -116,7 +118,6 @@ function PoseCam() {
         setIsSDR(isSDRPose(pose, 70));
       }
       if (isLeft && isRight && isT && isSDR) {
-        console.log('올패스 했냐?');
         setIsPass(true);
       }
     }
