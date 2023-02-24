@@ -1,8 +1,7 @@
 import type * as poseDetection from '@tensorflow-models/pose-detection';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { tutorialContentAtom, tutorialPassAtom } from '../../../app/atom';
 import * as movenet from '../../../utils/tfjs-movenet';
 import {
   isLeftHandUp,
@@ -12,6 +11,16 @@ import {
   isValidBody,
 } from '../../common/PoseRecognition';
 import { useInterval } from '../../inGame/hooks/useInterval';
+import {
+  isBodyAtom,
+  isLeftAtom,
+  isRightAtom,
+  isSDRAtom,
+  isTPoseAtom,
+  tutorialContentAtom,
+  tutorialImgAtom,
+  tutorialPassAtom,
+} from '../../../app/tutorial';
 
 const Video = styled.video`
   position: absolute;
@@ -33,29 +42,20 @@ const Canvas = styled.canvas`
   border-radius: 25px 5px;
 `;
 
-const Announcement = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid red;
-  height: 15%;
-  width: 95%;
-  font-size: 30px;
-  font-weight: 700;
-`;
-
 function PoseCam() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [delay, setDelay] = useState<number | null>(null);
-  const [isBody, setIsBody] = useState(false);
-  const [isLeft, setIsLeft] = useState(false);
-  const [isRight, setIsRight] = useState(false);
-  const [isT, setIsT] = useState(false);
-  const [isSDR, setIsSDR] = useState(false);
-  const [content, setContent] = useAtom(tutorialContentAtom);
+
+  const [isBody, setIsBody] = useAtom(isBodyAtom);
+  const [isLeft, setIsLeft] = useAtom(isLeftAtom);
+  const [isRight, setIsRight] = useAtom(isRightAtom);
+  const [isT, setIsT] = useAtom(isTPoseAtom);
+  const [isSDR, setIsSDR] = useAtom(isSDRAtom);
   const [isPass, setIsPass] = useAtom(tutorialPassAtom);
+  const setContent = useSetAtom(tutorialContentAtom);
+
   useEffect(() => {
     if (!videoRef.current || !canvasRef.current) {
       return;
@@ -80,10 +80,9 @@ function PoseCam() {
     if (isPass && canvasRef.current) {
       setDelay(null);
       canvasRef.current.style.display = 'none';
-      setContent('수고하셨습니다.');
       cancelAnimationFrame(movenet.myRafId);
     } else {
-      setDelay(700);
+      setDelay(1000);
     }
   }, [isPass]);
 
@@ -96,25 +95,23 @@ function PoseCam() {
     }
 
     let pose = await getMyPose();
+
     if (!isBody) {
       setContent(`전신이 나오게 서주세요.`);
       setIsBody(isValidBody(pose));
     }
+
     if (pose && isBody) {
       if (!isLeft) {
-        setContent(`왼손을 들어주세요.`);
         setIsLeft(isLeftHandUp(pose, 50));
       }
       if (isLeft && !isRight) {
-        setContent(`오른손을 들어주세요.`);
         setIsRight(isRightHandUp(pose, 50));
       }
       if (isLeft && isRight && !isT) {
-        setContent(`양팔 벌려 서주세요.`);
         setIsT(isTPose(pose, 65));
       }
       if (isLeft && isRight && isT && !isSDR) {
-        setContent(`상상도 못한 포즈를 해주세요.`);
         setIsSDR(isSDRPose(pose, 70));
       }
       if (isLeft && isRight && isT && isSDR) {
@@ -125,7 +122,6 @@ function PoseCam() {
 
   return (
     <>
-      <Announcement>{content}</Announcement>
       <Video ref={videoRef}></Video>
       <Canvas ref={canvasRef}></Canvas>
     </>

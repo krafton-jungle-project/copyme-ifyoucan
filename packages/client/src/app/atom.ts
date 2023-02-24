@@ -14,13 +14,3 @@ export const roomIdAtom = atom('');
 roomIdAtom.onMount = (onMountRoomIdAtom) => {
   return () => onMountRoomIdAtom('');
 };
-
-export const tutorialPassAtom = atom(false);
-tutorialPassAtom.onMount = (onMountTutorialPassAtom) => {
-  return () => onMountTutorialPassAtom(false);
-};
-
-export const tutorialContentAtom = atom('튜토리얼');
-tutorialContentAtom.onMount = (onMountTutorialContentAtom) => {
-  return () => onMountTutorialContentAtom('튜토리얼');
-};

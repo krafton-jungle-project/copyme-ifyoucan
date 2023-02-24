@@ -1,5 +1,7 @@
 import styled from 'styled-components';
+import Announce from './Announce';
 import PoseCam from './PoseCam';
+import PoseImg from './PoseImg';
 
 const Wrapper = styled.div`
   border: 2px solid yellow;
@@ -13,6 +15,10 @@ const ImgWrapper = styled.div`
   border: 2px solid yellow;
   width: 45%;
   height: 95%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
 `;
 
 const CameraWrapper = styled.div`
@@ -28,7 +34,10 @@ const CameraWrapper = styled.div`
 function Tutorial() {
   return (
     <Wrapper>
-      <ImgWrapper>hello</ImgWrapper>
+      <ImgWrapper>
+        <Announce />
+        <PoseImg />
+      </ImgWrapper>
       <CameraWrapper>
         <PoseCam />
       </CameraWrapper>
