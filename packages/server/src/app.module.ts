@@ -6,10 +6,14 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import mongoose from 'mongoose';
+import { AppController } from './app.controller';
+import { AwsService } from './aws.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     MongooseModule.forRoot(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -18,6 +22,8 @@ import mongoose from 'mongoose';
     AuthModule,
     EventsModule,
   ],
+  controllers: [AppController],
+  providers: [AwsService],
 })
 export class AppModule implements NestModule {
   private readonly isDev: boolean = process.env.MODE === 'dev' ? true : false;
