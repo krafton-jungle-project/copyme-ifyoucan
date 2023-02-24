@@ -201,8 +201,6 @@ function Announcer() {
   useEffect(() => {
     if (game.status === GameStatus.RESULT) {
       //temp
-      console.log('finish');
-
       if (host) {
         socket.emit('finish');
       }

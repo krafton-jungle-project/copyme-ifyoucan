@@ -41,7 +41,6 @@ function MotionReady() {
             // 상대가 레디했을 때, 왼손을 올리면 바로 게임을 시작한다
             if (game.peer.isReady && isLeftHandUp(pose, 50)) {
               socket.emit('start', roomId);
-              console.log('start');
             }
           }
           // 내가 host가 아니면
@@ -52,7 +51,6 @@ function MotionReady() {
               if (isLeftHandUp(pose, 50)) {
                 GunReload.play();
                 socket.emit('ready', roomId);
-                console.log('ready!');
                 setGame((prev) => ({ ...prev, user: { ...prev.user, isReady: true } }));
               }
             }
@@ -62,7 +60,6 @@ function MotionReady() {
               if (!isLeftHandUp(pose, 50)) {
                 GunReload.play();
                 socket.emit('unready', roomId);
-                console.log('unready!');
                 setGame((prev) => ({ ...prev, user: { ...prev.user, isReady: false } }));
               }
             }
