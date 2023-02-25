@@ -1,7 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import styled, { css } from 'styled-components';
 import { isStartedAtom, tutorialImgAtom } from '../../../app/tutorial';
-import defaultImg from '../../../assets/images/tutorial/mario.png';
+import startImg from '../../../assets/images/tutorial/leggo.webp';
 
 const ImgWrapper = styled.div`
   height: 50%;
@@ -32,7 +32,7 @@ function PoseImg() {
   return (
     <ImgWrapper>
       <Img
-        src={isStarted ? defaultImg : img}
+        src={isStarted ? img : startImg}
         alt="pose"
         onClick={startTutorial}
         isStarted={isStarted}

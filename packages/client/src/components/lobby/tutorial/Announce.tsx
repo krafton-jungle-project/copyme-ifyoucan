@@ -44,7 +44,6 @@ function Announce() {
   useEffect(() => {
     if (!isStarted) {
       setContent(`마리오를 눌러 시작해주세요.`);
-      setImg(startImg);
     }
     if (isStarted && !isBody) {
       setContent(`전신이 나오게 서주세요.`);
@@ -55,6 +54,7 @@ function Announce() {
       if (!isLeft) {
         setContent(`왼손을 들어주세요.`);
         setImg(leftHandUp);
+        console.log(leftHandUp);
       }
       if (isLeft && !isRight) {
         setContent(`오른손을 들어주세요.`);
@@ -73,7 +73,7 @@ function Announce() {
         setImg(defaultImg);
       }
     }
-  }, [isStarted, isBody, isLeft, isRight, isT, isSDR, isPass]);
+  }, [isStarted, isBody, isLeft, isRight, isT, isSDR, isPass, setImg]);
 
   return <Announcement>{content}</Announcement>;
 }
