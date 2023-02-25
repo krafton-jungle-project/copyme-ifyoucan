@@ -1,5 +1,5 @@
 import type * as poseDetection from '@tensorflow-models/pose-detection';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import * as movenet from '../../../utils/tfjs-movenet';
@@ -18,8 +18,6 @@ import {
   isSDRAtom,
   isStartedAtom,
   isTPoseAtom,
-  tutorialContentAtom,
-  tutorialImgAtom,
   tutorialPassAtom,
 } from '../../../app/tutorial';
 
@@ -35,9 +33,8 @@ const Video = styled.video`
 `;
 
 const Canvas = styled.canvas`
-  /* position: absolute; */
+  display: none;
   object-fit: cover;
-  /* visibility: hidden; */
   width: 95%;
   height: 100%;
   border-radius: 25px 5px;
@@ -49,14 +46,13 @@ function PoseCam() {
 
   const [delay, setDelay] = useState<number | null>(null);
 
-  const [isStarted, setIsStarted] = useAtom(isStartedAtom);
+  const isStarted = useAtomValue(isStartedAtom);
   const [isBody, setIsBody] = useAtom(isBodyAtom);
   const [isLeft, setIsLeft] = useAtom(isLeftAtom);
   const [isRight, setIsRight] = useAtom(isRightAtom);
   const [isT, setIsT] = useAtom(isTPoseAtom);
   const [isSDR, setIsSDR] = useAtom(isSDRAtom);
   const [isPass, setIsPass] = useAtom(tutorialPassAtom);
-  const setContent = useSetAtom(tutorialContentAtom);
 
   useEffect(() => {
     if (!videoRef.current || !canvasRef.current) {
@@ -106,18 +102,11 @@ function PoseCam() {
 
     let pose = await getMyPose();
 
-    if (!isStarted) {
-      setContent(`마리오를 눌러 튜토리얼을 시작하세요.`);
-      console.log(`시작 안했는데?`);
-    }
-
     if (isStarted && !isBody) {
-      setContent(`전신이 나오게 서주세요.`);
       setIsBody(isValidBody(pose));
-      console.log(`왜 시작함?`);
     }
 
-    if (pose && isBody) {
+    if (isStarted && pose && isBody) {
       if (!isLeft) {
         setIsLeft(isLeftHandUp(pose, 50));
       }

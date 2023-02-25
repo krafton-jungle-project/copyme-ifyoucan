@@ -5,11 +5,6 @@ tutorialPassAtom.onMount = (onMountTutorialPassAtom) => {
   return () => onMountTutorialPassAtom(false);
 };
 
-export const tutorialContentAtom = atom('튜토리얼');
-tutorialContentAtom.onMount = (onMountTutorialContentAtom) => {
-  return () => onMountTutorialContentAtom('튜토리얼');
-};
-
 export const tutorialImgAtom = atom('');
 tutorialImgAtom.onMount = (onMountTutorialImgAtom) => {
   return () => onMountTutorialImgAtom('');
