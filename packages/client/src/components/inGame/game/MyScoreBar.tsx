@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { GameStage, gameAtom } from '../../../app/game';
@@ -21,20 +21,40 @@ const ScoreBarWrapper = styled.div`
   transform: translate(-50%, -50%);
   width: 80%;
   height: 80%;
-  border: 5px solid #ff3131;
-  background-color: #ff3131;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 0.2rem solid #fff;
   border-radius: 20px;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #ff3131, 0 0 0.8rem #ff3131,
+    0 0 2.8rem #ff3131, inset 0 0 1.3rem #ff3131;
+`;
+
+const animate = keyframes`
+  0%, 100% {
+    opacity: 0.5;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    filter: hue-rotate(30deg) blur(1px);
+  }
 `;
 
 const ScoreBar = styled.div<{ isInit: boolean; score: number }>`
   position: absolute;
+  bottom: 0%;
   width: 100%;
-  height: ${(props) => `${(100 - props.score).toString()}%`};
+  height: ${(props) => `${props.score.toString()}%`};
   transition-property: height;
   transition-delay: ${(props) => (props.isInit ? '1.2s' : '0s')};
-  transition-duration: ${(props) => (props.isInit ? '0.7s' : '0.5s')};
-  background-color: #a66868;
+  transition-duration: ${(props) => (props.isInit ? '1.5s' : '0.5s')};
+  background-color: #888;
   border-radius: 20px;
+  ${(props) =>
+    (props.isInit || props.score > 60) &&
+    css`
+      background-color: #ff3131;
+      animation: ${animate} 1s linear infinite;
+    `}
 `;
 
 const ScoreInfo = styled.div`
@@ -110,19 +130,14 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     }
   }, [game.countDown]);
 
-  //temp
-  //todo: 조금 더 효율적으로 할 방법 생각(게임 시작 시 스코어바 이펙트)
+  // 게임 시작 시 스코어바 이펙트(게임중에는 빠르게 변화)
   useEffect(() => {
-    // 초기화(시작 이펙트)
-    if (!game.isStart) {
+    if (game.stage === GameStage.INITIAL) {
       setIsInit(true);
-    }
-
-    // 게임중에는 빠르게 변화
-    if (game.stage !== GameStage.INITIAL) {
+    } else {
       setIsInit(false);
     }
-  }, [game.isStart, game.stage]);
+  }, [game.stage]);
 
   return (
     <Container>

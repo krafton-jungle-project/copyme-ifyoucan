@@ -20,8 +20,8 @@ const Container = styled.div<{ isStart: boolean }>`
 
 const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
   position: absolute;
-  left: ${(props) => (props.isMe ? (props.isStart ? '0%' : '-50%') : 'none')};
-  right: ${(props) => (props.isMe ? 'none' : props.isStart ? '0%' : '-50%')};
+  left: ${(props) => (props.isMe ? (props.isStart ? '0%' : '-60%') : 'none')};
+  right: ${(props) => (props.isMe ? 'none' : props.isStart ? '0%' : '-60%')};
   width: 45%;
   height: 100%;
   transition-property: left, right;

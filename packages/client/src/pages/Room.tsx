@@ -13,6 +13,7 @@ import MotionReady from '../components/inGame/waiting/MotionReady';
 import { peerInfoAtom } from '../app/peer';
 import { roomInfoAtom } from '../app/room';
 import { usePreventExit } from '../components/inGame/hooks/usePreventExit';
+import { GameMusic } from '../utils/sound';
 
 function Room() {
   const navigate = useNavigate();
@@ -45,6 +46,8 @@ function Room() {
       resetRoomInfo();
       resetPeerInfo();
       resetGame();
+      GameMusic.currentTime = 0;
+      GameMusic.pause();
       socket.emit('exit_room', myNickName);
     };
   }, []);
