@@ -19,5 +19,6 @@
     "suppressLineUncommittedWarning": true
   },
   "gitlens.hovers.currentLine.over": "line",
-  "todohighlight.isEnable": true
+  "todohighlight.isEnable": true,
+  "editor.tabSize": 2
 }

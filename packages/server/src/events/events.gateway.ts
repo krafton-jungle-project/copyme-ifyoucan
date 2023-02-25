@@ -408,7 +408,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.rooms[roomId]) {
       this.rooms[roomId].users = this.rooms[roomId].users.filter((user) => user.id !== socket.id);
       if (this.rooms[roomId].users.length === 0) {
-        // 방 삭제
+        // 방에 유저가 없으면 방 삭제
         delete this.rooms[roomId];
         this.logger.log(`roomId: ${roomId} 삭제`);
       } else {

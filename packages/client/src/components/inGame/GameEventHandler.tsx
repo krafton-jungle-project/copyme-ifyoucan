@@ -89,6 +89,9 @@ const GameEventHandler = () => {
       GameMusic.pause();
       resetGame();
     });
+    return () => {
+      socket.removeAllListeners();
+    };
   }, []);
 
   return null;

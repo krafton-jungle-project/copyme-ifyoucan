@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import CreateRoom from '../lobby/roomList/CreateRoom';
 import { useClientSocket } from '../../module/client-socket';
 import RoomCard from './roomList/RoomCard';
+import { useRoomAtom } from '../../app/room';
 
 const RoomContainerWrapper = styled.div`
   display: flex;
@@ -38,38 +39,28 @@ const RoomHeader = styled.h2`
 
 export default function RoomList() {
   const { socket } = useClientSocket();
+  const { roomsList, updateRooms } = useRoomAtom();
 
-  const [rooms, setRooms] = useState<{
-    [key: string]: {
-      roomName: string;
-      users: { id: string; nickName: string }[];
-      isStart: boolean;
-      readyCount: number;
-    };
-  }>({});
-
-  // ! 이 부분도 공통스테이트로 빼면 좋을 것 같습니다 - @minhoyooDEV
   useEffect(() => {
     socket.emit('rooms');
   }, [socket]);
 
   useEffect(() => {
     socket.on('get_rooms', (rooms) => {
-      setRooms(rooms);
+      updateRooms(rooms);
     });
-  }, [socket, rooms]);
+  }, [socket, updateRooms]);
 
-  //! 방 하나 하나를 component화 필요
   return (
     <div className="play">
       <CreateRoom></CreateRoom>
       <RoomHeader>방 목록</RoomHeader>
       <RoomContainerWrapper>
         <RoomContainer>
-          {Object.entries(rooms).map((room) => {
+          {roomsList.map((room) => {
             return (
-              <RoomBox key={room[0]}>
-                <RoomCard roomId={room[0]} roomInfo={room[1]} />
+              <RoomBox key={room.id}>
+                <RoomCard roomInfo={room} />
               </RoomBox>
             );
           })}

@@ -5,7 +5,7 @@ import { stream, detector } from '../utils/tfjs-movenet';
 import { isLoadedAtom, myNickName } from './Lobby';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
-import ConnectWebRTC from '../components/inGame/ConnectWebRTC';
+import useConnectWebRTC from '../components/inGame/hooks/useConnectWebRTC';
 import GameEventHandler from '../components/inGame/GameEventHandler';
 import { useClientSocket } from '../module/client-socket';
 import { gameAtom } from '../app/game';
@@ -24,7 +24,7 @@ function Room() {
   const resetRoomInfo = useResetAtom(roomInfoAtom);
 
   usePreventExit(); //temp
-  ConnectWebRTC();
+  useConnectWebRTC();
   GameEventHandler();
   MotionReady();
 
@@ -46,7 +46,6 @@ function Room() {
       resetPeerInfo();
       resetGame();
       socket.emit('exit_room', myNickName);
-      window.location.reload(); //todo: 태준
     };
   }, []);
 
