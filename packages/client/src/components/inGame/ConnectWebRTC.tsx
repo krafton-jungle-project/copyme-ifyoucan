@@ -1,11 +1,13 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { stream } from '../../utils/tfjs-movenet';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { imHostAtom, myNickNameAtom, roomIdAtom } from '../../app/atom';
-import { peerAtom } from '../../app/peer';
+import { useAtom, useSetAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
 import { useClientSocket } from '../../module/client-socket';
+import { peerInfoAtom } from '../../app/peer';
+import { roomInfoAtom } from '../../app/room';
+import { myNickName } from '../../pages/Lobby';
+import { gameAtom } from '../../app/game';
 
 //! 스턴 서버 직접 생성 고려(임시)
 const pc_config = {
@@ -16,20 +18,18 @@ const pc_config = {
   ],
 };
 
-//todo 주소로 직접 접근 시 홈(로그인)/로비 페이지로 redirect
 const ConnectWebRTC = () => {
   const { socket } = useClientSocket();
+  const navigate = useNavigate();
   const pcRef = useRef<RTCPeerConnection>(); // 상대 유저의 RTCPeerConnection 저장
   const myStreamRef = useRef<MediaStream>(); // 유저 자신의 스트림 ref
-  const roomId = useAtomValue(roomIdAtom);
-  const nickName = useAtomValue(myNickNameAtom);
-  const setPeer = useSetAtom(peerAtom);
-  const setImHost = useSetAtom(imHostAtom);
-  const resetPeer = useResetAtom(peerAtom);
-  const navigate = useNavigate();
+  const [roomInfo, setRoomInfo] = useAtom(roomInfoAtom);
+  const setPeerInfo = useSetAtom(peerInfoAtom);
+  const resetPeerInfo = useResetAtom(peerInfoAtom);
+  const resetGame = useResetAtom(gameAtom);
 
   // 인자로 받은 유저와 peerConnection을 생성하는 함수
-  const makeConnection = useCallback((userId: string, nickName: string, host: boolean) => {
+  const makeConnection = useCallback((userId: string, peerNickName: string) => {
     const peerConnection = new RTCPeerConnection(pc_config);
 
     peerConnection.addEventListener('icecandidate', (data) => {
@@ -43,13 +43,12 @@ const ConnectWebRTC = () => {
       } else return;
     });
 
-    //! 수정해야될 부분 dispatch
     peerConnection.addEventListener('track', (data) => {
       console.log('track event');
-      setPeer((prev) => ({
+      setPeerInfo((prev) => ({
         ...prev,
         socketId: userId,
-        nickName: nickName,
+        nickName: peerNickName,
         stream: data.streams[0],
       }));
     });
@@ -63,11 +62,12 @@ const ConnectWebRTC = () => {
     } else {
       console.log('my stream error');
     }
+
     return peerConnection;
   }, []);
 
   useEffect(() => {
-    if (!roomId || !nickName || !socket) {
+    if (!roomInfo.roomId || !myNickName || !socket) {
       console.log('방 정보 없음');
       navigate('/');
     }
@@ -77,13 +77,13 @@ const ConnectWebRTC = () => {
 
     //! socket join
     socket.emit('join_room', {
-      roomId,
-      nickName,
+      roomId: roomInfo.roomId,
+      nickName: myNickName,
     });
 
     //! 서버에서 다른 유저의 정보를 받는다
     socket.on('peer', async (peer: { id: string; nickName: string }) => {
-      const peerConnection = makeConnection(peer.id, peer.nickName, false);
+      const peerConnection = makeConnection(peer.id, peer.nickName);
       if (!peerConnection || !socket) return;
       pcRef.current = peerConnection;
 
@@ -93,7 +93,7 @@ const ConnectWebRTC = () => {
         socket.emit('offer', {
           sdp: offer,
           offerSendID: socket.id,
-          offerSendNickName: nickName,
+          offerSendNickName: myNickName,
           offerReceiveID: peer.id,
         });
       } catch (e) {
@@ -113,7 +113,7 @@ const ConnectWebRTC = () => {
         if (!myStreamRef.current) return;
 
         // offer를 한 user는 방장이 될 수 없다.
-        const peerConnection = makeConnection(offerSendID, offerSendNickName, false);
+        const peerConnection = makeConnection(offerSendID, offerSendNickName);
 
         if (!(peerConnection && socket)) return;
         pcRef.current = peerConnection;
@@ -150,23 +150,31 @@ const ConnectWebRTC = () => {
       }
     });
 
-    //! 유저가 나갔을 시
-    socket.on('user_exit', () => {
-      // console.log('user_exit');
+    //! 상대가 나갔을 시
+    socket.on('user_exit', (isStart) => {
+      console.log('user_exit');
+
       if (!pcRef.current) return;
       pcRef.current.close();
-      resetPeer();
-      setImHost(true); // 유저가 나가면 자신이 방장이 된다.
+
+      // 게임 중일 때 상대가 나가면, 로비로 이동한다.
+      if (isStart) {
+        navigate('/');
+      }
+      // 게임 중이 아닐 땐, 내가 방장이 되고
+      else {
+        resetPeerInfo();
+        resetGame();
+        setRoomInfo((prev) => ({ ...prev, host: true }));
+      }
     });
 
     return () => {
       if (!pcRef.current) return;
 
       pcRef.current.close();
-      resetPeer();
-      setImHost(false);
     };
-  }, [makeConnection]);
+  }, []);
 
   return null;
 };

@@ -1,11 +1,10 @@
 import type { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { atom, useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import styled from 'styled-components';
-import { imHostAtom, roomIdAtom } from '../../app/atom';
-import { peerAtom } from '../../app/peer';
+import { gameAtom } from '../../app/game';
+import { roomInfoAtom } from '../../app/room';
 import { useClientSocket } from '../../module/client-socket';
 import { GunReload } from '../../utils/sound';
-import { isStartAtom } from './InGame';
 
 const Container = styled.div`
   position: absolute;
@@ -23,44 +22,36 @@ const Button = styled.div`
   cursor: pointer; /* 마우스 올리면 손모양 커서 */
 `;
 
-//todo: 한 곳에 모아야 한다
-export const imReadyAtom = atom(false);
-imReadyAtom.onMount = (setAtom) => {
-  setAtom(false);
-  return () => {
-    setAtom(false);
-  };
-};
-
 // hidden start/ready Button
 function Logo() {
-  const peer = useAtomValue(peerAtom);
   const { socket } = useClientSocket();
-  const roomId = useAtomValue(roomIdAtom);
-  const imHost = useAtomValue(imHostAtom);
-  const [imReady, setImReady] = useAtom(imReadyAtom);
-  const isStart = useAtomValue(isStartAtom);
+  const roomInfo = useAtomValue(roomInfoAtom);
+  const [game, setGame] = useAtom(gameAtom);
 
   function onStart() {
-    socket.emit('start', roomId);
+    socket.emit('start', roomInfo.roomId);
     console.log('start');
   }
 
   function onReady() {
-    if (imReady) {
+    if (game.user.isReady) {
       GunReload.play();
-      socket.emit('unready', roomId);
+      socket.emit('unready', roomInfo.roomId);
       console.log('unready!');
     } else {
       GunReload.play();
-      socket.emit('ready', roomId);
+      socket.emit('ready', roomInfo.roomId);
       console.log('ready!');
     }
-    setImReady(!imReady);
+
+    setGame((prev) => ({
+      ...prev,
+      user: { ...prev.user, isReady: !prev.user.isReady },
+    }));
   }
 
-  let hiddenButton: ReactJSXElement | null = isStart ? null : imHost ? (
-    <Button onClick={onStart} style={{ visibility: peer.isReady ? 'visible' : 'hidden' }} />
+  let hiddenButton: ReactJSXElement | null = game.isStart ? null : roomInfo.host ? (
+    <Button onClick={onStart} style={{ visibility: game.peer.isReady ? 'visible' : 'hidden' }} />
   ) : (
     <Button onClick={onReady} />
   );

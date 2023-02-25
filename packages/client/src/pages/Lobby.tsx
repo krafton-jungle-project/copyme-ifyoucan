@@ -1,10 +1,9 @@
 import RoomList from '../components/lobby/RoomList';
 import logo from '../assets/images/logo.png';
 import styled from 'styled-components';
-import { atom, useAtom, useSetAtom } from 'jotai';
+import { atom, useAtom } from 'jotai';
 import Loading from '../components/lobby/Loading';
 import { stream, detector } from '../utils/tfjs-movenet';
-import { myNickNameAtom } from '../app/atom';
 import { useEffect, useState } from 'react';
 import { removeUser } from '../utils/localstorage';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +20,7 @@ const Logo = styled.img`
   text-align: center;
 `;
 
+//temp
 //! for test
 const nickNameArr = [
   '정태욱',
@@ -47,35 +47,35 @@ const NavBtn = styled.button`
 `;
 
 const randomIdx = Math.floor(Math.random() * 10);
-let nickName = nickNameArr[randomIdx];
+export let myNickName = nickNameArr[randomIdx]; //temp
+
 function Lobby() {
   const [isLoaded, setIsLoaded] = useAtom(isLoadedAtom);
-  const setNickName = useSetAtom(myNickNameAtom);
   const [mode, setMode] = useState('Room');
   const navigate = useNavigate();
 
-  const getUserInfo = async () => {
-    if (document.cookie) {
-      const token = document.cookie.split('=')[1];
-      try {
-        const res = await axios.get('http://localhost:5001/users/', {
-          // const res = await axios.get('http://15.165.237.195:5001/users/', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res) {
-          nickName = res.data.data.name;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-
+  //todo: 최초 한 번만 실행하는 방법 생각해보기
   useEffect(() => {
-    getUserInfo();
-    console.log(nickName);
-    setNickName(nickName);
+    //todo: 경기 사진이나 동영상 가져올 때 정보 가져와야하므로 다시 고려해야함
+    const setMyNickName = async () => {
+      if (document.cookie) {
+        const token = document.cookie.split('=')[1];
+        try {
+          const res = await axios.get('http://localhost:5001/users/', {
+            // const res = await axios.get('http://15.165.237.195:5001/users/', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res) {
+            myNickName = res.data.data.name;
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    setMyNickName();
   }, []);
+
   if (isLoaded && (!stream || !detector)) {
     setIsLoaded(false);
     console.log('error: stream & detector is reloaded.');

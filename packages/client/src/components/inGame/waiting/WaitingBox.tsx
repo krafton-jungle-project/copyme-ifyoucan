@@ -1,14 +1,12 @@
 import styled from 'styled-components';
-import { useEffect } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { gameAtom } from '../../../app/game';
-import { imHostAtom, myNickNameAtom } from '../../../app/atom';
-import { isStartAtom } from '../InGame';
-import { peerAtom } from '../../../app/peer';
+import { peerInfoAtom } from '../../../app/peer';
 import MyVideo from './MyVideo';
 import PeerVideo from './PeerVideo';
 import Chatting from './Chatting';
-import { imReadyAtom } from '../Logo';
+import { roomInfoAtom } from '../../../app/room';
+import { myNickName } from '../../../pages/Lobby';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -88,37 +86,33 @@ const TempChattingBox = styled.div<{ isStart: boolean }>`
 `;
 
 function WaitingBox() {
-  const setGame = useSetAtom(gameAtom);
-  const myNickName = useAtomValue(myNickNameAtom);
-  const peer = useAtomValue(peerAtom);
-  const peerNickName = peer.nickName;
-  const imHost = useAtomValue(imHostAtom);
-  const imReady = useAtomValue(imReadyAtom);
-  const isStart = useAtomValue(isStartAtom);
-
-  useEffect(() => {
-    if (imHost) {
-      setGame((prev) => ({ ...prev, isOffender: true }));
-    }
-  }, [imHost]);
+  const game = useAtomValue(gameAtom);
+  const roomInfo = useAtomValue(roomInfoAtom);
+  const peerInfo = useAtomValue(peerInfoAtom);
 
   return (
-    <Container isStart={isStart}>
-      <Wrapper isMe={true} isStart={isStart}>
+    <Container isStart={game.isStart}>
+      <Wrapper isMe={true} isStart={game.isStart}>
         <NickNameBox>{myNickName}</NickNameBox>
         <MyVideo />
-        <ReadyState isHost={imHost} isReady={imReady}>
-          {imHost ? '👑 HOST' : imReady ? 'READY' : 'NOT READY'}
+        <ReadyState isHost={roomInfo.host} isReady={game.user.isReady}>
+          {roomInfo.host ? '👑 HOST' : game.user.isReady ? 'READY' : 'NOT READY'}
         </ReadyState>
       </Wrapper>
-      <Wrapper isMe={false} isStart={isStart}>
-        <NickNameBox>{peerNickName}</NickNameBox>
+      <Wrapper isMe={false} isStart={game.isStart}>
+        <NickNameBox>{peerInfo.nickName}</NickNameBox>
         <PeerVideo />
-        <ReadyState isHost={!imHost} isReady={peer.isReady}>
-          {imHost ? (peerNickName ? (peer.isReady ? 'READY' : 'NOT READY') : 'WAITING') : '👑 HOST'}
+        <ReadyState isHost={!roomInfo.host} isReady={game.peer.isReady}>
+          {roomInfo.host
+            ? peerInfo.nickName
+              ? game.peer.isReady
+                ? 'READY'
+                : 'NOT READY'
+              : 'WAITING'
+            : '👑 HOST'}
         </ReadyState>
       </Wrapper>
-      <TempChattingBox isStart={isStart}>Chat Box</TempChattingBox>
+      <TempChattingBox isStart={game.isStart}>Chat Box</TempChattingBox>
       {/* <Chatting />/ */}
     </Container>
   );

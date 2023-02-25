@@ -1,14 +1,14 @@
 import styled, { css } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { peerAtom } from '../../../app/peer';
-import { countDownAtom, gameAtom, GameStage, peerPoseAtom } from '../../../app/game';
+import { useAtom, useAtomValue } from 'jotai';
+import { peerInfoAtom } from '../../../app/peer';
+import { gameAtom, GameStage } from '../../../app/game';
 import * as moveNet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
-import { imHostAtom } from '../../../app/atom';
 import { useClientSocket } from '../../../module/client-socket';
 import CountDown from './CountDown';
 import Grade from './Grade';
+import { roomInfoAtom } from '../../../app/room';
 
 const Container = styled.div`
   position: absolute;
@@ -70,17 +70,15 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const capturedPoseRef = useRef<HTMLCanvasElement>(null);
 
-  const peer = useAtomValue(peerAtom);
-  const game = useAtomValue(gameAtom);
-  const host = useAtomValue(imHostAtom);
-  const setPeerPose = useSetAtom(peerPoseAtom);
+  const peerInfo = useAtomValue(peerInfoAtom);
+  const [game, setGame] = useAtom(gameAtom);
+  const host = useAtomValue(roomInfoAtom).host;
   const { socket } = useClientSocket();
-  const countDown = useAtomValue(countDownAtom);
   const [isCaptured, setIsCaptured] = useState(false);
   const [gradable, setGradable] = useState(false);
 
   useEffect(() => {
-    if (videoRef.current === null || canvasRef.current === null || peer.stream === null) return;
+    if (videoRef.current === null || canvasRef.current === null || peerInfo.stream === null) return;
 
     const elements = {
       video: videoRef.current,
@@ -90,37 +88,42 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
     moveNet.peerCanvasRender({
       size: { width: 640, height: 480 },
       element: elements,
-      peerStream: peer.stream,
+      peerStream: peerInfo.stream,
     });
 
     return () => {
       cancelAnimationFrame(moveNet.peerRafId);
     };
-  }, [peer.stream]);
+  }, [videoRef, canvasRef, peerInfo.stream]);
 
   useEffect(() => {
     const getPeerPose = async () => {
       const poses = await moveNet.detector.estimatePoses(moveNet.peerCamera.video);
-      setPeerPose(poses[0]);
+      setGame((prev) => ({ ...prev, peer: { ...prev.peer, pose: poses[0] } }));
     };
 
     // 카운트다운 0초일 때,
-    if (countDown === 0) {
+    if (game.countDown === 0) {
       // 공격 스테이지에서, 내가 수비자면 상대 공격을 캡쳐 또는
       // 수비 스테이지에서, 내가 공격자면 상대 수비를 캡쳐
       if (
-        (game.stage === GameStage.OFFEND && !game.isOffender) ||
-        (game.stage === GameStage.DEFEND && game.isOffender)
+        (game.stage === GameStage.OFFEND && !game.user.isOffender) ||
+        (game.stage === GameStage.DEFEND && game.user.isOffender)
       ) {
         if (videoRef.current !== null && capturedPoseRef.current !== null) {
           // 내 수비 점수 확인을 위한 공격자(상대) 포즈 추정
-          if (!game.isOffender) {
+          if (!game.user.isOffender) {
             getPeerPose();
           }
 
           // host 여부에 따라 소켓으로 이미지 전송 여부 결정
           if (host) {
-            capturePose(videoRef.current, capturedPoseRef.current, game.isOffender ? 1 : 0, socket);
+            capturePose(
+              videoRef.current,
+              capturedPoseRef.current,
+              game.user.isOffender ? 1 : 0,
+              socket,
+            );
           } else {
             capturePose(videoRef.current, capturedPoseRef.current);
           }
@@ -136,7 +139,7 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
         // 공수 비교 이펙트
         setTimeout(() => {
           setIsCaptured(true);
-          if (game.isOffender) {
+          if (game.user.isOffender) {
             setTimeout(() => {
               setGradable(true);
             }, 1000);
@@ -153,14 +156,14 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
         }, 3000);
       }
     }
-  }, [countDown]);
+  }, [game.countDown]);
 
   return (
     <Container>
       <Video ref={videoRef} />
       <Canvas ref={canvasRef} />
       <CapturedPose ref={capturedPoseRef} isCaptured={isCaptured} />
-      {gradable ? <Grade score={peer.score} isMe={false} /> : null}
+      {gradable ? <Grade score={game.peer.score} isMe={false} /> : null}
       <CountDown isMe={false} />
     </Container>
   );

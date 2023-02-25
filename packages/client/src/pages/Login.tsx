@@ -180,7 +180,15 @@ export default function Login() {
 
           <InputTitle style={{ marginTop: '26px' }}>비밀번호</InputTitle>
           <InputWrap>
-            <Input type="password" placeholder="영문, 숫자 포함" value={pw} onChange={handlePw} />
+            <form>
+              <Input
+                type="password"
+                placeholder="영문, 숫자 포함"
+                value={pw}
+                onChange={handlePw}
+                autoComplete="on"
+              />
+            </form>
           </InputWrap>
           <ErrorMessageWrap>
             {!pwValid && pw.length > 0 && <div>영문, 숫자를 입력해주세요.</div>}

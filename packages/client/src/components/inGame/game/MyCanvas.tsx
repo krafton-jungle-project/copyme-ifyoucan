@@ -1,13 +1,13 @@
 import styled, { css } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { countDownAtom, gameAtom, GameStage, myScoreAtom } from '../../../app/game';
+import { gameAtom, GameStage } from '../../../app/game';
 import * as moveNet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
-import { imHostAtom } from '../../../app/atom';
 import { useClientSocket } from '../../../module/client-socket';
 import CountDown from './CountDown';
 import Grade from './Grade';
+import { roomInfoAtom } from '../../../app/room';
 
 const Container = styled.div`
   position: absolute;
@@ -70,12 +70,10 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
   const capturedPoseRef = useRef<HTMLCanvasElement>(null);
 
   const game = useAtomValue(gameAtom);
-  const host = useAtomValue(imHostAtom);
+  const host = useAtomValue(roomInfoAtom).host;
   const { socket } = useClientSocket();
-  const countDown = useAtomValue(countDownAtom);
   const [isCaptured, setIsCaptured] = useState(false);
   const [gradable, setGradable] = useState(false);
-  const myScore = useAtomValue(myScoreAtom);
 
   useEffect(() => {
     if (videoRef.current === null || canvasRef.current === null) return;
@@ -93,21 +91,26 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
     return () => {
       cancelAnimationFrame(moveNet.myRafId);
     };
-  }, []);
+  }, [videoRef, canvasRef]);
 
   useEffect(() => {
     // 카운트다운 0초일 때,
-    if (countDown === 0) {
+    if (game.countDown === 0) {
       // 공격 스테이지에서, 내가 공격자면 내 공격을 캡쳐 또는
       // 수비 스테이지에서, 내가 수비자면 내 수비를 캡쳐
       if (
-        (game.stage === GameStage.OFFEND && game.isOffender) ||
-        (game.stage === GameStage.DEFEND && !game.isOffender)
+        (game.stage === GameStage.OFFEND && game.user.isOffender) ||
+        (game.stage === GameStage.DEFEND && !game.user.isOffender)
       ) {
         if (videoRef.current !== null && capturedPoseRef.current !== null) {
           // host 여부에 따라 소켓으로 이미지 전송 여부 결정
           if (host) {
-            capturePose(videoRef.current, capturedPoseRef.current, game.isOffender ? 0 : 1, socket);
+            capturePose(
+              videoRef.current,
+              capturedPoseRef.current,
+              game.user.isOffender ? 0 : 1,
+              socket,
+            );
           } else {
             capturePose(videoRef.current, capturedPoseRef.current);
           }
@@ -123,7 +126,7 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
         // 공수 비교 이펙트
         setTimeout(() => {
           setIsCaptured(true);
-          if (!game.isOffender) {
+          if (!game.user.isOffender) {
             setTimeout(() => {
               setGradable(true);
             }, 1000);
@@ -140,14 +143,14 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
         }, 3000);
       }
     }
-  }, [countDown]);
+  }, [game.countDown]);
 
   return (
     <Container>
       <Video ref={videoRef}></Video>
       <Canvas ref={canvasRef}></Canvas>
       <CapturedPose ref={capturedPoseRef} isCaptured={isCaptured} />
-      {gradable ? <Grade score={myScore} isMe={true} /> : null}
+      {gradable ? <Grade score={game.user.score} isMe={true} /> : null}
       <CountDown isMe={true} />
     </Container>
   );

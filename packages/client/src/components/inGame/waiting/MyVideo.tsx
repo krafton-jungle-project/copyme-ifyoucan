@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { stream } from '../../../utils/tfjs-movenet';
 import DefaultProfileImg from '../../../assets/images/default-profile.png';
-import { isStartAtom } from '../InGame';
+import { gameAtom } from '../../../app/game';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -39,7 +39,7 @@ const Video = styled.video`
 
 function MyVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const isStart = useAtomValue(isStartAtom);
+  const isStart = useAtomValue(gameAtom).isStart;
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.srcObject = stream;
