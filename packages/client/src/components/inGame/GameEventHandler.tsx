@@ -101,6 +101,9 @@ const GameEventHandler = () => {
       console.log('get_finish');
       resetGame();
     });
+    return () => {
+      socket.removeAllListeners();
+    };
   }, []);
 
   return null;

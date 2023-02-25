@@ -1,3 +1,5 @@
+import { Rooms } from './rooms';
+
 /**
  * 해당하는 타입파일을 정의하면 socket.io에서 자동으로 타입을 인식한다.
  * 추가타입 반영시 yarn install 하여 패키지의 업데이트 사항을 반영해야한다.
@@ -9,14 +11,6 @@ export interface IChat {
   isImg: boolean;
 }
 
-export interface Rooms {
-  [key: string]: {
-    roomName: string;
-    users: { id: string; nickName: string }[];
-    isStart: boolean;
-    readyCount: number;
-  };
-}
 export interface ServerToClientEvents {
   full: () => void;
   get_rooms: (rooms: Rooms) => void;

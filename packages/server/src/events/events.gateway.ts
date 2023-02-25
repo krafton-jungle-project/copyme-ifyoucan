@@ -287,7 +287,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const roomId = this.userToRoom[socket.id];
     //! 게임 시작 상태 변경
     this.rooms[roomId].isStart = false;
-    this.server.to(roomId).emit('get_finish');
+    this.server.in(roomId).emit('get_finish');
   }
 
   //! 방에 새로운 유저 join
@@ -348,7 +348,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.rooms[roomId]) {
       this.rooms[roomId].users = this.rooms[roomId].users.filter((user) => user.id !== socket.id);
       if (this.rooms[roomId].users.length === 0) {
-        // 방 삭제
+        // 방에 유저가 없으면 방 삭제
         delete this.rooms[roomId];
         this.logger.log(`roomId: ${roomId} 삭제`);
       } else {
