@@ -23,8 +23,8 @@ const Container = styled.div<{ visible: boolean | undefined }>`
     0 0 2.8rem rgba(15, 255, 80, 0.1), inset 0 0 1.3rem rgba(15, 255, 80, 0.1);
 
   color: rgba(255, 255, 255, 0.8);
-  text-shadow: /* White glow */ 0 0 5px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.8),
-    0 0 50px rgba(255, 255, 255, 0.8), /* Green glow */ 0 0 42px rgba(15, 255, 80, 0.1),
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.8),
+    0 0 50px rgba(255, 255, 255, 0.8), 0 0 42px rgba(15, 255, 80, 0.1),
     0 0 120px rgba(15, 255, 80, 0.1), 0 0 92px rgba(15, 255, 80, 0.1),
     0 0 102px rgba(15, 255, 80, 0.1), 0 0 151px rgba(15, 255, 80, 0.1);
 

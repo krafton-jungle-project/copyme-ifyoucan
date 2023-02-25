@@ -190,76 +190,114 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.rooms[roomId].images[worstIdx].forEach((img) => resultImg.push(img));
     const users = this.rooms[roomId].users;
     let idx = 0;
+
+    //temp
+    this.rooms[roomId].isStart = false;
+    this.server.in(roomId).emit('get_finish');
+
     const intervalId = setInterval(() => {
-      if (idx < 10) {
+      if (idx <= 6) {
         if (idx === 0) {
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '베스트',
+            message: '　',
             isImg: false,
           });
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '🔥 최고의 수비자 🔥',
+            isImg: false,
+          });
+        } else if (idx === 1) {
+          if (bestIdx % 2 == 0) {
+            this.server.in(roomId).emit('message', {
+              userId: users[1].id,
+              message: '공격 포즈',
+              isImg: false,
+            });
+            this.server.in(roomId).emit('message', {
+              userId: users[1].id,
+              message: resultImg[0],
+              isImg: true,
+            });
+          } else {
+            this.server.in(roomId).emit('message', {
+              userId: users[0].id,
+              message: '공격 포즈',
+              isImg: false,
+            });
+            this.server.in(roomId).emit('message', {
+              userId: users[0].id,
+              message: resultImg[0],
+              isImg: true,
+            });
+          }
+        } else if (idx === 2) {
+          if (bestIdx % 2 == 0) {
+            this.server.in(roomId).emit('message', {
+              userId: users[0].id,
+              message: `수비 포즈(유사도 ${maxScore}%)`,
+              isImg: false,
+            });
+            this.server.in(roomId).emit('message', {
+              userId: users[0].id,
+              message: resultImg[1],
+              isImg: true,
+            });
+          } else {
+            this.server.in(roomId).emit('message', {
+              userId: users[1].id,
+              message: `수비 포즈(유사도 ${maxScore}%)`,
+              isImg: false,
+            });
+            this.server.in(roomId).emit('message', {
+              userId: users[1].id,
+              message: resultImg[1],
+              isImg: true,
+            });
+          }
+        } else if (idx === 3) {
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '　',
+            isImg: false,
+          });
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '\n\n💩 최악의 수비자 💩',
+            isImg: false,
+          });
+        } else if (idx === 4) {
+          if (worstIdx % 2 == 0) {
+            this.server.in(roomId).emit('message', {
+              userId: users[0].id,
+              message: '공격 포즈',
+              isImg: false,
+            });
+            this.server.in(roomId).emit('message', {
+              userId: users[0].id,
+              message: resultImg[2],
+              isImg: true,
+            });
+          } else {
+            this.server.in(roomId).emit('message', {
+              userId: users[1].id,
+              message: '공격 포즈',
+              isImg: false,
+            });
+            this.server.in(roomId).emit('message', {
+              userId: users[1].id,
+              message: resultImg[2],
+              isImg: true,
+            });
+          }
         } else if (idx === 5) {
-          this.server.in(roomId).emit('message', {
-            userId: '',
-            message: '워스트',
-            isImg: false,
-          });
-        } else if (idx === 1 || idx === 6) {
-          this.server.in(roomId).emit('message', {
-            userId: '',
-            message: '공격',
-            isImg: false,
-          });
-        } else if (idx === 3 || idx === 8) {
-          this.server.in(roomId).emit('message', {
-            userId: '',
-            message: '수비',
-            isImg: false,
-          });
-        } else if (idx == 2) {
-          if (bestIdx % 2 == 0) {
-            this.server.in(roomId).emit('message', {
-              userId: users[0].id,
-              message: resultImg[0],
-              isImg: true,
-            });
-          } else {
-            this.server.in(roomId).emit('message', {
-              userId: users[1].id,
-              message: resultImg[0],
-              isImg: true,
-            });
-          }
-        } else if (idx == 4) {
-          if (bestIdx % 2 == 0) {
-            this.server.in(roomId).emit('message', {
-              userId: users[1].id,
-              message: resultImg[1],
-              isImg: true,
-            });
-          } else {
-            this.server.in(roomId).emit('message', {
-              userId: users[0].id,
-              message: resultImg[1],
-              isImg: true,
-            });
-          }
-        } else if (idx == 7) {
           if (worstIdx % 2 == 0) {
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
-              message: resultImg[2],
-              isImg: true,
-            });
-          } else {
-            this.server.in(roomId).emit('message', {
               userId: users[1].id,
-              message: resultImg[2],
-              isImg: true,
+              message: `수비 자세(유사도 ${minScore}%)`,
+              isImg: false,
             });
-          }
-        } else if (idx == 9) {
-          if (worstIdx % 2 == 0) {
             this.server.in(roomId).emit('message', {
               userId: users[1].id,
               message: resultImg[3],
@@ -268,16 +306,38 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           } else {
             this.server.in(roomId).emit('message', {
               userId: users[0].id,
+              message: `수비 자세(유사도 ${minScore}%)`,
+              isImg: false,
+            });
+            this.server.in(roomId).emit('message', {
+              userId: users[0].id,
               message: resultImg[3],
               isImg: true,
             });
           }
+        } else {
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '　',
+            isImg: false,
+          });
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: `🕹️ GAME OVER 🕹️`,
+            isImg: false,
+          });
+          this.server.in(roomId).emit('message', {
+            userId: '',
+            message: '　',
+            isImg: false,
+          });
         }
+
         idx++;
       } else {
         clearInterval(intervalId);
       }
-    }, 2000);
+    }, 3000);
   }
 
   //! 게임 끝
@@ -287,7 +347,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const roomId = this.userToRoom[socket.id];
     //! 게임 시작 상태 변경
     this.rooms[roomId].isStart = false;
-    this.server.to(roomId).emit('get_finish');
+    this.server.in(roomId).emit('get_finish');
   }
 
   //! 방에 새로운 유저 join
@@ -328,8 +388,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(socket.id).emit('peer', otherUsers[0]);
 
     //채팅 메시지 날려보기
-    socket.to(roomId).emit('message', {
-      message: `${nickName}님이 들어왔습니다.`,
+    this.server.in(roomId).emit('message', {
+      message: `🟢 ${nickName}님이 입장했습니다 🟢`,
       userId: '',
       isImg: false,
     });
@@ -355,7 +415,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         socket.to(roomId).emit('user_exit', this.rooms[roomId].isStart);
         socket.to(roomId).emit('message', {
           userId: '',
-          message: `${nickName}가 나갔습니다.`,
+          message: `🔴 ${nickName}님이 퇴장했습니다\u00A0\u00A0🔴`,
           isImg: false,
         });
       }

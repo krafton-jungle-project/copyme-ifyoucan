@@ -67,7 +67,7 @@ const GameEventHandler = () => {
               user: { ...prev.user, isOffender: !prev.user.isOffender }, // 공수전환
             }));
           }
-        }, 3000);
+        }, 4000);
       }
     });
 

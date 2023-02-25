@@ -9,14 +9,14 @@ const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
   top: 50%;
   left: 0%;
-  transform: translate(0, -50%);
-  /* 세로 가운데 정렬(top: 50%와 같이 사용) */
+  transform: translate(0, -50%); /* 세로 가운데 정렬(top: 50%와 같이 사용) */
   width: 100%;
   aspect-ratio: 1;
   transition-property: left;
   transition-duration: 0.5s;
   border-radius: 20px;
   background-color: grey;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #ff3131;
 `;
 
 const Img = styled.img`

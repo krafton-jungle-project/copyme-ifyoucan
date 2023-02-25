@@ -26,9 +26,8 @@ const Container = styled.div`
     0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
 
   color: #fff;
-  text-shadow: /* White glow */ 0 0 5px #fff, 0 0 20px #fff, 0 0 50px #fff,
-    /* Green glow */ 0 0 42px #bc13fe, 0 0 120px #bc13fe, 0 0 92px #bc13fe, 0 0 102px #bc13fe,
-    0 0 151px #bc13fe;
+  text-shadow: 0 0 5px #fff, 0 0 20px #fff, 0 0 50px #fff, 0 0 42px #bc13fe, 0 0 120px #bc13fe,
+    0 0 92px #bc13fe, 0 0 102px #bc13fe, 0 0 151px #bc13fe;
 `;
 
 function Announcer() {
@@ -122,13 +121,13 @@ function Announcer() {
                 user: { ...prev.user, score: 0 },
                 peer: { ...prev.peer, score: 0 },
               }));
-            }, 1500);
+            }, 1000);
 
             setTimeout(() => {
               if (host) {
                 socket.emit('change_stage', GameStage.OFFEND);
               }
-            }, 3000);
+            }, 2000);
           }
           // 3(3.5) 라운드가 모두 끝났을 때,
           else {
@@ -200,22 +199,22 @@ function Announcer() {
 
   useEffect(() => {
     if (game.status === GameStatus.RESULT) {
-      //temp
-      if (host) {
-        socket.emit('finish');
-      }
+      // //temp
+      // if (host) {
+      //   socket.emit('finish');
+      // }
 
-      // setMessage('게임 결과');
+      setMessage('게임 결과');
 
       //todo: 게임 종료 사운드
       //todo: 게임 종료 안내 멘트(game over)
       //todo: 등등 추가 필요
 
-      // if (host) {
-      //   setTimeout(() => {
-      //     socket.emit('result');
-      //   }, 2000);
-      // }
+      if (host) {
+        setTimeout(() => {
+          socket.emit('result');
+        }, 2000);
+      }
     }
   }, [game.status]);
 
