@@ -6,10 +6,12 @@ import {
   isLeftAtom,
   isRightAtom,
   isSDRAtom,
+  isStartedAtom,
   isTPoseAtom,
   tutorialImgAtom,
   tutorialPassAtom,
 } from '../../../app/tutorial';
+import startImg from '../../../assets/images/tutorial/leggo.webp';
 import defaultImg from '../../../assets/images/tutorial/mario.png';
 import leftHandUp from '../../../assets/images/tutorial/left.png';
 import rightHandUp from '../../../assets/images/tutorial/right.png';
@@ -31,6 +33,7 @@ function Announce() {
   const [content, setContent] = useState('튜토리얼');
 
   const setImg = useSetAtom(tutorialImgAtom);
+  const isStarted = useAtomValue(isStartedAtom);
   const isBody = useAtomValue(isBodyAtom);
   const isLeft = useAtomValue(isLeftAtom);
   const isRight = useAtomValue(isRightAtom);
@@ -39,7 +42,16 @@ function Announce() {
   const isPass = useAtomValue(tutorialPassAtom);
 
   useEffect(() => {
-    if (isBody) {
+    if (!isStarted) {
+      setContent(`마리오를 눌러 시작해주세요.`);
+      setImg(startImg);
+    }
+    if (isStarted && !isBody) {
+      setContent(`전신이 나오게 서주세요.`);
+      setImg(defaultImg);
+    }
+
+    if (isBody && isStarted) {
       if (!isLeft) {
         setContent(`왼손을 들어주세요.`);
         setImg(leftHandUp);
@@ -60,11 +72,8 @@ function Announce() {
         setContent(`수고하셨습니다.`);
         setImg(defaultImg);
       }
-    } else {
-      setContent(`전신이 나오게 서주세요.`);
-      setImg(defaultImg);
     }
-  }, [isBody, isLeft, isRight, isT, isSDR, isPass]);
+  }, [isStarted, isBody, isLeft, isRight, isT, isSDR, isPass]);
 
   return <Announcement>{content}</Announcement>;
 }

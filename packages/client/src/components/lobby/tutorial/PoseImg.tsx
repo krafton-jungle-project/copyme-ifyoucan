@@ -1,6 +1,6 @@
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import styled from 'styled-components';
-import { tutorialImgAtom } from '../../../app/tutorial';
+import { isStartedAtom, tutorialImgAtom } from '../../../app/tutorial';
 
 const ImgWrapper = styled.div`
   height: 50%;
@@ -11,15 +11,21 @@ const ImgWrapper = styled.div`
 `;
 
 const Img = styled.img`
-  width: 95%;
+  height: 85%;
+  width: auto;
 `;
 
 function PoseImg() {
   const img = useAtomValue(tutorialImgAtom);
+  const setIsStarted = useSetAtom(isStartedAtom);
+
+  const startTutorial = () => {
+    setIsStarted(true);
+  };
 
   return (
     <ImgWrapper>
-      <img src={img} alt="pose" />
+      <Img src={img} alt="pose" onClick={startTutorial} />
     </ImgWrapper>
   );
 }

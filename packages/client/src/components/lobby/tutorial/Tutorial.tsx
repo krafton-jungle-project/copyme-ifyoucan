@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 
 const ImgWrapper = styled.div`
   border: 2px solid yellow;
-  width: 45%;
+  width: 35%;
   height: 95%;
   display: flex;
   flex-direction: column;
@@ -23,7 +23,7 @@ const ImgWrapper = styled.div`
 
 const CameraWrapper = styled.div`
   border: 2px solid yellow;
-  width: 45%;
+  width: 55%;
   height: 95%;
   display: flex;
   flex-direction: column;

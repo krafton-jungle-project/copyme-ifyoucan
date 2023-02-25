@@ -20,3 +20,4 @@ export const isLeftAtom = atom(false);
 export const isRightAtom = atom(false);
 export const isTPoseAtom = atom(false);
 export const isSDRAtom = atom(false);
+export const isStartedAtom = atom(false);

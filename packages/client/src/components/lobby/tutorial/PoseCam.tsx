@@ -16,6 +16,7 @@ import {
   isLeftAtom,
   isRightAtom,
   isSDRAtom,
+  isStartedAtom,
   isTPoseAtom,
   tutorialContentAtom,
   tutorialImgAtom,
@@ -48,6 +49,7 @@ function PoseCam() {
 
   const [delay, setDelay] = useState<number | null>(null);
 
+  const [isStarted, setIsStarted] = useAtom(isStartedAtom);
   const [isBody, setIsBody] = useAtom(isBodyAtom);
   const [isLeft, setIsLeft] = useAtom(isLeftAtom);
   const [isRight, setIsRight] = useAtom(isRightAtom);
@@ -77,14 +79,22 @@ function PoseCam() {
   }, []);
 
   useEffect(() => {
-    if (isPass && canvasRef.current) {
-      setDelay(null);
-      canvasRef.current.style.display = 'none';
-      cancelAnimationFrame(movenet.myRafId);
-    } else {
-      setDelay(1000);
+    if (canvasRef.current) {
+      if (!isStarted) {
+        setDelay(null);
+        canvasRef.current.style.display = 'none';
+      } else {
+        canvasRef.current.style.display = 'block';
+        setDelay(1000);
+      }
+
+      if (isPass) {
+        setDelay(null);
+        canvasRef.current.style.display = 'none';
+        cancelAnimationFrame(movenet.myRafId);
+      }
     }
-  }, [isPass]);
+  }, [isStarted, isPass]);
 
   useInterval(async () => {
     async function getMyPose(): Promise<poseDetection.Pose> {
@@ -96,9 +106,15 @@ function PoseCam() {
 
     let pose = await getMyPose();
 
-    if (!isBody) {
+    if (!isStarted) {
+      setContent(`마리오를 눌러 튜토리얼을 시작하세요.`);
+      console.log(`시작 안했는데?`);
+    }
+
+    if (isStarted && !isBody) {
       setContent(`전신이 나오게 서주세요.`);
       setIsBody(isValidBody(pose));
+      console.log(`왜 시작함?`);
     }
 
     if (pose && isBody) {
