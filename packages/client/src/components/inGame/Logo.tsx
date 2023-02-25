@@ -30,18 +30,15 @@ function Logo() {
 
   function onStart() {
     socket.emit('start', roomInfo.roomId);
-    console.log('start');
   }
 
   function onReady() {
     if (game.user.isReady) {
       GunReload.play();
       socket.emit('unready', roomInfo.roomId);
-      console.log('unready!');
     } else {
       GunReload.play();
       socket.emit('ready', roomInfo.roomId);
-      console.log('ready!');
     }
 
     setGame((prev) => ({

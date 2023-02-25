@@ -2,6 +2,7 @@ import type { Pose } from '@tensorflow-models/pose-detection';
 import { atomWithReset } from 'jotai/utils';
 
 interface UserState {
+  isValidBody: boolean;
   isReady: boolean;
   score: number;
   isOffender: boolean;
@@ -38,6 +39,7 @@ interface GameState {
 
 const initialState: GameState = {
   user: {
+    isValidBody: false,
     isReady: false,
     score: 0,
     isOffender: false,

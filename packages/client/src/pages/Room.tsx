@@ -26,17 +26,15 @@ function Room() {
   usePreventExit(); //temp
   useConnectWebRTC();
   GameEventHandler();
-  // MotionReady();
+  MotionReady();
 
   useEffect(() => {
     if (!myNickName || !roomInfo.roomId) {
-      console.log('잘못된 접근입니다.');
+      alert('잘못된 접근입니다.');
       navigate('/', { replace: true });
       window.location.reload(); //check
-    }
-
-    if (!stream || !detector) {
-      console.log('비디오 연결이 종료되어 다시 로딩합니다.');
+    } else if (!stream || !detector) {
+      alert('비디오 연결이 종료되어 다시 로딩합니다.');
       setIsLoaded(false);
       navigate('/', { replace: true });
       window.location.reload(); //check

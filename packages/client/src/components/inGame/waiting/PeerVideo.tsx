@@ -16,6 +16,7 @@ const Container = styled.div<{ isStart: boolean }>`
   transition-duration: 0.5s;
   border-radius: 20px;
   background-color: grey;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #1f51ff;
 `;
 
 const Img = styled.img`

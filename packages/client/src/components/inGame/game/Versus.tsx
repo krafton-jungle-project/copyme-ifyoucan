@@ -31,9 +31,9 @@ const VS = styled.div<{ isStart: boolean }>`
     `}
     
   color: rgba(255, 255, 255, 0.6);
-  text-shadow: /* White glow */ 0 0 5px rgba(255, 255, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.6),
-    0 0 50px rgba(255, 255, 255, 0.6), /* Green glow */ 0 0 42px #bc13fe, 0 0 120px #bc13fe,
-    0 0 92px #bc13fe, 0 0 102px #bc13fe, 0 0 151px #bc13fe;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.6),
+    0 0 50px rgba(255, 255, 255, 0.6), 0 0 42px #bc13fe, 0 0 120px #bc13fe, 0 0 92px #bc13fe,
+    0 0 102px #bc13fe, 0 0 151px #bc13fe;
 
   transition: 0.5s;
   transition-delay: 1s;
