@@ -11,7 +11,6 @@ import {
   tutorialImgAtom,
   tutorialPassAtom,
 } from '../../../app/tutorial';
-import startImg from '../../../assets/images/tutorial/leggo.webp';
 import defaultImg from '../../../assets/images/tutorial/mario.png';
 import leftHandUp from '../../../assets/images/tutorial/left.png';
 import rightHandUp from '../../../assets/images/tutorial/right.png';

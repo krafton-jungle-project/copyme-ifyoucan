@@ -44,7 +44,7 @@ export function isLeftHandUp(pose: Pose, minAngle: number = 0): boolean {
   return false;
 }
 
-export function isRightHandUp(pose: any, minAngle: number = 0): boolean {
+export function isRightHandUp(pose: Pose, minAngle: number = 0): boolean {
   const rightHip = pose['keypoints'][12];
   const rightShoulder = pose['keypoints'][6];
   const rightElbow = pose['keypoints'][8];
