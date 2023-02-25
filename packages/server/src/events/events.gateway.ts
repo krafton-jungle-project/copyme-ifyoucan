@@ -143,7 +143,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   gameStart(@MessageBody() roomId: string): void {
     if (!this.rooms[roomId].isStart) {
       // 게임이 시작하면 모든 유저들에게 게임이 시작됐다는 이벤트 발생
-      console.log('start');
       this.rooms[roomId].isStart = true;
       this.server.in(roomId).emit('get_start');
     }
@@ -156,7 +155,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let count = 3;
     const intervalId = setInterval(() => {
       if (count >= 0) {
-        console.log('countDown', count);
         this.server.in(roomId).emit('get_count_down', count--, stage);
       } else {
         clearInterval(intervalId);
@@ -336,6 +334,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         idx++;
       } else {
         clearInterval(intervalId);
+        //! 게임 상태 초기화 temp
+        this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
       }
     }, 3000);
   }
@@ -345,8 +345,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   finish(@ConnectedSocket() socket: ServerToClientSocket): void {
     // 방에 모든 유저들에게 게임이 끝났다고 알려줌
     const roomId = this.userToRoom[socket.id];
-    //! 게임 시작 상태 변경
-    this.rooms[roomId].isStart = false;
+    //! 게임 상태 초기화
+    // this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
     this.server.in(roomId).emit('get_finish');
   }
 
