@@ -27,4 +27,8 @@ export class UsersRepository {
   async create(user: UserRequestDto): Promise<User> {
     return await this.userModel.create(user);
   }
+
+  async updateUser(id: string, imgUrl: string) {
+    //findoneUpdate
+  }
 }
