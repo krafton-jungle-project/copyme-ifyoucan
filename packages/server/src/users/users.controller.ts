@@ -1,6 +1,14 @@
 import { AuthService } from '../auth/auth.service';
 import { UserRequestDto } from './dto/users.request.dto';
-import { Body, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Put,
+  Req,
+  UploadedFile,
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { Controller, Get, Post } from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
@@ -11,6 +19,8 @@ import { LoginRequestDto } from 'src/auth/dto/login.request.dto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { User } from './users.schema';
+import { UploadService } from 'src/uploads/uploads.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 @UseInterceptors(SuccessInterceptor)
@@ -19,6 +29,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
+    private readonly uploadService: UploadService,
   ) {}
 
   @ApiOperation({ summary: '현재 로그인한 유저 가져오기' })
@@ -44,9 +55,16 @@ export class UsersController {
 
   //로그아웃은 필요가 없음 프론트에서 jwt 제거하면 필요가 없음
 
-  // @ApiOperation({ summary: '이미지 업로드' })
-  // @Post('upload/cats')
-  // uploadCatImg() {
-  //   return 'uploadImg';
-  // }
+  @ApiOperation({ summary: '이미지 업로드' })
+  @UseGuards(JwtAuthGuard)
+  @Put('upload')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadImg(@Req() req: any, @UploadedFile() file: Express.Multer.File) {
+    //s3에 업로드
+    const s3Object = await this.uploadService.uploadFileToS3('copy', file);
+    //s3에 저장된 url 얻기
+    const imgUrl = this.uploadService.getAwsS3FileUrl(s3Object.key);
+    // 유저 정보 update
+    return await this.usersService.uploadImg(imgUrl, req.data.id);
+  }
 }

@@ -25,4 +25,12 @@ export class UsersService {
 
     return user.readOnlyData;
   }
+
+  async uploadImg(id: string, imgUrl: string) {
+    // 유저 있는지 검사
+    const user = await this.usersRepository.existsByLoginId(id);
+    if (user) {
+      await this.usersRepository.updateUser(id, imgUrl);
+    }
+  }
 }
