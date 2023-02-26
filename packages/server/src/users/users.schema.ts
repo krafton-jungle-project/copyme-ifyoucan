@@ -48,7 +48,7 @@ export class User extends Document {
   //이미지는 안넣을수도 있기에 required 안넣는다. -> 디폴트값이 false 임
   @Prop()
   @IsString()
-  imgUrl: string;
+  imgUrls: string[];
   //언제 업데이트 했는지 사용자는 알 필요없고 백엔드만 필요하다.
   readonly readOnlyData: { id: string; loginid: string; name: string };
 }

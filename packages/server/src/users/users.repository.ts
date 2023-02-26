@@ -3,7 +3,6 @@ import { User } from './users.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ImageRequestDto } from './dto/images.request.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -29,7 +28,8 @@ export class UsersRepository {
     return await this.userModel.create(user);
   }
 
-  async updateUser(id: string, imgUrl: ImageRequestDto): Promise<User> {
-    return await this.userModel.findByIdAndUpdate(id, imgUrl);
+  async updateUserImg(userId: string, imgUrl: string): Promise<User> {
+    const filter = { _id: userId };
+    return await this.userModel.findOneAndUpdate(filter, { $push: { imgUrls: imgUrl } });
   }
 }

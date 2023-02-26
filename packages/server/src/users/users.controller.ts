@@ -57,7 +57,7 @@ export class UsersController {
 
   @ApiOperation({ summary: '이미지 업로드' })
   @UseGuards(JwtAuthGuard)
-  @Put('upload')
+  @Post('upload')
   @UseInterceptors(FileInterceptor('image'))
   async uploadImg(@Req() req: any, @UploadedFile() file: Express.Multer.File) {
     //s3에 업로드
@@ -65,6 +65,11 @@ export class UsersController {
     //s3에 저장된 url 얻기
     const imgUrl = this.uploadService.getAwsS3FileUrl(s3Object.key);
     // 유저 정보 update
-    return await this.usersService.uploadImg(imgUrl, req.data.id);
+    const user = await this.usersService.uploadImg(req.user.id, imgUrl);
+    return Object.assign({
+      statuscode: 200,
+      message: '이미지 업로드 성공',
+      user,
+    });
   }
 }
