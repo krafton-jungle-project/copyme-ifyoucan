@@ -3,9 +3,9 @@ import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { GameStage, gameAtom } from '../../../app/game';
 import { comparePoses } from '../../../utils/pose-similarity';
-import { detector } from '../../../utils/tfjs-movenet';
 import { useInterval } from '../hooks/useInterval';
 import { useClientSocket } from '../../../module/client-socket';
+import { useMovenetStream } from '../../../module/movenet-stream';
 
 const Container = styled.div`
   position: absolute;
@@ -90,17 +90,19 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
   const [delay, setDelay] = useState<number | null>(null);
   const [isInit, setIsInit] = useState(true);
   const { socket } = useClientSocket();
-
-  const getMyPose = async () => {
-    if (myVideoRef.current) {
-      const myPoses = await detector.estimatePoses(myVideoRef.current);
-      if (myPoses && myPoses.length > 0) {
-        return myPoses[0];
-      }
-    }
-  };
+  const detector = useMovenetStream().movenet.detector;
 
   useInterval(async () => {
+    const getMyPose = async () => {
+      if (myVideoRef.current) {
+        const myPoses = await detector.estimatePoses(myVideoRef.current);
+        console.log(myPoses);
+        if (myPoses && myPoses.length > 0) {
+          return myPoses[0];
+        }
+      }
+    };
+
     const myPose = await getMyPose();
     if (myPose && game.peer.pose) {
       const tempScore = comparePoses(myPose, game.peer.pose);

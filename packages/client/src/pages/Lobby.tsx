@@ -1,16 +1,13 @@
 import RoomList from '../components/lobby/RoomList';
 import logo from '../assets/images/logo.png';
 import styled from 'styled-components';
-import { atom, useAtom } from 'jotai';
 import Loading from '../components/lobby/Loading';
-import { stream, detector } from '../utils/tfjs-movenet';
 import { useEffect, useState } from 'react';
 import { removeUser } from '../utils/localstorage';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Tutorial from '../components/lobby/tutorial/Tutorial';
-
-export const isLoadedAtom = atom(false);
+import { useMovenetStream } from '../module/movenet-stream';
 
 const Logo = styled.img`
   margin: auto;
@@ -50,9 +47,9 @@ const randomIdx = Math.floor(Math.random() * 10);
 export let myNickName = nickNameArr[randomIdx]; //temp
 
 function Lobby() {
-  const [isLoaded, setIsLoaded] = useAtom(isLoadedAtom);
-  const [mode, setMode] = useState('Room');
   const navigate = useNavigate();
+  const [mode, setMode] = useState('Room');
+  const { isStreamReady } = useMovenetStream();
 
   //todo: 최초 한 번만 실행하는 방법 생각해보기
   useEffect(() => {
@@ -75,11 +72,6 @@ function Lobby() {
     };
     setMyNickName();
   }, []);
-
-  if (isLoaded && (!stream || !detector)) {
-    setIsLoaded(false);
-    console.log('error: stream & detector is reloaded.');
-  }
 
   const logoutHandler = () => {
     const check = window.confirm('로그아웃 하시겠습니까?');
@@ -114,7 +106,7 @@ function Lobby() {
 
   return (
     <>
-      {!isLoaded ? (
+      {!isStreamReady ? (
         <Loading />
       ) : (
         <div>

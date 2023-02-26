@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import CreateRoom from '../lobby/roomList/CreateRoom';
 import { useClientSocket } from '../../module/client-socket';
