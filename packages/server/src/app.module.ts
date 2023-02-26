@@ -7,7 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import mongoose from 'mongoose';
 import { AppController } from './app.controller';
-import { AwsService } from './aws.service';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -21,9 +21,10 @@ import { AwsService } from './aws.service';
     UsersModule,
     AuthModule,
     EventsModule,
+    UploadsModule,
   ],
   controllers: [AppController],
-  providers: [AwsService],
+  providers: [],
 })
 export class AppModule implements NestModule {
   private readonly isDev: boolean = process.env.MODE === 'dev' ? true : false;

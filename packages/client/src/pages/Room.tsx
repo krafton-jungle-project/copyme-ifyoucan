@@ -5,7 +5,7 @@ import { stream, detector } from '../utils/tfjs-movenet';
 import { isLoadedAtom, myNickName } from './Lobby';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
-import ConnectWebRTC from '../components/inGame/ConnectWebRTC';
+import useConnectWebRTC from '../components/inGame/hooks/useConnectWebRTC';
 import GameEventHandler from '../components/inGame/GameEventHandler';
 import { useClientSocket } from '../module/client-socket';
 import { gameAtom } from '../app/game';
@@ -24,19 +24,17 @@ function Room() {
   const resetRoomInfo = useResetAtom(roomInfoAtom);
 
   usePreventExit(); //temp
-  ConnectWebRTC();
+  useConnectWebRTC();
   GameEventHandler();
-  // MotionReady();
+  MotionReady();
 
   useEffect(() => {
     if (!myNickName || !roomInfo.roomId) {
-      console.log('잘못된 접근입니다.');
+      alert('잘못된 접근입니다.');
       navigate('/', { replace: true });
       window.location.reload(); //check
-    }
-
-    if (!stream || !detector) {
-      console.log('비디오 연결이 종료되어 다시 로딩합니다.');
+    } else if (!stream || !detector) {
+      alert('비디오 연결이 종료되어 다시 로딩합니다.');
       setIsLoaded(false);
       navigate('/', { replace: true });
       window.location.reload(); //check
@@ -48,7 +46,6 @@ function Room() {
       resetPeerInfo();
       resetGame();
       socket.emit('exit_room', myNickName);
-      window.location.reload(); //todo: 태준
     };
   }, []);
 

@@ -1,13 +1,13 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { stream } from '../../utils/tfjs-movenet';
+import { stream } from '../../../utils/tfjs-movenet';
 import { useAtom, useSetAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
-import { useClientSocket } from '../../module/client-socket';
-import { peerInfoAtom } from '../../app/peer';
-import { roomInfoAtom } from '../../app/room';
-import { myNickName } from '../../pages/Lobby';
-import { gameAtom } from '../../app/game';
+import { useClientSocket } from '../../../module/client-socket';
+import { peerInfoAtom } from '../../../app/peer';
+import { roomInfoAtom } from '../../../app/room';
+import { myNickName } from '../../../pages/Lobby';
+import { gameAtom } from '../../../app/game';
 
 //! 스턴 서버 직접 생성 고려(임시)
 const pc_config = {
@@ -18,7 +18,7 @@ const pc_config = {
   ],
 };
 
-const ConnectWebRTC = () => {
+const useConnectWebRTC = () => {
   const { socket } = useClientSocket();
   const navigate = useNavigate();
   const pcRef = useRef<RTCPeerConnection>(); // 상대 유저의 RTCPeerConnection 저장
@@ -89,7 +89,7 @@ const ConnectWebRTC = () => {
 
       try {
         const offer = await peerConnection.createOffer();
-        peerConnection.setLocalDescription(new RTCSessionDescription(offer));
+        peerConnection.setLocalDescription(offer);
         socket.emit('offer', {
           sdp: offer,
           offerSendID: socket.id,
@@ -119,10 +119,9 @@ const ConnectWebRTC = () => {
         pcRef.current = peerConnection;
 
         try {
-          await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
-          console.log('answer set remote description success');
+          peerConnection.setRemoteDescription(sdp);
           const answer = await peerConnection.createAnswer();
-          await peerConnection.setLocalDescription(new RTCSessionDescription(answer));
+          peerConnection.setLocalDescription(answer);
           socket.emit('answer', {
             sdp: answer,
             answerSendID: socket.id,
@@ -137,13 +136,14 @@ const ConnectWebRTC = () => {
     //! answer에 대한 RTCSessionDescription을 얻는다.
     socket.on('get_answer', (sdp: RTCSessionDescription) => {
       if (!pcRef.current) return;
-      pcRef.current.setRemoteDescription(new RTCSessionDescription(sdp));
+      pcRef.current.setRemoteDescription(sdp);
+      console.log('answer set remote description success');
     });
 
     socket.on('get_ice', async (candidate: RTCIceCandidateInit) => {
       try {
         if (!pcRef.current) return;
-        await pcRef.current.addIceCandidate(new RTCIceCandidate(candidate));
+        await pcRef.current.addIceCandidate(candidate);
         console.log('candidate add success');
       } catch (e) {
         console.log(e);
@@ -171,12 +171,10 @@ const ConnectWebRTC = () => {
 
     return () => {
       if (!pcRef.current) return;
-
+      console.log('webRTC return');
       pcRef.current.close();
     };
   }, []);
-
-  return null;
 };
 
-export default ConnectWebRTC;
+export default useConnectWebRTC;

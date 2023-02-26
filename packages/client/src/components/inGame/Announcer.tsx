@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { gameAtom, GameStage, GameStatus } from '../../app/game';
 import { peerInfoAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
-import { imValidBodyAtom } from './waiting/MotionReady';
 import { RoundOne, RoundThree, RoundTwo, Transition } from '../../utils/sound';
 import { roomInfoAtom } from '../../app/room';
 import { myNickName } from '../../pages/Lobby';
@@ -27,12 +26,9 @@ const Container = styled.div`
     0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
 
   color: #fff;
-  text-shadow: /* White glow */ 0 0 5px #fff, 0 0 20px #fff, 0 0 50px #fff,
-    /* Green glow */ 0 0 42px #bc13fe, 0 0 120px #bc13fe, 0 0 92px #bc13fe, 0 0 102px #bc13fe,
-    0 0 151px #bc13fe;
+  text-shadow: 0 0 5px #fff, 0 0 20px #fff, 0 0 50px #fff, 0 0 42px #bc13fe, 0 0 120px #bc13fe,
+    0 0 92px #bc13fe, 0 0 102px #bc13fe, 0 0 151px #bc13fe;
 `;
-
-let messageOrder: number;
 
 function Announcer() {
   const host = useAtomValue(roomInfoAtom).host;
@@ -40,21 +36,61 @@ function Announcer() {
   const { socket } = useClientSocket();
   const [game, setGame] = useAtom(gameAtom);
   const [message, setMessage] = useState('');
-  const imValidBody = useAtomValue(imValidBodyAtom);
 
-  const initialMessages: string[] = [
-    '게임을 시작합니다',
-    '첫 번째 공격이 시작됩니다!',
-    '공격자의 자세를 정확히 따라해주세요!',
-  ];
-
-  const offenderMessages: string[] = [
-    '공격 수비 전환',
-    `${game.user.isOffender ? myNickName : peerInfo.nickName}님의 공격!`,
-  ];
-  const defenderMessages: string[] = [
-    `${game.user.isOffender ? peerInfo.nickName : myNickName}님의 수비!`,
-  ];
+  useEffect(() => {
+    if (game.status === GameStatus.WAITING) {
+      // 내가 방장일 때
+      if (host) {
+        // 아직 상대가 입장하지 않았으면
+        if (!peerInfo.socketId) {
+          setMessage('상대방이 입장하지 않았습니다');
+        }
+        // 상대방이 입장했을 때
+        else {
+          // 상대방이 준비되지 않았으면
+          if (!game.peer.isReady) {
+            setMessage('상대방이 아직 준비되지 않았습니다');
+          }
+          // 상대방이 준비되었으면
+          else {
+            // 내가 전신이 나오지 않았으면
+            if (!game.user.isValidBody) {
+              setMessage('전신이 나오도록 서주세요');
+            }
+            // 내가 전신이 나오게 섰으면(상대방은 레디한 상태)
+            else {
+              setMessage('왼손을 올려 게임을 시작해주세요');
+            }
+          }
+        }
+      }
+      // 방장이 아닐때
+      else {
+        // 내가 전신이 나오지 않았으면
+        if (!game.user.isValidBody) {
+          setMessage('전신이 나오도록 서주세요');
+        }
+        // 내가 전신이 나오게 섰으면
+        else {
+          // 내가 왼손을 안올리고 있으면
+          if (!game.user.isReady) {
+            setMessage('준비가 되면 왼손을 올려주세요');
+          }
+          // 내가 왼손을 올리고 있으면
+          else {
+            setMessage('상대도 손을 올리면 게임이 시작됩니다');
+          }
+        }
+      }
+    }
+  }, [
+    game.status,
+    host,
+    peerInfo.socketId,
+    game.user.isValidBody,
+    game.user.isReady,
+    game.peer.isReady,
+  ]);
 
   useEffect(() => {
     const gameMessage = () => {
@@ -85,13 +121,13 @@ function Announcer() {
                 user: { ...prev.user, score: 0 },
                 peer: { ...prev.peer, score: 0 },
               }));
-            }, 1500);
+            }, 1000);
 
             setTimeout(() => {
               if (host) {
                 socket.emit('change_stage', GameStage.OFFEND);
               }
-            }, 3000);
+            }, 2000);
           }
           // 3(3.5) 라운드가 모두 끝났을 때,
           else {
@@ -116,6 +152,7 @@ function Announcer() {
             setTimeout(gameMessage, 2000);
           } else {
             messageOrder = 0;
+
             if (host) {
               socket.emit('count_down', 'offend');
             }
@@ -127,6 +164,7 @@ function Announcer() {
             setTimeout(gameMessage, 2000);
           } else {
             messageOrder = 0;
+
             if (host) {
               socket.emit('count_down', 'defend');
             }
@@ -137,89 +175,48 @@ function Announcer() {
       }
     };
 
-    switch (game.status) {
-      // 게임방 대기실에서
-      case GameStatus.WAITING:
-        // 내가 방장일 때
-        if (host) {
-          // 아직 상대가 입장하지 않았으면
-          if (!peerInfo.socketId) {
-            setMessage('상대방이 입장하지 않았습니다');
-          }
-          // 상대방이 입장했을 때
-          else {
-            // 상대방이 준비되지 않았으면
-            if (!game.peer.isReady) {
-              setMessage('상대방이 아직 준비되지 않았습니다');
-            }
-            // 상대방이 준비되었으면
-            else {
-              // 내가 전신이 나오지 않았으면
-              if (!imValidBody) {
-                setMessage('전신이 나오도록 서주세요');
-              }
-              // 내가 전신이 나오게 섰으면(상대방은 레디한 상태)
-              else {
-                setMessage('왼손을 올려 게임을 시작해주세요');
-              }
-            }
-          }
-        }
-        // 방장이 아닐때
-        else {
-          // 내가 전신이 나오지 않았으면
-          if (!imValidBody) {
-            setMessage('전신이 나오도록 서주세요');
-          }
-          // 내가 전신이 나오게 섰으면
-          else {
-            // 내가 왼손을 안올리고 있으면
-            if (!game.user.isReady) {
-              setMessage('준비가 되면 왼손을 올려주세요');
-            }
-            // 내가 왼손을 올리고 있으면
-            else {
-              setMessage('상대도 손을 올리면 게임이 시작됩니다');
-            }
-          }
-        }
-        break;
-      case GameStatus.GAME:
-        messageOrder = 0;
-        gameMessage();
-        break;
-      case GameStatus.RESULT:
-        //temp
-        console.log('finish');
-        if (host) {
-          socket.emit('finish');
-        }
+    let messageOrder: number;
 
-        // setMessage('게임 결과');
+    const initialMessages: string[] = [
+      '게임을 시작합니다',
+      '첫 번째 공격이 시작됩니다!',
+      '공격자의 자세를 정확히 따라해주세요!',
+    ];
 
-        //todo: 게임 종료 사운드
-        //todo: 게임 종료 안내 멘트(game over)
-        //todo: 등등 추가 필요
+    const offenderMessages: string[] = [
+      '공격 수비 전환',
+      `${game.user.isOffender ? myNickName : peerInfo.nickName}님의 공격!`,
+    ];
+    const defenderMessages: string[] = [
+      `${game.user.isOffender ? peerInfo.nickName : myNickName}님의 수비!`,
+    ];
 
-        // if (host) {
-        //   setTimeout(() => {
-        //     socket.emit('result');
-        //   }, 2000);
-        // }
-        break;
-      default:
-        break;
+    if (game.status === GameStatus.GAME) {
+      messageOrder = 0;
+      gameMessage();
     }
-  }, [
-    game.status,
-    game.stage,
-    game.round,
-    host,
-    peerInfo.socketId,
-    game.user.isReady,
-    game.peer.isReady,
-    imValidBody,
-  ]);
+  }, [game.status, game.stage, game.round]);
+
+  useEffect(() => {
+    if (game.status === GameStatus.RESULT) {
+      // //temp
+      // if (host) {
+      //   socket.emit('finish');
+      // }
+
+      setMessage('게임 결과');
+
+      //todo: 게임 종료 사운드
+      //todo: 게임 종료 안내 멘트(game over)
+      //todo: 등등 추가 필요
+
+      if (host) {
+        setTimeout(() => {
+          socket.emit('result');
+        }, 2000);
+      }
+    }
+  }, [game.status]);
 
   return <Container>{message}</Container>;
 }

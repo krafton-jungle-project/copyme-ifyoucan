@@ -37,13 +37,14 @@ const RoomCnt = styled.span`
 `;
 
 interface Props {
+  id: string;
   roomName: string;
   users: { id: string; nickName: string }[];
   isStart: boolean;
   readyCount: number;
 }
 
-export default function RoomCard({ roomId, roomInfo }: { roomId: string; roomInfo: Props }) {
+export default function RoomCard({ roomInfo }: { roomInfo: Props }) {
   const navigate = useNavigate();
   const setRoomInfo = useSetAtom(roomInfoAtom);
 
@@ -62,7 +63,7 @@ export default function RoomCard({ roomId, roomInfo }: { roomId: string; roomInf
           <RoomCnt>{roomInfo.users.length} / 2</RoomCnt>
           {roomInfo.roomName}
         </RoomName>
-        <JoinBtn onClick={() => joinRoom(roomId)} disabled={roomInfo.users.length >= 2}>
+        <JoinBtn onClick={() => joinRoom(roomInfo.id)} disabled={roomInfo.users.length >= 2}>
           드루와
         </JoinBtn>
       </RoomInfo>

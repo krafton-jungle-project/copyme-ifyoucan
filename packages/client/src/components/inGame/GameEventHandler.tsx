@@ -15,20 +15,16 @@ const GameEventHandler = () => {
   useEffect(() => {
     socket.on('get_ready', () => {
       GunReload.play();
-      console.log('get_ready');
       setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: true } }));
     });
 
     socket.on('get_unready', () => {
       GunReload.play();
-      console.log('get_unready');
       setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: false } }));
     });
 
     //! 게임 Status를 waiting에서 game으로 바꾼다
     socket.on('get_start', () => {
-      console.log('get_start');
-
       setGame((prev) => ({
         ...prev,
         user: { ...prev.user, isOffender: host ? true : false },
@@ -49,7 +45,6 @@ const GameEventHandler = () => {
     });
 
     socket.on('get_count_down', (count: number, stage: string) => {
-      console.log(count, stage);
       setGame((prev) => ({ ...prev, countDown: count }));
 
       if (count === 3) {
@@ -59,24 +54,20 @@ const GameEventHandler = () => {
       if (count === 0) {
         CameraClick.play();
 
-        //todo
-        //todo
-        //todo
-
         setTimeout(() => {
           if (stage === 'offend') {
             setGame((prev) => ({ ...prev, stage: GameStage.DEFEND }));
-          } else if (stage === 'defend') {
+          }
+          // stage === 'defend')
+          else {
             setGame((prev) => ({
               ...prev,
               stage: Number.isInteger(prev.round + 0.5) ? GameStage.ROUND : GameStage.OFFEND,
               round: prev.round + 0.5,
               user: { ...prev.user, isOffender: !prev.user.isOffender }, // 공수전환
             }));
-          } else {
-            console.log('카운트다운 오류', 'count:', count, 'stage:', stage);
           }
-        }, 3000);
+        }, 4000);
       }
     });
 
@@ -85,12 +76,10 @@ const GameEventHandler = () => {
     });
 
     socket.on('get_change_stage', (stage: number) => {
-      console.log('change stage to:', stage);
       setGame((prev) => ({ ...prev, stage }));
     });
 
     socket.on('get_change_status', (status: number) => {
-      console.log('change status to:', status);
       setGame((prev) => ({ ...prev, status }));
     });
 
@@ -98,9 +87,11 @@ const GameEventHandler = () => {
     socket.on('get_finish', () => {
       GameMusic.currentTime = 0;
       GameMusic.pause();
-      console.log('get_finish');
       resetGame();
     });
+    return () => {
+      socket.removeAllListeners();
+    };
   }, []);
 
   return null;

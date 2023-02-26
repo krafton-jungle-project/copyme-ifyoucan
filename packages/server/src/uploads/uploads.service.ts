@@ -7,7 +7,7 @@ import { PromiseResult } from 'aws-sdk/lib/request';
 // sharp
 
 @Injectable()
-export class AwsService {
+export class UploadService {
   private readonly awsS3: AWS.S3;
   public readonly S3_BUCKET_NAME: string;
 
