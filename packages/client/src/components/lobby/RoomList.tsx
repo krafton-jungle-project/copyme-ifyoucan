@@ -5,6 +5,8 @@ import { useClientSocket } from '../../module/client-socket';
 import RoomCard from './roomList/RoomCard';
 import { useRoomAtom } from '../../app/room';
 
+const Container = styled.div``;
+
 const RoomContainerWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -16,7 +18,7 @@ const RoomContainer = styled.div`
   display: flex;
   justify-content: space-evenly;
   align-items: flex-start;
-  border: 1px solid red;
+  border: 1px solid #fffa;
   padding: 30px 50px;
   flex-wrap: wrap;
   overflow: scroll;
@@ -30,11 +32,6 @@ const RoomBox = styled.div`
   border-radius: 7px;
   padding: 30px 20px;
   display: flex;
-`;
-
-const RoomHeader = styled.h2`
-  text-align: center;
-  margin-top: 20px;
 `;
 
 export default function RoomList() {
@@ -52,9 +49,8 @@ export default function RoomList() {
   }, [socket, updateRooms]);
 
   return (
-    <div className="play">
-      <CreateRoom></CreateRoom>
-      <RoomHeader>방 목록</RoomHeader>
+    <Container>
+      <CreateRoom />
       <RoomContainerWrapper>
         <RoomContainer>
           {roomsList.map((room) => {
@@ -66,6 +62,6 @@ export default function RoomList() {
           })}
         </RoomContainer>
       </RoomContainerWrapper>
-    </div>
+    </Container>
   );
 }

@@ -2,7 +2,15 @@ import { useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useClientSocket } from '../../module/client-socket';
 import { gameAtom, GameStage, GameStatus } from '../../app/game';
-import { Bell, CameraClick, CountDown3s, GameMusic, GunReload, Swish } from '../../utils/sound';
+import {
+  BackgroundMusic,
+  Bell,
+  CameraClick,
+  CountDown3s,
+  GameMusic,
+  GunReload,
+  Swish,
+} from '../../utils/sound';
 import { useResetAtom } from 'jotai/utils';
 import { roomInfoAtom } from '../../app/room';
 
@@ -32,6 +40,7 @@ const GameEventHandler = () => {
         status: GameStatus.GAME,
       }));
 
+      BackgroundMusic.pause();
       Swish.play(); // 비디오 휙 넘어가는 소리
 
       setTimeout(() => {
