@@ -2,6 +2,7 @@ import { UsersRepository } from './users.repository';
 import { UserRequestDto } from './dto/users.request.dto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { ImageRequestDto } from './dto/images.request.dto';
 
 @Injectable()
 export class UsersService {
@@ -26,11 +27,13 @@ export class UsersService {
     return user.readOnlyData;
   }
 
-  async uploadImg(id: string, imgUrl: string) {
+  async uploadImg(id: string, imgUrl: ImageRequestDto) {
     // 유저 있는지 검사
     const user = await this.usersRepository.existsByLoginId(id);
     if (user) {
       await this.usersRepository.updateUser(id, imgUrl);
+    } else {
+      throw new UnauthorizedException('해당하는 아이디의 이미지가 없습니다.');
     }
   }
 }
