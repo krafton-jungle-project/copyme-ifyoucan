@@ -12,9 +12,21 @@ const Container = styled.div`
   height: 90%;
 `;
 
+const FadeBackGround = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 105%;
+  height: 105%;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 40px;
+`;
+
 function InGame() {
   return (
     <Container>
+      <FadeBackGround />
       <RoomHeader />
       <WaitingBox />
       <GameBox />
