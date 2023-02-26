@@ -38,6 +38,7 @@ export class UsersController {
   getCurrentUser(@CurrentUser() user: User) {
     return user.readOnlyData;
   }
+
   @ApiResponse({ status: 500, description: 'Sever Error ...' })
   @ApiResponse({ status: 200, description: '성공!', type: ReadOnlyUserDto })
   @ApiOperation({ summary: '회원가입' })

@@ -50,7 +50,7 @@ export class User extends Document {
   @IsString()
   imgUrls: string[];
   //언제 업데이트 했는지 사용자는 알 필요없고 백엔드만 필요하다.
-  readonly readOnlyData: { id: string; loginid: string; name: string };
+  readonly readOnlyData: { id: string; loginid: string; name: string; imgUrls: string[] };
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
