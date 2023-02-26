@@ -12,7 +12,7 @@ import MotionReady from '../components/inGame/waiting/MotionReady';
 import { peerInfoAtom } from '../app/peer';
 import { roomInfoAtom } from '../app/room';
 import { usePreventExit } from '../components/inGame/hooks/usePreventExit';
-import { GameMusic } from '../utils/sound';
+import { GameMusic, RoomEnter, RoomExit } from '../utils/sound';
 import { useMovenetStream } from '../module/movenet-stream';
 
 function Room() {
@@ -41,6 +41,8 @@ function Room() {
       window.location.reload(); //check
     }
 
+    RoomEnter.play(); // 자신 입장음
+
     // 방을 나갈 때
     return () => {
       resetRoomInfo();
@@ -49,6 +51,7 @@ function Room() {
       GameMusic.currentTime = 0;
       GameMusic.pause();
       socket.emit('exit_room', myNickName);
+      RoomExit.play(); // 자신 퇴장음
     };
   }, []);
 
