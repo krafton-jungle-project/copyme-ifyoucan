@@ -34,6 +34,7 @@ export interface ServerToClientEvents {
   user_exit: (isStart: boolean) => void;
   get_change_stage: (stage: number) => void;
   get_change_status: (stage: number) => void;
+  get_upload: (images: string[]) => void;
 }
 
 export interface ClientToServerEvents {
@@ -94,6 +95,7 @@ export interface InterServerEvents {
   get_change_stage: (stage: number) => void;
   get_change_status: (stage: number) => void;
   get_finish: () => void;
+  get_upload: (images: string[]) => void;
 }
 
 export interface SocketData {

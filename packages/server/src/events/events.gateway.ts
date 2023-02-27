@@ -184,8 +184,10 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('bestIdx', bestIdx);
     console.log('worstIdx', worstIdx);
     console.log(this.rooms[roomId].images.length);
-    this.rooms[roomId].images[bestIdx].forEach((img) => resultImg.push(img));
     this.rooms[roomId].images[worstIdx].forEach((img) => resultImg.push(img));
+    this.rooms[roomId].images[bestIdx].forEach((img) => resultImg.push(img));
+    // 이미지 병합을 위해 결과 이미지를 클라이언트에 보낸다.
+    this.server.in(roomId).emit('get_upload', resultImg);
     const users = this.rooms[roomId].users;
     let idx = 0;
 
