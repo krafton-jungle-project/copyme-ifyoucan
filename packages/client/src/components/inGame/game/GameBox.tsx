@@ -9,6 +9,7 @@ import PeerCanvas from './PeerCanvas';
 import PeerScoreBar from './PeerScoreBar';
 import Versus from './Versus';
 import { myNickName } from '../../../pages/Lobby';
+import InvisibleDrawingCanvas from '../InvisibleDrawingCanvas';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -163,6 +164,7 @@ function GameBox() {
           <PeerCanvas peerVideoRef={peerVideoRef} />
         </CameraWrapper>
       </Wrapper>
+      {/* <InvisibleDrawingCanvas /> */}
     </Container>
   );
 }

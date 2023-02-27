@@ -119,7 +119,7 @@ class Camera {
     }
   }
 
-  // 인식된 점 하나를 캔버스에 그리느 ㄴ함수.
+  // 인식된 점 하나를 캔버스에 그리는 함수.
   drawKeypoint(keypoint: poseDetection.Keypoint) {
     // If score is null, just show the keypoint.
     const score = keypoint.score != null ? keypoint.score : 1;
