@@ -1,5 +1,5 @@
 import RoomList from '../components/lobby/RoomList';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Loading from '../components/lobby/Loading';
 import { useEffect, useState } from 'react';
 import { removeUser } from '../utils/localstorage';
@@ -8,23 +8,6 @@ import axios from 'axios';
 import Tutorial from '../components/lobby/tutorial/Tutorial';
 import { useMovenetStream } from '../module/movenet-stream';
 import { BackgroundMusic } from '../utils/sound';
-
-const Container = styled.div``;
-
-const Wrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
-  height: 90%;
-  background-color: rgba(0, 0, 0, 0.5);
-  border: 0.1rem solid #fff;
-  border-radius: 40px;
-
-  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
-    0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
-`;
 
 //temp
 //! for test
@@ -40,17 +23,6 @@ const nickNameArr = [
   '소니',
   '모드리치',
 ];
-
-const NavBar = styled.nav`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const NavBtn = styled.button`
-  width: 100px;
-  height: 80px;
-`;
 
 const randomIdx = Math.floor(Math.random() * 10);
 export let myNickName = nickNameArr[randomIdx]; //temp
@@ -129,24 +101,20 @@ function Lobby() {
   }, [isStreamReady]);
 
   return (
-    <Container>
+    <>
       {!isStreamReady ? <Loading /> : null}
-      <Wrapper>
-        <NavBar>
-          <NavBtn onClick={onRoom}>Room</NavBtn>
-          <NavBtn onClick={onTutorial}>Tutorial</NavBtn>
-        </NavBar>
-        <button
-          onClick={() => {
-            sessionStorage.setItem('isAuthenticated', 'false');
-            logoutHandler();
-          }}
-        >
-          로그아웃
-        </button>
-        {content}
-      </Wrapper>
-    </Container>
+      <button onClick={onRoom}>Room</button>
+      <button onClick={onTutorial}>Tutorial</button>
+      <button
+        onClick={() => {
+          sessionStorage.setItem('isAuthenticated', 'false');
+          logoutHandler();
+        }}
+      >
+        로그아웃
+      </button>
+      {content}
+    </>
   );
 }
 

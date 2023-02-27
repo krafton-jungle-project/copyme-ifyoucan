@@ -1,6 +1,8 @@
-import RoomHeader from './RoomHeader';
 import WaitingBox from './waiting/WaitingBox';
 import GameBox from './game/GameBox';
+import Announcer from './Announcer';
+import ExitButton from './ExitButton';
+import Logo from './Logo';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -23,11 +25,21 @@ const FadeBackGround = styled.div`
   border-radius: 40px;
 `;
 
+const Header = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 15%;
+`;
+
 function InGame() {
   return (
     <Container>
       <FadeBackGround />
-      <RoomHeader />
+      <Header>
+        <Logo />
+        <Announcer />
+        <ExitButton />
+      </Header>
       <WaitingBox />
       <GameBox />
     </Container>
