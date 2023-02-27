@@ -1,67 +1,85 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import CreateRoom from './room-list/CreateRoom';
-import { useClientSocket } from '../../module/client-socket';
-import RoomCard from './room-list/RoomCard';
 import { useRoomAtom } from '../../app/room';
+import { useClientSocket } from '../../module/client-socket';
+import CreateRoom from './room-list/CreateRoom';
+import RoomCard from './room-list/RoomCard';
 
-const Container = styled.div``;
-
-const RoomContainerWrapper = styled.div`
-  display: flex;
-  justify-content: center;
+const Container = styled.div`
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 90%;
 `;
 
-const RoomContainer = styled.div`
-  width: 950px;
-  height: 530px;
+const Header = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 6%;
+`;
+
+const Txt = styled.div`
+  position: absolute;
   display: flex;
-  justify-content: space-evenly;
-  align-items: flex-start;
-  border: 1px solid #fffa;
-  padding: 30px 50px;
-  flex-wrap: wrap;
+  align-items: center;
+  height: 100%;
+  padding: 0 10px 0 10px;
+  font-size: 18px;
+  font-weight: 400;
+  text-shadow: 0 0 1px #fff, 0 0 3px #fff;
+`;
+
+const RoomCardContainer = styled.div`
+  position: absolute;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-auto-rows: calc(100% / 3);
+  grid-auto-flow: rows;
+  padding: 10px;
   overflow: scroll;
+  bottom: 0;
+  width: 100%;
+  height: 93%;
+  border: 1px solid #ff00cc;
+  background-color: #ff00cc11;
+  border-radius: 5px;
 `;
 
-const RoomBox = styled.div`
-  width: 370px;
-  height: 150px;
-  margin: 5px 5px;
-  border: 1px solid black;
-  border-radius: 7px;
-  padding: 30px 20px;
-  display: flex;
+const RoomCardWrapper = styled.div`
+  padding: 10px;
 `;
 
-export default function RoomList() {
+function RoomList() {
   const { socket } = useClientSocket();
-  const { roomsList, updateRooms } = useRoomAtom();
+  const { roomList, updateRooms } = useRoomAtom();
 
   useEffect(() => {
     socket.emit('rooms');
-  }, [socket]);
 
-  useEffect(() => {
     socket.on('get_rooms', (rooms) => {
       updateRooms(rooms);
     });
-  }, [socket, updateRooms]);
+  }, []);
 
   return (
     <Container>
-      <CreateRoom />
-      <RoomContainerWrapper>
-        <RoomContainer>
-          {roomsList.map((room) => {
-            return (
-              <RoomBox key={room.id}>
-                <RoomCard roomInfo={room} />
-              </RoomBox>
-            );
-          })}
-        </RoomContainer>
-      </RoomContainerWrapper>
+      <Header>
+        <Txt>방 목록</Txt>
+        <CreateRoom />
+      </Header>
+      <RoomCardContainer>
+        {roomList.map((room) => {
+          return (
+            <RoomCardWrapper>
+              <RoomCard key={room.id} roomInfo={room} />
+            </RoomCardWrapper>
+          );
+        })}
+      </RoomCardContainer>
     </Container>
   );
 }
+
+export default RoomList;

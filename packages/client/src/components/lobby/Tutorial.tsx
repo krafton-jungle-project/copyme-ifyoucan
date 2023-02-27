@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import Announce from './Announce';
-import PoseCam from './PoseCam';
-import PoseImg from './PoseImg';
+import Announce from './tutorial/Announce';
+import PoseCam from './tutorial/PoseCam';
+import PoseImg from './tutorial/PoseImg';
 
 const Wrapper = styled.div`
   border: 2px solid yellow;

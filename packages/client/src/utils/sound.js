@@ -30,7 +30,7 @@ const Stamp = new Audio(stamp);
 const Fail = new Audio(fail);
 const Swish = new Audio(swish);
 const Transition = new Audio(transition);
-const Button = new Audio(button);
+const ButtonClick = new Audio(button);
 
 export {
   CountDown3s,
@@ -48,5 +48,5 @@ export {
   Fail,
   Swish,
   Transition,
-  Button,
+  ButtonClick,
 };

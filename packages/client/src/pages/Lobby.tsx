@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react';
 import { removeUser } from '../utils/local-storage';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Tutorial from '../components/lobby/tutorial/Tutorial';
+import Tutorial from '../components/lobby/Tutorial';
 import { useMovenetStream } from '../module/movenet-stream';
 import { BackgroundMusic } from '../utils/sound';
 import logoImg from '../assets/images/logo.png';
-import { Button } from '../utils/sound';
+import { ButtonClick } from '../utils/sound';
 import logoutImg from '../assets/images/logout.png';
 import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
 import BestShot from '../components/lobby/BestShot';
@@ -107,8 +107,14 @@ const NavItem = styled.div<{ isSelected: boolean }>`
         0 0 20px #bc13fe, 0 0 30px #bc13fe, 0 0 50px #bc13fe;
     `}
 
+  ${(props) =>
+    !props.isSelected &&
+    css`
+      &:hover {
+        text-shadow: 0 0 1px #fff, 0 0 3px #fff;
+      }
+    `}
   cursor: pointer;
-  transition: 0.2s;
 `;
 
 const VerticalLine = styled.div`
@@ -217,13 +223,13 @@ function Lobby() {
     if (check) {
       sessionStorage.setItem('isAuthenticated', 'false');
       removeUser();
-      navigate('/login'); //temp
+      navigate('/login'); //temp: Private Router 적용 후 삭제
     }
   };
 
   useEffect(() => {
     setTimeout(() => {
-      BackgroundMusic.play();
+      // BackgroundMusic.play(); //temp
       BackgroundMusic.volume = 0.5;
     }, 2000);
     BackgroundMusic.addEventListener(
@@ -248,7 +254,7 @@ function Lobby() {
           <NavBar>
             <NavItem
               onClick={() => {
-                Button.play();
+                ButtonClick.play();
                 setMode('플레이');
               }}
               isSelected={mode === '플레이'}
@@ -258,7 +264,7 @@ function Lobby() {
             <VerticalLine />
             <NavItem
               onClick={() => {
-                Button.play();
+                ButtonClick.play();
                 setMode('튜토리얼');
               }}
               isSelected={mode === '튜토리얼'}
@@ -268,7 +274,7 @@ function Lobby() {
             <VerticalLine />
             <NavItem
               onClick={() => {
-                Button.play();
+                ButtonClick.play();
                 setMode('베스트샷');
               }}
               isSelected={mode === '베스트샷'}
