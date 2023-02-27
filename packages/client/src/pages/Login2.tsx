@@ -7,7 +7,6 @@ import { isLoggedInAtom, isModalOpenedAtom } from '../app/login';
 import RegisterModal from '../components/member/RegisterModal';
 import jwt_decode from 'jwt-decode';
 import { setCookie } from '../utils/cookies';
-// import './Login.css';
 
 const Wrapper = styled.div<{ isModalOpened: boolean }>`
   position: absolute;

@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { setCookie } from '../utils/cookies';
 import SignUpModal from '../components/member/SignUpModal';
 import styled from 'styled-components';
-// import './Login.css';
 
 const Page = styled.div`
   position: absolute;
