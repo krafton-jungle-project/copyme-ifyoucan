@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { gameAtom, GameStage } from '../../../app/game';
-import * as moveNet from '../../../utils/tfjs-movenet';
+import * as movenet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
 import { useClientSocket } from '../../../module/client-socket';
 import CountDown from './CountDown';
@@ -35,7 +35,7 @@ const Canvas = styled.canvas`
   visibility: hidden;
   width: 100%;
   height: 100%;
-  border-radius: 25px 5px;
+  border-radius: 20px;
 `;
 
 const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
@@ -83,13 +83,14 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
       canvas: canvasRef.current,
     };
 
-    moveNet.myCanvasRender({
+    movenet.myCanvasRender({
       size: { width: 640, height: 480 },
       element: elements,
+      canvasRender: false,
     });
 
     return () => {
-      cancelAnimationFrame(moveNet.myRafId);
+      cancelAnimationFrame(movenet.myRafId);
     };
   }, [videoRef, canvasRef]);
 

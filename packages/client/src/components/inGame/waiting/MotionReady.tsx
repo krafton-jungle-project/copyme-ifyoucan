@@ -1,4 +1,4 @@
-import * as moveNet from '../../../utils/tfjs-movenet';
+import * as movenet from '../../../utils/tfjs-movenet';
 import { useClientSocket } from '../../../module/client-socket';
 import { isLeftHandUp, isValidBody } from '../../common/PoseRecognition';
 import { useAtom, useAtomValue } from 'jotai';
@@ -27,7 +27,7 @@ function MotionReady() {
   useInterval(async () => {
     // peer가 있다면
     if (peerSocketId) {
-      let poses = await moveNet.detector.estimatePoses(moveNet.myCamera.video);
+      let poses = await movenet.detector.estimatePoses(movenet.myCamera.video);
       if (poses && poses.length > 0) {
         let pose = poses[0];
         // 전신이 나오지 않았는지 확인한다(최초 한 번)

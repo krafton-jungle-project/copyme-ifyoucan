@@ -1,40 +1,59 @@
-import { useAtom } from 'jotai';
-import { useEffect } from 'react';
+import PuffLoader from 'react-spinners/PuffLoader';
 import styled from 'styled-components';
-import loadingImg from '../../assets/images/loading.gif';
-import { isLoadedAtom } from '../../pages/Lobby';
-import * as moveNet from '../../utils/tfjs-movenet';
 
 const LoadingContainer = styled.div`
-  margin-top: 150px;
-  width: auto;
-  height: auto;
-  text-align: center;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+`;
+
+const FadeBackGround = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #333;
+  opacity: 0.9;
+`;
+
+const LoadingWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40%;
+  height: 30%;
+`;
+
+const Loader = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const LoadingText = styled.p`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 400%;
+  font-weight: 400;
+  color: #fff;
+  text-shadow: 0 0 5px #fff, 0 0 20px #fff, 0 0 50px #fff, 0 0 42px #bc13fe, 0 0 120px #bc13fe,
+    0 0 92px #bc13fe, 0 0 102px #bc13fe, 0 0 151px #bc13fe;
 `;
 
 function Loading() {
-  const [isLoaded, setIsLoaded] = useAtom(isLoadedAtom);
-
-  useEffect(() => {
-    async function mediaLoad() {
-      // Login하여 처음 Lobby로 이동 시, stream 및 detector를 초기화 해준다.
-
-      await moveNet.getMyStream({ width: 640, height: 480 });
-      console.log('webcam stream is ready.');
-
-      await moveNet.createDetector();
-      console.log('pose detector is ready.');
-
-      setIsLoaded(true);
-    }
-    if (!isLoaded) mediaLoad();
-  }, [isLoaded, setIsLoaded]);
-
   return (
     <LoadingContainer>
-      <img alt="Loading" src={loadingImg} />
-      <h1>로딩중입니다. </h1>
-      <h1>잠시만 기다려주세요</h1>
+      <FadeBackGround />
+      <LoadingWrapper>
+        <Loader>
+          <PuffLoader color="#a836d6" size={400} />
+        </Loader>
+        <LoadingText>Loading</LoadingText>
+      </LoadingWrapper>
     </LoadingContainer>
   );
 }

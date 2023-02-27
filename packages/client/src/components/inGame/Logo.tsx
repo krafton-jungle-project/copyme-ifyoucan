@@ -5,20 +5,20 @@ import { gameAtom } from '../../app/game';
 import { roomInfoAtom } from '../../app/room';
 import { useClientSocket } from '../../module/client-socket';
 import { GunReload } from '../../utils/sound';
+import logoImg from '../../assets/images/logo.png';
 
 const Container = styled.div`
   position: absolute;
   display: flex;
-  justify-content: center;
   align-items: center;
   left: 0%;
-  width: 15%;
+  width: 10%;
   height: 100%;
 `;
 
-const Button = styled.div`
+const LogoImg = styled.img`
+  position: absolute;
   width: 100%;
-  height: 100%;
   cursor: pointer; /* 마우스 올리면 손모양 커서 */
 `;
 
@@ -47,13 +47,17 @@ function Logo() {
     }));
   }
 
-  let hiddenButton: ReactJSXElement | null = game.isStart ? null : roomInfo.host ? (
-    <Button onClick={onStart} style={{ visibility: game.peer.isReady ? 'visible' : 'hidden' }} />
+  let logoButton: ReactJSXElement = roomInfo.host ? (
+    <LogoImg
+      alt="logo"
+      src={logoImg}
+      onClick={() => (game.isStart ? null : game.peer.isReady ? onStart() : null)}
+    />
   ) : (
-    <Button onClick={onReady} />
+    <LogoImg alt="logo" src={logoImg} onClick={() => (game.isStart ? null : onReady())} />
   );
 
-  return <Container>{hiddenButton}</Container>;
+  return <Container>{logoButton}</Container>;
 }
 
 export default Logo;

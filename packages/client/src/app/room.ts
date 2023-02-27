@@ -12,12 +12,12 @@ const updateRoomsAtom = atom(null, (get, set, newRooms: Rooms) => {
 const useRoomAtom = () => {
   const rooms = useAtomValue(roomsAtom);
   const updateRooms = useSetAtom(updateRoomsAtom);
-  const roomsList: (Room & { id: string })[] = useMemo(
+  const roomList: (Room & { id: string })[] = useMemo(
     () => Object.entries(rooms).map(([id, room]) => ({ id, ...room })),
     [rooms],
   );
 
-  return { rooms, roomsList, updateRooms };
+  return { rooms, roomList, updateRooms };
 };
 
 interface RoomState {

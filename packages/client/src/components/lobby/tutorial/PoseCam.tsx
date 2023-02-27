@@ -67,6 +67,7 @@ function PoseCam() {
     movenet.myCanvasRender({
       size: { width: 680, height: 480 },
       element: elements,
+      canvasRender: true,
     });
 
     return () => {

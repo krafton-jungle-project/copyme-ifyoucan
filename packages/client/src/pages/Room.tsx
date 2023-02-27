@@ -1,9 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import InGame from '../components/inGame/InGame';
-import { stream, detector } from '../utils/tfjs-movenet';
-import { isLoadedAtom, myNickName } from './Lobby';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { myNickName } from './Lobby';
+import { useAtomValue } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
 import useConnectWebRTC from '../components/inGame/hooks/useConnectWebRTC';
 import GameEventHandler from '../components/inGame/GameEventHandler';
@@ -13,15 +12,17 @@ import MotionReady from '../components/inGame/waiting/MotionReady';
 import { peerInfoAtom } from '../app/peer';
 import { roomInfoAtom } from '../app/room';
 import { usePreventExit } from '../components/inGame/hooks/usePreventExit';
+import { GameMusic, RoomEnter, RoomExit } from '../utils/sound';
+import { useMovenetStream } from '../module/movenet-stream';
 
 function Room() {
   const navigate = useNavigate();
   const { socket } = useClientSocket();
-  const setIsLoaded = useSetAtom(isLoadedAtom);
   const resetGame = useResetAtom(gameAtom);
   const resetPeerInfo = useResetAtom(peerInfoAtom);
   const roomInfo = useAtomValue(roomInfoAtom);
   const resetRoomInfo = useResetAtom(roomInfoAtom);
+  const { isStreamReady, initialize } = useMovenetStream();
 
   usePreventExit(); //temp
   useConnectWebRTC();
@@ -33,19 +34,24 @@ function Room() {
       alert('잘못된 접근입니다.');
       navigate('/', { replace: true });
       window.location.reload(); //check
-    } else if (!stream || !detector) {
+    } else if (!isStreamReady) {
       alert('비디오 연결이 종료되어 다시 로딩합니다.');
-      setIsLoaded(false);
+      initialize();
       navigate('/', { replace: true });
       window.location.reload(); //check
     }
+
+    RoomEnter.play(); // 자신 입장음
 
     // 방을 나갈 때
     return () => {
       resetRoomInfo();
       resetPeerInfo();
       resetGame();
+      GameMusic.currentTime = 0;
+      GameMusic.pause();
       socket.emit('exit_room', myNickName);
+      RoomExit.play(); // 자신 퇴장음
     };
   }, []);
 
