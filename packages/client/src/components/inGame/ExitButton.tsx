@@ -1,5 +1,7 @@
+import { useAtomValue } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { gameAtom } from '../../app/game';
 import { BackgroundMusic } from '../../utils/sound';
 
 const Container = styled.div`
@@ -28,9 +30,12 @@ const Exit = styled.p`
 //todo: 디자인 컨셉에 맞는 EXIT ICON(Imgae) 추가
 function ExitButton() {
   const navigate = useNavigate();
+  const isStart = useAtomValue(gameAtom).isStart;
 
   const exitRoom = () => {
-    BackgroundMusic.currentTime = 0;
+    if (isStart) {
+      BackgroundMusic.currentTime = 0;
+    }
     navigate('/', { replace: true });
   };
 
