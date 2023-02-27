@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { BackgroundMusic } from '../../utils/sound';
 
 const Container = styled.div`
   position: absolute;
@@ -29,6 +30,7 @@ function ExitButton() {
   const navigate = useNavigate();
 
   const exitRoom = () => {
+    BackgroundMusic.currentTime = 0;
     navigate('/', { replace: true });
   };
 

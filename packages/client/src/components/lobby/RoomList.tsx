@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import CreateRoom from '../lobby/roomList/CreateRoom';
+import CreateRoom from './room-list/CreateRoom';
 import { useClientSocket } from '../../module/client-socket';
-import RoomCard from './roomList/RoomCard';
+import RoomCard from './room-list/RoomCard';
 import { useRoomAtom } from '../../app/room';
 
 const Container = styled.div``;

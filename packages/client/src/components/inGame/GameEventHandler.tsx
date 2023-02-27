@@ -49,7 +49,7 @@ const GameEventHandler = () => {
 
       setTimeout(() => {
         GameMusic.play(); // 게임 배경음악
-        GameMusic.volume = 0.3;
+        GameMusic.volume = 0.5;
       }, 1500);
     });
 
