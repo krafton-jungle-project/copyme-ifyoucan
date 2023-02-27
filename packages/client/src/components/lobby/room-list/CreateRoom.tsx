@@ -21,6 +21,7 @@ const Button = styled.button`
   border: 1px solid pink;
   border-radius: 5px;
   color: white;
+  cursor: pointer;
   &:hover {
     text-shadow: 0 0 1px #fff, 0 0 3px #fff;
   }

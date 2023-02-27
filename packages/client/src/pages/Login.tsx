@@ -7,8 +7,11 @@ import { isLoggedInAtom, isModalOpenedAtom } from '../app/login';
 import RegisterModal from '../components/member/RegisterModal';
 import jwt_decode from 'jwt-decode';
 import { setCookie } from '../utils/cookies';
+import { useMovenetStream } from '../module/movenet-stream';
+import Loading from '../components/lobby/Loading';
+import logoImg from '../assets/images/logo.png';
 
-const Wrapper = styled.div<{ isModalOpened: boolean }>`
+const Container = styled.div<{ isModalOpened: boolean }>`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -16,7 +19,7 @@ const Wrapper = styled.div<{ isModalOpened: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 2px solid #f4a7f4;
+  border: 0.1rem solid #fff;
   border-radius: 12px;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
     0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
@@ -35,6 +38,7 @@ const Form = styled.form`
 `;
 
 const LoginWrapper = styled.div`
+  position: absolute;
   height: 350px;
   width: 100%;
   display: flex;
@@ -44,6 +48,8 @@ const LoginWrapper = styled.div`
 `;
 
 const SubmitWrapper = styled.div`
+  position: absolute;
+  top: 350px;
   height: 200px;
   width: 100%;
   display: flex;
@@ -52,75 +58,64 @@ const SubmitWrapper = styled.div`
   justify-content: space-evenly;
 `;
 
-const TextDiv = styled.div<{ size: number; cursor?: boolean; isBtn?: boolean }>`
+const Logo = styled.img`
+  position: absolute;
+  top: 10%;
+  height: 100px;
+`;
+
+const TextDiv = styled.div`
+  position: absolute;
+  top: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  ${(props) =>
-    props.size &&
-    css`
-      font-size: ${props.size}rem;
-    `}
-  ${(props) =>
-    props.cursor &&
-    css`
-      cursor: pointer;
-    `}
-    ${(props) =>
-    props.isBtn &&
-    css`
-      border: 2px solid #fff;
-      border-radius: 3px;
-      width: 85%;
-      padding: 2% 0;
-
-      position: absolute;
-      bottom: 20%;
-
-      &:hover {
-        transition: 0.3s;
-        box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
-          0 0 2.8rem #bc13fe, inset 0 0 0.3rem #bc13fe;
-        outline: none;
-        border: none;
-      }
-    `}
+  font-size: 1.05rem;
+  text-shadow: 0 0 2px #fff;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ class: string }>`
+  position: absolute;
+  top: ${(props) => (props.class === 'id' ? '45%' : '70%')};
   font-size: large;
   color: #fff;
   border: 2px solid #fff;
   border-radius: 5px;
   padding: 4% 2%;
-  width: 85%;
+  width: 80%;
   background-color: transparent;
 
   &:focus {
     transition: 0.3s;
-    box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 0.7rem #fff, 0 0 0.7rem #fff, 0 0 1rem #fff,
-      inset 0 0 0.7rem #fff;
+    box-shadow: 0 0 0.1rem #fff, 0 0 0.1rem #fff, 0 0 0.4rem #fff, 0 0 0.4rem #fff, 0 0 0.6rem #fff,
+      inset 0 0 0.4rem #fff;
     outline: none;
   }
 `;
 
-const Btn = styled.button`
-  width: 85%;
+const Btn = styled.div<{ class: string }>`
+  position: absolute;
+  bottom: ${(props) => (props.class === 'register' ? '60%' : '25%')};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  height: 20%;
   padding: 2% 3%;
   border-radius: 3px;
   font-size: large;
-  background-color: transparent;
+  font-weight: 600;
+  background-color: ${(props) => (props.class === 'register' ? '#e6a7ff54' : '#e6a7ff54')};
   border: 2px solid #fff;
-  color: #fff;
   cursor: pointer;
+  transition: 0.3s;
 
   &:hover {
-    transition: 0.3s;
+    background-color: #e6a7ff44;
+    text-shadow: 0 0 2px #fff;
     box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
       0 0 2.8rem #bc13fe, inset 0 0 0.3rem #bc13fe;
-    outline: none;
-    border: none;
   }
 `;
 
@@ -129,8 +124,8 @@ function Login2() {
   const [pw, setPw] = useState('');
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom);
-
   const [isModalOpened, setIsModalOpened] = useAtom(isModalOpenedAtom);
+  const { isStreamReady } = useMovenetStream();
 
   function openModal() {
     setIsModalOpened(true);
@@ -186,39 +181,37 @@ function Login2() {
   return (
     <>
       {isModalOpened && <RegisterModal />}
-      <Wrapper isModalOpened={isModalOpened}>
+      {!isStreamReady ? <Loading /> : null}
+      <Container isModalOpened={isModalOpened}>
         <Form>
           <LoginWrapper>
-            <TextDiv size={1.5}>로고 자리</TextDiv>
-            <TextDiv size={1.5}>Sign in</TextDiv>
-            <Input placeholder="아이디 입력" type="text" value={id} onChange={handleId} />
-            <Input placeholder="비밀번호 입력" type="password" value={pw} onChange={handlePw} />
+            <Logo alt="logo" src={logoImg} />
+            <Input
+              placeholder="아이디 입력"
+              type="text"
+              value={id}
+              onChange={handleId}
+              class="id"
+            />
+            <Input
+              placeholder="비밀번호 입력"
+              type="password"
+              value={pw}
+              onChange={handlePw}
+              class="pw"
+            />
           </LoginWrapper>
           <SubmitWrapper>
-            <TextDiv
-              size={1.05}
-              style={{
-                position: 'absolute',
-                bottom: '33%',
-              }}
-            >
-              계정을 만들고 게임을 즐겨보세요!
-            </TextDiv>
-            <TextDiv size={1.2} cursor={true} onClick={openModal} isBtn={true}>
+            <TextDiv>계정을 만들고 게임을 즐겨보세요!</TextDiv>
+            <Btn onClick={openModal} class="register">
               계정 만들기
-            </TextDiv>
-            <Btn
-              onClick={onClickConfirmButton}
-              style={{
-                position: 'absolute',
-                bottom: '7%',
-              }}
-            >
+            </Btn>
+            <Btn onClick={onClickConfirmButton} class="login">
               로그인
             </Btn>
           </SubmitWrapper>
         </Form>
-      </Wrapper>
+      </Container>
     </>
   );
 }

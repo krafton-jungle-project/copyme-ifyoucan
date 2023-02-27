@@ -6,13 +6,9 @@ import { isModalOpenedAtom } from '../../app/login';
 
 const popup = keyframes`
   from {
-    width: 0%;
-    height: 0%;
     opacity: 0;
   }
   to {
-    width: 100%;
-    height: 100%;
     opacity: 1;
   }
 `;
@@ -43,13 +39,13 @@ const ModalWrapper = styled.div`
   transform: translate(-50%, -50%);
 
   background-color: #18022b;
-  border: 1px solid black;
-  border-radius: 8px;
+  border: 0.1rem solid #fff;
+  border-radius: 12px;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
     0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
 
-  width: 460px;
-  height: 600px;
+  width: 500px;
+  height: 650px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -90,8 +86,8 @@ const Input = styled.input`
 
   &:focus {
     transition: 0.3s;
-    box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 0.7rem #fff, 0 0 0.7rem #fff, 0 0 1rem #fff,
-      inset 0 0 0.7rem #fff;
+    box-shadow: 0 0 0.1rem #fff, 0 0 0.1rem #fff, 0 0 0.4rem #fff, 0 0 0.4rem #fff, 0 0 0.6rem #fff,
+      inset 0 0 0.4rem #fff;
     outline: none;
   }
 `;
@@ -111,32 +107,38 @@ const ErrorText = styled.div`
 const ModalBtn = styled.button`
   padding: 1% 2%;
   background-color: transparent;
-  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 1rem #bc13fe, 0 0 0.8rem #bc13fe,
-    0 0 1.3rem #bc13fe, inset 0 0 0.5rem #bc13fe;
+  border: 1px solid white;
+  box-shadow: 0 0 0.3rem #fff, 0 0 0.3rem #fff;
   border-radius: 5px;
-  border: none;
   color: white;
   font-size: large;
   font-weight: 800;
   cursor: pointer;
+
+  &:hover {
+    background-color: #e6a7ff44;
+    text-shadow: 0 0 2px #fff;
+    box-shadow: 0 0 0.1rem #fff, 0 0 0.1rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
+      0 0 2.8rem #bc13fe, inset 0 0 0.3rem #bc13fe;
+  }
 `;
 
 const RegisterBtn = styled.button`
   width: 90%;
   border-radius: 3px;
   border: 2px solid #fffe;
-  background-color: transparent;
+  background-color: #e6a7ff54;
   color: #fff;
   font-size: 1.2rem;
   padding: 3.5%;
   cursor: pointer;
+  transition: 0.3s;
 
   &:hover {
-    transition: 0.3s;
+    background-color: #e6a7ff44;
+    text-shadow: 0 0 2px #fff;
     box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
       0 0 2.8rem #bc13fe, inset 0 0 0.3rem #bc13fe;
-    outline: none;
-    border: none;
   }
 `;
 
@@ -224,7 +226,7 @@ function RegisterModal() {
           <ModalBtn onClick={closeModal}>X</ModalBtn>
         </Div>
         <Form>
-          <Title>Sign up</Title>
+          <Title>REGISTER</Title>
           <Label>아이디</Label>
           <Input placeholder="아이디" onChange={handleId} value={id} />
 
