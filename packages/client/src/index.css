@@ -6,6 +6,12 @@
   font-family: 'NanumSquareRound', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+*::after,
+*::before {
+  box-sizing: border-box;
 }
 
 body {

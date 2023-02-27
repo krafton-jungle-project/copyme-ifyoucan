@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Lobby from './pages/Lobby';
 import Room from './pages/Room';
-import Login from './pages/Login';
 import * as Jotai from 'jotai';
 import { ClientSocketContextProvider } from './module/client-socket';
 import { MovenetStreamContextProvider } from './module/movenet-stream';
 import PrivateRoute from './utils/PrivateRouter';
+import Login from './pages/Login';
 
 function App() {
   return (

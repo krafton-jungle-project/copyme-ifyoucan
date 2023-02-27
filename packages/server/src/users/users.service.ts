@@ -26,11 +26,11 @@ export class UsersService {
     return user.readOnlyData;
   }
 
-  async uploadImg(id: string, imgUrl: string) {
-    // 유저 있는지 검사
-    const user = await this.usersRepository.existsByLoginId(id);
-    if (user) {
-      await this.usersRepository.updateUser(id, imgUrl);
+  async uploadImg(userId: string, imgUrl: string) {
+    const user = await this.usersRepository.findUserByIdWithoutPassword(userId);
+    if (!user) {
+      throw new UnauthorizedException('해당하는 아이디의 유저를 찾을 수 없습니다.');
     }
+    return await this.usersRepository.updateUserImg(userId, imgUrl);
   }
 }

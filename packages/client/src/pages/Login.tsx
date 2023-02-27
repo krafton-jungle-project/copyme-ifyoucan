@@ -1,146 +1,169 @@
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
+import { useAtom } from 'jotai';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled, { css } from 'styled-components';
+import { isLoggedInAtom, isModalOpenedAtom } from '../app/login';
+import RegisterModal from '../components/member/RegisterModal';
+import jwt_decode from 'jwt-decode';
 import { setCookie } from '../utils/cookies';
-import SignUpModal from '../components/member/SignUpModal';
-import styled from 'styled-components';
 
-const Page = styled.div`
+const Wrapper = styled.div<{ isModalOpened: boolean }>`
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  max-width: 500px;
-  padding: 0 20px;
-
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, 0);
-
-  background-color: #f7f7f7;
-
-  overflow: hidden;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
+  align-items: center;
+  border: 2px solid #f4a7f4;
+  border-radius: 12px;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
+    0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
+  min-height: 550px;
+  min-width: 448px;
+  ${(props) =>
+    props.isModalOpened &&
+    css`
+      z-index: -1;
+      box-shadow: none;
+    `}
 `;
 
-const TitleWrap = styled.div`
-  margin-top: 87px;
-  font-size: 26px;
-  font-weight: bold;
-  color: #262626;
+const Form = styled.form`
+  width: 100%;
 `;
 
-const ContentWrap = styled.div`
-  margin-top: 26px;
-  flex: 1;
-`;
-
-const InputTitle = styled.div`
-  font-size: 12px;
-  font-weight: 600;
-  color: #262626;
-`;
-
-const InputWrap = styled.div`
+const LoginWrapper = styled.div`
+  height: 350px;
+  width: 100%;
   display: flex;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 8px;
-  background-color: white;
-  border: 1px solid #e2e0e0;
-  :focus-within {
-    border: 1px solid #9e30f4;
-  }
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
 `;
 
-const ErrorMessageWrap = styled.div`
-  margin-top: 8px;
-  color: #ef0000;
-  font-size: 12px;
-`;
-
-const SignupButton = styled.button`
+const SubmitWrapper = styled.div`
+  height: 200px;
   width: 100%;
-  height: 48px;
-  border: none;
-  font-weight: bold;
-  border-radius: 64px;
-  background-color: #9e30f4;
-  color: white;
-  margin-bottom: 16px;
-  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
 `;
 
-const BottomButton = styled.button`
-  width: 100%;
-  height: 48px;
-  border: none;
-  font-weight: bold;
-  border-radius: 64px;
-  background-color: #9e30f4;
-  color: white;
-  margin-bottom: 16px;
-  cursor: pointer;
-  :disabled {
-    background-color: #dadada;
-    color: white;
-  }
+const TextDiv = styled.div<{ size: number; cursor?: boolean; isBtn?: boolean }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  ${(props) =>
+    props.size &&
+    css`
+      font-size: ${props.size}rem;
+    `}
+  ${(props) =>
+    props.cursor &&
+    css`
+      cursor: pointer;
+    `}
+    ${(props) =>
+    props.isBtn &&
+    css`
+      border: 2px solid #fff;
+      border-radius: 3px;
+      width: 85%;
+      padding: 2% 0;
+
+      position: absolute;
+      bottom: 20%;
+
+      &:hover {
+        transition: 0.3s;
+        box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
+          0 0 2.8rem #bc13fe, inset 0 0 0.3rem #bc13fe;
+        outline: none;
+        border: none;
+      }
+    `}
 `;
 
 const Input = styled.input`
-  width: 100%;
-  outline: none;
-  border: none;
-  height: 17px;
-  font-size: 14px;
-  font-weight: 400;
-  ::placeholder {
-    color: #dadada;
+  font-size: large;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  padding: 4% 2%;
+  width: 85%;
+  background-color: transparent;
+
+  &:focus {
+    transition: 0.3s;
+    box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 0.7rem #fff, 0 0 0.7rem #fff, 0 0 1rem #fff,
+      inset 0 0 0.7rem #fff;
+    outline: none;
   }
 `;
 
-export default function Login() {
+const Btn = styled.button`
+  width: 85%;
+  padding: 2% 3%;
+  border-radius: 3px;
+  font-size: large;
+  background-color: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+  cursor: pointer;
+
+  &:hover {
+    transition: 0.3s;
+    box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
+      0 0 2.8rem #bc13fe, inset 0 0 0.3rem #bc13fe;
+    outline: none;
+    border: none;
+  }
+`;
+
+function Login2() {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
-
-  const [idValid, setIdValid] = useState(false);
-  const [pwValid, setPwValid] = useState(false);
-  const [notAllow, setNotAllow] = useState(true);
-  const [signUpModalOn, setSignUpModalOn] = useState(false);
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom);
+
+  const [isModalOpened, setIsModalOpened] = useAtom(isModalOpenedAtom);
+
+  function openModal() {
+    setIsModalOpened(true);
+  }
 
   useEffect(() => {
-    if (idValid && pwValid) {
-      setNotAllow(false);
+    if (isLoggedIn) {
+      navigate('/');
+    }
+  }, [isLoggedIn, navigate]);
+
+  function handleId(e: React.ChangeEvent<HTMLInputElement>) {
+    setId(e.target.value);
+  }
+
+  function handlePw(e: React.ChangeEvent<HTMLInputElement>) {
+    setPw(e.target.value);
+  }
+
+  const onClickConfirmButton = async (e: any) => {
+    e.preventDefault();
+    console.log('login');
+    if (id === '') {
+      alert(`아이디를 입력해주세요`);
       return;
     }
-    setNotAllow(true);
-  }, [idValid, pwValid]);
-
-  const handleId = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setId(e.target.value);
-    const regex = /^[a-z]+[a-z0-9]{5,19}$/g;
-    if (regex.test(e.target.value)) {
-      setIdValid(true);
-    } else {
-      setIdValid(false);
+    if (pw === '') {
+      alert(`비밀번호를 입력해주세요`);
+      return;
     }
-  };
-  const handlePw = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPw(e.target.value);
-    const regex = /^[a-z]+[a-z0-9]{5,19}$/g;
-    if (regex.test(e.target.value)) {
-      setPwValid(true);
-    } else {
-      setPwValid(false);
-    }
-  };
-  const onClickConfirmButton = async () => {
-    console.log('login');
     try {
-      const res = await axios.post('http://15.165.237.195:5001/users/login', {
-        // const res = await axios.post('http://localhost:5001/users/login', {
+      // const res = await axios.post('http://15.165.237.195:5001/users/login', {
+      const res = await axios.post('http://localhost:5001/users/login', {
         loginid: id,
         password: pw,
       });
@@ -151,6 +174,7 @@ export default function Login() {
       //로그인 해야지만 다음 이동 가능하게
       sessionStorage.setItem('isAuthenticated', 'true');
       // 메인으로 이동
+      setIsLoggedIn(true);
       navigate('/'); // 성공시 이동될 url 적용하기
 
       return res;
@@ -159,50 +183,44 @@ export default function Login() {
     }
   };
 
-  // const registerButton = () => {
-  //   return <SignUpModal show={signUpModalOn} onHide={() => setSignUpModalOn(false)} />;
-  //   // navigate('/signup');
-  // };
-
   return (
     <>
-      <SignUpModal show={signUpModalOn} onHide={() => setSignUpModalOn(false)} />
-      <Page>
-        <TitleWrap>COPY ME IF YOU CAN</TitleWrap>
-        <ContentWrap>
-          <InputTitle>아이디</InputTitle>
-          <InputWrap>
-            <Input type="text" placeholder="test1234" value={id} onChange={handleId} />
-          </InputWrap>
-          <ErrorMessageWrap>
-            {!idValid && id.length > 0 && <div>올바른 아이디을 입력해주세요.</div>}
-          </ErrorMessageWrap>
-
-          <InputTitle style={{ marginTop: '26px' }}>비밀번호</InputTitle>
-          <InputWrap>
-            <form>
-              <Input
-                type="password"
-                placeholder="영문, 숫자 포함"
-                value={pw}
-                onChange={handlePw}
-                autoComplete="on"
-              />
-            </form>
-          </InputWrap>
-          <ErrorMessageWrap>
-            {!pwValid && pw.length > 0 && <div>영문, 숫자를 입력해주세요.</div>}
-          </ErrorMessageWrap>
-        </ContentWrap>
-        <div>
-          <SignupButton onClick={() => setSignUpModalOn(true)}>회원가입</SignupButton>
-        </div>
-        <div>
-          <BottomButton onClick={onClickConfirmButton} disabled={notAllow}>
-            로그인
-          </BottomButton>
-        </div>
-      </Page>
+      {isModalOpened && <RegisterModal />}
+      <Wrapper isModalOpened={isModalOpened}>
+        <Form>
+          <LoginWrapper>
+            <TextDiv size={1.5}>로고 자리</TextDiv>
+            <TextDiv size={1.5}>Sign in</TextDiv>
+            <Input placeholder="아이디 입력" type="text" value={id} onChange={handleId} />
+            <Input placeholder="비밀번호 입력" type="password" value={pw} onChange={handlePw} />
+          </LoginWrapper>
+          <SubmitWrapper>
+            <TextDiv
+              size={1.05}
+              style={{
+                position: 'absolute',
+                bottom: '33%',
+              }}
+            >
+              계정을 만들고 게임을 즐겨보세요!
+            </TextDiv>
+            <TextDiv size={1.2} cursor={true} onClick={openModal} isBtn={true}>
+              계정 만들기
+            </TextDiv>
+            <Btn
+              onClick={onClickConfirmButton}
+              style={{
+                position: 'absolute',
+                bottom: '7%',
+              }}
+            >
+              로그인
+            </Btn>
+          </SubmitWrapper>
+        </Form>
+      </Wrapper>
     </>
   );
 }
+
+export default Login2;

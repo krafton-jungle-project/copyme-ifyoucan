@@ -28,7 +28,8 @@ export class UsersRepository {
     return await this.userModel.create(user);
   }
 
-  async updateUser(id: string, imgUrl: string) {
-    //findoneUpdate
+  async updateUserImg(userId: string, imgUrl: string): Promise<User> {
+    const filter = { _id: userId };
+    return await this.userModel.findOneAndUpdate(filter, { $push: { imgUrls: imgUrl } });
   }
 }
