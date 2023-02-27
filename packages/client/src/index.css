@@ -4,6 +4,13 @@
   font-family: 'NanumSquareRound', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+*::after,
+*::before {
+  box-sizing: border-box;
 }
 
 body {
@@ -12,8 +19,4 @@ body {
   background-image: url('./assets/images/background-image.jpg');
   background-size: cover;
   color: white;
-  /* display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; */
 }

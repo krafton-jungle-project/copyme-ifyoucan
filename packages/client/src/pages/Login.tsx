@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { setCookie } from '../utils/cookies';
 import SignUpModal from '../components/member/SignUpModal';
 import styled from 'styled-components';
-import './Login.css';
+// import './Login.css';
 
 const Page = styled.div`
   position: absolute;
@@ -140,8 +140,8 @@ export default function Login() {
   const onClickConfirmButton = async () => {
     console.log('login');
     try {
-      const res = await axios.post('http://15.165.237.195:5001/users/login', {
-        // const res = await axios.post('http://localhost:3000/users/login', {
+      // const res = await axios.post('http://15.165.237.195:5001/users/login', {
+      const res = await axios.post('http://localhost:5001/users/login', {
         loginid: id,
         password: pw,
       });
