@@ -17,7 +17,7 @@ const Page = styled.div`
   left: 50%;
   transform: translate(-50%, 0);
 
-  background-color: #f7f7f7;
+  background-color: green;
 
   overflow: hidden;
   display: flex;

@@ -27,7 +27,7 @@ const ChatWrapper = styled.div`
   top: 2.5%;
   width: 100%;
   height: 85%;
-  padding: 0 2.5% 0 2.5%;
+  padding: 0 2.5%;
   overflow: auto;
 `;
 
