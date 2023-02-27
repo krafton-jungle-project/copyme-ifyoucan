@@ -129,24 +129,30 @@ const Chat = () => {
   const [message, setMessage] = useState<string>('');
   const chatWrapperRef = useRef<HTMLDivElement>(null);
   const { socket } = useClientSocket();
-  // const imgRef = useRef<HTMLImageElement>(null);
   const isStart = useAtomValue(gameAtom).isStart;
+
+  const scrollDown = () => {
+    if (!chatWrapperRef.current) return;
+    const chatWrapper = chatWrapperRef.current;
+    const { scrollHeight, clientHeight } = chatWrapper;
+    if (scrollHeight > clientHeight) {
+      chatWrapper.scrollTo({ behavior: 'smooth', left: 0, top: scrollHeight });
+    }
+  };
 
   // 채팅이 길어지면(chats.length) 스크롤이 생성되므로, 스크롤의 위치를 최근 메시지에 위치시키기 위함
   useEffect(() => {
-    if (!chatWrapperRef.current) return;
-
-    const chatWrapper = chatWrapperRef.current;
-    const { scrollHeight, clientHeight } = chatWrapper;
-
-    if (scrollHeight > clientHeight) {
-      chatWrapper.scrollTop = scrollHeight - clientHeight;
+    const lastIdx = chats.length - 1;
+    if (lastIdx >= 0 && !chats[lastIdx].isImg) {
+      scrollDown();
     }
   }, [chats.length]);
 
   // message event listener
   useEffect(() => {
-    const messageHandler = (chat: IChat) => setChats((prevChats) => [...prevChats, chat]);
+    const messageHandler = (chat: IChat) => {
+      setChats((prevChats) => [...prevChats, chat]);
+    };
     socket.on('message', messageHandler);
     return () => {
       socket.off('message', messageHandler);
@@ -184,7 +190,11 @@ const Chat = () => {
               })}
             >
               <Message className="message" isImg={chat.isImg}>
-                {chat.isImg ? <ImgTag src={chat.message} alt="결과 이미지" /> : chat.message}
+                {chat.isImg ? (
+                  <ImgTag src={chat.message} alt="결과 이미지" onLoad={() => scrollDown()} />
+                ) : (
+                  chat.message
+                )}
               </Message>
             </MessageBox>
           );
