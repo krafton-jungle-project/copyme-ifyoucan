@@ -110,7 +110,7 @@ function Announcer() {
           }
           break;
         case GameStage.ROUND:
-          if (game.round < 40) {
+          if (game.round < 4) {
             if (game.round === 1) RoundOne.play();
             else if (game.round === 2) RoundTwo.play();
             else if (game.round === 3) RoundThree.play();

@@ -15,6 +15,7 @@ import transparent from '../../../assets/images/transparent.png';
 import roundOneImg from '../../../assets/images/round-one.gif';
 import roundTwoImg from '../../../assets/images/round-two.gif';
 import roundThreeImg from '../../../assets/images/round-three.gif';
+import transition from '../../../assets/images/transition.gif';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -126,10 +127,10 @@ const CameraFocus = styled.div<{ focus: string }>`
 
 const upDownAnimate = keyframes`
   0%, 100% {
-    top: -25%;
+    top: -28%;
   }
   50% {
-    top: -20%;
+    top: -23%;
   }
 `;
 
@@ -183,7 +184,6 @@ function GameBox() {
   const peerVideoRef = useRef<HTMLVideoElement>(null);
   const [focus, setFocus] = useState('noMe');
   let [roundImg, setRoundImg] = useState(transparent);
-  const [visibility, setVisibility] = useState(false);
 
   useEffect(() => {
     if (
@@ -216,24 +216,25 @@ function GameBox() {
       switch (game.round) {
         case 1:
           setRoundImg(roundOneImg);
-          setTimeout(() => {
-            setRoundImg(transparent);
-          }, 2400);
           break;
         case 2:
           setRoundImg(roundTwoImg);
-          setTimeout(() => {
-            setRoundImg(transparent);
-          }, 2400);
           break;
         case 3:
           setRoundImg(roundThreeImg);
-          setTimeout(() => {
-            setRoundImg(transparent);
-          }, 2400);
           break;
         default:
           break;
+      }
+      setTimeout(() => {
+        setRoundImg(transparent);
+      }, 2000);
+    } else if (game.stage === GameStage.OFFEND) {
+      if (game.round % 1 !== 0) {
+        setRoundImg(transition);
+        setTimeout(() => {
+          setRoundImg(transparent);
+        }, 2000);
       }
     }
   }, [game.stage, game.round]);
