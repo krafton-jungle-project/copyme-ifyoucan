@@ -8,15 +8,16 @@ import { RoundOne, RoundThree, RoundTwo, Transition } from '../../utils/sound';
 import { roomInfoAtom } from '../../app/room';
 import { myNickName } from '../../pages/Lobby';
 
-const Container = styled.div`
+const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
-  left: 15%;
-  width: 70%;
+  left: 50%;
+  transform: translate(-50%);
+  width: ${(props) => (props.isStart ? '50%' : '70%')};
   height: 100%;
-  font-size: 3vw;
+  font-size: 2.8vw;
   font-weight: 400;
 
   border: 0.2rem solid #fff;
@@ -28,6 +29,8 @@ const Container = styled.div`
   color: #fff;
   text-shadow: 0 0 5px #fff, 0 0 20px #fff, 0 0 50px #fff, 0 0 42px #bc13fe, 0 0 120px #bc13fe,
     0 0 92px #bc13fe, 0 0 102px #bc13fe, 0 0 151px #bc13fe;
+
+  transition: 0.5s;
 `;
 
 function Announcer() {
@@ -180,7 +183,7 @@ function Announcer() {
     const initialMessages: string[] = [
       '게임을 시작합니다',
       '첫 번째 공격이 시작됩니다!',
-      '공격자의 자세를 정확히 따라해주세요!',
+      '자세를 정확히 따라해주세요!',
     ];
 
     const offenderMessages: string[] = [
@@ -199,7 +202,7 @@ function Announcer() {
 
   useEffect(() => {
     if (game.status === GameStatus.RESULT) {
-      // //temp
+      //temp
       // if (host) {
       //   socket.emit('finish');
       // }
@@ -218,7 +221,7 @@ function Announcer() {
     }
   }, [game.status]);
 
-  return <Container>{message}</Container>;
+  return <Container isStart={game.isStart}>{message}</Container>;
 }
 
 export default Announcer;

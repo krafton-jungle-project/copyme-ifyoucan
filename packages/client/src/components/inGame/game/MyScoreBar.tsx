@@ -39,7 +39,7 @@ const animate = keyframes`
   }
 `;
 
-const ScoreBar = styled.div<{ isInit: boolean; score: number }>`
+const ScoreBar = styled.div<{ isInit: boolean; score: number; isDefense: boolean }>`
   position: absolute;
   bottom: 0%;
   width: 100%;
@@ -47,13 +47,13 @@ const ScoreBar = styled.div<{ isInit: boolean; score: number }>`
   transition-property: height;
   transition-delay: ${(props) => (props.isInit ? '1.2s' : '0s')};
   transition-duration: ${(props) => (props.isInit ? '1.5s' : '0.5s')};
-  background-color: #888;
+  background-color: ${(props) => (props.score > 50 ? '#ff3131' : '#888')};
   border-radius: 20px;
   ${(props) =>
-    (props.isInit || props.score > 60) &&
+    (props.isInit || (props.score > 50 && props.isDefense)) &&
     css`
       background-color: #ff3131;
-      animation: ${animate} 1s linear infinite;
+      animation: ${animate} 1.5s linear infinite;
     `}
 `;
 
@@ -145,7 +145,11 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     <Container>
       <ScoreInfo>유사도</ScoreInfo>
       <ScoreBarWrapper>
-        <ScoreBar isInit={isInit} score={game.isStart ? game.user.score : 100} />
+        <ScoreBar
+          isInit={isInit}
+          score={game.isStart ? game.user.score : 100}
+          isDefense={!game.user.isOffender && game.stage === GameStage.DEFEND}
+        />
       </ScoreBarWrapper>
       <ScorePercent>{game.user.score}</ScorePercent>
     </Container>

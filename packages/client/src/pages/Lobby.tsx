@@ -47,6 +47,7 @@ const Logo = styled.img`
   left: 50%;
   transform: translate(-50%);
   height: 50%;
+  cursor: pointer;
 `;
 
 const LogOutWrapper = styled.div`
@@ -246,7 +247,13 @@ function Lobby() {
       {!isStreamReady ? <Loading /> : null}
       <Wrapper>
         <Header>
-          <Logo alt="logo" src={logoImg} />
+          <Logo
+            alt="logo"
+            src={logoImg}
+            onClick={() => {
+              window.location.reload();
+            }}
+          />
           <LogOutWrapper onClick={logoutHandler}>
             <LogOutImg alt="logout" src={logoutImg} />
             <LogOutTxt>LOGOUT</LogOutTxt>
