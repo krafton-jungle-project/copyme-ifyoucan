@@ -1,47 +1,73 @@
+import { useAtomValue } from 'jotai';
+import { useEffect } from 'react';
 import styled from 'styled-components';
-import Announce from './tutorial/Announce';
+import { tutorialPassAtom } from '../../app/tutorial';
+import Guide from './tutorial/Guide';
 import PoseCam from './tutorial/PoseCam';
 import PoseImg from './tutorial/PoseImg';
+import partyPopper from '../../assets/images/tutorial/party-popper.gif';
+import { Yeah } from '../../utils/sound';
 
-const Wrapper = styled.div`
-  border: 2px solid yellow;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  height: 55rem;
+const Container = styled.div`
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 20% 80%;
+  grid-auto-flow: rows;
+  width: 80%;
+  height: 90%;
 `;
 
 const ImgWrapper = styled.div`
-  border: 2px solid yellow;
-  width: 35%;
-  height: 95%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  padding: 20px;
+  margin: 20px 30px;
+  border: 1px solid #ff00cc;
+  background-color: #ff00cc11;
+  border-radius: 5px;
 `;
 
 const CameraWrapper = styled.div`
-  border: 2px solid yellow;
-  width: 55%;
-  height: 95%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  margin: 20px 30px;
+`;
+
+const PartyPopper = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
 `;
 
 function Tutorial() {
+  const isPass = useAtomValue(tutorialPassAtom);
+
+  useEffect(() => {
+    if (isPass) {
+      Yeah.play();
+    }
+  }, [isPass]);
+
   return (
-    <Wrapper>
+    <Container>
+      <Guide />
       <ImgWrapper>
-        <Announce />
         <PoseImg />
       </ImgWrapper>
       <CameraWrapper>
         <PoseCam />
       </CameraWrapper>
-    </Wrapper>
+      {isPass ? <PartyPopper src={partyPopper} /> : null}
+    </Container>
   );
 }
 

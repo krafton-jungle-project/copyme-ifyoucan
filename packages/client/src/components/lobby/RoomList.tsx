@@ -51,6 +51,18 @@ const RoomCardWrapper = styled.div`
   padding: 10px;
 `;
 
+const NoRoomAnnouncer = styled.div`
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  line-height: 2;
+  font-size: 24px;
+  color: #fffb;
+`;
+
 function RoomList() {
   const { socket } = useClientSocket();
   const { roomList, updateRooms } = useRoomAtom();
@@ -63,6 +75,12 @@ function RoomList() {
     });
   }, []);
 
+  useEffect(() => {
+    if (roomList.length === 0) {
+      // 추가
+    }
+  }, [roomList]);
+
   return (
     <Container>
       <Header>
@@ -70,13 +88,21 @@ function RoomList() {
         <CreateRoom />
       </Header>
       <RoomCardContainer>
-        {roomList.map((room) => {
-          return (
-            <RoomCardWrapper>
-              <RoomCard key={room.id} roomInfo={room} />
-            </RoomCardWrapper>
-          );
-        })}
+        {roomList.length === 0 ? (
+          <NoRoomAnnouncer>
+            현재 대기 중인 방이 없습니다 🥺
+            <br />
+            방을 직접 만들어 보세요!
+          </NoRoomAnnouncer>
+        ) : (
+          roomList.map((room) => {
+            return (
+              <RoomCardWrapper key={room.id}>
+                <RoomCard roomInfo={room} />
+              </RoomCardWrapper>
+            );
+          })
+        )}
       </RoomCardContainer>
     </Container>
   );

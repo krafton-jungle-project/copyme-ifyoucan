@@ -10,6 +10,7 @@ import { setCookie } from '../utils/cookies';
 import { useMovenetStream } from '../module/movenet-stream';
 import Loading from '../components/lobby/Loading';
 import logoImg from '../assets/images/logo.png';
+import { ButtonClick } from '../utils/sound';
 
 const Container = styled.div<{ isModalOpened: boolean }>`
   position: absolute;
@@ -19,6 +20,7 @@ const Container = styled.div<{ isModalOpened: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
   border: 0.1rem solid #fff;
   border-radius: 12px;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
@@ -96,7 +98,7 @@ const Input = styled.input<{ class: string }>`
 
 const Btn = styled.div<{ class: string }>`
   position: absolute;
-  bottom: ${(props) => (props.class === 'register' ? '60%' : '25%')};
+  bottom: ${(props) => (props.class === 'register' ? '25%' : '60%')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -147,6 +149,7 @@ function Login2() {
 
   const onClickConfirmButton = async (e: any) => {
     e.preventDefault();
+    ButtonClick.play();
     console.log('login');
     if (id === '') {
       alert(`아이디를 입력해주세요`);
@@ -203,11 +206,11 @@ function Login2() {
           </LoginWrapper>
           <SubmitWrapper>
             <TextDiv>계정을 만들고 게임을 즐겨보세요!</TextDiv>
-            <Btn onClick={openModal} class="register">
-              계정 만들기
-            </Btn>
             <Btn onClick={onClickConfirmButton} class="login">
               로그인
+            </Btn>
+            <Btn onClick={openModal} class="register">
+              계정 만들기
             </Btn>
           </SubmitWrapper>
         </Form>

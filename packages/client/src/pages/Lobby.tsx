@@ -231,7 +231,7 @@ function Lobby() {
     setTimeout(() => {
       // BackgroundMusic.play(); //temp
       BackgroundMusic.volume = 0.5;
-    }, 2000);
+    }, 1000);
     BackgroundMusic.addEventListener(
       'ended',
       function () {
