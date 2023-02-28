@@ -142,8 +142,8 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
     // if (game.round < 2) return;
 
     if (host) {
-      let idx = Math.random() * 3;
-      socket.emit('item_type', Math.floor(idx));
+      let idx = Math.floor(Math.random() * (Object.keys(ItemType).length / 2));
+      socket.emit('item_type', idx);
     }
   }, [game.round]);
 
