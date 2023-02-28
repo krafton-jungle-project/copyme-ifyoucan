@@ -429,7 +429,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         socket.to(roomId).emit('user_exit', this.rooms[roomId].isStart);
         socket.to(roomId).emit('message', {
           userId: '',
-          message: `🔴 ${nickName}님이 퇴장했습니다\u00A0\u00A0🔴`,
+          message: `🔴 ${nickName}님이 퇴장했습니다\u00A0🔴`,
           isImg: false,
         });
       }
@@ -501,5 +501,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleGameStatus(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() status: number) {
     const roomId = this.userToRoom[socket.id];
     this.server.to(roomId).emit('get_change_status', status);
+  }
+
+  @SubscribeMessage('item_type')
+  handleItemRound(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() status: number) {
+    const roomId = this.userToRoom[socket.id];
+    this.server.to(roomId).emit('get_item_type', status);
   }
 }
