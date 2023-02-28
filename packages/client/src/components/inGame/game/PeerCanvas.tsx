@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { peerInfoAtom } from '../../../app/peer';
@@ -19,6 +19,21 @@ const Container = styled.div`
   border-radius: 20px;
 `;
 
+const rotate = keyframes`
+  0% {
+    -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  }
+  50% {
+    -webkit-transform: scaleX(1);
+  transform: scaleX(1);
+  }
+  100% {
+-webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  }
+`;
+
 const Video = styled.video<{ itemType: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
@@ -31,6 +46,22 @@ const Video = styled.video<{ itemType: any; offender: boolean }>`
 
   ${(p) =>
     p.itemType === ItemType.BLUR &&
+    p.offender &&
+    css`
+      filter: blur(30px);
+      transition: 0.7s;
+    `}
+
+  ${(p) =>
+    p.itemType === ItemType.ROTATE &&
+    p.offender &&
+    css`
+      animation: ${rotate} 1.5s infinite;
+      transition: 0.7s;
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.SIZEDOWN &&
     p.offender &&
     css`
       filter: blur(30px);
@@ -63,8 +94,8 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff, 0 0 0.8rem #fff, 0 0 2.8rem #fff,
     inset 0 0 1.3rem #fff;
 
-  ${(props) =>
-    props.isCaptured &&
+  ${(p) =>
+    p.isCaptured &&
     css`
       transform: scaleX(-1.2) scaleY(1.25);
       right: 10%;
@@ -75,6 +106,14 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
     p.offender &&
     css`
       filter: blur(30px);
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.ROTATE &&
+    p.offender &&
+    css`
+      animation: ${rotate} 1.5s infinite;
+      transition: 0.7s;
     `}
 
   transition: 0.7s;

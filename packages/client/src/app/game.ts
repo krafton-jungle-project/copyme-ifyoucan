@@ -1,5 +1,4 @@
 import type { Pose } from '@tensorflow-models/pose-detection';
-import { atom } from 'jotai';
 import { atomWithReset } from 'jotai/utils';
 
 interface UserState {
@@ -30,8 +29,8 @@ enum GameStage {
 
 enum ItemType {
   BLUR,
-  HIDE,
-  STICKMAN,
+  ROTATE,
+  SIZEDOWN,
 }
 
 interface GameState {
