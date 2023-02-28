@@ -20,7 +20,7 @@ import { ButtonClick } from '../../../utils/sound';
 
 const Container = styled.div`
   grid-column: 1 / 3;
-  grid-row: 1/ 2;
+  grid-row: 1 / 2;
   display: flex;
   justify-content: center;
   align-items: center;
