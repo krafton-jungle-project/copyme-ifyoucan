@@ -9,6 +9,7 @@ import { removeUser } from '../utils/localstorage';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Tutorial from '../components/lobby/tutorial/Tutorial';
+import BestShot from '../components/lobby/bestShot/BestShot';
 
 export const isLoadedAtom = atom(false);
 
@@ -119,6 +120,7 @@ function Lobby() {
       ) : (
         <div>
           <Logo src={logo} />
+          <BestShot />
           <button
             onClick={() => {
               sessionStorage.setItem('isAuthenticated', 'false');
@@ -127,7 +129,6 @@ function Lobby() {
           >
             로그아웃
           </button>
-
           <NavBar>
             <NavBtn onClick={onRoom}>Room</NavBtn>
             <NavBtn onClick={onTutorial}>Tutorial</NavBtn>

@@ -23,6 +23,8 @@
     "@types/react": "^18.0.27",
     "@types/react-bootstrap": "^0.32.32",
     "@types/react-dom": "^18.0.10",
+    "@types/react-js-pagination": "^3.0.4",
+    "@types/react-responsive-masonry": "^2.1.0",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.26",
     "antd": "^5.2.0",
@@ -36,6 +38,8 @@
     "react-bootstrap": "^2.7.2",
     "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
+    "react-js-pagination": "^3.0.3",
+    "react-responsive-masonry": "^2.1.7",
     "react-router-dom": "^6.8.1",
     "react-scripts": "5.0.1",
     "socket.io-client": "^4.6.0",
@@ -43,14 +47,14 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "project-types": "*",
     "@types/jest": "29.2.4",
     "@types/node": "18.11.18",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.26",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "project-types": "*"
   },
   "browserslist": {
     "production": [
