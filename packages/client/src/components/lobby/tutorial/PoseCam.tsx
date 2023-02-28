@@ -20,24 +20,23 @@ import {
   isTPoseAtom,
   tutorialPassAtom,
 } from '../../../app/tutorial';
+import { Correct } from '../../../utils/sound';
+
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+`;
 
 const Video = styled.video`
   position: absolute;
-  object-fit: cover;
-  -webkit-transform: scaleX(-1);
-  transform: scaleX(-1);
   visibility: hidden;
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
 `;
 
 const Canvas = styled.canvas`
-  display: none;
   object-fit: cover;
-  width: 95%;
+  width: 100%;
   height: 100%;
-  border-radius: 25px 5px;
+  border-radius: 5px;
 `;
 
 function PoseCam() {
@@ -55,9 +54,7 @@ function PoseCam() {
   const [isPass, setIsPass] = useAtom(tutorialPassAtom);
 
   useEffect(() => {
-    if (!videoRef.current || !canvasRef.current) {
-      return;
-    }
+    if (!videoRef.current || !canvasRef.current) return;
 
     const elements = {
       video: videoRef.current,
@@ -79,15 +76,12 @@ function PoseCam() {
     if (canvasRef.current) {
       if (!isStarted) {
         setDelay(null);
-        canvasRef.current.style.display = 'none';
       } else {
-        canvasRef.current.style.display = 'block';
         setDelay(1000);
       }
 
       if (isPass) {
         setDelay(null);
-        canvasRef.current.style.display = 'none';
         cancelAnimationFrame(movenet.myRafId);
       }
     }
@@ -102,23 +96,34 @@ function PoseCam() {
     }
 
     let pose = await getMyPose();
+    let soundFlag: boolean;
 
     if (isStarted && !isBody) {
-      setIsBody(isValidBody(pose));
+      soundFlag = isValidBody(pose);
+      if (soundFlag) Correct.play();
+      setIsBody(soundFlag);
     }
 
     if (isStarted && pose && isBody) {
       if (!isLeft) {
+        soundFlag = isLeftHandUp(pose, 50);
+        if (soundFlag) Correct.play();
         setIsLeft(isLeftHandUp(pose, 50));
       }
       if (isLeft && !isRight) {
-        setIsRight(isRightHandUp(pose, 50));
+        soundFlag = isRightHandUp(pose, 50);
+        if (soundFlag) Correct.play();
+        setIsRight(soundFlag);
       }
       if (isLeft && isRight && !isT) {
-        setIsT(isTPose(pose, 65));
+        soundFlag = isTPose(pose, 65);
+        if (soundFlag) Correct.play();
+        setIsT(soundFlag);
       }
       if (isLeft && isRight && isT && !isSDR) {
-        setIsSDR(isSDRPose(pose, 70));
+        soundFlag = isSDRPose(pose, 70);
+        if (soundFlag) Correct.play();
+        setIsSDR(soundFlag);
       }
       if (isLeft && isRight && isT && isSDR) {
         setIsPass(true);
@@ -127,10 +132,10 @@ function PoseCam() {
   }, delay);
 
   return (
-    <>
+    <Container>
       <Video ref={videoRef}></Video>
       <Canvas ref={canvasRef}></Canvas>
-    </>
+    </Container>
   );
 }
 

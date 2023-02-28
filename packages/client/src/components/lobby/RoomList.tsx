@@ -72,8 +72,8 @@ function RoomList() {
       <RoomCardContainer>
         {roomList.map((room) => {
           return (
-            <RoomCardWrapper>
-              <RoomCard key={room.id} roomInfo={room} />
+            <RoomCardWrapper key={room.id}>
+              <RoomCard roomInfo={room} />
             </RoomCardWrapper>
           );
         })}

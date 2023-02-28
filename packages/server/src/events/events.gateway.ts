@@ -103,6 +103,12 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ready(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() roomId: string): void {
     this.rooms[roomId].readyCount += 1;
 
+    this.server.in(roomId).emit('message', {
+      message: `🔥 준비완료 🔥`,
+      userId: '',
+      isImg: false,
+    });
+
     // 방에 다른 유저들에게 준비 했다고 알려줌
     socket.to(roomId).emit('get_ready');
   }
@@ -114,6 +120,12 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() roomId: string,
   ): void {
     this.rooms[roomId].readyCount -= 1;
+
+    this.server.in(roomId).emit('message', {
+      message: `🚧 재정비중 🚧`,
+      userId: '',
+      isImg: false,
+    });
 
     // 방에 다른 유저들에게 준비 취소했다고 알려줌
     socket.to(roomId).emit('get_unready');
