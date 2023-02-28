@@ -21,6 +21,7 @@ import {
   tutorialPassAtom,
 } from '../../../app/tutorial';
 import { Correct } from '../../../utils/sound';
+import correctImg from '../../../assets/images/tutorial/correct.gif';
 
 const Container = styled.div`
   width: 100%;
@@ -39,11 +40,20 @@ const Canvas = styled.canvas`
   border-radius: 5px;
 `;
 
+const CorrectSign = styled.img`
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%);
+  width: 30%;
+`;
+
 function PoseCam() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [delay, setDelay] = useState<number | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean>(false);
 
   const isStarted = useAtomValue(isStartedAtom);
   const [isBody, setIsBody] = useAtom(isBodyAtom);
@@ -96,34 +106,44 @@ function PoseCam() {
     }
 
     let pose = await getMyPose();
-    let soundFlag: boolean;
+    let result;
+
+    const correctEffect = (flag: boolean) => {
+      if (flag) {
+        Correct.play();
+        setIsCorrect(true);
+        setTimeout(() => {
+          setIsCorrect(false);
+        }, 1000);
+      }
+    };
 
     if (isStarted && !isBody) {
-      soundFlag = isValidBody(pose);
-      if (soundFlag) Correct.play();
-      setIsBody(soundFlag);
+      result = isValidBody(pose);
+      correctEffect(result);
+      setIsBody(result);
     }
 
     if (isStarted && pose && isBody) {
       if (!isLeft) {
-        soundFlag = isLeftHandUp(pose, 50);
-        if (soundFlag) Correct.play();
-        setIsLeft(isLeftHandUp(pose, 50));
+        result = isLeftHandUp(pose, 50);
+        correctEffect(result);
+        setIsLeft(result);
       }
       if (isLeft && !isRight) {
-        soundFlag = isRightHandUp(pose, 50);
-        if (soundFlag) Correct.play();
-        setIsRight(soundFlag);
+        result = isRightHandUp(pose, 50);
+        correctEffect(result);
+        setIsRight(result);
       }
       if (isLeft && isRight && !isT) {
-        soundFlag = isTPose(pose, 65);
-        if (soundFlag) Correct.play();
-        setIsT(soundFlag);
+        result = isTPose(pose, 65);
+        correctEffect(result);
+        setIsT(result);
       }
       if (isLeft && isRight && isT && !isSDR) {
-        soundFlag = isSDRPose(pose, 70);
-        if (soundFlag) Correct.play();
-        setIsSDR(soundFlag);
+        result = isSDRPose(pose, 70);
+        correctEffect(result);
+        setIsSDR(result);
       }
       if (isLeft && isRight && isT && isSDR) {
         setIsPass(true);
@@ -135,6 +155,7 @@ function PoseCam() {
     <Container>
       <Video ref={videoRef}></Video>
       <Canvas ref={canvasRef}></Canvas>
+      {isCorrect ? <CorrectSign src={correctImg} /> : null}
     </Container>
   );
 }

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import Poro from '../../../assets/images/arcadePoro.png';
+import Poro from '../../../assets/images/arcade-poro.png';
 import { useSetAtom } from 'jotai';
 import { roomInfoAtom } from '../../../app/room';
 

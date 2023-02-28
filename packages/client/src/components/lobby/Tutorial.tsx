@@ -1,7 +1,12 @@
+import { useAtomValue } from 'jotai';
+import { useEffect } from 'react';
 import styled from 'styled-components';
+import { tutorialPassAtom } from '../../app/tutorial';
 import Guide from './tutorial/Guide';
 import PoseCam from './tutorial/PoseCam';
 import PoseImg from './tutorial/PoseImg';
+import partyPopper from '../../assets/images/tutorial/party-popper.gif';
+import { Yeah } from '../../utils/sound';
 
 const Container = styled.div`
   position: relative;
@@ -34,7 +39,24 @@ const CameraWrapper = styled.div`
   margin: 20px 30px;
 `;
 
+const PartyPopper = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+`;
+
 function Tutorial() {
+  const isPass = useAtomValue(tutorialPassAtom);
+
+  useEffect(() => {
+    if (isPass) {
+      Yeah.play();
+    }
+  }, [isPass]);
+
   return (
     <Container>
       <Guide />
@@ -44,6 +66,7 @@ function Tutorial() {
       <CameraWrapper>
         <PoseCam />
       </CameraWrapper>
+      {isPass ? <PartyPopper src={partyPopper} /> : null}
     </Container>
   );
 }
