@@ -45,6 +45,9 @@ const RoomCardContainer = styled.div`
   border: 1px solid #ff00cc;
   background-color: #ff00cc11;
   border-radius: 5px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const RoomCardWrapper = styled.div`

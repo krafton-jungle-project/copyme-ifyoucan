@@ -29,6 +29,9 @@ const ChatWrapper = styled.div`
   height: 85%;
   padding: 0 2.5%;
   overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const MessageBox = styled.div`
