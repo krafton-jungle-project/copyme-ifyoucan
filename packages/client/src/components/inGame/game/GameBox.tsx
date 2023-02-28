@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { gameAtom, GameStage } from '../../../app/game';
@@ -9,6 +9,7 @@ import PeerCanvas from './PeerCanvas';
 import PeerScoreBar from './PeerScoreBar';
 import Versus from './Versus';
 import { myNickName } from '../../../pages/Lobby';
+import arrow from '../../../assets/images/arrow.png';
 import InvisibleDrawingCanvas from '../InvisibleDrawingCanvas';
 
 const Container = styled.div<{ isStart: boolean }>`
@@ -38,7 +39,7 @@ const CameraWrapper = styled.div<{ isMe: boolean }>`
   height: 100%;
 `;
 
-const NickNameBox = styled.div`
+const GameRole = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -48,9 +49,11 @@ const NickNameBox = styled.div`
   height: 10%;
   font-size: 35px;
   font-weight: bold;
+  color: #f4ff00;
+  transition: 0.5s;
 `;
 
-const GameRole = styled.div`
+const NickNameBox = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -60,7 +63,6 @@ const GameRole = styled.div`
   height: 10%;
   font-size: 35px;
   font-weight: bold;
-  color: #ffff99;
 `;
 
 const CameraFocus = styled.div<{ focus: string; light: boolean }>`
@@ -113,6 +115,36 @@ const CameraFocus = styled.div<{ focus: string; light: boolean }>`
   transition: 0.5s;
 `;
 
+const animate = keyframes`
+  0%, 100% {
+    top: -25%;
+  }
+  50% {
+    top: -20%;
+  }
+`;
+
+const HighlightArrow = styled.img<{ focus: string }>`
+  position: absolute;
+  visibility: hidden;
+  top: -25%;
+  height: 20%;
+  animation: ${animate} 0.6s linear infinite;
+
+  ${(props) =>
+    props.focus === 'me' &&
+    css`
+      visibility: visible;
+      left: 15%;
+    `}
+  ${(props) =>
+    props.focus === 'peer' &&
+    css`
+      visibility: visible;
+      right: 15%;
+    `}
+`;
+
 function GameBox() {
   const game = useAtomValue(gameAtom);
   const peerNickName = useAtomValue(peerInfoAtom).nickName;
@@ -147,20 +179,21 @@ function GameBox() {
   return (
     <Container isStart={game.isStart}>
       <CameraFocus focus={focus} light={game.countDown % 2 === 1} />
+      <HighlightArrow src={arrow} focus={focus} />
       <Versus />
       <Wrapper isMe={true} isStart={game.isStart}>
         <MyScoreBar myVideoRef={myVideoRef} />
         <CameraWrapper isMe={true}>
-          <NickNameBox>{myNickName}</NickNameBox>
           <GameRole>{game.user.isOffender ? '공격자' : '수비자'}</GameRole>
+          <NickNameBox>{myNickName}</NickNameBox>
           <MyCanvas myVideoRef={myVideoRef} />
         </CameraWrapper>
       </Wrapper>
       <Wrapper isMe={false} isStart={game.isStart}>
         <PeerScoreBar />
         <CameraWrapper isMe={false}>
-          <NickNameBox>{peerNickName}</NickNameBox>
           <GameRole>{game.user.isOffender ? '수비자' : '공격자'}</GameRole>
+          <NickNameBox>{peerNickName}</NickNameBox>
           <PeerCanvas peerVideoRef={peerVideoRef} />
         </CameraWrapper>
       </Wrapper>

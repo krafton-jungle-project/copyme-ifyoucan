@@ -53,7 +53,7 @@ const ScoreBar = styled.div<{ isInit: boolean; score: number; isDefense: boolean
     `}
 `;
 
-const ScoreInfo = styled.div`
+const ScorePercent = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -62,12 +62,12 @@ const ScoreInfo = styled.div`
   top: 0%;
   width: 100%;
   height: 10%;
-  font-size: 25px;
+  font-size: 40px;
   font-weight: bold;
   color: #1f51ff;
 `;
 
-const ScorePercent = styled.div`
+const ScoreInfo = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -76,7 +76,7 @@ const ScorePercent = styled.div`
   bottom: 0%;
   width: 100%;
   height: 10%;
-  font-size: 30px;
+  font-size: 25px;
   font-weight: bold;
   color: #1f51ff;
 `;
@@ -96,7 +96,7 @@ function PeerScoreBar() {
 
   return (
     <Container>
-      <ScoreInfo>유사도</ScoreInfo>
+      <ScorePercent>{game.peer.score}</ScorePercent>
       <ScoreBarWrapper>
         <ScoreBar
           isInit={isInit}
@@ -104,7 +104,7 @@ function PeerScoreBar() {
           isDefense={game.user.isOffender && game.stage === GameStage.DEFEND}
         />
       </ScoreBarWrapper>
-      <ScorePercent>{game.peer.score}</ScorePercent>
+      <ScoreInfo>유사도</ScoreInfo>
     </Container>
   );
 }

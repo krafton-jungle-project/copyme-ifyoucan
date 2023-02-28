@@ -63,6 +63,7 @@ const JoinButton = styled.button<{ isFull: boolean }>`
       &:hover {
         width: 90px;
         font-size: 18px;
+        cursor: pointer;
       }
     `}
   transition: 0.15s;

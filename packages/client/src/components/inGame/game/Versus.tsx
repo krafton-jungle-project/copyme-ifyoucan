@@ -7,25 +7,20 @@ const VS = styled.div<{ isStart: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
   ${(props) =>
     props.isStart &&
     css`
-      top: 30%;
-      left: 40%;
-      width: 20%;
-      height: 40%;
-      font-size: 7vw;
+      font-size: 5vw;
       font-weight: 500;
     `}
 
   ${(props) =>
     !props.isStart &&
     css`
-      top: 50%;
-      left: 50%;
-      width: 0%;
-      height: 0%;
       font-size: 0;
       font-weight: 0;
     `}
@@ -35,6 +30,7 @@ const VS = styled.div<{ isStart: boolean }>`
     0 0 50px rgba(255, 255, 255, 0.6), 0 0 42px #bc13fe, 0 0 120px #bc13fe, 0 0 92px #bc13fe,
     0 0 102px #bc13fe, 0 0 151px #bc13fe;
 
+  text-align: center;
   transition: 0.5s;
   transition-delay: 1s;
 `;

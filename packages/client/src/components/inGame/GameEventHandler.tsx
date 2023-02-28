@@ -6,7 +6,7 @@ import {
   BackgroundMusic,
   Bell,
   CameraClick,
-  CountDown3s,
+  CountDown,
   GameMusic,
   GunReload,
   Swish,
@@ -56,27 +56,29 @@ const GameEventHandler = () => {
     socket.on('get_count_down', (count: number, stage: string) => {
       setGame((prev) => ({ ...prev, countDown: count }));
 
-      if (count === 3) {
-        CountDown3s.play();
+      if (count === 5) {
+        CountDown.play();
       }
 
       if (count === 0) {
         CameraClick.play();
 
-        setTimeout(() => {
-          if (stage === 'offend') {
+        if (stage === 'offend') {
+          setTimeout(() => {
             setGame((prev) => ({ ...prev, stage: GameStage.DEFEND }));
-          }
-          // stage === 'defend')
-          else {
+          }, 2500);
+        }
+
+        if (stage === 'defend') {
+          setTimeout(() => {
             setGame((prev) => ({
               ...prev,
               stage: Number.isInteger(prev.round + 0.5) ? GameStage.ROUND : GameStage.OFFEND,
               round: prev.round + 0.5,
               user: { ...prev.user, isOffender: !prev.user.isOffender }, // 공수전환
             }));
-          }
-        }, 4000);
+          }, 4000);
+        }
       }
     });
 

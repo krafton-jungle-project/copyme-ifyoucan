@@ -1,4 +1,4 @@
-import countdown from '../assets/sounds/count-down_3s.mp3';
+import countdown from '../assets/sounds/count-down_5s.mp3';
 import gamemusic from '../assets/sounds/game-music.mp3';
 import bell from '../assets/sounds/bell.mp3';
 import gunreload from '../assets/sounds/gun-reload.mp3';
@@ -17,7 +17,7 @@ import button from '../assets/sounds/button.mp3';
 import correct from '../assets/sounds/correct.mp3';
 import yeah from '../assets/sounds/yeah.mp3';
 
-const CountDown3s = new Audio(countdown);
+const CountDown = new Audio(countdown);
 const GameMusic = new Audio(gamemusic);
 const Bell = new Audio(bell);
 const GunReload = new Audio(gunreload);
@@ -37,7 +37,7 @@ const Correct = new Audio(correct);
 const Yeah = new Audio(yeah);
 
 export {
-  CountDown3s,
+  CountDown,
   GameMusic,
   Bell,
   GunReload,

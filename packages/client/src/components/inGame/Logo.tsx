@@ -1,6 +1,6 @@
 import type { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { useAtom, useAtomValue } from 'jotai';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { gameAtom } from '../../app/game';
 import { roomInfoAtom } from '../../app/room';
 import { useClientSocket } from '../../module/client-socket';
@@ -16,10 +16,14 @@ const Container = styled.div`
   height: 100%;
 `;
 
-const LogoImg = styled.img`
+const LogoImg = styled.img<{ isClickable: boolean }>`
   position: absolute;
   width: 100%;
-  cursor: pointer; /* 마우스 올리면 손모양 커서 */
+  ${(props) =>
+    props.isClickable &&
+    css`
+      cursor: pointer;
+    `}
 `;
 
 // hidden start/ready Button
@@ -52,9 +56,15 @@ function Logo() {
       alt="logo"
       src={logoImg}
       onClick={() => (game.isStart ? null : game.peer.isReady ? onStart() : null)}
+      isClickable={!game.isStart && game.peer.isReady}
     />
   ) : (
-    <LogoImg alt="logo" src={logoImg} onClick={() => (game.isStart ? null : onReady())} />
+    <LogoImg
+      alt="logo"
+      src={logoImg}
+      onClick={() => (game.isStart ? null : onReady())}
+      isClickable={!game.isStart}
+    />
   );
 
   return <Container>{logoButton}</Container>;

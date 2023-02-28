@@ -15,19 +15,19 @@ const Container = styled.div<{ isStart: boolean }>`
   align-items: center;
   left: 50%;
   transform: translate(-50%);
-  width: ${(props) => (props.isStart ? '50%' : '70%')};
+  width: ${(props) => (props.isStart ? '40%' : '60%')};
   height: 100%;
   font-size: 2.8vw;
   font-weight: 400;
 
-  border: 0.2rem solid #fff;
+  border: 0.15rem solid #fff;
   border-radius: 2rem;
   padding: 0.4em;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
     0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
 
   color: #fff;
-  text-shadow: 0 0 5px #fff, 0 0 20px #fff, 0 0 50px #fff, 0 0 42px #bc13fe, 0 0 120px #bc13fe,
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 30px #fff, 0 0 60px #bc13fe, 0 0 120px #bc13fe,
     0 0 92px #bc13fe, 0 0 102px #bc13fe, 0 0 151px #bc13fe;
 
   transition: 0.5s;
@@ -110,7 +110,7 @@ function Announcer() {
           }
           break;
         case GameStage.ROUND:
-          if (game.round < 4) {
+          if (game.round < 40) {
             if (game.round === 1) RoundOne.play();
             else if (game.round === 2) RoundTwo.play();
             else if (game.round === 3) RoundThree.play();
@@ -130,7 +130,7 @@ function Announcer() {
               if (host) {
                 socket.emit('change_stage', GameStage.OFFEND);
               }
-            }, 2000);
+            }, 3000);
           }
           // 3(3.5) 라운드가 모두 끝났을 때,
           else {
@@ -142,36 +142,37 @@ function Announcer() {
           break;
         case GameStage.OFFEND:
           // 공수 전환
-          if (messageOrder === 0) {
-            if (game.round % 1 !== 0) {
-              Transition.play();
-            } else {
-              messageOrder = 1;
-            }
-          }
-
-          if (messageOrder < offenderMessages.length) {
-            setMessage(offenderMessages[messageOrder++]);
-            setTimeout(gameMessage, 2000);
+          if (game.round % 1 !== 0) {
+            Transition.play();
+            setMessage('공격 수비 전환');
+            setTimeout(() => {
+              setMessage(`${game.user.isOffender ? myNickName : peerInfo.nickName}님의 공격!`);
+              setTimeout(() => {
+                if (host) {
+                  socket.emit('count_down', 'offend');
+                }
+              }, 1500);
+            }, 2000);
           } else {
-            messageOrder = 0;
-
-            if (host) {
-              socket.emit('count_down', 'offend');
-            }
+            setTimeout(() => {
+              setMessage(`${game.user.isOffender ? myNickName : peerInfo.nickName}님의 공격!`);
+              setTimeout(() => {
+                if (host) {
+                  socket.emit('count_down', 'offend');
+                }
+              }, 1500);
+            }, 2000);
           }
+
           break;
         case GameStage.DEFEND:
-          if (messageOrder < defenderMessages.length) {
-            setMessage(defenderMessages[messageOrder++]);
-            setTimeout(gameMessage, 2000);
-          } else {
-            messageOrder = 0;
+          setMessage(`${game.user.isOffender ? peerInfo.nickName : myNickName}님의 수비!`);
 
+          setTimeout(() => {
             if (host) {
               socket.emit('count_down', 'defend');
             }
-          }
+          }, 1500);
           break;
         default:
           break;
@@ -184,14 +185,6 @@ function Announcer() {
       '게임을 시작합니다',
       '첫 번째 공격이 시작됩니다!',
       '자세를 정확히 따라해주세요!',
-    ];
-
-    const offenderMessages: string[] = [
-      '공격 수비 전환',
-      `${game.user.isOffender ? myNickName : peerInfo.nickName}님의 공격!`,
-    ];
-    const defenderMessages: string[] = [
-      `${game.user.isOffender ? peerInfo.nickName : myNickName}님의 수비!`,
     ];
 
     if (game.status === GameStatus.GAME) {

@@ -57,7 +57,7 @@ const ScoreBar = styled.div<{ isInit: boolean; score: number; isDefense: boolean
     `}
 `;
 
-const ScoreInfo = styled.div`
+const ScorePercent = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -66,12 +66,12 @@ const ScoreInfo = styled.div`
   top: 0%;
   width: 100%;
   height: 10%;
-  font-size: 25px;
+  font-size: 40px;
   font-weight: bold;
   color: #ff3131;
 `;
 
-const ScorePercent = styled.div`
+const ScoreInfo = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -80,7 +80,7 @@ const ScorePercent = styled.div`
   bottom: 0%;
   width: 100%;
   height: 10%;
-  font-size: 30px;
+  font-size: 25px;
   font-weight: bold;
   color: #ff3131;
 `;
@@ -118,7 +118,7 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     // 내가 수비자이고 수비 스테이지일 때
     if (!game.user.isOffender && game.stage === GameStage.DEFEND) {
       // 수비 카운트 다운이 시작되면
-      if (game.countDown === 3) {
+      if (game.countDown === 5) {
         // 실시간 점수 계산 시작(0.5초 간격)
         setDelay(500);
       }
@@ -143,7 +143,7 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
 
   return (
     <Container>
-      <ScoreInfo>유사도</ScoreInfo>
+      <ScorePercent>{game.user.score}</ScorePercent>
       <ScoreBarWrapper>
         <ScoreBar
           isInit={isInit}
@@ -151,7 +151,7 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
           isDefense={!game.user.isOffender && game.stage === GameStage.DEFEND}
         />
       </ScoreBarWrapper>
-      <ScorePercent>{game.user.score}</ScorePercent>
+      <ScoreInfo>유사도</ScoreInfo>
     </Container>
   );
 }
