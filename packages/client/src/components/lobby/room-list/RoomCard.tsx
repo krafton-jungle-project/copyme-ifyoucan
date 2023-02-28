@@ -84,7 +84,7 @@ export default function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
   const joinRoom = (roomId: string) => {
     if (roomInfo.users.length === 1) {
       setRoomInfo((prev) => ({ ...prev, roomId }));
-      navigate('/room');
+      navigate('/room', { replace: true });
     }
   };
 

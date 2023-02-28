@@ -135,7 +135,7 @@ function Login2() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate('/');
+      navigate('/', { replace: true });
     }
   }, [isLoggedIn, navigate]);
 
@@ -173,7 +173,7 @@ function Login2() {
       sessionStorage.setItem('isAuthenticated', 'true');
       // 메인으로 이동
       setIsLoggedIn(true);
-      navigate('/'); // 성공시 이동될 url 적용하기
+      navigate('/', { replace: true }); // 성공시 이동될 url 적용하기
 
       return res;
     } catch (error) {

@@ -224,7 +224,7 @@ function Lobby() {
     if (check) {
       sessionStorage.setItem('isAuthenticated', 'false');
       removeUser();
-      navigate('/login'); //temp: Private Router 적용 후 삭제
+      navigate('/login', { replace: true }); //temp: Private Router 적용 후 삭제
     }
   };
 
