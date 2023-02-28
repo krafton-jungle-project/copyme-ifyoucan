@@ -13,6 +13,8 @@ import { ButtonClick } from '../utils/sound';
 import logoutImg from '../assets/images/logout.png';
 import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
 import BestShot from '../components/lobby/BestShot';
+import bgmOnImg from '../assets/images/bgm-on.png';
+import bgmOffImg from '../assets/images/bgm-off.png';
 
 const Container = styled.div`
   /* position: absolute;
@@ -39,6 +41,37 @@ const Header = styled.div`
   top: 0;
   width: 100%;
   height: 20%;
+`;
+
+const MuteWrapper = styled.div`
+  position: absolute;
+  top: 20%;
+  left: 5%;
+  width: 6%;
+  height: 40%;
+  cursor: pointer;
+`;
+
+const MuteImg = styled.img`
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%);
+  height: 70%;
+`;
+
+const MuteTxt = styled.p`
+  position: absolute;
+  bottom: 0%;
+  left: 50%;
+  transform: translate(-50%);
+  font-size: 12px;
+  color: #fceab5;
+  text-shadow: 0 0 5px #ff9300;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const Logo = styled.img`
@@ -76,6 +109,9 @@ const LogOutTxt = styled.p`
   color: #baffba;
   text-shadow: 0 0 5px #15ff00;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const NavBar = styled.div`
@@ -180,6 +216,7 @@ function Lobby() {
   const navigate = useNavigate();
   const [mode, setMode] = useState('플레이');
   const { isStreamReady } = useMovenetStream();
+  const [mute, setMute] = useState(bgmOffImg);
   let content;
 
   switch (mode) {
@@ -230,7 +267,7 @@ function Lobby() {
 
   useEffect(() => {
     setTimeout(() => {
-      // BackgroundMusic.play(); //temp
+      BackgroundMusic.play();
       BackgroundMusic.volume = 0.5;
     }, 1000);
     BackgroundMusic.addEventListener(
@@ -242,11 +279,27 @@ function Lobby() {
     );
   }, []);
 
+  const bgmHandler = () => {
+    if (mute === bgmOffImg) {
+      ButtonClick.play();
+      BackgroundMusic.pause();
+      setMute(bgmOnImg);
+    } else {
+      ButtonClick.play();
+      BackgroundMusic.play();
+      setMute(bgmOffImg);
+    }
+  };
+
   return (
     <Container>
       {!isStreamReady ? <Loading /> : null}
       <Wrapper>
         <Header>
+          <MuteWrapper>
+            <MuteImg src={mute} onClick={bgmHandler} />
+            <MuteTxt>{mute === bgmOffImg ? 'BGM OFF' : 'BGM ON'}</MuteTxt>
+          </MuteWrapper>
           <Logo
             alt="logo"
             src={logoImg}
