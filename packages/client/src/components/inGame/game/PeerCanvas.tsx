@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { peerInfoAtom } from '../../../app/peer';
 import { gameAtom, GameStage } from '../../../app/game';
-import * as moveNet from '../../../utils/tfjs-movenet';
+import * as movenet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
 import { useClientSocket } from '../../../module/client-socket';
 import CountDown from './CountDown';
@@ -85,20 +85,21 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
       canvas: canvasRef.current,
     };
 
-    moveNet.peerCanvasRender({
+    movenet.peerCanvasRender({
       size: { width: 640, height: 480 },
       element: elements,
       peerStream: peerInfo.stream,
+      canvasRender: false,
     });
 
     return () => {
-      cancelAnimationFrame(moveNet.peerRafId);
+      cancelAnimationFrame(movenet.peerRafId);
     };
   }, [videoRef, canvasRef, peerInfo.stream]);
 
   useEffect(() => {
     const getPeerPose = async () => {
-      const poses = await moveNet.detector.estimatePoses(moveNet.peerCamera.video);
+      const poses = await movenet.detector.estimatePoses(movenet.peerCamera.video);
       setGame((prev) => ({ ...prev, peer: { ...prev.peer, pose: poses[0] } }));
     };
 

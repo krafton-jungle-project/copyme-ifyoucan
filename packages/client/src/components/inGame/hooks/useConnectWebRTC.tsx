@@ -8,6 +8,7 @@ import { peerInfoAtom } from '../../../app/peer';
 import { roomInfoAtom } from '../../../app/room';
 import { myNickName } from '../../../pages/Lobby';
 import { gameAtom } from '../../../app/game';
+import { BackgroundMusic, RoomEnter, RoomExit } from '../../../utils/sound';
 
 //! 스턴 서버 직접 생성 고려(임시)
 const pc_config = {
@@ -109,6 +110,8 @@ const useConnectWebRTC = () => {
         offerSendID: string;
         offerSendNickName: string;
       }) => {
+        RoomEnter.play(); // 상대 입장음
+
         const { sdp, offerSendID, offerSendNickName } = data;
         if (!myStreamRef.current) return;
 
@@ -152,6 +155,8 @@ const useConnectWebRTC = () => {
 
     //! 상대가 나갔을 시
     socket.on('user_exit', (isStart) => {
+      RoomExit.play(); // 상대 퇴장음
+
       console.log('user_exit');
 
       if (!pcRef.current) return;
@@ -159,6 +164,7 @@ const useConnectWebRTC = () => {
 
       // 게임 중일 때 상대가 나가면, 로비로 이동한다.
       if (isStart) {
+        BackgroundMusic.currentTime = 0;
         navigate('/');
       }
       // 게임 중이 아닐 땐, 내가 방장이 되고

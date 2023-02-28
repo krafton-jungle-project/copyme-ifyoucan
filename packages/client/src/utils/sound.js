@@ -13,6 +13,9 @@ import stamp from '../assets/sounds/stamp.mp3';
 import fail from '../assets/sounds/fail.mp3';
 import swish from '../assets/sounds/swish.mp3';
 import transition from '../assets/sounds/transition.mp3';
+import button from '../assets/sounds/button.mp3';
+import correct from '../assets/sounds/correct.mp3';
+import yeah from '../assets/sounds/yeah.mp3';
 
 const CountDown3s = new Audio(countdown);
 const GameMusic = new Audio(gamemusic);
@@ -29,6 +32,9 @@ const Stamp = new Audio(stamp);
 const Fail = new Audio(fail);
 const Swish = new Audio(swish);
 const Transition = new Audio(transition);
+const ButtonClick = new Audio(button);
+const Correct = new Audio(correct);
+const Yeah = new Audio(yeah);
 
 export {
   CountDown3s,
@@ -46,4 +52,7 @@ export {
   Fail,
   Swish,
   Transition,
+  ButtonClick,
+  Correct,
+  Yeah,
 };
