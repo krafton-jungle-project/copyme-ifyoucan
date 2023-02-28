@@ -96,7 +96,6 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     const getMyPose = async () => {
       if (myVideoRef.current) {
         const myPoses = await detector.estimatePoses(myVideoRef.current);
-        console.log(myPoses);
         if (myPoses && myPoses.length > 0) {
           return myPoses[0];
         }
