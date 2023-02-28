@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { gameAtom, GameStage, ItemType } from '../../../app/game';
@@ -18,6 +18,21 @@ const Container = styled.div`
   border-radius: 20px;
 `;
 
+const rotate = keyframes`
+  0% {
+    -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  }
+  50% {
+    -webkit-transform: scaleX(1);
+  transform: scaleX(1);
+  }
+  100% {
+-webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  }
+`;
+
 const Video = styled.video<{ itemType: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
@@ -29,11 +44,27 @@ const Video = styled.video<{ itemType: any; offender: boolean }>`
   border-radius: 20px;
   /* filter: blur(5px); */
 
-  ${(props) =>
-    props.itemType === ItemType.BLUR &&
-    props.offender &&
+  ${(p) =>
+    p.itemType === ItemType.BLUR &&
+    p.offender &&
     css`
       filter: blur(30px);
+      transition: 0.7s;
+    `}
+
+  ${(p) =>
+    p.itemType === ItemType.ROTATE &&
+    p.offender &&
+    css`
+      animation: ${rotate} 1.5s infinite;
+      transition: 0.7s;
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.SIZEDOWN &&
+    p.offender &&
+    css`
+      transform: scale(0.5) scaleX(-1);
       transition: 0.7s;
     `}
 `;
@@ -63,18 +94,34 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff, 0 0 0.8rem #fff, 0 0 2.8rem #fff,
     inset 0 0 1.3rem #fff;
 
-  ${(props) =>
-    props.isCaptured &&
+  ${(p) =>
+    p.isCaptured &&
     css`
       transform: scaleX(-1.2) scaleY(1.25);
       left: 10%;
     `}
 
-  ${(props) =>
-    props.itemType === ItemType.BLUR &&
-    props.offender &&
+  ${(p) =>
+    p.itemType === ItemType.BLUR &&
+    p.offender &&
     css`
       filter: blur(30px);
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.ROTATE &&
+    p.offender &&
+    css`
+      animation: ${rotate} 1.5s infinite;
+      transition: 0.7s;
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.SIZEDOWN &&
+    p.offender &&
+    css`
+      transform: scale(0.5) scaleX(-1);
+      transition: 0.7s;
     `}
 
   transition: 0.7s;
@@ -95,8 +142,8 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
     // if (game.round < 2) return;
 
     if (host) {
-      let idx = Math.random();
-      socket.emit('item_type', Math.floor(idx));
+      let idx = Math.floor(Math.random() * (Object.keys(ItemType).length / 2));
+      socket.emit('item_type', idx);
     }
   }, [game.round]);
 
