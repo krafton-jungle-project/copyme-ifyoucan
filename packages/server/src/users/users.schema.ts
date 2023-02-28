@@ -62,5 +62,6 @@ UserSchema.virtual('readOnlyData').get(function (this: User) {
     id: this.id,
     loginid: this.loginid,
     name: this.name,
+    imgurl: this.imgUrls,
   };
 });
