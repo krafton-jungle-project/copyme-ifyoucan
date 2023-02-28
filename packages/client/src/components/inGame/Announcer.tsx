@@ -130,7 +130,7 @@ function Announcer() {
               if (host) {
                 socket.emit('change_stage', GameStage.OFFEND);
               }
-            }, 3000);
+            }, 2500);
           }
           // 3(3.5) 라운드가 모두 끝났을 때,
           else {

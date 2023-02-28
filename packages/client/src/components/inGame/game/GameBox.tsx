@@ -11,6 +11,10 @@ import Versus from './Versus';
 import { myNickName } from '../../../pages/Lobby';
 import arrow from '../../../assets/images/arrow.png';
 import InvisibleDrawingCanvas from '../InvisibleDrawingCanvas';
+import transparent from '../../../assets/images/transparent.png';
+import roundOneImg from '../../../assets/images/round-one.gif';
+import roundTwoImg from '../../../assets/images/round-two.gif';
+import roundThreeImg from '../../../assets/images/round-three.gif';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -150,12 +154,36 @@ const HighlightArrow = styled.img<{ focus: string }>`
     `}
 `;
 
+const RoundImg = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+`;
+
+const FadeBackGround = styled.div<{ visible: boolean }>`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200%;
+  height: 200%;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 5px solid white;
+  visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
+  /* transition: 0.5s; */
+`;
+
 function GameBox() {
   const game = useAtomValue(gameAtom);
   const peerNickName = useAtomValue(peerInfoAtom).nickName;
   const myVideoRef = useRef<HTMLVideoElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null);
   const [focus, setFocus] = useState('noMe');
+  let [roundImg, setRoundImg] = useState(transparent);
+  const [visibility, setVisibility] = useState(false);
 
   useEffect(() => {
     if (
@@ -183,6 +211,33 @@ function GameBox() {
     }
   }, [game.stage, game.countDown]);
 
+  useEffect(() => {
+    if (game.stage === GameStage.ROUND) {
+      switch (game.round) {
+        case 1:
+          setRoundImg(roundOneImg);
+          setTimeout(() => {
+            setRoundImg(transparent);
+          }, 2400);
+          break;
+        case 2:
+          setRoundImg(roundTwoImg);
+          setTimeout(() => {
+            setRoundImg(transparent);
+          }, 2400);
+          break;
+        case 3:
+          setRoundImg(roundThreeImg);
+          setTimeout(() => {
+            setRoundImg(transparent);
+          }, 2400);
+          break;
+        default:
+          break;
+      }
+    }
+  }, [game.stage, game.round]);
+
   return (
     <Container isStart={game.isStart}>
       <CameraFocus focus={focus} />
@@ -209,6 +264,9 @@ function GameBox() {
         </CameraWrapper>
       </Wrapper>
       {/* <InvisibleDrawingCanvas /> */}
+      <FadeBackGround visible={roundImg !== transparent}>
+        <RoundImg alt="round image" src={roundImg} />
+      </FadeBackGround>
     </Container>
   );
 }
