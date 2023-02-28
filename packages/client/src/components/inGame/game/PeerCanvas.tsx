@@ -64,7 +64,7 @@ const Video = styled.video<{ itemType: any; offender: boolean }>`
     p.itemType === ItemType.SIZEDOWN &&
     p.offender &&
     css`
-      filter: blur(30px);
+      transform: scale(0.5) scaleX(-1);
       transition: 0.7s;
     `}
 `;
@@ -113,6 +113,14 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
     p.offender &&
     css`
       animation: ${rotate} 1.5s infinite;
+      transition: 0.7s;
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.SIZEDOWN &&
+    p.offender &&
+    css`
+      transform: scale(0.5) scaleX(-1);
       transition: 0.7s;
     `}
 
