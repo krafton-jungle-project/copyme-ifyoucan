@@ -22,8 +22,13 @@ import {
 } from '../../../app/tutorial';
 import { Correct } from '../../../utils/sound';
 import correctImg from '../../../assets/images/tutorial/correct.gif';
+import loadingImg from '../../../assets/images/tutorial/loading.webp';
 
 const Container = styled.div`
+  background-image: url(${loadingImg});
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
   width: 100%;
   height: 100%;
 `;
@@ -34,6 +39,7 @@ const Video = styled.video`
 `;
 
 const Canvas = styled.canvas`
+  background-color: #0008;
   object-fit: cover;
   width: 100%;
   height: 100%;
