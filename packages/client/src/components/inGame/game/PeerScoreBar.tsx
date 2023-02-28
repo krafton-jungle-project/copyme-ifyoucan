@@ -76,8 +76,11 @@ const ScoreInfo = styled.div`
   bottom: 0%;
   width: 100%;
   height: 10%;
-  font-size: 25px;
+  font-size: 30px;
   font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: #1f51ff;
 `;
 

@@ -39,7 +39,17 @@ const CameraWrapper = styled.div<{ isMe: boolean }>`
   height: 100%;
 `;
 
-const GameRole = styled.div`
+const textHighlight = keyframes`
+  0%, 100% {
+    text-shadow: 0 0 1px #f4ff00, 0 0 2px #f4ff00;
+
+  }
+  50% {
+    text-shadow: 0 0 3px #f4ff00, 0 0 6px #f4ff00;
+  }
+`;
+
+const GameRole = styled.div<{ isMe: boolean; focus: string }>`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -49,7 +59,17 @@ const GameRole = styled.div`
   height: 10%;
   font-size: 35px;
   font-weight: bold;
-  color: #f4ff00;
+  color: #f4ff00aa;
+
+  /* color: ${(props) => (props.focus === 'me' ? 1 : 1)}; */
+
+  ${(props) =>
+    ((props.isMe && props.focus === 'me') || (!props.isMe && props.focus === 'peer')) &&
+    css`
+      color: #f4ff00;
+      animation: ${textHighlight} 1.6s linear infinite;
+    `}
+
   transition: 0.5s;
 `;
 
@@ -65,10 +85,21 @@ const NickNameBox = styled.div`
   font-weight: bold;
 `;
 
-const CameraFocus = styled.div<{ focus: string; light: boolean }>`
+const blinkAnimate = keyframes`
+  0%, 100% {
+    box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 1rem #cef205, 0 0 0.4rem #cef205,
+        0 0 1.4rem #cef205, inset 0 0 0.6rem #cef205;
+  }
+  50% {
+    box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #cef205, 0 0 0.8rem #cef205,
+        0 0 2.8rem #cef205, inset 0 0 1.3rem #cef205;
+  }
+`;
+
+const CameraFocus = styled.div<{ focus: string }>`
   position: absolute;
-  left: ${(props) => (props.focus === 'noMe' ? '-2%' : 'none')};
-  right: ${(props) => (props.focus === 'noPeer' ? '-2%' : 'none')};
+  left: ${(props) => (props.focus === 'me' || props.focus === 'noMe' ? '-2%' : 'none')};
+  right: ${(props) => (props.focus === 'peer' || props.focus === 'noPeer' ? '-2%' : 'none')};
   width: 48%;
   height: 100%;
   border-radius: 20px;
@@ -79,43 +110,17 @@ const CameraFocus = styled.div<{ focus: string; light: boolean }>`
       visibility: 'hidden';
       box-shadow: 0;
     `}
+
   ${(props) =>
-    props.focus === 'me' &&
-    props.light &&
+    (props.focus === 'me' || props.focus === 'peer') &&
     css`
-      left: -2%;
-      box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #ff3131, 0 0 0.8rem #ff3131,
-        0 0 2.8rem #ff3131, inset 0 0 1.3rem #ff3131;
-    `}
-  ${(props) =>
-    props.focus === 'me' &&
-    !props.light &&
-    css`
-      left: -2%;
-      box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 1rem #ff3131, 0 0 0.4rem #ff3131,
-        0 0 1.4rem #ff3131, inset 0 0 0.6rem #ff3131;
-    `}
-  ${(props) =>
-    props.focus === 'peer' &&
-    props.light &&
-    css`
-      right: -2%;
-      box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #1f51ff, 0 0 0.8rem #1f51ff,
-        0 0 2.8rem #1f51ff, inset 0 0 1.3rem #1f51ff;
-    `}
-  ${(props) =>
-    props.focus === 'peer' &&
-    !props.light &&
-    css`
-      right: -2%;
-      box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 1rem #1f51ff, 0 0 0.4rem #1f51ff,
-        0 0 1.4rem #1f51ff, inset 0 0 0.6rem #1f51ff;
+      animation: ${blinkAnimate} 0.8s linear infinite;
     `}
 
   transition: 0.5s;
 `;
 
-const animate = keyframes`
+const upDownAnimate = keyframes`
   0%, 100% {
     top: -25%;
   }
@@ -129,7 +134,7 @@ const HighlightArrow = styled.img<{ focus: string }>`
   visibility: hidden;
   top: -25%;
   height: 20%;
-  animation: ${animate} 0.6s linear infinite;
+  animation: ${upDownAnimate} 0.5s linear infinite;
 
   ${(props) =>
     props.focus === 'me' &&
@@ -160,6 +165,7 @@ function GameBox() {
       if (game.countDown !== 0) {
         setFocus('me');
       } else {
+        // 강조는 꺼지되 위치는 변경하지 않기 위함
         setFocus('noMe');
       }
     } else if (
@@ -169,6 +175,7 @@ function GameBox() {
       if (game.countDown !== 0) {
         setFocus('peer');
       } else {
+        // 강조는 꺼지되 위치는 변경하지 않기 위함
         setFocus('noPeer');
       }
     } else {
@@ -178,13 +185,15 @@ function GameBox() {
 
   return (
     <Container isStart={game.isStart}>
-      <CameraFocus focus={focus} light={game.countDown % 2 === 1} />
+      <CameraFocus focus={focus} />
       <HighlightArrow src={arrow} focus={focus} />
       <Versus />
       <Wrapper isMe={true} isStart={game.isStart}>
         <MyScoreBar myVideoRef={myVideoRef} />
         <CameraWrapper isMe={true}>
-          <GameRole>{game.user.isOffender ? '공격자' : '수비자'}</GameRole>
+          <GameRole isMe={true} focus={focus}>
+            {game.user.isOffender ? '공격자' : '수비자'}
+          </GameRole>
           <NickNameBox>{myNickName}</NickNameBox>
           <MyCanvas myVideoRef={myVideoRef} />
         </CameraWrapper>
@@ -192,7 +201,9 @@ function GameBox() {
       <Wrapper isMe={false} isStart={game.isStart}>
         <PeerScoreBar />
         <CameraWrapper isMe={false}>
-          <GameRole>{game.user.isOffender ? '수비자' : '공격자'}</GameRole>
+          <GameRole isMe={false} focus={focus}>
+            {game.user.isOffender ? '수비자' : '공격자'}
+          </GameRole>
           <NickNameBox>{peerNickName}</NickNameBox>
           <PeerCanvas peerVideoRef={peerVideoRef} />
         </CameraWrapper>
