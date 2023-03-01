@@ -94,6 +94,11 @@ const GameEventHandler = () => {
       setGame((prev) => ({ ...prev, status }));
     });
 
+    // 아이템 라운드 관리
+    socket.on('get_item_type', (ItemType: number) => {
+      setGame((prev) => ({ ...prev, item_type: ItemType }));
+    });
+
     // 게임이 끝났을 때
     socket.on('get_finish', () => {
       GameMusic.currentTime = 0;
