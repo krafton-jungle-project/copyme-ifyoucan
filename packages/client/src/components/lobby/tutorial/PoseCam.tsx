@@ -20,24 +20,38 @@ import {
   isTPoseAtom,
   tutorialPassAtom,
 } from '../../../app/tutorial';
+import { Correct } from '../../../utils/sound';
+import correctImg from '../../../assets/images/tutorial/correct.gif';
+import loadingImg from '../../../assets/images/tutorial/loading.webp';
+
+const Container = styled.div`
+  background-image: url(${loadingImg});
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 100%;
+  height: 100%;
+`;
 
 const Video = styled.video`
   position: absolute;
-  object-fit: cover;
-  -webkit-transform: scaleX(-1);
-  transform: scaleX(-1);
   visibility: hidden;
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
 `;
 
 const Canvas = styled.canvas`
-  display: none;
+  background-color: #0008;
   object-fit: cover;
-  width: 95%;
+  width: 100%;
   height: 100%;
-  border-radius: 25px 5px;
+  border-radius: 5px;
+`;
+
+const CorrectSign = styled.img`
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%);
+  width: 30%;
 `;
 
 function PoseCam() {
@@ -45,6 +59,7 @@ function PoseCam() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [delay, setDelay] = useState<number | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean>(false);
 
   const isStarted = useAtomValue(isStartedAtom);
   const [isBody, setIsBody] = useAtom(isBodyAtom);
@@ -55,9 +70,7 @@ function PoseCam() {
   const [isPass, setIsPass] = useAtom(tutorialPassAtom);
 
   useEffect(() => {
-    if (!videoRef.current || !canvasRef.current) {
-      return;
-    }
+    if (!videoRef.current || !canvasRef.current) return;
 
     const elements = {
       video: videoRef.current,
@@ -67,6 +80,7 @@ function PoseCam() {
     movenet.myCanvasRender({
       size: { width: 680, height: 480 },
       element: elements,
+      canvasRender: true,
     });
 
     return () => {
@@ -78,15 +92,12 @@ function PoseCam() {
     if (canvasRef.current) {
       if (!isStarted) {
         setDelay(null);
-        canvasRef.current.style.display = 'none';
       } else {
-        canvasRef.current.style.display = 'block';
         setDelay(1000);
       }
 
       if (isPass) {
         setDelay(null);
-        canvasRef.current.style.display = 'none';
         cancelAnimationFrame(movenet.myRafId);
       }
     }
@@ -101,23 +112,44 @@ function PoseCam() {
     }
 
     let pose = await getMyPose();
+    let result;
+
+    const correctEffect = (flag: boolean) => {
+      if (flag) {
+        Correct.play();
+        setIsCorrect(true);
+        setTimeout(() => {
+          setIsCorrect(false);
+        }, 1000);
+      }
+    };
 
     if (isStarted && !isBody) {
-      setIsBody(isValidBody(pose));
+      result = isValidBody(pose);
+      correctEffect(result);
+      setIsBody(result);
     }
 
     if (isStarted && pose && isBody) {
       if (!isLeft) {
-        setIsLeft(isLeftHandUp(pose, 50));
+        result = isLeftHandUp(pose, 50);
+        correctEffect(result);
+        setIsLeft(result);
       }
       if (isLeft && !isRight) {
-        setIsRight(isRightHandUp(pose, 50));
+        result = isRightHandUp(pose, 50);
+        correctEffect(result);
+        setIsRight(result);
       }
       if (isLeft && isRight && !isT) {
-        setIsT(isTPose(pose, 65));
+        result = isTPose(pose, 65);
+        correctEffect(result);
+        setIsT(result);
       }
       if (isLeft && isRight && isT && !isSDR) {
-        setIsSDR(isSDRPose(pose, 70));
+        result = isSDRPose(pose, 70);
+        correctEffect(result);
+        setIsSDR(result);
       }
       if (isLeft && isRight && isT && isSDR) {
         setIsPass(true);
@@ -126,10 +158,11 @@ function PoseCam() {
   }, delay);
 
   return (
-    <>
+    <Container>
       <Video ref={videoRef}></Video>
       <Canvas ref={canvasRef}></Canvas>
-    </>
+      {isCorrect ? <CorrectSign src={correctImg} /> : null}
+    </Container>
   );
 }
 

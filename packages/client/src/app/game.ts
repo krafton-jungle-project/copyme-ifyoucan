@@ -27,6 +27,12 @@ enum GameStage {
   DEFEND,
 }
 
+enum ItemType {
+  BLUR,
+  ROTATE,
+  SIZEDOWN,
+}
+
 interface GameState {
   user: UserState;
   peer: PeerState;
@@ -35,6 +41,7 @@ interface GameState {
   stage: number;
   round: number;
   countDown: number;
+  item_type: number;
 }
 
 const initialState: GameState = {
@@ -54,8 +61,9 @@ const initialState: GameState = {
   stage: GameStage.INITIAL,
   round: 1,
   countDown: 0,
+  item_type: 100,
 };
 
 const gameAtom = atomWithReset(initialState);
 
-export { GameStatus, GameStage, gameAtom };
+export { GameStatus, GameStage, ItemType, gameAtom };

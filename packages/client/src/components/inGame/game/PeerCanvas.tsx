@@ -1,9 +1,9 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { peerInfoAtom } from '../../../app/peer';
-import { gameAtom, GameStage } from '../../../app/game';
-import * as moveNet from '../../../utils/tfjs-movenet';
+import { gameAtom, GameStage, ItemType } from '../../../app/game';
+import * as movenet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
 import { useClientSocket } from '../../../module/client-socket';
 import CountDown from './CountDown';
@@ -19,7 +19,22 @@ const Container = styled.div`
   border-radius: 20px;
 `;
 
-const Video = styled.video`
+const rotate = keyframes`
+  0% {
+    -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  }
+  50% {
+    -webkit-transform: scaleX(1);
+  transform: scaleX(1);
+  }
+  100% {
+-webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  }
+`;
+
+const Video = styled.video<{ itemType: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   -webkit-transform: scaleX(-1);
@@ -28,6 +43,30 @@ const Video = styled.video`
   width: 100%;
   height: 100%;
   border-radius: 20px;
+
+  ${(p) =>
+    p.itemType === ItemType.BLUR &&
+    p.offender &&
+    css`
+      filter: blur(30px);
+      transition: 0.7s;
+    `}
+
+  ${(p) =>
+    p.itemType === ItemType.ROTATE &&
+    p.offender &&
+    css`
+      animation: ${rotate} 1.5s infinite;
+      transition: 0.7s;
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.SIZEDOWN &&
+    p.offender &&
+    css`
+      transform: scale(0.5) scaleX(-1);
+      transition: 0.7s;
+    `}
 `;
 
 const Canvas = styled.canvas`
@@ -41,7 +80,7 @@ const Canvas = styled.canvas`
   transform: scaleX(-1); */
 `;
 
-const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
+const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   -webkit-transform: scaleX(-1);
@@ -57,11 +96,34 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff, 0 0 0.8rem #fff, 0 0 2.8rem #fff,
     inset 0 0 1.3rem #fff;
 
-  ${(props) =>
-    props.isCaptured &&
+  ${(p) =>
+    p.isCaptured &&
     css`
       transform: scaleX(-1.2) scaleY(1.25);
       right: 10%;
+    `}
+
+  ${(p) =>
+    p.itemType === ItemType.BLUR &&
+    p.offender &&
+    css`
+      filter: blur(30px);
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.ROTATE &&
+    p.offender &&
+    css`
+      animation: ${rotate} 1.5s infinite;
+      transition: 0.7s;
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.SIZEDOWN &&
+    p.offender &&
+    css`
+      transform: scale(0.5) scaleX(-1);
+      transition: 0.7s;
     `}
 
   transition: 0.7s;
@@ -93,20 +155,21 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
     //   canvasRef.current.width = 640;
     //   canvasRef.current.height = 480;
     // }, 1000);
-    moveNet.peerCanvasRender({
+    movenet.peerCanvasRender({
       size: { width: 640, height: 480 },
       element: elements,
       peerStream: peerInfo.stream,
+      canvasRender: false,
     });
 
     return () => {
-      cancelAnimationFrame(moveNet.peerRafId);
+      cancelAnimationFrame(movenet.peerRafId);
     };
   }, [videoRef, canvasRef, peerInfo.stream]);
 
   useEffect(() => {
     const getPeerPose = async () => {
-      const poses = await moveNet.detector.estimatePoses(moveNet.peerCamera.video);
+      const poses = await movenet.detector.estimatePoses(movenet.peerCamera.video);
       setGame((prev) => ({ ...prev, peer: { ...prev.peer, pose: poses[0] } }));
     };
 
@@ -168,9 +231,14 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
 
   return (
     <Container>
-      <Video ref={videoRef} />
+      <Video ref={videoRef} itemType={game.item_type} offender={!game.user.isOffender} />
       <Canvas ref={canvasRef} />
-      <CapturedPose ref={capturedPoseRef} isCaptured={isCaptured} />
+      <CapturedPose
+        ref={capturedPoseRef}
+        isCaptured={isCaptured}
+        itemType={game.item_type}
+        offender={!game.user.isOffender}
+      />
       {gradable ? <Grade score={game.peer.score} isMe={false} /> : null}
       <CountDown isMe={false} />
     </Container>

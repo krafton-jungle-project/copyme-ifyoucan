@@ -2,7 +2,15 @@ import { useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useClientSocket } from '../../module/client-socket';
 import { gameAtom, GameStage, GameStatus } from '../../app/game';
-import { Bell, CameraClick, CountDown3s, GameMusic, GunReload, Swish } from '../../utils/sound';
+import {
+  BackgroundMusic,
+  Bell,
+  CameraClick,
+  CountDown,
+  GameMusic,
+  GunReload,
+  Swish,
+} from '../../utils/sound';
 import { useResetAtom } from 'jotai/utils';
 import { roomInfoAtom } from '../../app/room';
 
@@ -32,6 +40,7 @@ const GameEventHandler = () => {
         status: GameStatus.GAME,
       }));
 
+      BackgroundMusic.pause();
       Swish.play(); // 비디오 휙 넘어가는 소리
 
       setTimeout(() => {
@@ -40,34 +49,36 @@ const GameEventHandler = () => {
 
       setTimeout(() => {
         GameMusic.play(); // 게임 배경음악
-        GameMusic.volume = 0.3;
+        GameMusic.volume = 0.5;
       }, 1500);
     });
 
     socket.on('get_count_down', (count: number, stage: string) => {
       setGame((prev) => ({ ...prev, countDown: count }));
 
-      if (count === 3) {
-        CountDown3s.play();
+      if (count === 5) {
+        CountDown.play();
       }
 
       if (count === 0) {
         CameraClick.play();
 
-        setTimeout(() => {
-          if (stage === 'offend') {
+        if (stage === 'offend') {
+          setTimeout(() => {
             setGame((prev) => ({ ...prev, stage: GameStage.DEFEND }));
-          }
-          // stage === 'defend')
-          else {
+          }, 2500);
+        }
+
+        if (stage === 'defend') {
+          setTimeout(() => {
             setGame((prev) => ({
               ...prev,
               stage: Number.isInteger(prev.round + 0.5) ? GameStage.ROUND : GameStage.OFFEND,
               round: prev.round + 0.5,
               user: { ...prev.user, isOffender: !prev.user.isOffender }, // 공수전환
             }));
-          }
-        }, 4000);
+          }, 4000);
+        }
       }
     });
 
@@ -81,6 +92,11 @@ const GameEventHandler = () => {
 
     socket.on('get_change_status', (status: number) => {
       setGame((prev) => ({ ...prev, status }));
+    });
+
+    // 아이템 라운드 관리
+    socket.on('get_item_type', (ItemType: number) => {
+      setGame((prev) => ({ ...prev, item_type: ItemType }));
     });
 
     // 게임이 끝났을 때

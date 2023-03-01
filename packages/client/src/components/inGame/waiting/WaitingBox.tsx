@@ -25,21 +25,9 @@ const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
   left: ${(props) => (props.isMe ? (props.isStart ? '-35%' : '0%') : 'none')};
   right: ${(props) => (props.isMe ? 'none' : props.isStart ? '-35%' : '0%')};
   width: 27.5%;
-  aspect-ratio: 4/5;
+  aspect-ratio: 7/10;
   transition-property: left, right;
   transition-duration: 0.5s, 0.5s;
-`;
-
-const NickNameBox = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  top: 0%;
-  width: 100%;
-  height: 10%;
-  font-size: 30px;
-  font-weight: bold;
 `;
 
 const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`
@@ -47,12 +35,24 @@ const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  bottom: 0%;
+  top: 0%;
   width: 100%;
-  height: 10%;
+  height: 15%;
   font-size: 30px;
   font-weight: bold;
   color: ${(props) => (props.isHost ? 'yellow' : props.isReady ? 'red' : 'grey')};
+`;
+
+const NickNameBox = styled.div`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 0%;
+  width: 100%;
+  height: 15%;
+  font-size: 30px;
+  font-weight: bold;
 `;
 
 function WaitingBox() {
@@ -63,15 +63,13 @@ function WaitingBox() {
   return (
     <Container isStart={game.isStart}>
       <Wrapper isMe={true} isStart={game.isStart}>
-        <NickNameBox>{myNickName}</NickNameBox>
-        <MyVideo />
         <ReadyState isHost={roomInfo.host} isReady={game.user.isReady}>
           {roomInfo.host ? '👑 HOST' : game.user.isReady ? 'READY' : 'NOT READY'}
         </ReadyState>
+        <MyVideo />
+        <NickNameBox>{myNickName}</NickNameBox>
       </Wrapper>
       <Wrapper isMe={false} isStart={game.isStart}>
-        <NickNameBox>{peerInfo.nickName}</NickNameBox>
-        <PeerVideo />
         <ReadyState isHost={!roomInfo.host} isReady={game.peer.isReady}>
           {roomInfo.host
             ? peerInfo.nickName
@@ -81,6 +79,8 @@ function WaitingBox() {
               : 'WAITING'
             : '👑 HOST'}
         </ReadyState>
+        <PeerVideo />
+        <NickNameBox>{peerInfo.nickName}</NickNameBox>
       </Wrapper>
       <Chatting />
     </Container>

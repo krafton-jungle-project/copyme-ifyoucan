@@ -10,6 +10,7 @@ interface MovenetParam {
     video: HTMLVideoElement;
     canvas: HTMLCanvasElement;
   };
+  canvasRender: boolean;
   peerStream?: MediaStream;
 }
 
@@ -105,17 +106,17 @@ class Camera {
 
     this.ctx.fillStyle = KEYPOINT_COLOR_FILL_CENTER;
     for (const i of keypointInd.middle) {
-      this.drawKeypoint(keypoints[i]);
+      if (i > 4) this.drawKeypoint(keypoints[i]);
     }
 
     this.ctx.fillStyle = KEYPOINT_COLOR_FILL_LEFT;
     for (const i of keypointInd.left) {
-      this.drawKeypoint(keypoints[i]);
+      if (i > 4) this.drawKeypoint(keypoints[i]);
     }
 
     this.ctx.fillStyle = KEYPOINT_COLOR_FILL_RIGHT;
     for (const i of keypointInd.right) {
-      this.drawKeypoint(keypoints[i]);
+      if (i > 4) this.drawKeypoint(keypoints[i]);
     }
   }
 
@@ -149,7 +150,7 @@ class Camera {
       const score2: number = kp2.score !== undefined ? kp2.score : 1;
 
       // 두 key points의 score(추정 정확도)가 모두 SCORE_THRESSHOLD 이상일 때, 두 key points를 선으로 연결한다.
-      if (score1 >= SCORE_THRESSHOLD && score2 >= SCORE_THRESSHOLD) {
+      if (i > 4 && j > 4 && score1 >= SCORE_THRESSHOLD && score2 >= SCORE_THRESSHOLD) {
         this.ctx.beginPath();
         this.ctx.moveTo(kp1.x, kp1.y);
         this.ctx.lineTo(kp2.x, kp2.y);
@@ -198,14 +199,20 @@ async function peerRenderDetection() {
 
 export async function myCanvasRender(movenetParam: MovenetParam) {
   myCamera = await Camera.setupCamera(movenetParam);
+
   // detector가 생성된 이후에 자세를 추정하여 인식된 랜드마크와 골격을 canvas에 그린다.
-  myRenderDetection();
+  if (movenetParam.canvasRender) {
+    myRenderDetection();
+  }
 }
 
 export async function peerCanvasRender(movenetParam: MovenetParam) {
   peerCamera = await Camera.setupCamera(movenetParam);
+
   // detector가 생성된 이후에 자세를 추정하여 인식된 랜드마크와 골격을 canvas에 그린다.
-  // peerRenderDetection();
+  if (movenetParam.canvasRender) {
+    peerRenderDetection();
+  }
 }
 
 // 웹캠 스트림을 생성하여 반환하는 함수
@@ -222,6 +229,8 @@ export async function getMyStream(param: { width: number; height: number }) {
     },
   };
   stream = await navigator.mediaDevices.getUserMedia(videoConfig);
+
+  return stream;
 }
 
 // Pose Detector를 생성하여 반환하는 함수
@@ -229,4 +238,6 @@ export async function createDetector() {
   detector = await poseDetection.createDetector(POSE_DETECTION_MODEL, {
     modelType: POSE_DETECTION_MODEL_TYPE,
   });
+
+  return detector;
 }

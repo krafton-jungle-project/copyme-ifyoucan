@@ -1,24 +1,40 @@
 import { useAtom, useAtomValue } from 'jotai';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { isStartedAtom, tutorialImgAtom } from '../../../app/tutorial';
-import startImg from '../../../assets/images/tutorial/leggo.webp';
 
-const ImgWrapper = styled.div`
-  height: 50%;
-  width: 95%;
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  /* height: 100vh; */
 `;
 
-const Img = styled.img<{ isStarted: boolean }>`
-  height: 85%;
-  width: auto;
-  ${(props) =>
-    !props.isStarted &&
-    css`
-      cursor: pointer;
-    `}
+const Button = styled.button`
+  background-color: transparent;
+  color: #dd74c1;
+  border: 4px solid #dd74c1;
+  border-radius: 15px;
+  padding: 15px 25px;
+  font-size: 30px;
+  letter-spacing: 5px;
+  font-weight: 800;
+  filter: drop-shadow(0 0 5px #dd74c1) drop-shadow(0 0 20px #dd74c1) contrast(2) brightness(2);
+  cursor: pointer;
+
+  &:hover {
+    color: black;
+    background-color: #dd74c1;
+    filter: drop-shadow(0 0 10px #dd74c1) contrast(2) brightness(2);
+  }
+  transition: 0.5s;
+`;
+
+const Img = styled.img`
+  width: 100%;
+  height: 100%;
 `;
 
 function PoseImg() {
@@ -30,14 +46,9 @@ function PoseImg() {
   };
 
   return (
-    <ImgWrapper>
-      <Img
-        src={isStarted ? img : startImg}
-        alt="pose"
-        onClick={startTutorial}
-        isStarted={isStarted}
-      />
-    </ImgWrapper>
+    <Container>
+      {isStarted ? <Img src={img} alt="pose" /> : <Button onClick={startTutorial}>시작하기</Button>}
+    </Container>
   );
 }
 

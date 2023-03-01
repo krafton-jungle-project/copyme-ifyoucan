@@ -1,8 +1,8 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { gameAtom, GameStage } from '../../../app/game';
-import * as moveNet from '../../../utils/tfjs-movenet';
+import { gameAtom, GameStage, ItemType } from '../../../app/game';
+import * as movenet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
 import { useClientSocket } from '../../../module/client-socket';
 import CountDown from './CountDown';
@@ -18,7 +18,22 @@ const Container = styled.div`
   border-radius: 20px;
 `;
 
-const Video = styled.video`
+const rotate = keyframes`
+  0% {
+    -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  }
+  50% {
+    -webkit-transform: scaleX(1);
+  transform: scaleX(1);
+  }
+  100% {
+-webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  }
+`;
+
+const Video = styled.video<{ itemType: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   -webkit-transform: scaleX(-1);
@@ -27,6 +42,31 @@ const Video = styled.video`
   width: 100%;
   height: 100%;
   border-radius: 20px;
+  /* filter: blur(5px); */
+
+  ${(p) =>
+    p.itemType === ItemType.BLUR &&
+    p.offender &&
+    css`
+      filter: blur(30px);
+      transition: 0.7s;
+    `}
+
+  ${(p) =>
+    p.itemType === ItemType.ROTATE &&
+    p.offender &&
+    css`
+      animation: ${rotate} 1.5s infinite;
+      transition: 0.7s;
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.SIZEDOWN &&
+    p.offender &&
+    css`
+      transform: scale(0.5) scaleX(-1);
+      transition: 0.7s;
+    `}
 `;
 
 const Canvas = styled.canvas`
@@ -35,10 +75,10 @@ const Canvas = styled.canvas`
   visibility: hidden;
   width: 100%;
   height: 100%;
-  border-radius: 25px 5px;
+  border-radius: 20px;
 `;
 
-const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
+const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   -webkit-transform: scaleX(-1);
@@ -54,11 +94,34 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff, 0 0 0.8rem #fff, 0 0 2.8rem #fff,
     inset 0 0 1.3rem #fff;
 
-  ${(props) =>
-    props.isCaptured &&
+  ${(p) =>
+    p.isCaptured &&
     css`
       transform: scaleX(-1.2) scaleY(1.25);
       left: 10%;
+    `}
+
+  ${(p) =>
+    p.itemType === ItemType.BLUR &&
+    p.offender &&
+    css`
+      filter: blur(30px);
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.ROTATE &&
+    p.offender &&
+    css`
+      animation: ${rotate} 1.5s infinite;
+      transition: 0.7s;
+    `}
+
+    ${(p) =>
+    p.itemType === ItemType.SIZEDOWN &&
+    p.offender &&
+    css`
+      transform: scale(0.5) scaleX(-1);
+      transition: 0.7s;
     `}
 
   transition: 0.7s;
@@ -76,6 +139,15 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
   const [gradable, setGradable] = useState(false);
 
   useEffect(() => {
+    // if (game.round < 2) return;
+
+    if (host) {
+      let idx = Math.floor(Math.random() * (Object.keys(ItemType).length / 2));
+      socket.emit('item_type', idx);
+    }
+  }, [game.round]);
+
+  useEffect(() => {
     if (videoRef.current === null || canvasRef.current === null) return;
 
     const elements = {
@@ -83,13 +155,14 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
       canvas: canvasRef.current,
     };
 
-    moveNet.myCanvasRender({
+    movenet.myCanvasRender({
       size: { width: 640, height: 480 },
       element: elements,
+      canvasRender: false,
     });
 
     return () => {
-      cancelAnimationFrame(moveNet.myRafId);
+      cancelAnimationFrame(movenet.myRafId);
     };
   }, [videoRef, canvasRef]);
 
@@ -123,6 +196,10 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
 
       // 캡쳐한 수비사진을, 공격자의 캡쳐한 사진과 짧게 비교
       if (game.stage === GameStage.DEFEND) {
+        // 아이템 타입 초기화
+        if (game.item_type < 10) {
+          socket.emit('item_type', 100);
+        }
         // 공수 비교 이펙트
         setTimeout(() => {
           setIsCaptured(true);
@@ -147,9 +224,14 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
 
   return (
     <Container>
-      <Video ref={videoRef}></Video>
+      <Video ref={videoRef} itemType={game.item_type} offender={game.user.isOffender} />
       <Canvas ref={canvasRef}></Canvas>
-      <CapturedPose ref={capturedPoseRef} isCaptured={isCaptured} />
+      <CapturedPose
+        ref={capturedPoseRef}
+        isCaptured={isCaptured}
+        itemType={game.item_type}
+        offender={game.user.isOffender}
+      />
       {gradable ? <Grade score={game.user.score} isMe={true} /> : null}
       <CountDown isMe={true} />
     </Container>

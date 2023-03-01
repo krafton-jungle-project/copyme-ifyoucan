@@ -1,9 +1,12 @@
 @import url('https://cdn.rawgit.com/innks/NanumSquareRound/master/nanumsquareround.min.css');
 
 * {
+  margin: 0;
+  padding: 0;
   font-family: 'NanumSquareRound', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
 }
 
 body {
@@ -12,4 +15,20 @@ body {
   background-image: url('./assets/images/background-image.jpg');
   background-size: cover;
   color: white;
+
+  /* background: linear-gradient(270deg, #00d0ff, rgb(0, 0, 0), #ff0090);
+  background-size: 600% 600%;
+  animation: gradient 10s ease infinite; */
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
