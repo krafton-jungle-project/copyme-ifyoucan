@@ -1,0 +1,41 @@
+name: Copy me If you Can
+
+on:
+  # main branch에 푸시 시
+  push:
+    branches: [ "feature/action" ]
+    
+  # main branch에 PR 시
+  pull_request:
+    branches: [ "feature/action" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+        
+    - name: build client
+      run: |
+          yarn install 
+          yarn client:build
+      
+    - name: build server
+      run: |
+          yarn server:build
+        
+    - name: Dev
+      run: |
+        yarn client:start
+        yarn server:dev
