@@ -126,14 +126,6 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
   const host = useAtomValue(roomInfoAtom).host;
   const { socket } = useClientSocket();
 
-  // useEffect(() => {
-  //   // if (game.round < 3) return;
-
-  //   if (host) {
-
-  //   }
-  // }, [game.round]);
-
   useEffect(() => {
     if (videoRef.current === null || canvasRef.current === null) return;
 
@@ -189,6 +181,7 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
       }
     }
 
+    // 카운트다운 시작할 때 아이템 적용
     if (game.countDown === 5 && game.stage === GameStage.OFFEND) {
       if (host && game.round >= 3) {
         let idx = Math.floor(Math.random() * (Object.keys(ItemType).length / 2));
