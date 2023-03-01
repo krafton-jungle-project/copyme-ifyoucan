@@ -279,7 +279,7 @@ function GameBox() {
           <PeerCanvas peerVideoRef={peerVideoRef} />
         </CameraWrapper>
       </Wrapper>
-      {/* <InvisibleDrawingCanvas /> */}
+      <InvisibleDrawingCanvas />
       <FadeBackGround visible={roundImg !== transparent}>
         <RoundImg alt="round image" src={roundImg} />
       </FadeBackGround>
