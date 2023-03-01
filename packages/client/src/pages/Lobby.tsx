@@ -212,11 +212,13 @@ const nickNameArr = [
 const randomIdx = Math.floor(Math.random() * 10);
 export let myNickName = nickNameArr[randomIdx]; //temp
 
+let prevBgmState = true;
+
 function Lobby() {
   const navigate = useNavigate();
   const [mode, setMode] = useState('플레이');
   const { isStreamReady } = useMovenetStream();
-  const [mute, setMute] = useState(bgmOffImg);
+  const [muteImg, setMuteImg] = useState(prevBgmState === true ? bgmOffImg : bgmOnImg);
   let content;
 
   switch (mode) {
@@ -266,28 +268,33 @@ function Lobby() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      BackgroundMusic.play();
-      BackgroundMusic.volume = 0.5;
-    }, 1000);
-    BackgroundMusic.addEventListener(
-      'ended',
-      function () {
-        this.play();
-      },
-      false,
-    );
+    if (prevBgmState === true) {
+      setTimeout(() => {
+        BackgroundMusic.play();
+        BackgroundMusic.volume = 0.5;
+      }, 1000);
+
+      BackgroundMusic.addEventListener(
+        'ended',
+        function () {
+          this.play();
+        },
+        false,
+      );
+    }
   }, []);
 
   const bgmHandler = () => {
-    if (mute === bgmOffImg) {
+    if (prevBgmState === true) {
+      prevBgmState = false;
       ButtonClick.play();
       BackgroundMusic.pause();
-      setMute(bgmOnImg);
+      setMuteImg(bgmOnImg);
     } else {
+      prevBgmState = true;
       ButtonClick.play();
       BackgroundMusic.play();
-      setMute(bgmOffImg);
+      setMuteImg(bgmOffImg);
     }
   };
 
@@ -297,8 +304,8 @@ function Lobby() {
       <Wrapper>
         <Header>
           <MuteWrapper>
-            <MuteImg src={mute} onClick={bgmHandler} />
-            <MuteTxt>{mute === bgmOffImg ? 'BGM OFF' : 'BGM ON'}</MuteTxt>
+            <MuteImg src={muteImg} onClick={bgmHandler} />
+            <MuteTxt>{muteImg === bgmOffImg ? 'BGM OFF' : 'BGM ON'}</MuteTxt>
           </MuteWrapper>
           <Logo
             alt="logo"
