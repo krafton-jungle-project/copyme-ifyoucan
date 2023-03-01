@@ -249,7 +249,7 @@ function GameBox() {
         setRoundImg(transition);
         setTimeout(() => {
           setRoundImg(transparent);
-        }, 2000);
+        }, 2500);
       }
     }
   }, [game.stage, game.round]);

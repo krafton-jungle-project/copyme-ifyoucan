@@ -212,7 +212,7 @@ const nickNameArr = [
 const randomIdx = Math.floor(Math.random() * 10);
 export let myNickName = nickNameArr[randomIdx]; //temp
 
-let prevBgmState = true;
+export let prevBgmState = true;
 
 function Lobby() {
   const navigate = useNavigate();
@@ -271,7 +271,7 @@ function Lobby() {
     if (prevBgmState === true) {
       setTimeout(() => {
         BackgroundMusic.play();
-        BackgroundMusic.volume = 0.5;
+        BackgroundMusic.volume = 0.7;
       }, 1000);
 
       BackgroundMusic.addEventListener(

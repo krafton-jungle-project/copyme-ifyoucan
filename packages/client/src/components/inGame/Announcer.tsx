@@ -14,7 +14,7 @@ const Container = styled.div<{ isStart: boolean }>`
   align-items: center;
   left: 50%;
   transform: translate(-50%);
-  width: ${(props) => (props.isStart ? '40%' : '60%')};
+  width: ${(props) => (props.isStart ? '50%' : '60%')};
   height: 100%;
   font-size: 2.8vw;
   font-weight: 400;
