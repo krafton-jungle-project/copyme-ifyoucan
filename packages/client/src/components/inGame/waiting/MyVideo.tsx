@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { stream } from '../../../utils/tfjs-movenet';
-import DefaultProfileImg from '../../../assets/images/default-profile.png';
+import DefaultProfileImg from '../../../assets/images/my-default-profile.png';
 import { gameAtom } from '../../../app/game';
 
 const Container = styled.div<{ isStart: boolean }>`
@@ -15,7 +15,6 @@ const Container = styled.div<{ isStart: boolean }>`
   transition-property: left;
   transition-duration: 0.5s;
   border-radius: 20px;
-  background-color: grey;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #ff3131;
 `;
 
@@ -34,6 +33,7 @@ const Video = styled.video`
   width: 100%;
   height: 100%;
   border-radius: 20px;
+  background-color: #0008;
 `;
 
 function MyVideo() {

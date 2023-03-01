@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
-import DefaultProfileImg from '../../../assets/images/default-profile.png';
+import DefaultProfileImg from '../../../assets/images/peer-default-profile.jpg';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -15,7 +15,6 @@ const Container = styled.div<{ isStart: boolean }>`
   transition-property: right;
   transition-duration: 0.5s;
   border-radius: 20px;
-  background-color: grey;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #1f51ff;
 `;
 
@@ -34,6 +33,7 @@ const Video = styled.video`
   width: 100%;
   height: 100%;
   border-radius: 20px;
+  background-color: #0008;
 `;
 
 const PeerVideo = () => {
