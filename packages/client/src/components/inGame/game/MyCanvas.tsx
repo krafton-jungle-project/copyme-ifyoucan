@@ -94,6 +94,8 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff, 0 0 0.8rem #fff, 0 0 2.8rem #fff,
     inset 0 0 1.3rem #fff;
 
+  transition: 0.5s;
+
   ${(p) =>
     p.isCaptured &&
     css`
@@ -123,8 +125,6 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
       transform: scale(0.5) scaleX(-1);
       transition: 0.7s;
     `}
-
-  transition: 0.7s;
 `;
 
 function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement> }) {
@@ -135,11 +135,9 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
   const game = useAtomValue(gameAtom);
   const host = useAtomValue(roomInfoAtom).host;
   const { socket } = useClientSocket();
-  const [isCaptured, setIsCaptured] = useState(false);
-  const [gradable, setGradable] = useState(false);
 
   useEffect(() => {
-    // if (game.round < 2) return;
+    if (game.round < 3) return;
 
     if (host) {
       let idx = Math.floor(Math.random() * (Object.keys(ItemType).length / 2));
@@ -194,30 +192,13 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
         }
       }
 
+      // check
       // 캡쳐한 수비사진을, 공격자의 캡쳐한 사진과 짧게 비교
       if (game.stage === GameStage.DEFEND) {
         // 아이템 타입 초기화
         if (game.item_type < 10) {
           socket.emit('item_type', 100);
         }
-        // 공수 비교 이펙트
-        setTimeout(() => {
-          setIsCaptured(true);
-          if (!game.user.isOffender) {
-            setTimeout(() => {
-              setGradable(true);
-            }, 1000);
-          }
-        }, 1000);
-
-        setTimeout(() => {
-          if (videoRef.current !== null && capturedPoseRef.current !== null) {
-            // 공수 비교 이펙트 끝나고 다시 사진 감추기
-            capturedPoseRef.current.style.visibility = 'hidden';
-            setIsCaptured(false);
-            setGradable(false);
-          }
-        }, 3000);
       }
     }
   }, [game.countDown]);
@@ -228,11 +209,11 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
       <Canvas ref={canvasRef}></Canvas>
       <CapturedPose
         ref={capturedPoseRef}
-        isCaptured={isCaptured}
+        isCaptured={game.isCaptured}
         itemType={game.item_type}
         offender={game.user.isOffender}
       />
-      {gradable ? <Grade score={game.user.score} isMe={true} /> : null}
+      {game.user.gradable ? <Grade score={game.user.score} isMe={true} /> : null}
       <CountDown isMe={true} />
     </Container>
   );
