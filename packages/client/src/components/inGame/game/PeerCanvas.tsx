@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from 'styled-components';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { peerInfoAtom } from '../../../app/peer';
 import { gameAtom, GameStage, ItemType } from '../../../app/game';
@@ -21,35 +21,31 @@ const Container = styled.div`
 
 const rotate = keyframes`
   0% {
-    -webkit-transform: scaleX(-1);
-  transform: scaleX(-1);
+    transform: scaleX(-1);
   }
   50% {
-    -webkit-transform: scaleX(1);
-  transform: scaleX(1);
+    transform: scaleX(1);
   }
   100% {
--webkit-transform: scaleX(-1);
-  transform: scaleX(-1);
+    transform: scaleX(-1);
   }
 `;
 
 const Video = styled.video<{ itemType: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
-  -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
   /* visibility: hidden; */
   width: 100%;
   height: 100%;
   border-radius: 20px;
+  transition: 0.7s;
 
   ${(p) =>
     p.itemType === ItemType.BLUR &&
     p.offender &&
     css`
       filter: blur(30px);
-      transition: 0.7s;
     `}
 
   ${(p) =>
@@ -57,7 +53,6 @@ const Video = styled.video<{ itemType: any; offender: boolean }>`
     p.offender &&
     css`
       animation: ${rotate} 1.5s infinite;
-      transition: 0.7s;
     `}
 
     ${(p) =>
@@ -65,7 +60,6 @@ const Video = styled.video<{ itemType: any; offender: boolean }>`
     p.offender &&
     css`
       transform: scale(0.5) scaleX(-1);
-      transition: 0.7s;
     `}
 `;
 
@@ -81,7 +75,6 @@ const Canvas = styled.canvas`
 const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
-  -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
   right: 0%;
   width: 100%;
@@ -94,7 +87,7 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff, 0 0 0.8rem #fff, 0 0 2.8rem #fff,
     inset 0 0 1.3rem #fff;
 
-  transition: 0.5s;
+  transition: 0.7s;
 
   ${(p) =>
     p.isCaptured &&
@@ -115,7 +108,6 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
     p.offender &&
     css`
       animation: ${rotate} 1.5s infinite;
-      transition: 0.7s;
     `}
 
     ${(p) =>
@@ -123,7 +115,6 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
     p.offender &&
     css`
       transform: scale(0.5) scaleX(-1);
-      transition: 0.7s;
     `}
 `;
 
@@ -196,6 +187,13 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
       }
     }
   }, [game.countDown]);
+
+  // 공수 비교 이펙트 끝나고 캡쳐 사진 감추고 다시 비디오 on
+  useEffect(() => {
+    if (capturedPoseRef.current && game.stage === GameStage.DEFEND && !game.isCaptured) {
+      capturedPoseRef.current.style.visibility = 'hidden';
+    }
+  }, [game.isCaptured]);
 
   return (
     <Container>
