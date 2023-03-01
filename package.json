@@ -7,7 +7,9 @@
   "private": true,
   "scripts": {
     "server:dev": "yarn workspace server start:dev",
-    "client:start": "yarn workspace client start"
+    "client:start": "yarn workspace client start",
+    "server:build": "yarn workspace server build",
+    "client:build": "yarn workspace client build"
   },
   "workspaces": [
     "packages/*"
