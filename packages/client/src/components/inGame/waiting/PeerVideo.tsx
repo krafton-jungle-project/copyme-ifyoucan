@@ -30,7 +30,6 @@ const Img = styled.img`
 const Video = styled.video`
   position: absolute;
   object-fit: cover;
-  -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
   width: 100%;
   height: 100%;

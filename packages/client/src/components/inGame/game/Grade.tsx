@@ -19,7 +19,7 @@ const GradeImg = styled.img<{ isMe: boolean }>`
   ${(props) =>
     !props.isMe &&
     css`
-      right: 0%;
+      right: 0;
     `}
 `;
 
