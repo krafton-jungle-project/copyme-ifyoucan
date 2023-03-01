@@ -52,6 +52,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleDisconnect(@ConnectedSocket() socket: ServerToClientSocket): void {
     const roomId = this.userToRoom[socket.id];
     if (!roomId) return;
+    delete this.userToRoom[socket.id];
 
     // 유저 정보 업데이트
     if (this.rooms[roomId]) {
@@ -62,6 +63,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.logger.log(`roomId: ${roomId} 삭제`);
       } else {
         socket.to(roomId).emit('user_exit', this.rooms[roomId].isStart);
+        socket.to(roomId).emit('message', {
+          userId: '',
+          message: `🔴 상대방의 연결이 끊겼습니다. 🔴`,
+          isImg: false,
+        });
       }
     }
 
@@ -217,7 +223,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           });
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '🔥 최고의 수비자 🔥',
+            message: '🔥 최고의 공격 🔥',
             isImg: false,
           });
         } else if (idx === 1) {
@@ -248,7 +254,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           if (bestIdx % 2 === 0) {
             this.server.in(roomId).emit('message', {
               userId: users[0].id,
-              message: `수비 포즈(유사도 ${maxScore}%)`,
+              message: `수비 포즈(유사도 ${minScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
@@ -259,7 +265,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           } else {
             this.server.in(roomId).emit('message', {
               userId: users[1].id,
-              message: `수비 포즈(유사도 ${maxScore}%)`,
+              message: `수비 포즈(유사도 ${minScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
@@ -276,7 +282,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           });
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '\n\n💩 최악의 수비자 💩',
+            message: '\n\n🔥 최고의 수비 🔥',
             isImg: false,
           });
         } else if (idx === 4) {
@@ -307,7 +313,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           if (worstIdx % 2 === 0) {
             this.server.in(roomId).emit('message', {
               userId: users[1].id,
-              message: `수비 자세(유사도 ${minScore}%)`,
+              message: `수비 자세(유사도 ${maxScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
@@ -318,7 +324,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           } else {
             this.server.in(roomId).emit('message', {
               userId: users[0].id,
-              message: `수비 자세(유사도 ${minScore}%)`,
+              message: `수비 자세(유사도 ${maxScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
@@ -416,6 +422,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   exitRoom(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() nickName: string): void {
     const roomId = this.userToRoom[socket.id];
     if (!roomId) return;
+
+    delete this.userToRoom[socket.id];
     socket.leave(roomId);
 
     // 유저 정보 업데이트
