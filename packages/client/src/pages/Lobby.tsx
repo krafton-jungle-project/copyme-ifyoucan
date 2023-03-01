@@ -135,6 +135,7 @@ const NavItem = styled.div<{ isSelected: boolean }>`
   padding: 5px 5px 5px 5px;
   margin: 0 10px 0 10px;
   color: #fff8;
+  transition: 0.5s;
 
   ${(props) =>
     props.isSelected &&

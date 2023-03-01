@@ -27,12 +27,12 @@ function Grade({ score, isMe }: { score: number; isMe: boolean }) {
   const [gradeImg, setGradeImg] = useState('');
 
   useEffect(() => {
-    if (score > 60) {
-      if (score > 90) {
+    if (score >= 60) {
+      if (score >= 90) {
         setGradeImg(perfect);
-      } else if (score > 80) {
+      } else if (score >= 80) {
         setGradeImg(great);
-      } else if (score > 70) {
+      } else if (score >= 70) {
         setGradeImg(good);
       } else {
         setGradeImg(bad);
