@@ -1,14 +1,12 @@
-import { useAtomValue } from 'jotai';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { stream } from '../../../utils/tfjs-movenet';
 import DefaultProfileImg from '../../../assets/images/my-default-profile.png';
-import { gameAtom } from '../../../app/game';
 
 const Container = styled.div`
   position: absolute;
   top: 50%;
-  left: 0%;
+  left: 0;
   transform: translate(0, -50%); /* 세로 가운데 정렬(top: 50%와 같이 사용) */
   width: 100%;
   aspect-ratio: 1;
@@ -36,7 +34,6 @@ const Video = styled.video`
 
 function MyVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const isStart = useAtomValue(gameAtom).isStart;
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.srcObject = stream;

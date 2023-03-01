@@ -2,7 +2,7 @@ import axios from 'axios';
 // import { Blob } from 'buffer';
 import React, { useEffect, useState } from 'react';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
-import { Paging } from './bestShot/Paging';
+import { Paging } from './Paging';
 
 //todo: 경기 사진이나 동영상 가져올 때 정보 가져와야하므로 다시 고려해야함
 
@@ -41,7 +41,6 @@ export default function BestShot() {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res) {
-            console.log(res);
             const imgurls = res.data.data.imgurl;
             setImages(imgurls.reverse());
           }

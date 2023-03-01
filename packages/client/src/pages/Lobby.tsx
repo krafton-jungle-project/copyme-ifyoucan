@@ -1,18 +1,18 @@
-import RoomList from '../components/lobby/RoomList';
+import RoomList from '../components/lobby/room-list/RoomList';
 import styled, { css } from 'styled-components';
 import Loading from '../components/lobby/Loading';
 import { useEffect, useState } from 'react';
 import { removeUser } from '../utils/local-storage';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Tutorial from '../components/lobby/Tutorial';
+import Tutorial from '../components/lobby/tutorial/Tutorial';
 import { useMovenetStream } from '../module/movenet-stream';
 import { BackgroundMusic } from '../utils/sound';
 import logoImg from '../assets/images/logo.png';
 import { ButtonClick } from '../utils/sound';
 import logoutImg from '../assets/images/logout.png';
 import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
-import BestShot from '../components/lobby/BestShot';
+import BestShot from '../components/lobby/best-shot/BestShot';
 import bgmOnImg from '../assets/images/bgm-on.png';
 import bgmOffImg from '../assets/images/bgm-off.png';
 
@@ -32,8 +32,8 @@ const Wrapper = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   border: 0.1rem solid #fff;
   border-radius: 40px;
-  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
-    0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 1rem #bc13fe, 0 0 0.4rem #bc13fe,
+    0 0 1.4rem #bc13fe, inset 0 0 0.6rem #bc13fe;
 `;
 
 const Header = styled.div`
@@ -62,7 +62,7 @@ const MuteImg = styled.img`
 
 const MuteTxt = styled.p`
   position: absolute;
-  bottom: 0%;
+  bottom: 0;
   left: 50%;
   transform: translate(-50%);
   font-size: 12px;
@@ -102,7 +102,7 @@ const LogOutImg = styled.img`
 
 const LogOutTxt = styled.p`
   position: absolute;
-  bottom: 0%;
+  bottom: 0;
   left: 50%;
   transform: translate(-50%);
   font-size: 12px;

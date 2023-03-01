@@ -9,7 +9,7 @@ import { useMovenetStream } from '../../../module/movenet-stream';
 
 const Container = styled.div`
   position: absolute;
-  right: 0%;
+  right: 0;
   width: calc(100% * (1 / 6));
   height: 100%;
 `;
@@ -41,11 +41,10 @@ const animate = keyframes`
 
 const ScoreBar = styled.div<{ isInit: boolean; score: number; isDefense: boolean }>`
   position: absolute;
-  bottom: 0%;
+  bottom: 0;
   width: 100%;
   height: ${(props) => `${props.score.toString()}%`};
-  transition: ${(props) => (props.isInit ? '1.2s' : '0s')};
-  transition-duration: ${(props) => (props.isInit ? '1.5s' : '0.5s')};
+  transition: ${(props) => (props.isInit ? 'height 1.5s linear 1.2s' : 'height 0.5s linear')};
   background-color: ${(props) => (props.score > 60 ? '#ff3131' : '#888')};
   border-radius: 20px;
   ${(props) =>
@@ -62,7 +61,7 @@ const ScorePercent = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  top: 0%;
+  top: 0;
   width: 100%;
   height: 10%;
   font-size: 40px;
@@ -76,7 +75,7 @@ const ScoreInfo = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  bottom: 0%;
+  bottom: 0;
   width: 100%;
   height: 10%;
   font-size: 30px;
@@ -90,7 +89,6 @@ const ScoreInfo = styled.div`
 function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement> }) {
   const [game, setGame] = useAtom(gameAtom);
   const [delay, setDelay] = useState<number | null>(null);
-  const [isInit, setIsInit] = useState(true);
   const { socket } = useClientSocket();
   const detector = useMovenetStream().movenet.detector;
 
@@ -133,21 +131,12 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     }
   }, [game.countDown]);
 
-  // 게임 시작 시 스코어바 이펙트(게임중에는 빠르게 변화)
-  useEffect(() => {
-    if (game.stage === GameStage.INITIAL) {
-      setIsInit(true);
-    } else {
-      setIsInit(false);
-    }
-  }, [game.stage]);
-
   return (
     <Container>
       <ScorePercent>{game.user.score}</ScorePercent>
       <ScoreBarWrapper>
         <ScoreBar
-          isInit={isInit}
+          isInit={game.stage === GameStage.INITIAL}
           score={game.isStart ? game.user.score : 100}
           isDefense={!game.user.isOffender && game.stage === GameStage.DEFEND}
         />
