@@ -16,8 +16,8 @@ function getAngle(p1: any, p2: any, p3: any) {
 
 // 모든 신체 키포인트가 잘 나오는지 확인
 export function isValidBody(pose: Pose): boolean {
-  for (let key in pose.keypoints) {
-    if ((pose.keypoints[key].score as number) < SCORE_THRESSHOLD) {
+  for (let i = 5; i < pose.keypoints.length; i++) {
+    if ((pose.keypoints[i].score as number) < SCORE_THRESSHOLD) {
       return false;
     }
   }
@@ -25,10 +25,10 @@ export function isValidBody(pose: Pose): boolean {
 }
 
 export function isLeftHandUp(pose: Pose, minAngle: number = 0): boolean {
-  const leftHip = pose['keypoints'][11];
-  const leftShoulder = pose['keypoints'][5];
-  const leftElbow = pose['keypoints'][7];
-  const leftWrist = pose['keypoints'][9];
+  const leftHip = pose.keypoints[11];
+  const leftShoulder = pose.keypoints[5];
+  const leftElbow = pose.keypoints[7];
+  const leftWrist = pose.keypoints[9];
 
   // 손목이 팔꿈치와 어깨 위에 있을 때 && 왼쪽 골반, 어깨, 팔꿈치가 이루는 각이 0도 보다 커야함
   // 근데 얘는 왜 손목보다 팔꿈치가 아래 있을 때를 게산할까?? -> y 좌표 위에서부터 내려옴
@@ -45,10 +45,10 @@ export function isLeftHandUp(pose: Pose, minAngle: number = 0): boolean {
 }
 
 export function isRightHandUp(pose: Pose, minAngle: number = 0): boolean {
-  const rightHip = pose['keypoints'][12];
-  const rightShoulder = pose['keypoints'][6];
-  const rightElbow = pose['keypoints'][8];
-  const rightWrist = pose['keypoints'][10];
+  const rightHip = pose.keypoints[12];
+  const rightShoulder = pose.keypoints[6];
+  const rightElbow = pose.keypoints[8];
+  const rightWrist = pose.keypoints[10];
 
   const isHandUp = rightWrist.y - rightElbow.y < 0;
   const angle = getAngle(rightElbow, rightShoulder, rightHip);
@@ -60,15 +60,15 @@ export function isRightHandUp(pose: Pose, minAngle: number = 0): boolean {
 }
 
 export function isTPose(pose: Pose, minAngle: number): boolean {
-  const rightShoulder = pose['keypoints'][6];
-  const rightElbow = pose['keypoints'][8];
-  const rightWrist = pose['keypoints'][10];
-  const rightHip = pose['keypoints'][12];
+  const rightShoulder = pose.keypoints[6];
+  const rightElbow = pose.keypoints[8];
+  const rightWrist = pose.keypoints[10];
+  const rightHip = pose.keypoints[12];
 
-  const leftShoulder = pose['keypoints'][5];
-  const leftElbow = pose['keypoints'][7];
-  const leftWrist = pose['keypoints'][9];
-  const leftHip = pose['keypoints'][11];
+  const leftShoulder = pose.keypoints[5];
+  const leftElbow = pose.keypoints[7];
+  const leftWrist = pose.keypoints[9];
+  const leftHip = pose.keypoints[11];
 
   const isAlignedArm =
     leftWrist.x > leftElbow.x &&
@@ -87,13 +87,13 @@ export function isTPose(pose: Pose, minAngle: number): boolean {
 }
 
 export function isSDRPose(pose: Pose, minAngle: number = 0): boolean {
-  const leftShoulder = pose['keypoints'][5];
-  const leftElbow = pose['keypoints'][7];
-  const leftWrist = pose['keypoints'][9];
+  const leftShoulder = pose.keypoints[5];
+  const leftElbow = pose.keypoints[7];
+  const leftWrist = pose.keypoints[9];
 
-  const rightShoulder = pose['keypoints'][6];
-  const rightElbow = pose['keypoints'][8];
-  const rightWrist = pose['keypoints'][10];
+  const rightShoulder = pose.keypoints[6];
+  const rightElbow = pose.keypoints[8];
+  const rightWrist = pose.keypoints[10];
 
   const leftAngle = getAngle(leftWrist, leftElbow, leftShoulder);
   const rightAngle = getAngle(rightWrist, rightElbow, rightShoulder);

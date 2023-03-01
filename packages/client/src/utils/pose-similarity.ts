@@ -102,7 +102,7 @@ export function comparePoses(pose1: poseDetection.Pose, pose2: poseDetection.Pos
   // align 후에 같은 신체 부위의 점들의 차의 평균 거리를 구함
   // 포즈 1의 한 점과 포즈 2의 한 점의 유클리디안 거리를 구해서 totalDistance 합함
   let totalDistance = 0;
-  for (let i = 0; i < alignedPose1.keypoints.length; i++) {
+  for (let i = 5; i < alignedPose1.keypoints.length; i++) {
     let joint1 = alignedPose1.keypoints[i];
     let joint2 = alignedPose2.keypoints[i];
     let distance = euclideanDistance(joint1, joint2);
@@ -111,7 +111,7 @@ export function comparePoses(pose1: poseDetection.Pose, pose2: poseDetection.Pos
 
   // (점들의 차의 합) / (점의 개수)
   // totalDistance / 17
-  let averageDistance = totalDistance / alignedPose1.keypoints.length;
+  let averageDistance = totalDistance / (alignedPose1.keypoints.length - 5);
 
   return Math.ceil(averageDistance >= 1 ? 0 : 100 - 100 * averageDistance);
 }
