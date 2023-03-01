@@ -185,7 +185,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //! 게임 끝
   @SubscribeMessage('result')
   gameResult(@ConnectedSocket() socket: ServerToClientSocket): void {
-    // 방에 모든 유저들에게 게임이 끝났다고 알려줌
     const roomId = this.userToRoom[socket.id];
     const scores = this.rooms[roomId].scores;
     const maxScore = Math.max.apply(null, scores);
@@ -198,14 +197,15 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(this.rooms[roomId].images.length);
     this.rooms[roomId].images[worstIdx].forEach((img) => resultImg.push(img));
     this.rooms[roomId].images[bestIdx].forEach((img) => resultImg.push(img));
+
     // 이미지 병합을 위해 결과 이미지를 클라이언트에 보낸다.
     this.server.in(roomId).emit('get_upload', resultImg);
     const users = this.rooms[roomId].users;
     let idx = 0;
 
-    //temp
+    // 방에 모든 유저들에게 게임이 끝났다고 알려줌
     this.rooms[roomId].isStart = false;
-    this.server.in(roomId).emit('get_finish');
+    this.server.in(roomId).emit('get_result');
 
     const intervalId = setInterval(() => {
       if (idx <= 6) {
@@ -347,21 +347,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         idx++;
       } else {
+        // 모든 메세지 다 보낸 후 게임 상태 초기화
         clearInterval(intervalId);
-        //! 게임 상태 초기화 temp
         this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
       }
     }, 3000);
-  }
-
-  //! 게임 끝
-  @SubscribeMessage('finish')
-  finish(@ConnectedSocket() socket: ServerToClientSocket): void {
-    // 방에 모든 유저들에게 게임이 끝났다고 알려줌
-    const roomId = this.userToRoom[socket.id];
-    //! 게임 상태 초기화
-    // this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
-    this.server.in(roomId).emit('get_finish');
   }
 
   //! 방에 새로운 유저 join
@@ -495,12 +485,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleGameStage(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() stage: number) {
     const roomId = this.userToRoom[socket.id];
     this.server.to(roomId).emit('get_change_stage', stage);
-  }
-
-  @SubscribeMessage('change_status')
-  handleGameStatus(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() status: number) {
-    const roomId = this.userToRoom[socket.id];
-    this.server.to(roomId).emit('get_change_status', status);
   }
 
   @SubscribeMessage('item_type')

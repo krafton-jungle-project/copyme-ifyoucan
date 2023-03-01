@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useClientSocket } from '../../module/client-socket';
-import { gameAtom, GameStage, GameStatus } from '../../app/game';
+import { gameAtom, GameStage } from '../../app/game';
 import {
   BackgroundMusic,
   Bell,
@@ -31,13 +31,12 @@ const GameEventHandler = () => {
       setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: false } }));
     });
 
-    //! 게임 Status를 waiting에서 game으로 바꾼다
+    // 게임 Status를 waiting에서 game으로 바꾼다
     socket.on('get_start', () => {
       setGame((prev) => ({
         ...prev,
         user: { ...prev.user, isOffender: host ? true : false },
         isStart: true,
-        status: GameStatus.GAME,
       }));
 
       BackgroundMusic.pause();
@@ -117,21 +116,16 @@ const GameEventHandler = () => {
       setGame((prev) => ({ ...prev, stage }));
     });
 
-    socket.on('get_change_status', (status: number) => {
-      setGame((prev) => ({ ...prev, status }));
-    });
-
     // 아이템 라운드 관리
     socket.on('get_item_type', (ItemType: number) => {
       setGame((prev) => ({ ...prev, item_type: ItemType }));
     });
 
     // 게임이 끝났을 때
-    socket.on('get_finish', () => {
-      GameMusic.currentTime = 0;
-      GameMusic.pause();
+    socket.on('get_result', () => {
       resetGame();
     });
+
     return () => {
       socket.removeAllListeners();
     };

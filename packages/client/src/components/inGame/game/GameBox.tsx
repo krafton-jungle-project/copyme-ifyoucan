@@ -16,6 +16,15 @@ import roundOneImg from '../../../assets/images/round-one.gif';
 import roundTwoImg from '../../../assets/images/round-two.gif';
 import roundThreeImg from '../../../assets/images/round-three.gif';
 import transition from '../../../assets/images/transition.gif';
+import gameOverImg from '../../../assets/images/game-over.gif';
+import {
+  GameMusic,
+  GameOver,
+  RoundOne,
+  RoundThree,
+  RoundTwo,
+  Transition,
+} from '../../../utils/sound';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -31,9 +40,8 @@ const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
   right: ${(props) => (props.isMe ? 'none' : props.isStart ? '0%' : '-60%')};
   width: 45%;
   height: 100%;
-  transition-property: left, right;
-  transition-delay: 0.5s, 0.5s;
-  transition-duration: 0.5s, 0.5s;
+  transition: 0.5s;
+  transition-delay: ${(props) => (props.isStart ? '0.5s' : 'none')};
 `;
 
 const CameraWrapper = styled.div<{ isMe: boolean }>`
@@ -65,8 +73,6 @@ const GameRole = styled.div<{ isMe: boolean; focus: string }>`
   font-size: 35px;
   font-weight: bold;
   color: #f4ff00aa;
-
-  /* color: ${(props) => (props.focus === 'me' ? 1 : 1)}; */
 
   ${(props) =>
     ((props.isMe && props.focus === 'me') || (!props.isMe && props.focus === 'peer')) &&
@@ -174,7 +180,6 @@ const FadeBackGround = styled.div<{ visible: boolean }>`
   background-color: rgba(0, 0, 0, 0.5);
   border: 5px solid white;
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
-  /* transition: 0.5s; */
 `;
 
 function GameBox() {
@@ -215,13 +220,22 @@ function GameBox() {
     if (game.stage === GameStage.ROUND) {
       switch (game.round) {
         case 1:
+          RoundOne.play();
           setRoundImg(roundOneImg);
           break;
         case 2:
+          RoundTwo.play();
           setRoundImg(roundTwoImg);
           break;
         case 3:
+          RoundThree.play();
           setRoundImg(roundThreeImg);
+          break;
+        case 4:
+          GameMusic.currentTime = 0;
+          GameMusic.pause();
+          GameOver.play();
+          setRoundImg(gameOverImg);
           break;
         default:
           break;
@@ -231,6 +245,7 @@ function GameBox() {
       }, 2000);
     } else if (game.stage === GameStage.OFFEND) {
       if (game.round % 1 !== 0) {
+        Transition.play();
         setRoundImg(transition);
         setTimeout(() => {
           setRoundImg(transparent);
