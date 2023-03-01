@@ -40,8 +40,7 @@ const ScoreBar = styled.div<{ isInit: boolean; score: number; isDefense: boolean
   bottom: 0%;
   width: 100%;
   height: ${(props) => `${props.score.toString()}%`};
-  transition: ${(props) => (props.isInit ? '1.2s' : '0s')};
-  transition-duration: ${(props) => (props.isInit ? '1.5s' : '0.5s')};
+  transition: ${(props) => (props.isInit ? 'height 1.5s linear 1.2s' : 'height 0.5s linear')};
   background-color: ${(props) => (props.score > 60 ? '#1f51ff' : '#888')};
   border-radius: 20px;
   ${(props) =>
@@ -85,23 +84,13 @@ const ScoreInfo = styled.div`
 
 function PeerScoreBar() {
   const game = useAtomValue(gameAtom);
-  const [isInit, setIsInit] = useState(true);
-
-  // 게임 시작 시 스코어바 이펙트(게임중에는 빠르게 변화)
-  useEffect(() => {
-    if (game.stage === GameStage.INITIAL) {
-      setIsInit(true);
-    } else {
-      setIsInit(false);
-    }
-  }, [game.stage]);
 
   return (
     <Container>
       <ScorePercent>{game.peer.score}</ScorePercent>
       <ScoreBarWrapper>
         <ScoreBar
-          isInit={isInit}
+          isInit={game.stage === GameStage.INITIAL}
           score={game.isStart ? game.peer.score : 100}
           isDefense={game.user.isOffender && game.stage === GameStage.DEFEND}
         />
