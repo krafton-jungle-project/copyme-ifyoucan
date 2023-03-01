@@ -5,7 +5,7 @@ import great from '../../../assets/images/score/great.gif';
 import perfect from '../../../assets/images/score/perfect.gif';
 import bad from '../../../assets/images/score/bad.gif';
 import fail from '../../../assets/images/score/fail.gif';
-import { Fail, Stamp } from '../../../utils/sound';
+import { Fail, Great, Perfect, Stamp } from '../../../utils/sound';
 
 const GradeImg = styled.img<{ isMe: boolean }>`
   position: absolute;
@@ -30,8 +30,14 @@ function Grade({ score, isMe }: { score: number; isMe: boolean }) {
     if (score >= 60) {
       if (score >= 90) {
         setGradeImg(perfect);
+        setTimeout(() => {
+          Perfect.play();
+        }, 300);
       } else if (score >= 80) {
         setGradeImg(great);
+        setTimeout(() => {
+          Great.play();
+        }, 300);
       } else if (score >= 70) {
         setGradeImg(good);
       } else {

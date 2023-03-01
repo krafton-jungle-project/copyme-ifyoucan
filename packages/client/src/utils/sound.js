@@ -18,6 +18,8 @@ import correct from '../assets/sounds/correct.mp3';
 import yeah from '../assets/sounds/yeah.mp3';
 import gameover from '../assets/sounds/game-over.mp3';
 import potg from '../assets/sounds/play-of-the-game.mp3';
+import perfect from '../assets/sounds/perfect.mp3';
+import great from '../assets/sounds/great.mp3';
 
 const CountDown = new Audio(countdown);
 const GameMusic = new Audio(gamemusic);
@@ -39,6 +41,8 @@ const Correct = new Audio(correct);
 const Yeah = new Audio(yeah);
 const GameOver = new Audio(gameover);
 const POTG = new Audio(potg);
+const Perfect = new Audio(perfect);
+const Great = new Audio(great);
 
 export {
   CountDown,
@@ -61,4 +65,6 @@ export {
   Yeah,
   GameOver,
   POTG,
+  Perfect,
+  Great,
 };
