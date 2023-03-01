@@ -41,7 +41,6 @@ export default function BestShot() {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res) {
-            console.log(res);
             const imgurls = res.data.data.imgurl;
             setImages(imgurls.reverse());
           }
@@ -53,6 +52,25 @@ export default function BestShot() {
     getMyImages();
   }, []);
 
+  const handleDownload = () => {
+    const url = data.img;
+
+    fetch(url)
+      .then((response) => {
+        return response.blob();
+      })
+      .then((blob) => {
+        const blobUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = 'bestshot.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+  };
+
   const viewImage = async (img: string, i: number) => {
     setData({ img, i });
   };
@@ -61,7 +79,6 @@ export default function BestShot() {
     let i = data.i;
     if (action === 'next-img') {
       setData({ img: currentImages[i + 1], i: i + 1 });
-      console.log(data.img);
     }
     if (action === 'previous-img') {
       setData({ img: currentImages[i - 1], i: i - 1 });
@@ -99,14 +116,9 @@ export default function BestShot() {
             alt=""
           />
           <button onClick={() => imgAction('next-img')}>Next</button>
-          <a href={data.img} download target="_self">
-            {/* <a href=`` download> */}
-            {/* <a href={sample} download> */}
-            {/* <button onClick={() => downloadFile(data.img)} type="button"> */}
-            {/* 다운로드 */}
-            {/* </button> */}
-            <button type="button">다운로드</button>
-          </a>
+          <button type="button" onClick={handleDownload}>
+            다운로드
+          </button>
         </div>
       )}
       <div style={{ padding: '30px' }}>

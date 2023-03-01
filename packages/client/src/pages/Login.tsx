@@ -77,9 +77,9 @@ const TextDiv = styled.div`
   text-shadow: 0 0 2px #fff;
 `;
 
-const Input = styled.input<{ class: string }>`
+const Input = styled.input<{ nameTag: string }>`
   position: absolute;
-  top: ${(props) => (props.class === 'id' ? '45%' : '70%')};
+  top: ${(props) => (props.nameTag === 'id' ? '45%' : '70%')};
   font-size: large;
   color: #fff;
   border: 2px solid #fff;
@@ -96,9 +96,9 @@ const Input = styled.input<{ class: string }>`
   }
 `;
 
-const Btn = styled.div<{ class: string }>`
+const Btn = styled.div<{ nameTag: string }>`
   position: absolute;
-  bottom: ${(props) => (props.class === 'register' ? '25%' : '60%')};
+  bottom: ${(props) => (props.nameTag === 'register' ? '25%' : '60%')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -108,7 +108,7 @@ const Btn = styled.div<{ class: string }>`
   border-radius: 3px;
   font-size: large;
   font-weight: 600;
-  background-color: ${(props) => (props.class === 'register' ? '#e6a7ff54' : '#e6a7ff54')};
+  background-color: ${(props) => (props.nameTag === 'register' ? '#e6a7ff54' : '#e6a7ff54')};
   border: 2px solid #fff;
   cursor: pointer;
   transition: 0.3s;
@@ -121,7 +121,7 @@ const Btn = styled.div<{ class: string }>`
   }
 `;
 
-function Login2() {
+function Login() {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
   const navigate = useNavigate();
@@ -194,22 +194,22 @@ function Login2() {
               type="text"
               value={id}
               onChange={handleId}
-              class="id"
+              nameTag="id"
             />
             <Input
               placeholder="비밀번호 입력"
               type="password"
               value={pw}
               onChange={handlePw}
-              class="pw"
+              nameTag="pw"
             />
           </LoginWrapper>
           <SubmitWrapper>
             <TextDiv>계정을 만들고 게임을 즐겨보세요!</TextDiv>
-            <Btn onClick={onClickConfirmButton} class="login">
+            <Btn onClick={onClickConfirmButton} nameTag="login">
               로그인
             </Btn>
-            <Btn onClick={openModal} class="register">
+            <Btn onClick={openModal} nameTag="register">
               계정 만들기
             </Btn>
           </SubmitWrapper>
@@ -219,4 +219,4 @@ function Login2() {
   );
 }
 
-export default Login2;
+export default Login;
