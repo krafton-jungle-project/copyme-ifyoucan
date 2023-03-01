@@ -24,13 +24,10 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px 100px;
+  margin: 10px 0;
   font-size: 35px;
   font-weight: 400;
   text-shadow: 0 0 2px #fff, 0 0 4px #fff;
-  border: 1px solid #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 0.1rem #fff, 0 0 0.3rem #fff;
 `;
 
 function Guide() {
@@ -47,7 +44,7 @@ function Guide() {
 
   useEffect(() => {
     if (!isStarted) {
-      setContent('버튼을 누르면 시작됩니다');
+      setContent('버튼을 눌러 튜토리얼을 시작하세요');
     }
     if (isStarted && !isBody) {
       ButtonClick.play();
@@ -74,7 +71,7 @@ function Guide() {
         setImg(SDR);
       }
       if (isPass) {
-        setContent('수고하셨습니다');
+        setContent("수고하셨습니다! Let's PLAY!");
         setImg(defaultImg);
       }
     }

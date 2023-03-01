@@ -29,6 +29,9 @@ const ChatWrapper = styled.div`
   height: 85%;
   padding: 0 2.5%;
   overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const MessageBox = styled.div`
@@ -68,8 +71,7 @@ const MessageBox = styled.div`
 
 const Message = styled.div<{ isImg: boolean }>`
   width: ${(props) => (props.isImg ? '60%' : 'fit-content')};
-  padding: 10px;
-  padding: ${(props) => (props.isImg ? '6px' : '10px')};
+  padding: ${(props) => (props.isImg ? '6px 6px 0px 6px' : '10px')};
   font-size: 150%;
   font-weight: 400;
   margin-bottom: 1rem;

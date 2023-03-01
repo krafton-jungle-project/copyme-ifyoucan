@@ -42,7 +42,7 @@ export default function CreateRoom() {
         roomId,
         host: true,
       }));
-      navigate('/room');
+      navigate('/room', { replace: true });
     });
   };
 

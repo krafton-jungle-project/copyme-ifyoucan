@@ -39,7 +39,7 @@ const animate = keyframes`
   }
 `;
 
-const ScoreBar = styled.div<{ isInit: boolean; score: number }>`
+const ScoreBar = styled.div<{ isInit: boolean; score: number; isDefense: boolean }>`
   position: absolute;
   bottom: 0%;
   width: 100%;
@@ -47,17 +47,17 @@ const ScoreBar = styled.div<{ isInit: boolean; score: number }>`
   transition-property: height;
   transition-delay: ${(props) => (props.isInit ? '1.2s' : '0s')};
   transition-duration: ${(props) => (props.isInit ? '1.5s' : '0.5s')};
-  background-color: #888;
+  background-color: ${(props) => (props.score > 60 ? '#ff3131' : '#888')};
   border-radius: 20px;
   ${(props) =>
-    (props.isInit || props.score > 60) &&
+    (props.isInit || (props.score > 60 && props.isDefense)) &&
     css`
       background-color: #ff3131;
-      animation: ${animate} 1s linear infinite;
+      animation: ${animate} 1.5s linear infinite;
     `}
 `;
 
-const ScoreInfo = styled.div`
+const ScorePercent = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -66,12 +66,12 @@ const ScoreInfo = styled.div`
   top: 0%;
   width: 100%;
   height: 10%;
-  font-size: 25px;
+  font-size: 40px;
   font-weight: bold;
   color: #ff3131;
 `;
 
-const ScorePercent = styled.div`
+const ScoreInfo = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -82,6 +82,9 @@ const ScorePercent = styled.div`
   height: 10%;
   font-size: 30px;
   font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: #ff3131;
 `;
 
@@ -117,7 +120,7 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     // 내가 수비자이고 수비 스테이지일 때
     if (!game.user.isOffender && game.stage === GameStage.DEFEND) {
       // 수비 카운트 다운이 시작되면
-      if (game.countDown === 3) {
+      if (game.countDown === 5) {
         // 실시간 점수 계산 시작(0.5초 간격)
         setDelay(500);
       }
@@ -142,11 +145,15 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
 
   return (
     <Container>
-      <ScoreInfo>유사도</ScoreInfo>
-      <ScoreBarWrapper>
-        <ScoreBar isInit={isInit} score={game.isStart ? game.user.score : 100} />
-      </ScoreBarWrapper>
       <ScorePercent>{game.user.score}</ScorePercent>
+      <ScoreBarWrapper>
+        <ScoreBar
+          isInit={isInit}
+          score={game.isStart ? game.user.score : 100}
+          isDefense={!game.user.isOffender && game.stage === GameStage.DEFEND}
+        />
+      </ScoreBarWrapper>
+      <ScoreInfo>유사도</ScoreInfo>
     </Container>
   );
 }

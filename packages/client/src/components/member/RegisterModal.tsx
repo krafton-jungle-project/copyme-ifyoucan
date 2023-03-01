@@ -209,7 +209,7 @@ function RegisterModal() {
         // 토큰을 받아서 저장 (local storage 또는 쿠키?)
         alert('회원가입이 완료되었습니다.');
         window.location.reload();
-        // navigate('/login');
+        // navigate('/login', { replace: true });
         return res;
       })
       .catch((error) => {

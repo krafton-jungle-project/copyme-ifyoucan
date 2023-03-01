@@ -3,7 +3,6 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import { Paging } from './bestShot/Paging';
-import sample from '../../../assets/images/arcadePoro.png';
 
 //todo: 경기 사진이나 동영상 가져올 때 정보 가져와야하므로 다시 고려해야함
 
@@ -44,7 +43,7 @@ export default function BestShot() {
           if (res) {
             console.log(res);
             const imgurls = res.data.data.imgurl;
-            setImages(imgurls);
+            setImages(imgurls.reverse());
           }
         } catch (error) {
           console.log(error);
@@ -56,18 +55,8 @@ export default function BestShot() {
 
   const viewImage = async (img: string, i: number) => {
     setData({ img, i });
-    console.log(img);
-
-    // const res = await fetch(img);
-    // console.log(res);
-
-    // const blob = await res.blob();
-    // console.log(blob);
-
-    // const url = window.URL.createObjectURL(blob);
-    // console.log(url);
-    // setDownloadUrl(url);
   };
+
   const imgAction = (action: string) => {
     let i = data.i;
     if (action === 'next-img') {
@@ -81,52 +70,6 @@ export default function BestShot() {
       setData({ img: '', i: 0 });
     }
   };
-
-  // const downloadFile = (url: string) => {
-  //   url = `{data.img}`;
-
-  //   fetch(url, { method: 'GET' })
-  //     .then((res) => {
-  //       return res.blob();
-  //     })
-  //     .then((blob) => {
-  //       const url = window.URL.createObjectURL(blob);
-  //       const a = document.createElement('a');
-  //       a.href = url;
-  //       a.download = '파일명';
-  //       document.body.appendChild(a);
-  //       a.click();
-  //       setTimeout((_) => {
-  //         window.URL.revokeObjectURL(url);
-  //       }, 60000);
-  //       a.remove();
-  //       setOpen(false);
-  //     })
-  //     .catch((err) => {
-  //       console.error('err: ', err);
-  //     });
-  // };
-
-  // const downloadFile = () => {
-  //   axios({
-  //     url: `{data.img}`,
-  //     method: 'GET',
-  //     responseType: 'blob',
-  //   }).then((response) => {
-  //     const url = window.URL.createObjectURL(new Blob([response.data]));
-  //     const link = document.createElement('a');
-  //     link.href = url;
-  //     link.setAttribute('download', 'Sample.png');
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     document.body.removeChild(link);
-  //   });
-  // };
-
-  // const res = await fetch('');
-  // const blob = await res.blob();
-  // const downloadUrl = window.URL.createObjectURL(blob);
-  // let btnDownload = document.querySelector('button');
 
   return (
     <>

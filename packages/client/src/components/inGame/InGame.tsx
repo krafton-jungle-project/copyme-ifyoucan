@@ -27,6 +27,7 @@ const FadeBackGround = styled.div`
 
 const Header = styled.div`
   position: absolute;
+  top: 2%;
   width: 100%;
   height: 15%;
 `;

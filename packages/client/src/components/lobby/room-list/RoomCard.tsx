@@ -63,6 +63,7 @@ const JoinButton = styled.button<{ isFull: boolean }>`
       &:hover {
         width: 90px;
         font-size: 18px;
+        cursor: pointer;
       }
     `}
   transition: 0.15s;
@@ -83,7 +84,7 @@ export default function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
   const joinRoom = (roomId: string) => {
     if (roomInfo.users.length === 1) {
       setRoomInfo((prev) => ({ ...prev, roomId }));
-      navigate('/room');
+      navigate('/room', { replace: true });
     }
   };
 
