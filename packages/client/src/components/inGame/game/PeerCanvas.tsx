@@ -37,6 +37,8 @@ const Canvas = styled.canvas`
   width: 100%;
   height: 100%;
   border-radius: 20px;
+  /* -webkit-transform: scaleX(-1);
+  transform: scaleX(-1); */
 `;
 
 const CapturedPose = styled.canvas<{ isCaptured: boolean }>`
@@ -84,7 +86,13 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
       video: videoRef.current,
       canvas: canvasRef.current,
     };
+    // setTimeout(() => {
+    //   if (videoRef.current === null || canvasRef.current === null || !peerInfo.stream) return;
+    //   console.log('크기조정');
 
+    //   canvasRef.current.width = 640;
+    //   canvasRef.current.height = 480;
+    // }, 1000);
     moveNet.peerCanvasRender({
       size: { width: 640, height: 480 },
       element: elements,
