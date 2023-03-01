@@ -126,14 +126,13 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
   const host = useAtomValue(roomInfoAtom).host;
   const { socket } = useClientSocket();
 
-  useEffect(() => {
-    if (game.round < 5) return;
+  // useEffect(() => {
+  //   // if (game.round < 3) return;
 
-    if (host) {
-      let idx = Math.floor(Math.random() * (Object.keys(ItemType).length / 2));
-      socket.emit('item_type', idx);
-    }
-  }, [game.round]);
+  //   if (host) {
+
+  //   }
+  // }, [game.round]);
 
   useEffect(() => {
     if (videoRef.current === null || canvasRef.current === null) return;
@@ -182,13 +181,18 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
         }
       }
 
-      // check
-      // 캡쳐한 수비사진을, 공격자의 캡쳐한 사진과 짧게 비교
+      // 아이템 타입 초기화
       if (game.stage === GameStage.DEFEND) {
-        // 아이템 타입 초기화
         if (game.item_type < 10) {
           socket.emit('item_type', 100);
         }
+      }
+    }
+
+    if (game.countDown === 5 && game.stage === GameStage.OFFEND) {
+      if (host && game.round >= 3) {
+        let idx = Math.floor(Math.random() * (Object.keys(ItemType).length / 2));
+        socket.emit('item_type', idx);
       }
     }
   }, [game.countDown]);
