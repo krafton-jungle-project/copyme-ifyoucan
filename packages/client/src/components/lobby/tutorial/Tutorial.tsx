@@ -1,12 +1,12 @@
 import { useAtomValue } from 'jotai';
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { tutorialPassAtom } from '../../app/tutorial';
-import Guide from './tutorial/Guide';
-import PoseCam from './tutorial/PoseCam';
-import PoseImg from './tutorial/PoseImg';
-import partyPopper from '../../assets/images/tutorial/party-popper.gif';
-import { Yeah } from '../../utils/sound';
+import { tutorialPassAtom } from '../../../app/tutorial';
+import Guide from './Guide';
+import PoseCam from './PoseCam';
+import PoseImg from './PoseImg';
+import partyPopper from '../../../assets/images/tutorial/party-popper.gif';
+import { Yeah } from '../../../utils/sound';
 
 const Container = styled.div`
   position: relative;

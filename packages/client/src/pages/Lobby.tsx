@@ -1,18 +1,18 @@
-import RoomList from '../components/lobby/RoomList';
+import RoomList from '../components/lobby/room-list/RoomList';
 import styled, { css } from 'styled-components';
 import Loading from '../components/lobby/Loading';
 import { useEffect, useState } from 'react';
 import { removeUser } from '../utils/local-storage';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Tutorial from '../components/lobby/Tutorial';
+import Tutorial from '../components/lobby/tutorial/Tutorial';
 import { useMovenetStream } from '../module/movenet-stream';
 import { BackgroundMusic } from '../utils/sound';
 import logoImg from '../assets/images/logo.png';
 import { ButtonClick } from '../utils/sound';
 import logoutImg from '../assets/images/logout.png';
 import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
-import BestShot from '../components/lobby/BestShot';
+import BestShot from '../components/lobby/best-shot/BestShot';
 import bgmOnImg from '../assets/images/bgm-on.png';
 import bgmOffImg from '../assets/images/bgm-off.png';
 
