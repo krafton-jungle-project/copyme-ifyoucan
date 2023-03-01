@@ -1,10 +1,9 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { gameAtom, GameStage, GameStatus } from '../../app/game';
+import { gameAtom, GameStage } from '../../app/game';
 import { peerInfoAtom } from '../../app/peer';
 import { useClientSocket } from '../../module/client-socket';
-import { RoundOne, RoundThree, RoundTwo, Transition } from '../../utils/sound';
 import { roomInfoAtom } from '../../app/room';
 import { myNickName } from '../../pages/Lobby';
 
@@ -31,6 +30,7 @@ const Container = styled.div<{ isStart: boolean }>`
     0 0 92px #bc13fe, 0 0 102px #bc13fe, 0 0 151px #bc13fe;
 
   transition: 0.5s;
+  transition-delay: ${(props) => (props.isStart ? 'none' : '0.5s')};
 `;
 
 function Announcer() {
@@ -40,8 +40,9 @@ function Announcer() {
   const [game, setGame] = useAtom(gameAtom);
   const [message, setMessage] = useState('');
 
+  // 대기실
   useEffect(() => {
-    if (game.status === GameStatus.WAITING) {
+    if (!game.isStart) {
       // 내가 방장일 때
       if (host) {
         // 아직 상대가 입장하지 않았으면
@@ -87,20 +88,22 @@ function Announcer() {
       }
     }
   }, [
-    game.status,
     host,
     peerInfo.socketId,
+    game.isStart,
     game.user.isValidBody,
     game.user.isReady,
     game.peer.isReady,
   ]);
 
+  // 게임중
   useEffect(() => {
     const gameMessage = () => {
       switch (game.stage) {
         case GameStage.INITIAL:
           if (messageOrder < initialMessages.length) {
             setMessage(initialMessages[messageOrder++]);
+
             setTimeout(gameMessage, 2000);
           } else {
             messageOrder = 0;
@@ -111,10 +114,6 @@ function Announcer() {
           break;
         case GameStage.ROUND:
           if (game.round < 4) {
-            if (game.round === 1) RoundOne.play();
-            else if (game.round === 2) RoundTwo.play();
-            else if (game.round === 3) RoundThree.play();
-
             setMessage(`ROUND ${game.round}`);
 
             // 라운드 시작 시 점수 초기화
@@ -132,19 +131,22 @@ function Announcer() {
               }
             }, 2500);
           }
-          // 3(3.5) 라운드가 모두 끝났을 때,
+          // 3(3.5) 라운드가 모두 끝났을 때(게임 종료)
           else {
-            // 게임 끝
+            setMessage('GAME OVER');
+
             if (host) {
-              socket.emit('change_status', GameStatus.RESULT);
+              setTimeout(() => {
+                socket.emit('result');
+              }, 2500);
             }
           }
           break;
         case GameStage.OFFEND:
           // 공수 전환
           if (game.round % 1 !== 0) {
-            Transition.play();
             setMessage('공격 수비 전환');
+
             setTimeout(() => {
               setMessage(`${game.user.isOffender ? myNickName : peerInfo.nickName}님의 공격!`);
               setTimeout(() => {
@@ -156,6 +158,7 @@ function Announcer() {
           } else {
             setTimeout(() => {
               setMessage(`${game.user.isOffender ? myNickName : peerInfo.nickName}님의 공격!`);
+
               setTimeout(() => {
                 if (host) {
                   socket.emit('count_down', 'offend');
@@ -187,32 +190,11 @@ function Announcer() {
       '자세를 정확히 따라해주세요!',
     ];
 
-    if (game.status === GameStatus.GAME) {
+    if (game.isStart) {
       messageOrder = 0;
       gameMessage();
     }
-  }, [game.status, game.stage, game.round]);
-
-  useEffect(() => {
-    if (game.status === GameStatus.RESULT) {
-      //temp
-      // if (host) {
-      //   socket.emit('finish');
-      // }
-
-      setMessage('게임 결과');
-
-      //todo: 게임 종료 사운드
-      //todo: 게임 종료 안내 멘트(game over)
-      //todo: 등등 추가 필요
-
-      if (host) {
-        setTimeout(() => {
-          socket.emit('result');
-        }, 2000);
-      }
-    }
-  }, [game.status]);
+  }, [game.isStart, game.stage]);
 
   return <Container isStart={game.isStart}>{message}</Container>;
 }

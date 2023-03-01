@@ -40,8 +40,7 @@ const ScoreBar = styled.div<{ isInit: boolean; score: number; isDefense: boolean
   bottom: 0%;
   width: 100%;
   height: ${(props) => `${props.score.toString()}%`};
-  transition-property: height;
-  transition-delay: ${(props) => (props.isInit ? '1.2s' : '0s')};
+  transition: ${(props) => (props.isInit ? '1.2s' : '0s')};
   transition-duration: ${(props) => (props.isInit ? '1.5s' : '0.5s')};
   background-color: ${(props) => (props.score > 60 ? '#1f51ff' : '#888')};
   border-radius: 20px;
