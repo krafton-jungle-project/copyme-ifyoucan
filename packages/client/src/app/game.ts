@@ -5,6 +5,7 @@ interface UserState {
   isValidBody: boolean;
   isReady: boolean;
   score: number;
+  point: number;
   isOffender: boolean;
   gradable: boolean;
 }
@@ -12,6 +13,7 @@ interface UserState {
 interface PeerState {
   isReady: boolean;
   score: number;
+  point: number;
   pose: Pose | null;
   gradable: boolean;
 }
@@ -21,6 +23,7 @@ enum GameStage {
   ROUND,
   OFFEND,
   DEFEND,
+  JUDGE,
 }
 
 enum ItemType {
@@ -45,12 +48,14 @@ const initialState: GameState = {
     isValidBody: false,
     isReady: false,
     score: 0,
+    point: 0,
     isOffender: false,
     gradable: false,
   },
   peer: {
     isReady: false,
     score: 0,
+    point: 0,
     pose: null,
     gradable: false,
   },
