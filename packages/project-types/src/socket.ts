@@ -20,7 +20,7 @@ export interface ServerToClientEvents {
   get_start: () => void;
   get_score: (score: number) => void;
   get_count_down: (count: number, stage: string) => void;
-  get_finish: () => void;
+  get_result: () => void;
   peer: (data: { id: string; nickName: string }) => void;
   greeting: (data: { message: string }) => void;
   get_offer: (data: {
@@ -33,7 +33,6 @@ export interface ServerToClientEvents {
   message: (chat: IChat) => void;
   user_exit: (isStart: boolean) => void;
   get_change_stage: (stage: number) => void;
-  get_change_status: (stage: number) => void;
   get_upload: (images: string[]) => void;
   get_item_type: (status: number) => void;
 }
@@ -73,8 +72,6 @@ export interface ClientToServerEvents {
   }) => void;
   message: (message: string, callback: (chat: IChat) => void) => void;
   change_stage: (stage: number) => void;
-  change_status: (status: number) => void;
-  finish: () => void;
   item_type: (status: number) => void;
 }
 
@@ -95,8 +92,7 @@ export interface InterServerEvents {
   full: () => void; //todo
   message: (chat: IChat) => void;
   get_change_stage: (stage: number) => void;
-  get_change_status: (stage: number) => void;
-  get_finish: () => void;
+  get_result: () => void;
   get_upload: (images: string[]) => void;
   get_item_type: (status: number) => void;
 }

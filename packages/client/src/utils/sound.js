@@ -16,6 +16,7 @@ import transition from '../assets/sounds/transition.mp3';
 import button from '../assets/sounds/button.mp3';
 import correct from '../assets/sounds/correct.mp3';
 import yeah from '../assets/sounds/yeah.mp3';
+import gameover from '../assets/sounds/game-over.mp3';
 
 const CountDown = new Audio(countdown);
 const GameMusic = new Audio(gamemusic);
@@ -35,6 +36,7 @@ const Transition = new Audio(transition);
 const ButtonClick = new Audio(button);
 const Correct = new Audio(correct);
 const Yeah = new Audio(yeah);
+const GameOver = new Audio(gameover);
 
 export {
   CountDown,
@@ -55,4 +57,5 @@ export {
   ButtonClick,
   Correct,
   Yeah,
+  GameOver,
 };

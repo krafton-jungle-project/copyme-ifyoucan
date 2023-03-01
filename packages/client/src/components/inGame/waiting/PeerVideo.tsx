@@ -3,19 +3,16 @@ import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
-import DefaultProfileImg from '../../../assets/images/default-profile.png';
+import DefaultProfileImg from '../../../assets/images/peer-default-profile.jpg';
 
-const Container = styled.div<{ isStart: boolean }>`
+const Container = styled.div`
   position: absolute;
   top: 50%;
   right: 0%;
   transform: translate(0, -50%); /* 세로 가운데 정렬(top: 50%와 같이 사용) */
   width: 100%;
   aspect-ratio: 1;
-  transition-property: right;
-  transition-duration: 0.5s;
   border-radius: 20px;
-  background-color: grey;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #1f51ff;
 `;
 
@@ -34,6 +31,7 @@ const Video = styled.video`
   width: 100%;
   height: 100%;
   border-radius: 20px;
+  background-color: #0008;
 `;
 
 const PeerVideo = () => {
@@ -46,7 +44,7 @@ const PeerVideo = () => {
   }, [peerStream]);
 
   return (
-    <Container isStart={isStart}>
+    <Container>
       <Img src={DefaultProfileImg} />
       <Video ref={videoRef} autoPlay />
     </Container>

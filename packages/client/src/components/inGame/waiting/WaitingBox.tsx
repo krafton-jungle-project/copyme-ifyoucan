@@ -14,8 +14,6 @@ const Container = styled.div<{ isStart: boolean }>`
   width: 100%;
   height: 80%;
   visibility: ${(props) => (props.isStart ? 'hidden' : 'visible')};
-  transition-property: visibility;
-  transition-delay: 0.5s;
 `;
 
 const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
@@ -26,8 +24,8 @@ const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
   right: ${(props) => (props.isMe ? 'none' : props.isStart ? '-35%' : '0%')};
   width: 27.5%;
   aspect-ratio: 7/10;
-  transition-property: left, right;
-  transition-duration: 0.5s, 0.5s;
+  transition: 0.5s;
+  transition-delay: ${(props) => (props.isStart ? 'none' : '0.5s')};
 `;
 
 const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`

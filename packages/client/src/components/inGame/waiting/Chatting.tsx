@@ -16,8 +16,8 @@ const Container = styled.div<{ isStart: boolean }>`
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 1rem;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff;
-  transition-property: top;
-  transition-duration: 0.5s;
+  transition: 0.5s;
+  transition-delay: ${(props) => (props.isStart ? 'none' : '0.5s')};
 `;
 
 const ChatWrapper = styled.div`

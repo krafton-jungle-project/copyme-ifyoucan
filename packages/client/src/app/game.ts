@@ -16,12 +16,6 @@ interface PeerState {
   gradable: boolean;
 }
 
-enum GameStatus {
-  WAITING,
-  GAME,
-  RESULT,
-}
-
 enum GameStage {
   INITIAL,
   ROUND,
@@ -39,7 +33,6 @@ interface GameState {
   user: UserState;
   peer: PeerState;
   isStart: boolean;
-  status: GameStatus;
   stage: number;
   round: number;
   countDown: number;
@@ -62,7 +55,6 @@ const initialState: GameState = {
     gradable: false,
   },
   isStart: false,
-  status: GameStatus.WAITING,
   stage: GameStage.INITIAL,
   round: 1,
   countDown: 0,
@@ -72,4 +64,4 @@ const initialState: GameState = {
 
 const gameAtom = atomWithReset(initialState);
 
-export { GameStatus, GameStage, ItemType, gameAtom };
+export { GameStage, ItemType, gameAtom };
