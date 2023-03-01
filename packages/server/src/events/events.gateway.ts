@@ -228,23 +228,23 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         } else if (idx === 1) {
           if (bestIdx % 2 === 0) {
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
+              userId: users[0].id,
               message: '공격 포즈',
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
+              userId: users[0].id,
               message: resultImg[0],
               isImg: true,
             });
           } else {
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
+              userId: users[1].id,
               message: '공격 포즈',
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
+              userId: users[1].id,
               message: resultImg[0],
               isImg: true,
             });
@@ -252,23 +252,23 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         } else if (idx === 2) {
           if (bestIdx % 2 === 0) {
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
+              userId: users[1].id,
               message: `수비 포즈(유사도 ${maxScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
+              userId: users[1].id,
               message: resultImg[1],
               isImg: true,
             });
           } else {
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
+              userId: users[0].id,
               message: `수비 포즈(유사도 ${maxScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
+              userId: users[0].id,
               message: resultImg[1],
               isImg: true,
             });
