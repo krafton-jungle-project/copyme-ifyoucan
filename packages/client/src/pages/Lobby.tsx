@@ -272,7 +272,7 @@ function Lobby() {
     if (prevBgmState === true) {
       setTimeout(() => {
         BackgroundMusic.play();
-        BackgroundMusic.volume = 0.7;
+        BackgroundMusic.volume = 0.5;
       }, 1000);
 
       BackgroundMusic.addEventListener(

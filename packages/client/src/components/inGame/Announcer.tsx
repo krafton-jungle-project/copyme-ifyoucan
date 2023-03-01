@@ -131,6 +131,7 @@ function Announcer() {
           if (game.round < 4) {
             setMessage(`ROUND ${game.round}`);
 
+            //todo: 위치 빈경 필요
             // 라운드 시작 시 점수 초기화
             setTimeout(() => {
               setGame((prev) => ({

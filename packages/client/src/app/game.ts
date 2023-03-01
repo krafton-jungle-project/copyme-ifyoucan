@@ -21,6 +21,7 @@ enum GameStage {
   ROUND,
   OFFEND,
   DEFEND,
+  JUDGE,
 }
 
 enum ItemType {

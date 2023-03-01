@@ -66,7 +66,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         socket.to(roomId).emit('user_exit', this.rooms[roomId].isStart);
         socket.to(roomId).emit('message', {
           userId: '',
-          message: `🔴 상대방의 연결이 끊겼습니다. 🔴`,
+          message: `🔴 상대방의 연결이 끊겼습니다 🔴`,
           isImg: false,
         });
       }

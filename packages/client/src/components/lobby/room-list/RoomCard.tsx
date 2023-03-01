@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import Poro from '../../../assets/images/arcade-poro.png';
+import PoroImg from '../../../assets/images/arcade-poro.png';
 import { useSetAtom } from 'jotai';
 import { roomInfoAtom } from '../../../app/room';
 
@@ -90,7 +90,7 @@ export default function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
 
   return (
     <Container>
-      <Thumbnail alt="room thumbnail" src={Poro} />
+      <Thumbnail alt="room thumbnail" src={PoroImg} />
       <Wrapper>
         <RoomName>{roomInfo.roomName}</RoomName>
         <HeadCount isFull={roomInfo.users.length === 2}>{roomInfo.users.length} / 2</HeadCount>

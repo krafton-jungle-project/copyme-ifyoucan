@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import good from '../../../assets/images/score/good.gif';
-import great from '../../../assets/images/score/great.gif';
-import perfect from '../../../assets/images/score/perfect.gif';
-import bad from '../../../assets/images/score/bad.gif';
-import fail from '../../../assets/images/score/fail.gif';
+import goodImg from '../../../assets/images/score/good.gif';
+import greatImg from '../../../assets/images/score/great.gif';
+import perfectImg from '../../../assets/images/score/perfect.gif';
+import badImg from '../../../assets/images/score/bad.gif';
+import failImg from '../../../assets/images/score/fail.gif';
 import { Fail, Great, Perfect, Stamp } from '../../../utils/sound';
 
 const GradeImg = styled.img<{ isMe: boolean }>`
@@ -29,23 +29,23 @@ function Grade({ score, isMe }: { score: number; isMe: boolean }) {
   useEffect(() => {
     if (score >= 60) {
       if (score >= 90) {
-        setGradeImg(perfect);
+        setGradeImg(perfectImg);
         setTimeout(() => {
           Perfect.play();
         }, 300);
       } else if (score >= 80) {
-        setGradeImg(great);
+        setGradeImg(greatImg);
         setTimeout(() => {
           Great.play();
         }, 300);
       } else if (score >= 70) {
-        setGradeImg(good);
+        setGradeImg(goodImg);
       } else {
-        setGradeImg(bad);
+        setGradeImg(badImg);
       }
       Stamp.play();
     } else {
-      setGradeImg(fail);
+      setGradeImg(failImg);
       Fail.play();
     }
   }, [score]);
