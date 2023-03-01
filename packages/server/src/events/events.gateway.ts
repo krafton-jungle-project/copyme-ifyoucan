@@ -66,7 +66,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         socket.to(roomId).emit('user_exit', this.rooms[roomId].isStart);
         socket.to(roomId).emit('message', {
           userId: '',
-          message: `🔴 상대방의 연결이 끊겼습니다. 🔴`,
+          message: `🔴 상대방의 연결이 끊겼습니다 🔴`,
           isImg: false,
         });
       }
@@ -352,8 +352,13 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         idx++;
       } else {
-        // 모든 메세지 다 보낸 후 게임 상태 초기화
+        // 모든 메세지 다 보낸 후
         clearInterval(intervalId);
+
+        // 방에 모든 유저들에게 게임 결과 송출이 끝났다고 알려줌
+        this.server.in(roomId).emit('get_finish');
+
+        // 게임 상태 초기화
         this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
       }
     }, 3000);

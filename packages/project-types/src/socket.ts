@@ -21,6 +21,7 @@ export interface ServerToClientEvents {
   get_score: (score: number) => void;
   get_count_down: (count: number, stage: string) => void;
   get_result: () => void;
+  get_finish: () => void;
   peer: (data: { id: string; nickName: string }) => void;
   greeting: (data: { message: string }) => void;
   get_offer: (data: {
@@ -93,6 +94,7 @@ export interface InterServerEvents {
   message: (chat: IChat) => void;
   get_change_stage: (stage: number) => void;
   get_result: () => void;
+  get_finish: () => void;
   get_upload: (images: string[]) => void;
   get_item_type: (status: number) => void;
 }

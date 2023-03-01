@@ -135,6 +135,7 @@ const NavItem = styled.div<{ isSelected: boolean }>`
   padding: 5px 5px 5px 5px;
   margin: 0 10px 0 10px;
   color: #fff8;
+  transition: 0.5s;
 
   ${(props) =>
     props.isSelected &&
@@ -212,7 +213,7 @@ const nickNameArr = [
 const randomIdx = Math.floor(Math.random() * 10);
 export let myNickName = nickNameArr[randomIdx]; //temp
 
-let prevBgmState = true;
+export let prevBgmState = true;
 
 function Lobby() {
   const navigate = useNavigate();

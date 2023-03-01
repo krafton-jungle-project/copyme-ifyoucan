@@ -1,6 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { gameAtom, GameStage } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
 import MyScoreBar from './MyScoreBar';
@@ -9,22 +9,28 @@ import PeerCanvas from './PeerCanvas';
 import PeerScoreBar from './PeerScoreBar';
 import Versus from './Versus';
 import { myNickName } from '../../../pages/Lobby';
-import arrow from '../../../assets/images/arrow.png';
+import arrowImg from '../../../assets/images/arrow.png';
 import InvisibleDrawingCanvas from '../InvisibleDrawingCanvas';
-import transparent from '../../../assets/images/transparent.png';
+import transparentImg from '../../../assets/images/transparent.png';
 import roundOneImg from '../../../assets/images/round-one.gif';
 import roundTwoImg from '../../../assets/images/round-two.gif';
 import roundThreeImg from '../../../assets/images/round-three.gif';
-import transition from '../../../assets/images/transition.gif';
+import transitionImg from '../../../assets/images/transition.gif';
+import winImg from '../../../assets/images/win.gif';
+import loseImg from '../../../assets/images/lose.gif';
 import gameOverImg from '../../../assets/images/game-over.gif';
 import {
+  Coin,
   GameMusic,
   GameOver,
+  Lose,
   RoundOne,
   RoundThree,
   RoundTwo,
   Transition,
+  Win,
 } from '../../../utils/sound';
+import { useClientSocket } from '../../../module/client-socket';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -161,15 +167,6 @@ const HighlightArrow = styled.img<{ focus: string }>`
     `}
 `;
 
-const RoundImg = styled.img`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 50%;
-  height: 50%;
-`;
-
 const FadeBackGround = styled.div<{ visible: boolean }>`
   position: absolute;
   top: 50%;
@@ -177,18 +174,68 @@ const FadeBackGround = styled.div<{ visible: boolean }>`
   transform: translate(-50%, -50%);
   width: 200%;
   height: 200%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   border: 5px solid white;
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `;
 
+const RoundImg = styled.img`
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+`;
+
+const Judge = styled.p<{ isJudgement: boolean }>`
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0;
+  transition: 0.5s;
+
+  ${(props) =>
+    props.isJudgement &&
+    css`
+      font-size: 100px;
+      font-weight: 800;
+      -webkit-text-stroke: 2px black;
+      text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff;
+    `}
+`;
+
+const MyJudgeImg = styled.img`
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+`;
+
+const PeerJudgeImg = styled.img`
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+`;
+
 function GameBox() {
-  const game = useAtomValue(gameAtom);
+  const [game, setGame] = useAtom(gameAtom);
+  const { socket } = useClientSocket();
   const peerNickName = useAtomValue(peerInfoAtom).nickName;
   const myVideoRef = useRef<HTMLVideoElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null);
   const [focus, setFocus] = useState('noMe');
-  let [roundImg, setRoundImg] = useState(transparent);
+  let [roundImg, setRoundImg] = useState(transparentImg);
+  let [myJudgeImg, setMyJudgeImg] = useState(transparentImg);
+  let [peerJudgeImg, setPeerJudgeImg] = useState(transparentImg);
 
   useEffect(() => {
     if (
@@ -217,6 +264,7 @@ function GameBox() {
   }, [game.stage, game.countDown]);
 
   useEffect(() => {
+    // 라운드 시작 안내
     if (game.stage === GameStage.ROUND) {
       switch (game.round) {
         case 1:
@@ -241,23 +289,49 @@ function GameBox() {
           break;
       }
       setTimeout(() => {
-        setRoundImg(transparent);
+        setRoundImg(transparentImg);
       }, 2000);
-    } else if (game.stage === GameStage.OFFEND) {
+    }
+    // 공수 전환 안내
+    else if (game.stage === GameStage.OFFEND) {
+      // x.5 라운드
       if (game.round % 1 !== 0) {
         Transition.play();
-        setRoundImg(transition);
+        setRoundImg(transitionImg);
         setTimeout(() => {
-          setRoundImg(transparent);
+          setRoundImg(transparentImg);
         }, 2000);
       }
+    }
+    // 라운드 종료 후 승패 판정
+    else if (game.stage === GameStage.JUDGE) {
+      Coin.play();
+
+      setTimeout(() => {
+        if (game.user.score >= game.peer.score) {
+          Win.play();
+          setMyJudgeImg(winImg);
+          setPeerJudgeImg(loseImg);
+          setGame((prev) => ({ ...prev, user: { ...prev.user, point: prev.user.point + 1 } }));
+        } else {
+          Lose.play();
+          setMyJudgeImg(loseImg);
+          setPeerJudgeImg(winImg);
+          setGame((prev) => ({ ...prev, peer: { ...prev.peer, point: prev.peer.point + 1 } }));
+        }
+        setTimeout(() => {
+          setMyJudgeImg(transparentImg);
+          setPeerJudgeImg(transparentImg);
+          socket.emit('change_stage', GameStage.ROUND);
+        }, 2500);
+      }, 1500);
     }
   }, [game.stage, game.round]);
 
   return (
     <Container isStart={game.isStart}>
       <CameraFocus focus={focus} />
-      <HighlightArrow src={arrow} focus={focus} />
+      <HighlightArrow src={arrowImg} focus={focus} />
       <Versus />
       <Wrapper isMe={true} isStart={game.isStart}>
         <MyScoreBar myVideoRef={myVideoRef} />
@@ -267,8 +341,13 @@ function GameBox() {
           </GameRole>
           <NickNameBox>{myNickName}</NickNameBox>
           <MyCanvas myVideoRef={myVideoRef} />
+          <MyJudgeImg alt="my judge image" src={myJudgeImg} />
         </CameraWrapper>
       </Wrapper>
+      <RoundImg alt="round image" src={roundImg} />
+      <Judge isJudgement={game.stage === GameStage.JUDGE}>
+        {game.user.score >= game.peer.score ? '>' : '<'}
+      </Judge>
       <Wrapper isMe={false} isStart={game.isStart}>
         <PeerScoreBar />
         <CameraWrapper isMe={false}>
@@ -277,12 +356,11 @@ function GameBox() {
           </GameRole>
           <NickNameBox>{peerNickName}</NickNameBox>
           <PeerCanvas peerVideoRef={peerVideoRef} />
+          <PeerJudgeImg alt="peer judge image" src={peerJudgeImg} />
         </CameraWrapper>
       </Wrapper>
       <InvisibleDrawingCanvas />
-      <FadeBackGround visible={roundImg !== transparent}>
-        <RoundImg alt="round image" src={roundImg} />
-      </FadeBackGround>
+      <FadeBackGround visible={roundImg !== transparentImg || game.stage === GameStage.JUDGE} />
     </Container>
   );
 }

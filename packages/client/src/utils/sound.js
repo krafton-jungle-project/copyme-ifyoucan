@@ -17,6 +17,14 @@ import button from '../assets/sounds/button.mp3';
 import correct from '../assets/sounds/correct.mp3';
 import yeah from '../assets/sounds/yeah.mp3';
 import gameover from '../assets/sounds/game-over.mp3';
+import potg from '../assets/sounds/play-of-the-game.mp3';
+import perfect from '../assets/sounds/perfect.mp3';
+import great from '../assets/sounds/great.mp3';
+import win from '../assets/sounds/win.mp3';
+import lose from '../assets/sounds/lose.mp3';
+import youwin from '../assets/sounds/you-win.mp3';
+import youlose from '../assets/sounds/you-lose.mp3';
+import coin from '../assets/sounds/coin3.mp3'; //temp
 
 const CountDown = new Audio(countdown);
 const GameMusic = new Audio(gamemusic);
@@ -37,6 +45,14 @@ const ButtonClick = new Audio(button);
 const Correct = new Audio(correct);
 const Yeah = new Audio(yeah);
 const GameOver = new Audio(gameover);
+const POTG = new Audio(potg);
+const Perfect = new Audio(perfect);
+const Great = new Audio(great);
+const Win = new Audio(win);
+const Lose = new Audio(lose);
+const YouWin = new Audio(youwin);
+const YouLose = new Audio(youlose);
+const Coin = new Audio(coin);
 
 export {
   CountDown,
@@ -58,4 +74,12 @@ export {
   Correct,
   Yeah,
   GameOver,
+  POTG,
+  Perfect,
+  Great,
+  Win,
+  Lose,
+  YouWin,
+  YouLose,
+  Coin,
 };

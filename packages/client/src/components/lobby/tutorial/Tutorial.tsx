@@ -5,7 +5,7 @@ import { tutorialPassAtom } from '../../../app/tutorial';
 import Guide from './Guide';
 import PoseCam from './PoseCam';
 import PoseImg from './PoseImg';
-import partyPopper from '../../../assets/images/tutorial/party-popper.gif';
+import partyPopperImg from '../../../assets/images/tutorial/party-popper.gif';
 import { Yeah } from '../../../utils/sound';
 
 const Container = styled.div`
@@ -66,7 +66,7 @@ function Tutorial() {
       <CameraWrapper>
         <PoseCam />
       </CameraWrapper>
-      {isPass ? <PartyPopper src={partyPopper} /> : null}
+      {isPass ? <PartyPopper src={partyPopperImg} /> : null}
     </Container>
   );
 }

@@ -14,7 +14,7 @@ const Container = styled.div<{ isStart: boolean }>`
   align-items: center;
   left: 50%;
   transform: translate(-50%);
-  width: ${(props) => (props.isStart ? '40%' : '60%')};
+  width: ${(props) => (props.isStart ? '50%' : '60%')};
   height: 100%;
   font-size: 2.8vw;
   font-weight: 400;
@@ -43,48 +43,55 @@ function Announcer() {
   // 대기실
   useEffect(() => {
     if (!game.isStart) {
-      // 내가 방장일 때
-      if (host) {
-        // 아직 상대가 입장하지 않았으면
-        if (!peerInfo.socketId) {
-          setMessage('상대방이 입장하지 않았습니다');
-        }
-        // 상대방이 입장했을 때
-        else {
-          // 상대방이 준비되지 않았으면
-          if (!game.peer.isReady) {
-            setMessage('상대방이 아직 준비되지 않았습니다');
+      //temp 게임 대기 중
+      if (game.round < 4) {
+        // 내가 방장일 때
+        if (host) {
+          // 아직 상대가 입장하지 않았으면
+          if (!peerInfo.socketId) {
+            setMessage('상대방이 입장하지 않았습니다');
           }
-          // 상대방이 준비되었으면
+          // 상대방이 입장했을 때
           else {
-            // 내가 전신이 나오지 않았으면
-            if (!game.user.isValidBody) {
-              setMessage('전신이 나오도록 서주세요');
+            // 상대방이 준비되지 않았으면
+            if (!game.peer.isReady) {
+              setMessage('상대방이 아직 준비되지 않았습니다');
             }
-            // 내가 전신이 나오게 섰으면(상대방은 레디한 상태)
+            // 상대방이 준비되었으면
             else {
-              setMessage('왼손을 올려 게임을 시작해주세요');
+              // 내가 전신이 나오지 않았으면
+              if (!game.user.isValidBody) {
+                setMessage('전신이 나오도록 서주세요');
+              }
+              // 내가 전신이 나오게 섰으면(상대방은 레디한 상태)
+              else {
+                setMessage('왼손을 올려 게임을 시작해주세요');
+              }
+            }
+          }
+        }
+        // 방장이 아닐때
+        else {
+          // 내가 전신이 나오지 않았으면
+          if (!game.user.isValidBody) {
+            setMessage('전신이 나오도록 서주세요');
+          }
+          // 내가 전신이 나오게 섰으면
+          else {
+            // 내가 왼손을 안올리고 있으면
+            if (!game.user.isReady) {
+              setMessage('준비가 되면 왼손을 올려주세요');
+            }
+            // 내가 왼손을 올리고 있으면
+            else {
+              setMessage('상대도 손을 올리면 게임이 시작됩니다');
             }
           }
         }
       }
-      // 방장이 아닐때
+      //temp 게임 결과를 보여줄 때
       else {
-        // 내가 전신이 나오지 않았으면
-        if (!game.user.isValidBody) {
-          setMessage('전신이 나오도록 서주세요');
-        }
-        // 내가 전신이 나오게 섰으면
-        else {
-          // 내가 왼손을 안올리고 있으면
-          if (!game.user.isReady) {
-            setMessage('준비가 되면 왼손을 올려주세요');
-          }
-          // 내가 왼손을 올리고 있으면
-          else {
-            setMessage('상대도 손을 올리면 게임이 시작됩니다');
-          }
-        }
+        setMessage('PLAY OF THE GAME');
       }
     }
   }, [
@@ -94,11 +101,18 @@ function Announcer() {
     game.user.isValidBody,
     game.user.isReady,
     game.peer.isReady,
+    game.round,
   ]);
 
   // 게임중
   useEffect(() => {
     const gameMessage = () => {
+      const initialMessages: string[] = [
+        '게임을 시작합니다',
+        '첫 번째 공격이 시작됩니다!',
+        '자세를 정확히 따라해주세요!',
+      ];
+
       switch (game.stage) {
         case GameStage.INITIAL:
           if (messageOrder < initialMessages.length) {
@@ -107,6 +121,7 @@ function Announcer() {
             setTimeout(gameMessage, 2000);
           } else {
             messageOrder = 0;
+
             if (host) {
               socket.emit('change_stage', GameStage.ROUND);
             }
@@ -116,6 +131,7 @@ function Announcer() {
           if (game.round < 4) {
             setMessage(`ROUND ${game.round}`);
 
+            //todo: 위치 빈경 필요
             // 라운드 시작 시 점수 초기화
             setTimeout(() => {
               setGame((prev) => ({
@@ -183,12 +199,6 @@ function Announcer() {
     };
 
     let messageOrder: number;
-
-    const initialMessages: string[] = [
-      '게임을 시작합니다',
-      '첫 번째 공격이 시작됩니다!',
-      '자세를 정확히 따라해주세요!',
-    ];
 
     if (game.isStart) {
       messageOrder = 0;
