@@ -10,6 +10,7 @@ import { roomInfoAtom } from '../../app/room';
 import { gameAtom } from '../../app/game';
 import { BackgroundMusic, GunReload } from '../../utils/sound';
 import { useNavigate } from 'react-router-dom';
+import RoundBox from './game/RoundBox';
 
 const Container = styled.div`
   position: absolute;
@@ -37,12 +38,22 @@ const Header = styled.div`
   height: 15%;
 `;
 
-const Logo = styled.img<{ isClickable: boolean }>`
+const LogoWrapper = styled.div`
   position: absolute;
   top: 50%;
   left: 2%;
   transform: translate(0, -50%);
+  width: 10%;
   height: 50%;
+`;
+
+const Logo = styled.img<{ isClickable: boolean; isStart: boolean }>`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  visibility: ${(props) => (props.isStart ? 'hidden' : 'visible')};
   ${(props) =>
     props.isClickable &&
     css`
@@ -122,14 +133,18 @@ function InGame() {
     <Container>
       <FadeBackGround />
       <Header>
-        <Logo // hidden ready or start button
-          alt="logo"
-          src={logoImg}
-          onClick={() => {
-            roomInfo.host ? onStart() : onReady();
-          }}
-          isClickable={roomInfo.host ? !game.isStart && game.peer.isReady : !game.isStart}
-        />
+        <LogoWrapper>
+          <Logo // hidden ready or start button
+            alt="logo"
+            src={logoImg}
+            onClick={() => {
+              roomInfo.host ? onStart() : onReady();
+            }}
+            isClickable={roomInfo.host ? game.peer.isReady : true}
+            isStart={game.isStart}
+          />
+        </LogoWrapper>
+        <RoundBox />
         <Announcer />
         <ExitWrapper onClick={exitRoom}>
           <ExitImg alt="exit" src={exitImg} />

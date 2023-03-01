@@ -1,6 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { gameAtom, GameStage } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
 import MyScoreBar from './MyScoreBar';
@@ -227,7 +227,7 @@ const PeerJudgeImg = styled.img`
 `;
 
 function GameBox() {
-  const game = useAtomValue(gameAtom);
+  const [game, setGame] = useAtom(gameAtom);
   const { socket } = useClientSocket();
   const peerNickName = useAtomValue(peerInfoAtom).nickName;
   const myVideoRef = useRef<HTMLVideoElement>(null);
@@ -312,10 +312,12 @@ function GameBox() {
           Win.play();
           setMyJudgeImg(winImg);
           setPeerJudgeImg(loseImg);
+          setGame((prev) => ({ ...prev, user: { ...prev.user, point: prev.user.point + 1 } }));
         } else {
           Lose.play();
           setMyJudgeImg(loseImg);
           setPeerJudgeImg(winImg);
+          setGame((prev) => ({ ...prev, peer: { ...prev.peer, point: prev.peer.point + 1 } }));
         }
         setTimeout(() => {
           setMyJudgeImg(transparentImg);
