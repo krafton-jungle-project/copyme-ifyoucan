@@ -3,31 +3,40 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { gameAtom } from '../../app/game';
 import { BackgroundMusic } from '../../utils/sound';
+import exitImg from '../../assets/images/exit.png';
 
 const Container = styled.div`
   position: absolute;
-  right: 0%;
-  width: 10%;
-  height: 100%;
-`;
-
-const Exit = styled.p`
-  position: absolute;
   top: 50%;
-  right: 0;
+  right: 2%;
   transform: translate(0, -50%);
-
-  border-radius: 10px;
-  padding: 2px 5px 0 5px;
-  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 1rem #a6ff33, 0 0 0.5rem #a6ff33,
-    0 0 1rem #a6ff33, inset 0 0 0.5rem #a6ff33;
-  font-size: 2.5vw;
-  font-weight: 400;
-  text-shadow: 0 0 5px #a6ff33, 0 0 10px #a6ff33;
+  width: 5%;
+  height: 50%;
   cursor: pointer;
 `;
 
-//todo: 디자인 컨셉에 맞는 EXIT ICON(Imgae) 추가
+const ExitImg = styled.img`
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%);
+  height: 70%;
+`;
+
+const ExitTxt = styled.p`
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%);
+  font-size: 12px;
+  color: #baffba;
+  text-shadow: 0 0 5px #15ff00;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 function ExitButton() {
   const navigate = useNavigate();
   const isStart = useAtomValue(gameAtom).isStart;
@@ -40,8 +49,9 @@ function ExitButton() {
   };
 
   return (
-    <Container>
-      <Exit onClick={exitRoom}>EXIT</Exit>
+    <Container onClick={exitRoom}>
+      <ExitImg alt="exit" src={exitImg} />
+      <ExitTxt>EXIT</ExitTxt>
     </Container>
   );
 }

@@ -78,7 +78,7 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
   position: absolute;
   object-fit: cover;
   transform: scaleX(-1);
-  right: 0%;
+  right: 0;
   width: 100%;
   height: 100%;
   box-sizing: border-box;

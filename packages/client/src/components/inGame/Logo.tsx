@@ -7,18 +7,12 @@ import { useClientSocket } from '../../module/client-socket';
 import { GunReload } from '../../utils/sound';
 import logoImg from '../../assets/images/logo.png';
 
-const Container = styled.div`
-  position: absolute;
-  display: flex;
-  align-items: center;
-  left: 0%;
-  width: 10%;
-  height: 100%;
-`;
-
 const LogoImg = styled.img<{ isClickable: boolean }>`
   position: absolute;
-  width: 100%;
+  top: 50%;
+  left: 2%;
+  transform: translate(0, -50%);
+  height: 50%;
   ${(props) =>
     props.isClickable &&
     css`
@@ -67,7 +61,7 @@ function Logo() {
     />
   );
 
-  return <Container>{logoButton}</Container>;
+  return logoButton;
 }
 
 export default Logo;
