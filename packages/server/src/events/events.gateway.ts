@@ -50,6 +50,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //!소켓 연결 해제
   handleDisconnect(@ConnectedSocket() socket: ServerToClientSocket): void {
+    this.logger.log(`socketId: ${socket.id} 소켓 연결 해제 ❌`);
     const roomId = this.userToRoom[socket.id];
     if (!roomId) return;
     delete this.userToRoom[socket.id];
@@ -73,8 +74,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     // 모든 클라이언트에게 업데이트 된 방 정보 전달
     this.server.emit('get_rooms', this.rooms);
-
-    this.logger.log(`socketId: ${socket.id} 소켓 연결 해제 ❌`);
   }
 
   //! 방 조회
