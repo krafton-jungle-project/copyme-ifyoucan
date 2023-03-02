@@ -59,7 +59,7 @@ const Video = styled.video<{ itemType: any; offender: boolean }>`
     p.itemType === ItemType.SIZEDOWN &&
     p.offender &&
     css`
-      transform: scale(0.5) scaleX(-1);
+      transform: scale(0.3) scaleX(-1);
     `}
 `;
 
@@ -78,7 +78,7 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
   position: absolute;
   object-fit: cover;
   transform: scaleX(-1);
-  right: 0%;
+  right: 0;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -116,7 +116,7 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
     p.itemType === ItemType.SIZEDOWN &&
     p.offender &&
     css`
-      transform: scale(0.5) scaleX(-1);
+      transform: scale(0.3) scaleX(-1);
     `}
 `;
 

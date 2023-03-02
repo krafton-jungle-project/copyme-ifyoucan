@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { useRoomAtom } from '../../app/room';
-import { useClientSocket } from '../../module/client-socket';
-import CreateRoom from './room-list/CreateRoom';
-import RoomCard from './room-list/RoomCard';
+import { useRoomAtom } from '../../../app/room';
+import { useClientSocket } from '../../../module/client-socket';
+import CreateRoom from './CreateRoom';
+import RoomCard from './RoomCard';
 
 const Container = styled.div`
   position: relative;

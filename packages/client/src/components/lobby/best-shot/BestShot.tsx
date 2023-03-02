@@ -2,7 +2,7 @@ import axios from 'axios';
 // import { Blob } from 'buffer';
 import React, { useEffect, useState } from 'react';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
-import { Paging } from './bestShot/Paging';
+import { Paging } from './Paging';
 
 //todo: 경기 사진이나 동영상 가져올 때 정보 가져와야하므로 다시 고려해야함
 
@@ -36,12 +36,11 @@ export default function BestShot() {
       if (document.cookie) {
         const token = document.cookie.split('=')[1];
         try {
-          const res = await axios.get('http://localhost:5001/users/', {
-            // const res = await axios.get('http://15.165.237.195:5001/users/', {
+          // const res = await axios.get('http://localhost:5001/users/', {
+          const res = await axios.get('http://15.165.237.195:5001/users/', {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res) {
-            console.log(res);
             const imgurls = res.data.data.imgurl;
             setImages(imgurls.reverse());
           }
@@ -95,7 +94,8 @@ export default function BestShot() {
         <div
           style={{
             width: '100%',
-            height: '100vh',
+            // height: '100vh',
+            height: '100%',
             background: 'black',
             position: 'fixed',
             display: 'flex',

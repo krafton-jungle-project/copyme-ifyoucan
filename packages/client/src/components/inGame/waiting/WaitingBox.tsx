@@ -10,7 +10,7 @@ import { myNickName } from '../../../pages/Lobby';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
-  bottom: 0%;
+  bottom: 0;
   width: 100%;
   height: 80%;
   visibility: ${(props) => (props.isStart ? 'hidden' : 'visible')};
@@ -33,7 +33,7 @@ const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  top: 0%;
+  top: 0;
   width: 100%;
   height: 15%;
   font-size: 30px;
@@ -46,7 +46,7 @@ const NickNameBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  bottom: 0%;
+  bottom: 0;
   width: 100%;
   height: 15%;
   font-size: 30px;

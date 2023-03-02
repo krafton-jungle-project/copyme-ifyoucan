@@ -12,10 +12,10 @@ import {
   tutorialPassAtom,
 } from '../../../app/tutorial';
 import defaultImg from '../../../assets/images/tutorial/standing.png';
-import leftHandUp from '../../../assets/images/tutorial/left.png';
-import rightHandUp from '../../../assets/images/tutorial/right.png';
-import TPose from '../../../assets/images/tutorial/tpose.png';
-import SDR from '../../../assets/images/tutorial/SDR.png';
+import leftHandUpImg from '../../../assets/images/tutorial/left.png';
+import rightHandUpImg from '../../../assets/images/tutorial/right.png';
+import TPoseImg from '../../../assets/images/tutorial/tpose.png';
+import SDRImg from '../../../assets/images/tutorial/SDR.png';
 import { ButtonClick } from '../../../utils/sound';
 
 const Container = styled.div`
@@ -55,20 +55,20 @@ function Guide() {
     if (isBody && isStarted) {
       if (!isLeft) {
         setContent('왼손을 들어주세요');
-        setImg(leftHandUp);
-        console.log(leftHandUp);
+        setImg(leftHandUpImg);
+        console.log(leftHandUpImg);
       }
       if (isLeft && !isRight) {
         setContent('오른손을 들어주세요');
-        setImg(rightHandUp);
+        setImg(rightHandUpImg);
       }
       if (isLeft && isRight && !isT) {
         setContent('양팔을 벌려주세요');
-        setImg(TPose);
+        setImg(TPoseImg);
       }
       if (isLeft && isRight && isT && !isSDR) {
         setContent('상상도 못한 자세를 해주세요');
-        setImg(SDR);
+        setImg(SDRImg);
       }
       if (isPass) {
         setContent("수고하셨습니다! Let's PLAY!");

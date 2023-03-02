@@ -9,10 +9,12 @@ import {
   CountDown,
   GameMusic,
   GunReload,
+  POTG,
   Swish,
 } from '../../utils/sound';
 import { useResetAtom } from 'jotai/utils';
 import { roomInfoAtom } from '../../app/room';
+import { prevBgmState } from '../../pages/Lobby';
 
 const GameEventHandler = () => {
   const { socket } = useClientSocket();
@@ -96,7 +98,7 @@ const GameEventHandler = () => {
                 setTimeout(() => {
                   setGame((prev) => ({
                     ...prev,
-                    stage: Number.isInteger(prev.round + 0.5) ? GameStage.ROUND : GameStage.OFFEND,
+                    stage: Number.isInteger(prev.round + 0.5) ? GameStage.JUDGE : GameStage.OFFEND,
                     round: prev.round + 0.5,
                     user: { ...prev.user, isOffender: !prev.user.isOffender }, // 공수전환
                   }));
@@ -123,7 +125,25 @@ const GameEventHandler = () => {
 
     // 게임이 끝났을 때
     socket.on('get_result', () => {
+      POTG.play();
+      POTG.volume = 0.6;
+      // 게임 start 상태를 false로 바꿔서 결과를 보여주는 도중 상대가 나가도 튕기지 않게 하고
+      // 화면을 GameBox에서 WaitingBox로 전환하여 결과를 채팅으로 보여줄 수 있도록 한다.
+      setGame((prev) => ({ ...prev, isStart: false }));
+    });
+
+    // 게임 결과를 모두 보여줬을 때
+    socket.on('get_finish', () => {
       resetGame();
+
+      if (prevBgmState) {
+        POTG.currentTime = 0;
+        POTG.pause();
+        setTimeout(() => {
+          BackgroundMusic.currentTime = 0;
+          BackgroundMusic.play();
+        }, 2000);
+      }
     });
 
     return () => {

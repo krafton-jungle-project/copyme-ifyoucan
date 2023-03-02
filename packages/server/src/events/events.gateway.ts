@@ -66,7 +66,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         socket.to(roomId).emit('user_exit', this.rooms[roomId].isStart);
         socket.to(roomId).emit('message', {
           userId: '',
-          message: `🔴 상대방의 연결이 끊겼습니다. 🔴`,
+          message: `🔴 상대방의 연결이 끊겼습니다 🔴`,
           isImg: false,
         });
       }
@@ -200,8 +200,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('bestIdx', bestIdx);
     console.log('worstIdx', worstIdx);
     console.log(this.rooms[roomId].images.length);
-    this.rooms[roomId].images[worstIdx].forEach((img) => resultImg.push(img));
     this.rooms[roomId].images[bestIdx].forEach((img) => resultImg.push(img));
+    this.rooms[roomId].images[worstIdx].forEach((img) => resultImg.push(img));
 
     // 이미지 병합을 위해 결과 이미지를 클라이언트에 보낸다.
     this.server.in(roomId).emit('get_upload', resultImg);
@@ -222,29 +222,29 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           });
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '🔥 최고의 공격 🔥',
+            message: '🔥 최고의 수비 🔥',
             isImg: false,
           });
         } else if (idx === 1) {
           if (bestIdx % 2 === 0) {
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
+              userId: users[0].id,
               message: '공격 포즈',
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
+              userId: users[0].id,
               message: resultImg[0],
               isImg: true,
             });
           } else {
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
+              userId: users[1].id,
               message: '공격 포즈',
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
+              userId: users[1].id,
               message: resultImg[0],
               isImg: true,
             });
@@ -252,23 +252,23 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         } else if (idx === 2) {
           if (bestIdx % 2 === 0) {
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
-              message: `수비 포즈(유사도 ${minScore}%)`,
+              userId: users[1].id,
+              message: `수비 포즈(유사도 ${maxScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
+              userId: users[1].id,
               message: resultImg[1],
               isImg: true,
             });
           } else {
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
-              message: `수비 포즈(유사도 ${minScore}%)`,
+              userId: users[0].id,
+              message: `수비 포즈(유사도 ${maxScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
+              userId: users[0].id,
               message: resultImg[1],
               isImg: true,
             });
@@ -281,7 +281,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           });
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '\n\n🔥 최고의 수비 🔥',
+            message: '\n\n🔥 최고의 공격 🔥',
             isImg: false,
           });
         } else if (idx === 4) {
@@ -312,7 +312,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           if (worstIdx % 2 === 0) {
             this.server.in(roomId).emit('message', {
               userId: users[1].id,
-              message: `수비 자세(유사도 ${maxScore}%)`,
+              message: `수비 자세(유사도 ${minScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
@@ -323,7 +323,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           } else {
             this.server.in(roomId).emit('message', {
               userId: users[0].id,
-              message: `수비 자세(유사도 ${maxScore}%)`,
+              message: `수비 자세(유사도 ${minScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
@@ -352,8 +352,13 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         idx++;
       } else {
-        // 모든 메세지 다 보낸 후 게임 상태 초기화
+        // 모든 메세지 다 보낸 후
         clearInterval(intervalId);
+
+        // 방에 모든 유저들에게 게임 결과 송출이 끝났다고 알려줌
+        this.server.in(roomId).emit('get_finish');
+
+        // 게임 상태 초기화
         this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
       }
     }, 3000);
