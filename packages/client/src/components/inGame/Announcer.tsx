@@ -43,7 +43,6 @@ function Announcer() {
   // 대기실
   useEffect(() => {
     if (!game.isStart) {
-      //temp 게임 대기 중
       if (game.round < 4) {
         // 내가 방장일 때
         if (host) {
@@ -88,9 +87,7 @@ function Announcer() {
             }
           }
         }
-      }
-      //temp 게임 결과를 보여줄 때
-      else {
+      } else {
         setMessage('PLAY OF THE GAME');
       }
     }

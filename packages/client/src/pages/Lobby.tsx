@@ -9,7 +9,7 @@ import Tutorial from '../components/lobby/tutorial/Tutorial';
 import { useMovenetStream } from '../module/movenet-stream';
 import { BackgroundMusic } from '../utils/sound';
 import logoImg from '../assets/images/logo.png';
-import { ButtonClick } from '../utils/sound';
+import { ButtonClick1, ButtonClick2 } from '../utils/sound';
 import logoutImg from '../assets/images/logout.png';
 import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
 import BestShot from '../components/lobby/best-shot/BestShot';
@@ -179,6 +179,7 @@ const Footer = styled.div`
   bottom: 0;
   width: 100%;
   height: 10%;
+  z-index: -1;
 `;
 
 const ProducedBy = styled.div`
@@ -260,11 +261,14 @@ function Lobby() {
   }, []);
 
   const logoutHandler = () => {
+    ButtonClick1.play();
     const check = window.confirm('로그아웃 하시겠습니까?');
     if (check) {
       sessionStorage.setItem('isAuthenticated', 'false');
       removeUser();
       navigate('/login', { replace: true }); //temp: Private Router 적용 후 삭제
+    } else {
+      ButtonClick2.play();
     }
   };
 
@@ -288,12 +292,12 @@ function Lobby() {
   const bgmHandler = () => {
     if (prevBgmState === true) {
       prevBgmState = false;
-      ButtonClick.play();
+      ButtonClick1.play();
       BackgroundMusic.pause();
       setMuteImg(bgmOnImg);
     } else {
       prevBgmState = true;
-      ButtonClick.play();
+      ButtonClick1.play();
       BackgroundMusic.play();
       setMuteImg(bgmOffImg);
     }
@@ -322,7 +326,7 @@ function Lobby() {
           <NavBar>
             <NavItem
               onClick={() => {
-                ButtonClick.play();
+                ButtonClick1.play();
                 setMode('플레이');
               }}
               isSelected={mode === '플레이'}
@@ -332,7 +336,7 @@ function Lobby() {
             <VerticalLine />
             <NavItem
               onClick={() => {
-                ButtonClick.play();
+                ButtonClick1.play();
                 setMode('튜토리얼');
               }}
               isSelected={mode === '튜토리얼'}
@@ -342,7 +346,7 @@ function Lobby() {
             <VerticalLine />
             <NavItem
               onClick={() => {
-                ButtonClick.play();
+                ButtonClick1.play();
                 setMode('베스트샷');
               }}
               isSelected={mode === '베스트샷'}

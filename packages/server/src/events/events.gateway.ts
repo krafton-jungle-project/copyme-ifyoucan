@@ -364,7 +364,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }, 3000);
   }
 
-  //! 점수를 공격자에게 전송
+  //! 게임 종료
   @SubscribeMessage('finish')
   getFinsh(@ConnectedSocket() socket: ServerToClientSocket): void {
     // 방에 모든 유저들에게 게임 결과 송출이 끝났다고 알려줌

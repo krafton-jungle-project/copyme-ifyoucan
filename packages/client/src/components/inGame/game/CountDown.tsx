@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { gameAtom, GameStage } from '../../../app/game';
 
-const Container = styled.div<{ visible: boolean | undefined }>`
+const Container = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -27,9 +27,6 @@ const Container = styled.div<{ visible: boolean | undefined }>`
     0 0 50px rgba(255, 255, 255, 0.8), 0 0 42px rgba(15, 255, 80, 0.1),
     0 0 120px rgba(15, 255, 80, 0.1), 0 0 92px rgba(15, 255, 80, 0.1),
     0 0 102px rgba(15, 255, 80, 0.1), 0 0 151px rgba(15, 255, 80, 0.1);
-
-  opacity: ${(props) => (props.visible ? 1 : 0)};
-  transition: opacity 0.5s ease-in-out;
 `;
 
 function CountDown({ isMe }: { isMe: boolean }) {
@@ -59,7 +56,7 @@ function CountDown({ isMe }: { isMe: boolean }) {
   } else {
   }
 
-  return <Container visible={visibility ? true : undefined}>{game.countDown}</Container>;
+  return <>{visibility && game.countDown > 0 ? <Container>{game.countDown}</Container> : null}</>;
 }
 
 export default CountDown;

@@ -173,12 +173,8 @@ const useConnectWebRTC = () => {
         resetPeerInfo();
         setRoomInfo((prev) => ({ ...prev, host: true }));
         GameMusic.currentTime = 0;
-
         GameMusic.pause();
         socket.emit('finish');
-
-        // BackgroundMusic.currentTime = 0;
-        // navigate('/', { replace: true });
       }
       // 게임 중이 아닐 땐, 내가 방장이 되고
       else {

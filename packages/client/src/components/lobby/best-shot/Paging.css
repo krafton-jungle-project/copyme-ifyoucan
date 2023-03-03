@@ -1,50 +1,28 @@
-.gr {
-  color: #808080;
-}
-
 .pagination {
   display: flex;
   justify-content: center;
-  margin-top: 15px;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
+  font-size: 16px;
 }
 
 ul.pagination li {
-  display: inline-block;
-  width: 30px;
-  height: 30px;
-
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1rem;
+  width: 30px;
 }
 
 ul.pagination li a {
   text-decoration: none;
-  color: #808080;
-  font-size: 1rem;
+  color: #fffb;
 }
 
 ul.pagination li.active a {
-  font-weight: 800;
-}
-
-ul.pagination li.active {
-  font-weight: 800;
+  font-size: 25px;
+  font-weight: 600;
+  color: #f48;
 }
 
 ul.pagination li a:hover,
-ul.pagination li a.active {
-  color: #808080;
-}
-
-.page-selection {
-  width: 48px;
-  height: 30px;
-  color: #808080;
+ul.pagination li a.active:hover {
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff;
 }
