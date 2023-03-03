@@ -155,6 +155,8 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
         (game.stage === GameStage.DEFEND && !game.user.isOffender)
       ) {
         if (videoRef.current !== null && capturedPoseRef.current !== null) {
+          capturedPoseRef.current.width = videoRef.current.width;
+          capturedPoseRef.current.height = videoRef.current.height;
           // host 여부에 따라 소켓으로 이미지 전송 여부 결정
           if (host) {
             capturePose(
@@ -167,8 +169,6 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
             capturePose(videoRef.current, capturedPoseRef.current);
           }
 
-          capturedPoseRef.current.width = videoRef.current.width;
-          capturedPoseRef.current.height = videoRef.current.height;
           capturedPoseRef.current.style.visibility = 'visible';
         }
       }

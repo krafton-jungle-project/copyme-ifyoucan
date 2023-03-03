@@ -178,7 +178,6 @@ const NoPhotoAnnouncer = styled.div`
   color: #fffb;
 `;
 
-//todo: 경기 사진이나 동영상 가져올 때 정보 가져와야하므로 다시 고려해야함
 export default function BestShot() {
   const [data, setData] = useState({ img: '', i: 0 });
   const [images, setImages] = useState<string[]>([]);
@@ -230,6 +229,20 @@ export default function BestShot() {
   const viewImage = async (img: string, i: number) => {
     ButtonClick2.play();
     setData({ img, i });
+  };
+
+  const imageToDate = (imageUrl: string) => {
+    const urlParts = imageUrl.split('/');
+    const filename = urlParts[urlParts.length - 1];
+    const timestamp = parseInt(filename.split('_')[0]);
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+    const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+    const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+    const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
   const imgAction = (action: string) => {
@@ -299,6 +312,18 @@ export default function BestShot() {
           });
         break;
       case 'delete':
+        const newImages = images.filter((image) => image !== data.img); // 이미지를 제외한 새로운 배열 생성
+        setImages(newImages); // 이미지 배열 상태 업데이트
+        setData({ img: '', i: 0 }); // data 상태 업데이트
+        const token = document.cookie.split('=')[1];
+        const config = {
+          headers: { Authorization: `Bearer ${token}` },
+        };
+        try {
+          axios.delete(`http://localhost:5001/users/${data.img}`, config); // 서버와 통신하여 데이터 삭제
+        } catch (error) {
+          console.log(error);
+        }
         break;
       default:
         break;
@@ -325,7 +350,7 @@ export default function BestShot() {
                     onClick={() => viewImage(image, i)}
                   />
                 </ImgWrapper>
-                <DateTxt>{image ? '2023-03-03 18:15' : '　'}</DateTxt>
+                <DateTxt>{image ? imageToDate(image) : '　'}</DateTxt>
               </ImgCard>
             ))}
           </ImgCardContainer>

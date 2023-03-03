@@ -364,6 +364,17 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }, 3000);
   }
 
+  //! 게임 종료
+  @SubscribeMessage('finish')
+  getFinsh(@ConnectedSocket() socket: ServerToClientSocket): void {
+    // 방에 모든 유저들에게 게임 결과 송출이 끝났다고 알려줌
+    const roomId = this.userToRoom[socket.id];
+
+    this.server.to(socket.id).emit('get_finish');
+    // 게임 상태 초기화
+    this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
+  }
+
   //! 방에 새로운 유저 join
   @SubscribeMessage('join_room')
   joinRoom(

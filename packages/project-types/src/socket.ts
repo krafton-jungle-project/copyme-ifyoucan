@@ -54,6 +54,7 @@ export interface ClientToServerEvents {
   score: (score: number) => void;
   round_score: (score: number) => void;
   result: () => void;
+  finish: () => void;
   count_down: (stage: string) => void;
   offer: (data: {
     sdp: RTCSessionDescriptionInit;

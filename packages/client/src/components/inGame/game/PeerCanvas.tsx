@@ -171,6 +171,8 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
         (game.stage === GameStage.DEFEND && game.user.isOffender)
       ) {
         if (videoRef.current !== null && capturedPoseRef.current !== null) {
+          capturedPoseRef.current.width = videoRef.current.width;
+          capturedPoseRef.current.height = videoRef.current.height;
           // 내 수비 점수 확인을 위한 공격자(상대) 포즈 추정
           if (!game.user.isOffender) {
             getPeerPose();
@@ -187,9 +189,6 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
           } else {
             capturePose(videoRef.current, capturedPoseRef.current);
           }
-
-          capturedPoseRef.current.width = videoRef.current.width;
-          capturedPoseRef.current.height = videoRef.current.height;
           capturedPoseRef.current.style.visibility = 'visible';
         }
       }

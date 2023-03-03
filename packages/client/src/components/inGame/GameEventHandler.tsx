@@ -134,11 +134,11 @@ const GameEventHandler = () => {
 
     // 게임 결과를 모두 보여줬을 때
     socket.on('get_finish', () => {
+      POTG.currentTime = 0;
+      POTG.pause();
       resetGame();
 
       if (prevBgmState) {
-        POTG.currentTime = 0;
-        POTG.pause();
         setTimeout(() => {
           BackgroundMusic.currentTime = 0;
           BackgroundMusic.play();
