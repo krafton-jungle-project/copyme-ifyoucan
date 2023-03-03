@@ -9,7 +9,7 @@ export const Paging = ({ page, count, setPage }: Props) => {
   return (
     <Pagination
       activePage={page}
-      itemsCountPerPage={8}
+      itemsCountPerPage={4}
       totalItemsCount={count}
       pageRangeDisplayed={5}
       prevPageText={'‹'}

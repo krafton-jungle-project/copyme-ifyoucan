@@ -13,7 +13,7 @@ export default function BestShot() {
   //리스트에 나타낼 아이템
   const [count, setCount] = useState(0); //아이템 총 개수
   const [currentpage, setCurrentpage] = useState(1); //현재페이지
-  const [postPerPage] = useState(8); //페이지당 아이템 개수
+  const [postPerPage] = useState(4); //페이지당 아이템 개수
 
   const [indexOfLastPost, setIndexOfLastPost] = useState(0);
   const [indexOfFirstPost, setIndexOfFirstPost] = useState(0);
@@ -70,6 +70,35 @@ export default function BestShot() {
         document.body.removeChild(link);
       });
   };
+  //시간 분 초 나오게 하기
+
+  const imageToDate = (imageUrl: string) => {
+    const urlParts = imageUrl.split('/');
+    const filename = urlParts[urlParts.length - 1];
+    const timestamp = parseInt(filename.split('_')[0]);
+    const date = new Date(timestamp);
+    const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+    const formattedDate = `${date.getFullYear()}-${
+      date.getMonth() + 1
+    }-${date.getDate()} ${date.getHours()}:${minutes}`;
+
+    return formattedDate;
+  };
+
+  const deleteImage = async () => {
+    const newImages = images.filter((image) => image !== data.img); // 이미지를 제외한 새로운 배열 생성
+    setImages(newImages); // 이미지 배열 상태 업데이트
+    setData({ img: '', i: 0 }); // data 상태 업데이트
+    const token = document.cookie.split('=')[1];
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    try {
+      await axios.delete(`http://localhost:5001/users/${data.img}`, config); // 서버와 통신하여 데이터 삭제
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const viewImage = async (img: string, i: number) => {
     setData({ img, i });
@@ -120,19 +149,25 @@ export default function BestShot() {
           <button type="button" onClick={handleDownload}>
             다운로드
           </button>
+          <button type="button" onClick={deleteImage}>
+            삭제
+          </button>
         </div>
       )}
       <div style={{ padding: '30px' }}>
         <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3, 1050: 4 }}>
           <Masonry gutter="30px">
             {currentImages.map((image, i) => (
-              <img
-                key={i}
-                src={image}
-                style={{ width: '50%', display: 'block', cursor: 'pointer' }}
-                alt=""
-                onClick={() => viewImage(image, i)}
-              />
+              <>
+                <img
+                  key={i}
+                  src={image}
+                  style={{ width: '50%', display: 'block', cursor: 'pointer' }}
+                  alt=""
+                  onClick={() => viewImage(image, i)}
+                />
+                <div>{imageToDate(image)}</div>
+              </>
             ))}
           </Masonry>
         </ResponsiveMasonry>
