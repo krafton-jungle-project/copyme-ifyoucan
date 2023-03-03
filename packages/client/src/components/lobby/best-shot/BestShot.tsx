@@ -188,6 +188,11 @@ export default function BestShot() {
   const [indexOfLastPost, setIndexOfLastPost] = useState(0);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
 
+  const setPage = (e: number) => {
+    ButtonClick3.play();
+    setCurrentPage(e);
+  };
+
   useEffect(() => {
     setCount(images.length);
     setIndexOfLastPost(currentPage * postPerPage);
@@ -198,11 +203,6 @@ export default function BestShot() {
     }
     setCurrentImages(tempImages);
   }, [currentPage, indexOfFirstPost, indexOfLastPost, images, postPerPage]);
-
-  const setPage = (e: number) => {
-    ButtonClick3.play();
-    setCurrentPage(e);
-  };
 
   useEffect(() => {
     const getMyImages = async () => {
@@ -245,7 +245,7 @@ export default function BestShot() {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
-  const imgAction = (action: string) => {
+  const imgAction = async (action: string) => {
     ButtonClick3.play();
     let i = data.i;
 
@@ -312,15 +312,19 @@ export default function BestShot() {
           });
         break;
       case 'delete':
-        const newImages = images.filter((image) => image !== data.img); // 이미지를 제외한 새로운 배열 생성
-        setImages(newImages); // 이미지 배열 상태 업데이트
-        setData({ img: '', i: 0 }); // data 상태 업데이트
+        // data 상태 업데이트
         const token = document.cookie.split('=')[1];
-        const config = {
-          headers: { Authorization: `Bearer ${token}` },
-        };
+        const key = data.img.split('/')[4];
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-          axios.delete(`http://localhost:5001/users/${data.img}`, config); // 서버와 통신하여 데이터 삭제
+          const res = await axios.delete(`http://localhost:5001/users/${key}`, config); // 서버와 통신하여 데이터 삭제
+          // const res = await axios.delete(`http://15.165.237.195:5001/users/${key}`, config); // 서버와 통신하여 데이터 삭제
+          if (res) {
+            const newImgUrls = res.data.data.imgUrls;
+            setImages(newImgUrls.reverse());
+            setData({ img: '', i: 0 });
+            alert('삭제되었습니다');
+          }
         } catch (error) {
           console.log(error);
         }

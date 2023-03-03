@@ -55,7 +55,7 @@ export class UploadService {
         .deleteObject(
           {
             Bucket: this.S3_BUCKET_NAME,
-            Key: key,
+            Key: `copy/${key}`,
           },
           callback,
         )
