@@ -31,5 +31,7 @@ const RoomInitialState: RoomState = {
 };
 
 const roomInfoAtom = atomWithReset(RoomInitialState);
+const createRoomModalAtom = atom(false);
+const fadeOutAtom = atom(true);
 
-export { roomInfoAtom, useRoomAtom };
+export { roomInfoAtom, useRoomAtom, createRoomModalAtom, fadeOutAtom };
