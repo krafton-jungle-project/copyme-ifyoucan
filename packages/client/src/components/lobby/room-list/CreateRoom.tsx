@@ -1,11 +1,8 @@
-import { Modal } from 'antd';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSetAtom } from 'jotai';
-import { useClientSocket } from '../../../module/client-socket';
-import { roomInfoAtom } from '../../../app/room';
+import { useAtom, useSetAtom } from 'jotai';
+import { createRoomModalAtom, fadeOutAtom } from '../../../app/room';
 import styled from 'styled-components';
 import { ButtonClick } from '../../../utils/sound';
+import CreateRoomModal from './CreateRoomModal';
 
 const Button = styled.button`
   position: absolute;
@@ -28,40 +25,18 @@ const Button = styled.button`
   transition: 0.2s;
 `;
 
-export default function CreateRoom() {
-  const { socket } = useClientSocket();
-  const navigate = useNavigate();
-  const setRoomInfo = useSetAtom(roomInfoAtom);
-  const [open, setOpen] = useState<boolean>(false);
-  let roomName = '';
-
-  const joinRoom = () => {
-    socket.on('new_room', (roomId: string) => {
-      // 방 생성자는 호스트가 된다.
-      setRoomInfo(() => ({
-        roomId,
-        host: true,
-      }));
-      navigate('/room', { replace: true });
-    });
-  };
+function CreateRoom() {
+  const [open, setOpen] = useAtom(createRoomModalAtom);
+  const setVisible = useSetAtom(fadeOutAtom);
 
   const showModal = () => {
     setOpen(true);
-  };
-
-  const handleOk = () => {
-    setOpen(false);
-    socket.emit('create_room', roomName);
-    joinRoom();
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
+    setVisible(true);
   };
 
   return (
     <>
+      {open && <CreateRoomModal />}
       <Button
         onClick={() => {
           ButtonClick.play();
@@ -70,11 +45,11 @@ export default function CreateRoom() {
       >
         방만들기
       </Button>
-      <Modal
+      {/* <Modal
         title="Create Room"
         open={open}
         okText="Create"
-        cancelText="Cancle"
+        cancelText="Cancel"
         onOk={handleOk}
         onCancel={handleCancel}
       >
@@ -85,7 +60,9 @@ export default function CreateRoom() {
             roomName = e.target.value;
           }}
         />
-      </Modal>
+      </Modal> */}
     </>
   );
 }
+
+export default CreateRoom;
