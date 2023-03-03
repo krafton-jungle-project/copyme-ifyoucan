@@ -359,7 +359,7 @@ function GameBox() {
           <PeerJudgeImg alt="peer judge image" src={peerJudgeImg} />
         </CameraWrapper>
       </Wrapper>
-      <InvisibleDrawingCanvas />
+      {/* <InvisibleDrawingCanvas /> */}
       <FadeBackGround visible={roundImg !== transparentImg || game.stage === GameStage.JUDGE} />
     </Container>
   );

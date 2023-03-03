@@ -31,8 +31,8 @@ const InvisibleDrawingCanvas = () => {
       if (document.cookie) {
         const token = document.cookie.split('=')[1];
         try {
-          const res = await axios.post('http://15.165.237.195:5001/users/upload', image, {
-            // const res = await axios.post('http://localhost:5001/users/upload', image, {
+          // const res = await axios.post('http://15.165.237.195:5001/users/upload', image, {
+          const res = await axios.post('http://localhost:5001/users/upload', image, {
             headers: {
               'Content-Type': 'multipart/form-data',
               'Authorization': `Bearer ${token}`,
