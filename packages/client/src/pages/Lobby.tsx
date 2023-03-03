@@ -9,12 +9,13 @@ import Tutorial from '../components/lobby/tutorial/Tutorial';
 import { useMovenetStream } from '../module/movenet-stream';
 import { BackgroundMusic } from '../utils/sound';
 import logoImg from '../assets/images/logo.png';
-import { ButtonClick } from '../utils/sound';
+import { ButtonClick1, ButtonClick2 } from '../utils/sound';
 import logoutImg from '../assets/images/logout.png';
 import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
 import BestShot from '../components/lobby/best-shot/BestShot';
 import bgmOnImg from '../assets/images/bgm-on.png';
 import bgmOffImg from '../assets/images/bgm-off.png';
+import BestShot2 from '../components/lobby/best-shot/BestShot2';
 
 const Container = styled.div`
   /* position: absolute;
@@ -232,6 +233,9 @@ function Lobby() {
     case '베스트샷':
       content = <BestShot />;
       break;
+    case '베스트샷_dev':
+      content = <BestShot2 />;
+      break;
     default:
       content = <RoomList />;
       break;
@@ -260,18 +264,21 @@ function Lobby() {
   }, []);
 
   const logoutHandler = () => {
+    ButtonClick1.play();
     const check = window.confirm('로그아웃 하시겠습니까?');
     if (check) {
       sessionStorage.setItem('isAuthenticated', 'false');
       removeUser();
       navigate('/login', { replace: true }); //temp: Private Router 적용 후 삭제
+    } else {
+      ButtonClick2.play();
     }
   };
 
   useEffect(() => {
     if (prevBgmState === true) {
       setTimeout(() => {
-        BackgroundMusic.play();
+        // BackgroundMusic.play();
         BackgroundMusic.volume = 0.5;
       }, 1000);
 
@@ -288,12 +295,12 @@ function Lobby() {
   const bgmHandler = () => {
     if (prevBgmState === true) {
       prevBgmState = false;
-      ButtonClick.play();
+      ButtonClick1.play();
       BackgroundMusic.pause();
       setMuteImg(bgmOnImg);
     } else {
       prevBgmState = true;
-      ButtonClick.play();
+      ButtonClick1.play();
       BackgroundMusic.play();
       setMuteImg(bgmOffImg);
     }
@@ -322,7 +329,7 @@ function Lobby() {
           <NavBar>
             <NavItem
               onClick={() => {
-                ButtonClick.play();
+                ButtonClick1.play();
                 setMode('플레이');
               }}
               isSelected={mode === '플레이'}
@@ -332,7 +339,7 @@ function Lobby() {
             <VerticalLine />
             <NavItem
               onClick={() => {
-                ButtonClick.play();
+                ButtonClick1.play();
                 setMode('튜토리얼');
               }}
               isSelected={mode === '튜토리얼'}
@@ -342,12 +349,22 @@ function Lobby() {
             <VerticalLine />
             <NavItem
               onClick={() => {
-                ButtonClick.play();
+                ButtonClick1.play();
                 setMode('베스트샷');
               }}
               isSelected={mode === '베스트샷'}
             >
               베스트샷
+            </NavItem>
+            <VerticalLine />
+            <NavItem
+              onClick={() => {
+                ButtonClick1.play();
+                setMode('베스트샷_dev');
+              }}
+              isSelected={mode === '베스트샷_dev'}
+            >
+              베스트샷_dev
             </NavItem>
           </NavBar>
         </Header>

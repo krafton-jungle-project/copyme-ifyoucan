@@ -5,7 +5,7 @@ import { useSetAtom } from 'jotai';
 import { useClientSocket } from '../../../module/client-socket';
 import { roomInfoAtom } from '../../../app/room';
 import styled from 'styled-components';
-import { ButtonClick } from '../../../utils/sound';
+import { ButtonClick1, ButtonClick2 } from '../../../utils/sound';
 
 const Button = styled.button`
   position: absolute;
@@ -57,6 +57,7 @@ export default function CreateRoom() {
   };
 
   const handleCancel = () => {
+    ButtonClick2.play();
     setOpen(false);
   };
 
@@ -64,7 +65,7 @@ export default function CreateRoom() {
     <>
       <Button
         onClick={() => {
-          ButtonClick.play();
+          ButtonClick1.play();
           showModal();
         }}
       >

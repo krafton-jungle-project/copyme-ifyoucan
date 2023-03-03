@@ -10,7 +10,7 @@ import { setCookie } from '../utils/cookies';
 import { useMovenetStream } from '../module/movenet-stream';
 import Loading from '../components/lobby/Loading';
 import logoImg from '../assets/images/logo.png';
-import { ButtonClick } from '../utils/sound';
+import { ButtonClick1 } from '../utils/sound';
 
 const Container = styled.div<{ isModalOpened: boolean }>`
   position: absolute;
@@ -149,7 +149,7 @@ function Login() {
 
   const onClickConfirmButton = async (e: any) => {
     e.preventDefault();
-    ButtonClick.play();
+    ButtonClick1.play();
     console.log('login');
     if (id === '') {
       alert(`아이디를 입력해주세요`);
