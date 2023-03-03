@@ -15,7 +15,6 @@ import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
 import BestShot from '../components/lobby/best-shot/BestShot';
 import bgmOnImg from '../assets/images/bgm-on.png';
 import bgmOffImg from '../assets/images/bgm-off.png';
-import BestShot2 from '../components/lobby/best-shot/BestShot2';
 
 const Container = styled.div`
   /* position: absolute;
@@ -180,6 +179,7 @@ const Footer = styled.div`
   bottom: 0;
   width: 100%;
   height: 10%;
+  z-index: -1;
 `;
 
 const ProducedBy = styled.div`
@@ -233,9 +233,6 @@ function Lobby() {
     case '베스트샷':
       content = <BestShot />;
       break;
-    case '베스트샷_dev':
-      content = <BestShot2 />;
-      break;
     default:
       content = <RoomList />;
       break;
@@ -278,7 +275,7 @@ function Lobby() {
   useEffect(() => {
     if (prevBgmState === true) {
       setTimeout(() => {
-        // BackgroundMusic.play();
+        BackgroundMusic.play();
         BackgroundMusic.volume = 0.5;
       }, 1000);
 
@@ -355,16 +352,6 @@ function Lobby() {
               isSelected={mode === '베스트샷'}
             >
               베스트샷
-            </NavItem>
-            <VerticalLine />
-            <NavItem
-              onClick={() => {
-                ButtonClick1.play();
-                setMode('베스트샷_dev');
-              }}
-              isSelected={mode === '베스트샷_dev'}
-            >
-              베스트샷_dev
             </NavItem>
           </NavBar>
         </Header>

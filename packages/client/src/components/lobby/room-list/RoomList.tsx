@@ -98,13 +98,11 @@ function RoomList() {
             방을 직접 만들어 보세요!
           </NoRoomAnnouncer>
         ) : (
-          roomList.map((room) => {
-            return (
-              <RoomCardWrapper key={room.id}>
-                <RoomCard roomInfo={room} />
-              </RoomCardWrapper>
-            );
-          })
+          roomList.map((room) => (
+            <RoomCardWrapper key={room.id}>
+              <RoomCard roomInfo={room} />
+            </RoomCardWrapper>
+          ))
         )}
       </RoomCardContainer>
     </Container>
