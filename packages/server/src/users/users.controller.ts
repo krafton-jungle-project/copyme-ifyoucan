@@ -2,6 +2,8 @@ import { AuthService } from '../auth/auth.service';
 import { UserRequestDto } from './dto/users.request.dto';
 import {
   Body,
+  Delete,
+  Param,
   Put,
   Req,
   UploadedFile,
@@ -72,5 +74,25 @@ export class UsersController {
       message: '이미지 업로드 성공',
       user,
     });
+  }
+  @ApiOperation({ summary: '이미지 삭제 ' })
+  @UseGuards(JwtAuthGuard)
+  @Delete('/:imageUrl')
+  async deleteImg(@Req() req: any, @Param('imageUrl') imageUrl: string) {
+    const userId = req.user.id;
+    const key = imageUrl.substring(imageUrl.indexOf('copy'));
+    console.log(imageUrl);
+
+    // Delete the image from S3
+    await this.uploadService.deleteS3Object(key);
+
+    // Update the user's information
+    const user = await this.usersService.deleteImg(userId, null);
+
+    return {
+      statusCode: 200,
+      message: '이미지 삭제 성공',
+      user,
+    };
   }
 }

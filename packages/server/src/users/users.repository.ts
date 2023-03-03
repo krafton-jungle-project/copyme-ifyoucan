@@ -32,4 +32,10 @@ export class UsersRepository {
     const filter = { _id: userId };
     return await this.userModel.findOneAndUpdate(filter, { $push: { imgUrls: imgUrl } });
   }
+
+  async deleteUserImg(userId: string, imgUrl: string): Promise<User> {
+    const filter = { _id: userId };
+    const update = { $pull: { imgUrls: imgUrl } };
+    return await this.userModel.findOneAndUpdate(filter, update);
+  }
 }

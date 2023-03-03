@@ -24,6 +24,11 @@ export default function BestShot() {
     setCount(images.length);
     setIndexOfLastPost(currentpage * postPerPage);
     setIndexOfFirstPost(indexOfLastPost - postPerPage);
+    let tempImages = images.slice(indexOfFirstPost, indexOfLastPost);
+    while (tempImages.length < 8) {
+      tempImages.push('');
+    }
+
     setCurrentImages(images.slice(indexOfFirstPost, indexOfLastPost));
   }, [currentpage, indexOfFirstPost, indexOfLastPost, images, postPerPage]);
 
@@ -95,7 +100,7 @@ export default function BestShot() {
       headers: { Authorization: `Bearer ${token}` },
     };
     try {
-      await axios.delete(`http://localhost:5001/users/${data.img}`, config); // 서버와 통신하여 데이터 삭제
+      await axios.delete(`http://localhost:5001/users/:${data.img}`, config); // 서버와 통신하여 데이터 삭제
     } catch (error) {
       console.log(error);
     }
@@ -159,16 +164,13 @@ export default function BestShot() {
         <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3, 1050: 4 }}>
           <Masonry gutter="30px">
             {currentImages.map((image, i) => (
-              <>
-                <img
-                  key={i}
-                  src={image}
-                  style={{ width: '50%', display: 'block', cursor: 'pointer' }}
-                  alt=""
-                  onClick={() => viewImage(image, i)}
-                />
-                <div>{imageToDate(image)}</div>
-              </>
+              <img
+                key={i}
+                src={image}
+                style={{ width: '50%', display: 'block', cursor: 'pointer' }}
+                alt=""
+                onClick={() => viewImage(image, i)}
+              />
             ))}
           </Masonry>
         </ResponsiveMasonry>
