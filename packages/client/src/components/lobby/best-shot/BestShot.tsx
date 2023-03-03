@@ -77,10 +77,11 @@ export default function BestShot() {
     const filename = urlParts[urlParts.length - 1];
     const timestamp = parseInt(filename.split('_')[0]);
     const date = new Date(timestamp);
+    const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
     const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
     const formattedDate = `${date.getFullYear()}-${
       date.getMonth() + 1
-    }-${date.getDate()} ${date.getHours()}:${minutes}`;
+    }-${date.getDate()} ${hours}:${minutes}`;
 
     return formattedDate;
   };
