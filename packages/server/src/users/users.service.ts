@@ -34,11 +34,11 @@ export class UsersService {
     return await this.usersRepository.updateUserImg(userId, imgUrl);
   }
 
-  async deleteImg(userId: string, imgUrl: string) {
+  async deleteImg(userId: string, key: string) {
     const user = await this.usersRepository.findUserByIdWithoutPassword(userId);
     if (!user) {
       throw new UnauthorizedException('해당하는 아이디의 유저를 찾을 수 없습니다.');
     }
-    return await this.usersRepository.deleteUserImg(userId, imgUrl);
+    return await this.usersRepository.deleteUserImg(userId, key);
   }
 }
