@@ -1,12 +1,12 @@
-import type * as poseDetection from '@tensorflow-models/pose-detection';
+import type { Keypoint, Pose } from '@tensorflow-models/pose-detection';
 import '@tensorflow/tfjs-backend-webgl';
 
 // euclideanDistance 함수
-const euclideanDistance = (kp1: poseDetection.Keypoint, kp2: poseDetection.Keypoint): number =>
+const euclideanDistance = (kp1: Keypoint, kp2: Keypoint): number =>
   Math.sqrt(Math.pow(kp1.x - kp2.x, 2) + Math.pow(kp1.y - kp2.y, 2));
 
 // scaling 함수
-const resizePose = (pose: poseDetection.Pose) => {
+const resizePose = (pose: Pose) => {
   // 양쪽 어깨 좌표 받아옴, 어깨가 가장 인식이 잘 되므로 어깨로 선정하겠슴다
   const leftShoulder = pose.keypoints[5];
   const rightShoulder = pose.keypoints[6];
@@ -33,12 +33,7 @@ const resizePose = (pose: poseDetection.Pose) => {
  * @returns 공격자 기준에 맞춘 수비자의 pose2
  */
 // 사각형 산술평균 중심
-function squareCenter(
-  a: poseDetection.Keypoint,
-  b: poseDetection.Keypoint,
-  c: poseDetection.Keypoint,
-  d: poseDetection.Keypoint,
-): number[] {
+function squareCenter(a: Keypoint, b: Keypoint, c: Keypoint, d: Keypoint): number[] {
   return [(a.x + b.x + c.x + d.x) / 4, (a.y + b.y + c.y + d.y) / 4];
 }
 /**
@@ -47,7 +42,7 @@ function squareCenter(
  * @param {*} pose2 : 수비자 (채점)
  * @returns 공격자 기준에 맞춘 수비자의 pose2
  */
-function alignPose(pose1: poseDetection.Pose, pose2: poseDetection.Pose): poseDetection.Pose {
+function alignPose(pose1: Pose, pose2: Pose): Pose {
   // 5번: 왼쪽 어깨
   // 6번: 오른쪽 어깨
   // 11번: 왼쪽 골반
@@ -84,7 +79,7 @@ function alignPose(pose1: poseDetection.Pose, pose2: poseDetection.Pose): poseDe
   return pose2;
 }
 
-export function comparePoses(pose1: poseDetection.Pose, pose2: poseDetection.Pose): number {
+export function comparePoses(pose1: Pose, pose2: Pose): number {
   // Deep copy 후 cmpPose 진행, shallow copy 진행 시, 캔버스에 skelton을 그릴 때
   // resizing된 점들을 토대로 그리기 때문에 제대로 그려지지 않음
 
@@ -116,12 +111,36 @@ export function comparePoses(pose1: poseDetection.Pose, pose2: poseDetection.Pos
   return Math.ceil(averageDistance >= 1 ? 0 : 100 - 100 * averageDistance);
 }
 
+export function cosineSimilarity(pose1: Pose, pose2: Pose): number {
+  resizePose(pose1);
+  resizePose(pose2);
+  const keypoints1 = pose1.keypoints;
+  const keypoints2 = pose2.keypoints;
+
+  const xCoords1 = keypoints1.map((keypoint) => keypoint.x);
+  const yCoords1 = keypoints1.map((keypoint) => keypoint.y);
+  const xCoords2 = keypoints2.map((keypoint) => keypoint.x);
+  const yCoords2 = keypoints2.map((keypoint) => keypoint.y);
+
+  let dotProduct = 0;
+  let mag1 = 0;
+  let mag2 = 0;
+  for (let i = 0; i < xCoords1.length; i++) {
+    dotProduct += xCoords1[i] * xCoords2[i] + yCoords1[i] * yCoords2[i];
+    mag1 += xCoords1[i] ** 2 + yCoords1[i] ** 2;
+    mag2 += xCoords2[i] ** 2 + yCoords2[i] ** 2;
+  }
+
+  const similarity = dotProduct / (Math.sqrt(mag1) * Math.sqrt(mag2));
+  return (similarity + 1) * 50;
+}
+
 // 각 스트림에서 추출한 pose object 넣으시면 됩니다 ㅎㅎ;
 // Usage: comparePoses(공격자, 수비자)
 // comparePoses(stdPose, pose4);
 
 // // 다각형 무게중심 코드
-// function getCentroid(points: poseDetection.Keypoint[]) {
+// function getCentroid(points: Keypoint[]) {
 //   let area = 0,
 //     cx = 0,
 //     cy = 0;
