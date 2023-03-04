@@ -78,9 +78,10 @@ interface RoomInfo {
   readyCount: number;
   gameMode: IGameMode;
 }
+
 const mode = ['일반', '블러', '회전', '축소'];
 
-export default function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
+function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
   const navigate = useNavigate();
   const setRoomInfo = useSetAtom(roomInfoAtom);
 
@@ -112,3 +113,5 @@ export default function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
     </Container>
   );
 }
+
+export default RoomCard;

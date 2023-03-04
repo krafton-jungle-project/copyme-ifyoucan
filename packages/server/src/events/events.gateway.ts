@@ -127,7 +127,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 준비 취소
   @SubscribeMessage('unready')
-  cancleReady(
+  cancelReady(
     @ConnectedSocket() socket: ServerToClientSocket,
     @MessageBody() roomId: string,
   ): void {

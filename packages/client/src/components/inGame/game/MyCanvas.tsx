@@ -30,7 +30,7 @@ const rotate = keyframes`
   }
 `;
 
-const Video = styled.video<{ GameMode: any; offender: boolean }>`
+const Video = styled.video<{ GameMode: number; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   transform: scaleX(-1);
@@ -71,7 +71,7 @@ const Canvas = styled.canvas`
   border-radius: 20px;
 `;
 
-const CapturedPose = styled.canvas<{ isCaptured: boolean; GameMode: any; offender: boolean }>`
+const CapturedPose = styled.canvas<{ isCaptured: boolean; GameMode: number; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   transform: scaleX(-1);
@@ -177,7 +177,7 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
 
       // 아이템 타입 초기화
       if (game.stage === GameStage.DEFEND) {
-        setMode(100);
+        setMode(-1);
       }
     }
 
