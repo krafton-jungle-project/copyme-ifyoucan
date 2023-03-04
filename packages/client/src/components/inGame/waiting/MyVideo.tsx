@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import DefaultProfileImg from '../../../assets/images/my-default-profile.png';
+import DefaultProfileImg from '../../../assets/images/in-game/my-default-profile.png';
 import { stream } from '../../../utils/tfjs-movenet';
 
 const Container = styled.div`

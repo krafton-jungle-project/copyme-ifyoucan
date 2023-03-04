@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import frameImgSrc from '../../assets/images/frame-img.png';
-import stickerImgSrc from '../../assets/images/sticker.png';
+import frameImgSrc from '../../assets/images/in-game/frame-img.png';
+import stickerImgSrc from '../../assets/images/in-game/sticker.png';
 import { useClientSocket } from '../../module/client-socket';
 
 const Canvas = styled.canvas`

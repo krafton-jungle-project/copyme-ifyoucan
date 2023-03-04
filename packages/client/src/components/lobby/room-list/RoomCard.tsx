@@ -2,13 +2,13 @@ import { useSetAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { roomInfoAtom } from '../../../app/room';
-import BlueImg from '../../../assets/images/room-card/blue.gif';
-import GreenImg from '../../../assets/images/room-card/green.gif';
-import OrangeImg from '../../../assets/images/room-card/orange.gif';
-import PinkImg from '../../../assets/images/room-card/pink.gif';
-import PurpleImg from '../../../assets/images/room-card/purple.gif';
-import RedImg from '../../../assets/images/room-card/red.gif';
-import YellowImg from '../../../assets/images/room-card/yellow.gif';
+import BlueImg from '../../../assets/images/lobby/room-card/blue.gif';
+import GreenImg from '../../../assets/images/lobby/room-card/green.gif';
+import OrangeImg from '../../../assets/images/lobby/room-card/orange.gif';
+import PinkImg from '../../../assets/images/lobby/room-card/pink.gif';
+import PurpleImg from '../../../assets/images/lobby/room-card/purple.gif';
+import RedImg from '../../../assets/images/lobby/room-card/red.gif';
+import YellowImg from '../../../assets/images/lobby/room-card/yellow.gif';
 
 const Container = styled.div`
   display: inline-flex;
