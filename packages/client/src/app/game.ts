@@ -27,6 +27,7 @@ enum GameStage {
 }
 
 enum ItemType {
+  NORMAL,
   BLUR,
   ROTATE,
   SIZEDOWN,
