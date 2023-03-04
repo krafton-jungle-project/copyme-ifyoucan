@@ -1,8 +1,9 @@
 import { useAtom, useSetAtom } from 'jotai';
+import type { IGameMode } from 'project-types';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css, keyframes } from 'styled-components';
-import { createRoomModalAtom, fadeOutAtom, roomInfoAtom } from '../../../app/room';
+import { createRoomModalAtom, fadeOutAtom, GameMode, roomInfoAtom } from '../../../app/room';
 import { useClientSocket } from '../../../module/client-socket';
 
 const fadeIn = keyframes`
@@ -50,11 +51,11 @@ const Modal2 = styled.div<{ isOpened: boolean; isVisible: boolean }>`
   border-radius: 15px;
   position: absolute;
   transform: translate(-50%);
-  width: 30vw;
-  height: 35vh;
+  width: 35vw;
+  height: 55vh;
   left: 50%;
-  max-height: 250px;
-  max-width: 500px;
+  max-height: 400px;
+  max-width: 600px;
   background-color: #01000d;
   z-index: 999;
   display: flex;
@@ -106,6 +107,7 @@ const Input = styled.input`
   border-radius: 10px;
   font-size: large;
   background-color: transparent;
+  color: #fff;
 
   &::placeholder {
     color: #fffd;
@@ -135,6 +137,49 @@ const Button = styled.button`
   }
 `;
 
+const ModeDiv = styled.div`
+  border: 2px solid #fff;
+  border-radius: 10px;
+
+  padding: 2% 0 2% 5%;
+  height: 40%;
+  width: 85%;
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: space-evenly;
+  align-items: center;
+`;
+
+const RoundWrapper = styled.div`
+  width: 27%;
+  height: 100%;
+`;
+
+const RoundDiv = styled.div`
+  height: 33%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+`;
+
+const SelectionWrapper = styled.div`
+  width: 73%;
+  height: 100%;
+`;
+
+const SelectionDiv = styled.div`
+  /* position: absolute; */
+  font-size: 1.2rem;
+  height: 33%;
+  display: flex;
+  align-items: center;
+`;
+
+const SelSpan = styled.span`
+  cursor: pointer;
+`;
+
 function CreateRoomModal() {
   const { socket } = useClientSocket();
   const setRoomInfo = useSetAtom(roomInfoAtom);
@@ -142,13 +187,19 @@ function CreateRoomModal() {
   const [roomName, setRoomName] = useState<string>('');
   const [open, setOpen] = useAtom(createRoomModalAtom);
   const [visible, setVisible] = useAtom(fadeOutAtom);
+  const [gameMode, setGameMode] = useState({
+    round1: GameMode.NORMAL,
+    round2: GameMode.NORMAL,
+    round3: GameMode.NORMAL,
+  });
 
   const joinRoom = () => {
-    socket.on('new_room', (roomId: string) => {
+    socket.on('new_room', (roomId: string, gameMode: IGameMode) => {
       // 방 생성자는 호스트가 된다.
       setRoomInfo(() => ({
         roomId,
         host: true,
+        gameMode,
       }));
       navigate('/room', { replace: true });
     });
@@ -156,7 +207,7 @@ function CreateRoomModal() {
 
   const handleOk = () => {
     setOpen(false);
-    socket.emit('create_room', roomName);
+    socket.emit('create_room', { roomName, gameMode });
     joinRoom();
   };
 
@@ -165,6 +216,26 @@ function CreateRoomModal() {
     setTimeout(() => {
       setOpen(false);
     }, 300);
+  };
+
+  const handleMode = (e: any) => {
+    let round: string = `round${e.target.lang}`;
+    switch (e.target.innerText) {
+      case '일반':
+        setGameMode((prev) => ({ ...prev, [round]: GameMode.NORMAL }));
+        break;
+      case '블러':
+        setGameMode((prev) => ({ ...prev, [round]: GameMode.BLUR }));
+        break;
+      case '축소':
+        setGameMode((prev) => ({ ...prev, [round]: GameMode.SIZEDOWN }));
+        break;
+      case '회전':
+        setGameMode((prev) => ({ ...prev, [round]: GameMode.ROTATE }));
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -181,6 +252,67 @@ function CreateRoomModal() {
           }}
           value={roomName}
         />
+        <Title>모드 선택</Title>
+        <ModeDiv>
+          <RoundWrapper>
+            <RoundDiv>Round 1 :</RoundDiv>
+            <RoundDiv>Round 2 :</RoundDiv>
+            <RoundDiv>Round 3 :</RoundDiv>
+          </RoundWrapper>
+          <SelectionWrapper>
+            <SelectionDiv>
+              <SelSpan lang="1" onClick={handleMode}>
+                일반
+              </SelSpan>
+              <span>　|　</span>
+              <SelSpan lang="1" onClick={handleMode}>
+                블러
+              </SelSpan>
+              <span>　|　</span>
+              <SelSpan lang="1" onClick={handleMode}>
+                축소
+              </SelSpan>
+              <span>　|　</span>
+              <SelSpan lang="1" onClick={handleMode}>
+                회전
+              </SelSpan>
+            </SelectionDiv>
+            <SelectionDiv>
+              <SelSpan lang="2" onClick={handleMode}>
+                일반
+              </SelSpan>
+              <span>　|　</span>
+              <SelSpan lang="2" onClick={handleMode}>
+                블러
+              </SelSpan>
+              <span>　|　</span>
+              <SelSpan lang="2" onClick={handleMode}>
+                축소
+              </SelSpan>
+              <span>　|　</span>
+              <SelSpan lang="2" onClick={handleMode}>
+                회전
+              </SelSpan>
+            </SelectionDiv>
+            <SelectionDiv>
+              <SelSpan lang="3" onClick={handleMode}>
+                일반
+              </SelSpan>
+              <span>　|　</span>
+              <SelSpan lang="3" onClick={handleMode}>
+                블러
+              </SelSpan>
+              <span>　|　</span>
+              <SelSpan lang="3" onClick={handleMode}>
+                축소
+              </SelSpan>
+              <span>　|　</span>
+              <SelSpan lang="3" onClick={handleMode}>
+                회전
+              </SelSpan>
+            </SelectionDiv>
+          </SelectionWrapper>
+        </ModeDiv>
         <Button onClick={handleOk}>생성하기</Button>
       </Modal2>
     </>

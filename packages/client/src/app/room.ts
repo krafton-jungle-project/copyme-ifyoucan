@@ -1,7 +1,34 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithReset } from 'jotai/utils';
-import type { Room, Rooms } from 'project-types';
+import type { IGameMode, Room, Rooms } from 'project-types';
 import { useMemo } from 'react';
+
+interface RoomState {
+  roomId: string;
+  host: boolean;
+  gameMode: IGameMode;
+}
+
+enum GameMode {
+  NORMAL,
+  BLUR,
+  ROTATE,
+  SIZEDOWN,
+}
+
+const RoomInitialState: RoomState = {
+  roomId: '',
+  host: false,
+  gameMode: {
+    round1: GameMode.NORMAL,
+    round2: GameMode.NORMAL,
+    round3: GameMode.NORMAL,
+  },
+};
+
+const roomInfoAtom = atomWithReset(RoomInitialState);
+const createRoomModalAtom = atom(false);
+const fadeOutAtom = atom(true);
 
 const roomsAtom = atom<Rooms>({});
 
@@ -16,22 +43,7 @@ const useRoomAtom = () => {
     () => Object.entries(rooms).map(([id, room]) => ({ id, ...room })),
     [rooms],
   );
-
   return { rooms, roomList, updateRooms };
 };
 
-interface RoomState {
-  roomId: string;
-  host: boolean;
-}
-
-const RoomInitialState: RoomState = {
-  roomId: '',
-  host: false,
-};
-
-const roomInfoAtom = atomWithReset(RoomInitialState);
-const createRoomModalAtom = atom(false);
-const fadeOutAtom = atom(true);
-
-export { roomInfoAtom, useRoomAtom, createRoomModalAtom, fadeOutAtom };
+export { roomInfoAtom, useRoomAtom, createRoomModalAtom, fadeOutAtom, GameMode };

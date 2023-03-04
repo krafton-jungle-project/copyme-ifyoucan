@@ -26,12 +26,6 @@ enum GameStage {
   JUDGE,
 }
 
-enum ItemType {
-  BLUR,
-  ROTATE,
-  SIZEDOWN,
-}
-
 interface GameState {
   user: UserState;
   peer: PeerState;
@@ -40,7 +34,6 @@ interface GameState {
   round: number;
   countDown: number;
   isCaptured: boolean;
-  item_type: number;
 }
 
 const initialState: GameState = {
@@ -64,9 +57,8 @@ const initialState: GameState = {
   round: 1,
   countDown: 0,
   isCaptured: false,
-  item_type: 100,
 };
 
 const gameAtom = atomWithReset(initialState);
 
-export { GameStage, ItemType, gameAtom };
+export { GameStage, gameAtom };

@@ -11,10 +11,16 @@ export interface IChat {
   isImg: boolean;
 }
 
+export interface IGameMode {
+  round1: number;
+  round2: number;
+  round3: number;
+}
+
 export interface ServerToClientEvents {
   full: () => void;
   get_rooms: (rooms: Rooms) => void;
-  new_room: (roomId: string) => void;
+  new_room: (roomId: string, gameMode: IGameMode) => void;
   get_ready: () => void;
   get_unready: () => void;
   get_start: () => void;
@@ -35,7 +41,6 @@ export interface ServerToClientEvents {
   user_exit: (isStart: boolean) => void;
   get_change_stage: (stage: number) => void;
   get_upload: (images: string[]) => void;
-  get_item_type: (status: number) => void;
 }
 
 export interface ClientToServerEvents {
@@ -45,7 +50,7 @@ export interface ClientToServerEvents {
    * 서버에서는 get_rooms 이벤트를 통해 응답합니다.
    */
   rooms: () => void;
-  create_room: (roomName: string) => void;
+  create_room: (data: { roomName: string; gameMode: IGameMode }) => void;
   join_room: (data: { roomId: string; nickName: string }) => void;
   exit_room: (nickName: string) => void;
   ready: (roomId: string) => void;
@@ -74,12 +79,11 @@ export interface ClientToServerEvents {
   }) => void;
   message: (message: string, callback: (chat: IChat) => void) => void;
   change_stage: (stage: number) => void;
-  item_type: (status: number) => void;
 }
 
 export interface InterServerEvents {
   get_rooms: (rooms: Rooms) => void;
-  new_room: (roomId: string) => void;
+  new_room: (roomId: string, gameMode: IGameMode) => void;
   get_start: () => void;
   peer: (data: { id: string; nickName: string }) => void;
   get_count_down: (count: number, stage: string) => void;
@@ -97,7 +101,6 @@ export interface InterServerEvents {
   get_result: () => void;
   get_finish: () => void;
   get_upload: (images: string[]) => void;
-  get_item_type: (status: number) => void;
 }
 
 export interface SocketData {

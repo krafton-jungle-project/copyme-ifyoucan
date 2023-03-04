@@ -1,4 +1,5 @@
 import { useSetAtom } from 'jotai';
+import type { IGameMode } from 'project-types';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { roomInfoAtom } from '../../../app/room';
@@ -75,15 +76,18 @@ interface RoomInfo {
   users: { id: string; nickName: string }[];
   isStart: boolean;
   readyCount: number;
+  gameMode: IGameMode;
 }
 
-export default function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
+const mode = ['일반', '블러', '회전', '축소'];
+
+function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
   const navigate = useNavigate();
   const setRoomInfo = useSetAtom(roomInfoAtom);
 
-  const joinRoom = (roomId: string) => {
+  const joinRoom = (roomId: string, gameMode: IGameMode) => {
     if (roomInfo.users.length === 1) {
-      setRoomInfo((prev) => ({ ...prev, roomId }));
+      setRoomInfo((prev) => ({ ...prev, roomId, gameMode }));
       navigate('/room', { replace: true });
     }
   };
@@ -95,13 +99,19 @@ export default function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
         <RoomName>{roomInfo.roomName}</RoomName>
         <HeadCount isFull={roomInfo.users.length === 2}>{roomInfo.users.length} / 2</HeadCount>
         <JoinButton
-          onClick={() => joinRoom(roomInfo.id)}
+          onClick={() => joinRoom(roomInfo.id, roomInfo.gameMode)}
           disabled={roomInfo.users.length === 2}
           isFull={roomInfo.users.length === 2}
         >
           {roomInfo.users.length === 2 ? 'FULL' : 'JOIN'}
         </JoinButton>
+        <div>
+          {mode[roomInfo.gameMode.round1]} / {mode[roomInfo.gameMode.round2]} /{' '}
+          {mode[roomInfo.gameMode.round3]}
+        </div>
       </Wrapper>
     </Container>
   );
 }
+
+export default RoomCard;
