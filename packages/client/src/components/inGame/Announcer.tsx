@@ -125,7 +125,7 @@ function Announcer() {
           }
           break;
         case GameStage.ROUND:
-          if (game.round < 4) {
+          if (game.round < 2) {
             setMessage(`ROUND ${game.round}`);
 
             //todo: 위치 빈경 필요

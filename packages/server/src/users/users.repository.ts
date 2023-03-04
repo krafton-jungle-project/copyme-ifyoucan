@@ -38,6 +38,6 @@ export class UsersRepository {
     const update = {
       $pull: { imgUrls: `https://${process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/copy/${key}` },
     };
-    return await this.userModel.findOneAndUpdate(filter, update);
+    return await this.userModel.findOneAndUpdate(filter, update, { returnOriginal: false });
   }
 }
