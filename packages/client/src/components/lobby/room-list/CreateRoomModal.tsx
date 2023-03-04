@@ -221,7 +221,7 @@ function CreateRoomModal() {
   const handleMode = (e: any) => {
     let round: string = `round${e.target.lang}`;
     switch (e.target.innerText) {
-      case '노말':
+      case '일반':
         setGameMode((prev) => ({ ...prev, [round]: GameMode.NORMAL }));
         break;
       case '블러':
@@ -262,7 +262,7 @@ function CreateRoomModal() {
           <SelectionWrapper>
             <SelectionDiv>
               <SelSpan lang="1" onClick={handleMode}>
-                노말
+                일반
               </SelSpan>
               <span>　|　</span>
               <SelSpan lang="1" onClick={handleMode}>
@@ -279,7 +279,7 @@ function CreateRoomModal() {
             </SelectionDiv>
             <SelectionDiv>
               <SelSpan lang="2" onClick={handleMode}>
-                노말
+                일반
               </SelSpan>
               <span>　|　</span>
               <SelSpan lang="2" onClick={handleMode}>
@@ -296,7 +296,7 @@ function CreateRoomModal() {
             </SelectionDiv>
             <SelectionDiv>
               <SelSpan lang="3" onClick={handleMode}>
-                노말
+                일반
               </SelSpan>
               <span>　|　</span>
               <SelSpan lang="3" onClick={handleMode}>
