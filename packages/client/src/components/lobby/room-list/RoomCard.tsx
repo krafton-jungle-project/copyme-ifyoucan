@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import PoroImg from '../../../assets/images/arcade-poro.png';
 import { useSetAtom } from 'jotai';
 import { roomInfoAtom } from '../../../app/room';
+import type { IGameMode } from 'project-types';
 
 const Container = styled.div`
   display: inline-flex;
@@ -75,7 +76,9 @@ interface RoomInfo {
   users: { id: string; nickName: string }[];
   isStart: boolean;
   readyCount: number;
+  gameMode: IGameMode;
 }
+const mode = ['일반', '블러', '회전', '축소'];
 
 export default function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
   const navigate = useNavigate();
@@ -101,6 +104,10 @@ export default function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
         >
           {roomInfo.users.length === 2 ? 'FULL' : 'JOIN'}
         </JoinButton>
+        <div>
+          {mode[roomInfo.gameMode.round1]} / {mode[roomInfo.gameMode.round2]} /{' '}
+          {mode[roomInfo.gameMode.round3]}
+        </div>
       </Wrapper>
     </Container>
   );
