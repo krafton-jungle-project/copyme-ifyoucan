@@ -1,13 +1,13 @@
 import styled, { css, keyframes } from 'styled-components';
 import { useEffect, useRef } from 'react';
 import { useAtomValue } from 'jotai';
-import { gameAtom, GameStage, ItemType } from '../../../app/game';
+import { gameAtom, GameStage } from '../../../app/game';
 import * as movenet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
 import { useClientSocket } from '../../../module/client-socket';
 import CountDown from './CountDown';
 import Grade from './Grade';
-import { roomInfoAtom } from '../../../app/room';
+import { GameMode, roomInfoAtom } from '../../../app/room';
 
 const Container = styled.div`
   position: absolute;
@@ -30,7 +30,7 @@ const rotate = keyframes`
   }
 `;
 
-const Video = styled.video<{ itemType: any; offender: boolean }>`
+const Video = styled.video<{ GameMode: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   transform: scaleX(-1);
@@ -41,21 +41,21 @@ const Video = styled.video<{ itemType: any; offender: boolean }>`
   transition: 0.7s;
 
   ${(p) =>
-    p.itemType === ItemType.BLUR &&
+    p.GameMode === GameMode.BLUR &&
     p.offender &&
     css`
       filter: blur(30px);
     `}
 
   ${(p) =>
-    p.itemType === ItemType.ROTATE &&
+    p.GameMode === GameMode.ROTATE &&
     p.offender &&
     css`
       animation: ${rotate} 1.5s infinite;
     `}
 
   ${(p) =>
-    p.itemType === ItemType.SIZEDOWN &&
+    p.GameMode === GameMode.SIZEDOWN &&
     p.offender &&
     css`
       transform: scale(0.3) scaleX(-1);
@@ -71,7 +71,7 @@ const Canvas = styled.canvas`
   border-radius: 20px;
 `;
 
-const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offender: boolean }>`
+const CapturedPose = styled.canvas<{ isCaptured: boolean; GameMode: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   transform: scaleX(-1);
@@ -96,21 +96,21 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
     `}
 
   ${(p) =>
-    p.itemType === ItemType.BLUR &&
+    p.GameMode === GameMode.BLUR &&
     p.offender &&
     css`
       filter: blur(30px);
     `}
 
   ${(p) =>
-    p.itemType === ItemType.ROTATE &&
+    p.GameMode === GameMode.ROTATE &&
     p.offender &&
     css`
       animation: ${rotate} 1.5s infinite;
     `}
 
   ${(p) =>
-    p.itemType === ItemType.SIZEDOWN &&
+    p.GameMode === GameMode.SIZEDOWN &&
     p.offender &&
     css`
       transform: scale(0.3) scaleX(-1);
@@ -184,7 +184,7 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
     // 카운트다운 시작할 때 아이템 적용
     if (game.countDown === 5 && game.stage === GameStage.OFFEND) {
       if (host && game.round >= 3) {
-        let idx = Math.floor(Math.random() * (Object.keys(ItemType).length / 2));
+        let idx = Math.floor(Math.random() * (Object.keys(GameMode).length / 2));
         socket.emit('item_type', idx);
       }
     }
@@ -199,12 +199,12 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
 
   return (
     <Container>
-      <Video ref={videoRef} itemType={game.item_type} offender={game.user.isOffender} />
+      <Video ref={videoRef} GameMode={game.item_type} offender={game.user.isOffender} />
       <Canvas ref={canvasRef}></Canvas>
       <CapturedPose
         ref={capturedPoseRef}
         isCaptured={game.isCaptured}
-        itemType={game.item_type}
+        GameMode={game.item_type}
         offender={game.user.isOffender}
       />
       {game.user.gradable ? <Grade score={game.user.score} isMe={true} /> : null}

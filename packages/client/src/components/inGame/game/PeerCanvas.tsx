@@ -2,13 +2,13 @@ import styled, { css, keyframes } from 'styled-components';
 import { useEffect, useRef } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { peerInfoAtom } from '../../../app/peer';
-import { gameAtom, GameStage, ItemType } from '../../../app/game';
+import { gameAtom, GameStage } from '../../../app/game';
 import * as movenet from '../../../utils/tfjs-movenet';
 import { capturePose } from '../../../utils/capture-pose';
 import { useClientSocket } from '../../../module/client-socket';
 import CountDown from './CountDown';
 import Grade from './Grade';
-import { roomInfoAtom } from '../../../app/room';
+import { GameMode, roomInfoAtom } from '../../../app/room';
 
 const Container = styled.div`
   position: absolute;
@@ -31,7 +31,7 @@ const rotate = keyframes`
   }
 `;
 
-const Video = styled.video<{ itemType: any; offender: boolean }>`
+const Video = styled.video<{ GameMode: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   transform: scaleX(-1);
@@ -42,21 +42,21 @@ const Video = styled.video<{ itemType: any; offender: boolean }>`
   transition: 0.7s;
 
   ${(p) =>
-    p.itemType === ItemType.BLUR &&
+    p.GameMode === GameMode.BLUR &&
     p.offender &&
     css`
       filter: blur(30px);
     `}
 
   ${(p) =>
-    p.itemType === ItemType.ROTATE &&
+    p.GameMode === GameMode.ROTATE &&
     p.offender &&
     css`
       animation: ${rotate} 1.5s infinite;
     `}
 
   ${(p) =>
-    p.itemType === ItemType.SIZEDOWN &&
+    p.GameMode === GameMode.SIZEDOWN &&
     p.offender &&
     css`
       transform: scale(0.3) scaleX(-1);
@@ -74,7 +74,7 @@ const Canvas = styled.canvas`
   transform: scaleX(-1); */
 `;
 
-const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offender: boolean }>`
+const CapturedPose = styled.canvas<{ isCaptured: boolean; GameMode: any; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   transform: scaleX(-1);
@@ -99,21 +99,21 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; itemType: any; offende
     `}
 
   ${(p) =>
-    p.itemType === ItemType.BLUR &&
+    p.GameMode === GameMode.BLUR &&
     p.offender &&
     css`
       filter: blur(30px);
     `}
 
   ${(p) =>
-    p.itemType === ItemType.ROTATE &&
+    p.GameMode === GameMode.ROTATE &&
     p.offender &&
     css`
       animation: ${rotate} 1.5s infinite;
     `}
 
   ${(p) =>
-    p.itemType === ItemType.SIZEDOWN &&
+    p.GameMode === GameMode.SIZEDOWN &&
     p.offender &&
     css`
       transform: scale(0.3) scaleX(-1);
@@ -204,12 +204,12 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
 
   return (
     <Container>
-      <Video ref={videoRef} itemType={game.item_type} offender={!game.user.isOffender} />
+      <Video ref={videoRef} GameMode={game.item_type} offender={!game.user.isOffender} />
       <Canvas ref={canvasRef} />
       <CapturedPose
         ref={capturedPoseRef}
         isCaptured={game.isCaptured}
-        itemType={game.item_type}
+        GameMode={game.item_type}
         offender={!game.user.isOffender}
       />
       {game.peer.gradable ? <Grade score={game.peer.score} isMe={false} /> : null}

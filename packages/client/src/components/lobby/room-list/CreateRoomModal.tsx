@@ -1,9 +1,9 @@
 import { useAtom, useSetAtom } from 'jotai';
+import type { IGameMode } from 'project-types';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css, keyframes } from 'styled-components';
-import { ItemType } from '../../../app/game';
-import { createRoomModalAtom, fadeOutAtom, roomInfoAtom } from '../../../app/room';
+import { createRoomModalAtom, fadeOutAtom, GameMode, roomInfoAtom } from '../../../app/room';
 import { useClientSocket } from '../../../module/client-socket';
 
 const fadeIn = keyframes`
@@ -187,19 +187,19 @@ function CreateRoomModal() {
   const [roomName, setRoomName] = useState<string>('');
   const [open, setOpen] = useAtom(createRoomModalAtom);
   const [visible, setVisible] = useAtom(fadeOutAtom);
-  const [itemType, setItemType] = useState({
-    round1: ItemType.NORMAL,
-    round2: ItemType.NORMAL,
-    round3: ItemType.NORMAL,
+  const [gameMode, setGameMode] = useState({
+    round1: GameMode.NORMAL,
+    round2: GameMode.NORMAL,
+    round3: GameMode.NORMAL,
   });
 
   const joinRoom = () => {
-    socket.on('new_room', (roomId: string) => {
+    socket.on('new_room', (roomId: string, gameMode: IGameMode) => {
       // 방 생성자는 호스트가 된다.
       setRoomInfo(() => ({
         roomId,
         host: true,
-        itemType,
+        gameMode,
       }));
       navigate('/room', { replace: true });
     });
@@ -207,7 +207,7 @@ function CreateRoomModal() {
 
   const handleOk = () => {
     setOpen(false);
-    socket.emit('create_room', roomName);
+    socket.emit('create_room', { roomName, gameMode });
     joinRoom();
   };
 
@@ -222,16 +222,16 @@ function CreateRoomModal() {
     let round: string = `round${e.target.lang}`;
     switch (e.target.innerText) {
       case '노말':
-        setItemType((prev) => ({ ...prev, [round]: ItemType.NORMAL }));
+        setGameMode((prev) => ({ ...prev, [round]: GameMode.NORMAL }));
         break;
       case '블러':
-        setItemType((prev) => ({ ...prev, [round]: ItemType.BLUR }));
+        setGameMode((prev) => ({ ...prev, [round]: GameMode.BLUR }));
         break;
       case '축소':
-        setItemType((prev) => ({ ...prev, [round]: ItemType.SIZEDOWN }));
+        setGameMode((prev) => ({ ...prev, [round]: GameMode.SIZEDOWN }));
         break;
       case '회전':
-        setItemType((prev) => ({ ...prev, [round]: ItemType.ROTATE }));
+        setGameMode((prev) => ({ ...prev, [round]: GameMode.ROTATE }));
         break;
       default:
         break;

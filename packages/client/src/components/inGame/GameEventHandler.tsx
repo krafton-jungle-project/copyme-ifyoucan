@@ -119,8 +119,8 @@ const GameEventHandler = () => {
     });
 
     // 아이템 라운드 관리
-    socket.on('get_item_type', (ItemType: number) => {
-      setGame((prev) => ({ ...prev, item_type: ItemType }));
+    socket.on('get_item_type', (roundGameMode: number) => {
+      setGame((prev) => ({ ...prev, item_type: roundGameMode }));
     });
 
     // 게임이 끝났을 때
