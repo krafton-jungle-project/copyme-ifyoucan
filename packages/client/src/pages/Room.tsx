@@ -34,12 +34,12 @@ function Room() {
     if (!myNickName || !roomInfo.roomId) {
       alert('잘못된 접근입니다.');
       navigate('/', { replace: true });
-      window.location.reload(); //check
+      window.location.reload();
     } else if (!isStreamReady) {
       alert('비디오 연결이 종료되어 다시 로딩합니다.');
       initialize();
       navigate('/', { replace: true });
-      window.location.reload(); //check
+      window.location.reload();
     }
 
     RoomEnter.play(); // 자신 입장음

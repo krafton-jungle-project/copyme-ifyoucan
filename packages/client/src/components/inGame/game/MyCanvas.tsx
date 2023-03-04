@@ -30,7 +30,7 @@ const rotate = keyframes`
   }
 `;
 
-const Video = styled.video<{ GameMode: number; offender: boolean }>`
+const Video = styled.video<{ gameMode: number; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   transform: scaleX(-1);
@@ -41,24 +41,24 @@ const Video = styled.video<{ GameMode: number; offender: boolean }>`
   transition: 0.7s;
 
   ${(p) =>
-    p.GameMode === GameMode.BLUR &&
+    p.gameMode === GameMode.BLUR &&
     p.offender &&
     css`
       filter: blur(30px);
     `}
 
   ${(p) =>
-    p.GameMode === GameMode.ROTATE &&
+    p.gameMode === GameMode.ROTATE &&
     p.offender &&
     css`
       animation: ${rotate} 1.5s infinite;
     `}
 
   ${(p) =>
-    p.GameMode === GameMode.SIZEDOWN &&
+    p.gameMode === GameMode.SIZEDOWN &&
     p.offender &&
     css`
-      transform: scale(0.3) scaleX(-1);
+      transform: scaleX(-0.3) scaleY(0.3);
     `}
 `;
 
@@ -71,7 +71,7 @@ const Canvas = styled.canvas`
   border-radius: 20px;
 `;
 
-const CapturedPose = styled.canvas<{ isCaptured: boolean; GameMode: number; offender: boolean }>`
+const CapturedPose = styled.canvas<{ isCaptured: boolean; gameMode: number; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   transform: scaleX(-1);
@@ -96,24 +96,24 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; GameMode: number; offe
     `}
 
   ${(p) =>
-    p.GameMode === GameMode.BLUR &&
+    p.gameMode === GameMode.BLUR &&
     p.offender &&
     css`
       filter: blur(30px);
     `}
 
   ${(p) =>
-    p.GameMode === GameMode.ROTATE &&
+    p.gameMode === GameMode.ROTATE &&
     p.offender &&
     css`
       animation: ${rotate} 1.5s infinite;
     `}
 
   ${(p) =>
-    p.GameMode === GameMode.SIZEDOWN &&
+    p.gameMode === GameMode.SIZEDOWN &&
     p.offender &&
     css`
-      transform: scale(0.3) scaleX(-1);
+      transform: scaleX(-0.3) scaleY(0.3);
     `}
 `;
 
@@ -206,16 +206,16 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
 
   return (
     <Container>
-      <Video ref={videoRef} GameMode={mode} offender={game.user.isOffender} />
+      <Video ref={videoRef} gameMode={mode} offender={game.user.isOffender} />
       <Canvas ref={canvasRef}></Canvas>
       <CapturedPose
         ref={capturedPoseRef}
         isCaptured={game.isCaptured}
-        GameMode={mode}
+        gameMode={mode}
         offender={game.user.isOffender}
       />
       {game.user.gradable ? <Grade score={game.user.score} isMe={true} /> : null}
-      <CountDown isMe={true} />
+      <CountDown isMe={true} gameMode={mode} />
     </Container>
   );
 }
