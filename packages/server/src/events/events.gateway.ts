@@ -516,10 +516,4 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const roomId = this.userToRoom[socket.id];
     this.server.to(roomId).emit('get_change_stage', stage);
   }
-
-  @SubscribeMessage('item_type')
-  handleItemRound(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() status: number) {
-    const roomId = this.userToRoom[socket.id];
-    this.server.to(roomId).emit('get_item_type', status);
-  }
 }

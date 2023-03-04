@@ -41,7 +41,6 @@ export interface ServerToClientEvents {
   user_exit: (isStart: boolean) => void;
   get_change_stage: (stage: number) => void;
   get_upload: (images: string[]) => void;
-  get_item_type: (status: number) => void;
 }
 
 export interface ClientToServerEvents {
@@ -80,7 +79,6 @@ export interface ClientToServerEvents {
   }) => void;
   message: (message: string, callback: (chat: IChat) => void) => void;
   change_stage: (stage: number) => void;
-  item_type: (status: number) => void;
 }
 
 export interface InterServerEvents {
@@ -103,7 +101,6 @@ export interface InterServerEvents {
   get_result: () => void;
   get_finish: () => void;
   get_upload: (images: string[]) => void;
-  get_item_type: (status: number) => void;
 }
 
 export interface SocketData {

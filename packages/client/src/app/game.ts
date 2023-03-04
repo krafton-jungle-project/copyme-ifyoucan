@@ -34,7 +34,6 @@ interface GameState {
   round: number;
   countDown: number;
   isCaptured: boolean;
-  item_type: number;
 }
 
 const initialState: GameState = {
@@ -58,8 +57,6 @@ const initialState: GameState = {
   round: 1,
   countDown: 0,
   isCaptured: false,
-  // TODO: delete random itemtype
-  item_type: 100,
 };
 
 const gameAtom = atomWithReset(initialState);
