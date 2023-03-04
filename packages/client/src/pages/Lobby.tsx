@@ -15,6 +15,7 @@ import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
 import BestShot from '../components/lobby/best-shot/BestShot';
 import bgmOnImg from '../assets/images/bgm-on.png';
 import bgmOffImg from '../assets/images/bgm-off.png';
+import ItemGuide from '../components/lobby/item-guide/ItemGuide';
 
 const Container = styled.div`
   /* position: absolute;
@@ -230,6 +231,9 @@ function Lobby() {
     case '튜토리얼':
       content = <Tutorial />;
       break;
+    case '아이템 안내':
+      content = <ItemGuide />;
+      break;
     case '베스트샷':
       content = <BestShot />;
       break;
@@ -342,6 +346,16 @@ function Lobby() {
               isSelected={mode === '튜토리얼'}
             >
               튜토리얼
+            </NavItem>
+            <VerticalLine />
+            <NavItem
+              onClick={() => {
+                ButtonClick1.play();
+                setMode('아이템 안내');
+              }}
+              isSelected={mode === '아이템 안내'}
+            >
+              아이템 안내
             </NavItem>
             <VerticalLine />
             <NavItem
