@@ -18,7 +18,10 @@ const Container = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  height: 90%;
+  aspect-ratio: 16 / 9;
+  min-width: 900px;
+  min-height: 500px;
+  max-height: 90%;
 `;
 
 const FadeBackGround = styled.div`
@@ -130,30 +133,32 @@ function InGame() {
   };
 
   return (
-    <Container>
+    <>
       <FadeBackGround />
-      <Header>
-        <LogoWrapper>
-          <Logo // hidden ready or start button
-            alt="logo"
-            src={logoImg}
-            onClick={() => {
-              roomInfo.host ? onStart() : onReady();
-            }}
-            isClickable={roomInfo.host ? game.peer.isReady : true}
-            isStart={game.isStart}
-          />
-        </LogoWrapper>
-        <RoundBox />
-        <Announcer />
-        <ExitWrapper onClick={exitRoom}>
-          <ExitImg alt="exit" src={exitImg} />
-          <ExitTxt>EXIT</ExitTxt>
-        </ExitWrapper>
-      </Header>
-      <WaitingBox />
-      <GameBox />
-    </Container>
+      <Container>
+        <Header>
+          <LogoWrapper>
+            <Logo // hidden ready or start button
+              alt="logo"
+              src={logoImg}
+              onClick={() => {
+                roomInfo.host ? onStart() : onReady();
+              }}
+              isClickable={roomInfo.host ? game.peer.isReady : true}
+              isStart={game.isStart}
+            />
+          </LogoWrapper>
+          <RoundBox />
+          <Announcer />
+          <ExitWrapper onClick={exitRoom}>
+            <ExitImg alt="exit" src={exitImg} />
+            <ExitTxt>EXIT</ExitTxt>
+          </ExitWrapper>
+        </Header>
+        <WaitingBox />
+        <GameBox />
+      </Container>
+    </>
   );
 }
 

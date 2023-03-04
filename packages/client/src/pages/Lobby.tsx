@@ -17,9 +17,9 @@ import { removeUser } from '../utils/local-storage';
 import { BackgroundMusic, ButtonClick1, ButtonClick2 } from '../utils/sound';
 
 const Container = styled.div`
-  /* position: absolute;
+  position: absolute;
   width: 100%;
-  height: 100%; */
+  height: 100%;
 `;
 
 const Wrapper = styled.div`
@@ -28,7 +28,10 @@ const Wrapper = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 80%;
-  height: 90%;
+  aspect-ratio: 3 / 2;
+  min-width: 900px;
+  min-height: 600px;
+  max-height: 90%;
   background-color: rgba(0, 0, 0, 0.5);
   border: 0.1rem solid #fff;
   border-radius: 40px;
@@ -230,7 +233,7 @@ function Lobby() {
     case '튜토리얼':
       content = <Tutorial />;
       break;
-    case '아이템 안내':
+    case '게임모드':
       content = <ItemGuide />;
       break;
     case '베스트샷':
@@ -350,11 +353,11 @@ function Lobby() {
             <NavItem
               onClick={() => {
                 ButtonClick1.play();
-                setMode('아이템 안내');
+                setMode('게임모드');
               }}
-              isSelected={mode === '아이템 안내'}
+              isSelected={mode === '게임모드'}
             >
-              아이템 안내
+              게임모드
             </NavItem>
             <VerticalLine />
             <NavItem
