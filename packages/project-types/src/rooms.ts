@@ -6,6 +6,7 @@ export type Room = {
   isStart: boolean;
   readyCount: number;
   gameMode: IGameMode;
+  thumbnailIdx: number;
 };
 
 // export interface Rooms {

@@ -37,6 +37,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       images: [string, string][];
       scores: number[];
       gameMode: IGameMode;
+      thumbnailIdx: number;
     };
   } = {};
 
@@ -92,6 +93,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     data: {
       roomName: string;
       gameMode: IGameMode;
+      thumbnailIdx: number;
     },
   ): void {
     const roomId = uuidv4();
@@ -103,6 +105,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       images: [],
       scores: [],
       gameMode: data.gameMode,
+      thumbnailIdx: data.thumbnailIdx,
     };
 
     this.server.to(socket.id).emit('new_room', roomId, data.gameMode);

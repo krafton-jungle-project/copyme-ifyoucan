@@ -85,6 +85,7 @@ interface RoomInfo {
   isStart: boolean;
   readyCount: number;
   gameMode: IGameMode;
+  thumbnailIdx: number;
 }
 
 const mode = ['일반', '블러', '회전', '축소'];
@@ -102,7 +103,7 @@ function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
 
   return (
     <Container>
-      <Thumbnail alt="room thumbnail" src={ThumbnailImg[Math.floor(Math.random() * 7)]} />
+      <Thumbnail alt="room thumbnail" src={ThumbnailImg[roomInfo.thumbnailIdx]} />
       <Wrapper>
         <RoomName>{roomInfo.roomName}</RoomName>
         <HeadCount isFull={roomInfo.users.length === 2}>{roomInfo.users.length} / 2</HeadCount>

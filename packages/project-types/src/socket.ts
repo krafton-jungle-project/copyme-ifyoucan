@@ -51,7 +51,7 @@ export interface ClientToServerEvents {
    * 서버에서는 get_rooms 이벤트를 통해 응답합니다.
    */
   rooms: () => void;
-  create_room: (data: { roomName: string; gameMode: IGameMode }) => void;
+  create_room: (data: { roomName: string; gameMode: IGameMode; thumbnailIdx: number }) => void;
   join_room: (data: { roomId: string; nickName: string }) => void;
   exit_room: (nickName: string) => void;
   ready: (roomId: string) => void;
