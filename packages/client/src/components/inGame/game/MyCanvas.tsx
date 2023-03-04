@@ -175,13 +175,13 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
         }
       }
 
-      // 아이템 타입 초기화
+      // 모드 타입 초기화
       if (game.stage === GameStage.DEFEND) {
         setMode(-1);
       }
     }
 
-    // 카운트다운 시작할 때 아이템 적용
+    // 카운트 다운 시작할 때 모드 적용
     if (game.countDown === 5 && game.stage === GameStage.OFFEND) {
       switch (Math.floor(game.round)) {
         case 1:

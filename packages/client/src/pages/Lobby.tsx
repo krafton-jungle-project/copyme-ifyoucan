@@ -231,7 +231,7 @@ function Lobby() {
     case '튜토리얼':
       content = <Tutorial />;
       break;
-    case '아이템 안내':
+    case '게임 모드':
       content = <ItemGuide />;
       break;
     case '베스트샷':
@@ -351,11 +351,11 @@ function Lobby() {
             <NavItem
               onClick={() => {
                 ButtonClick1.play();
-                setMode('아이템 안내');
+                setMode('게임 모드');
               }}
-              isSelected={mode === '아이템 안내'}
+              isSelected={mode === '게임 모드'}
             >
-              아이템 안내
+              게임 모드
             </NavItem>
             <VerticalLine />
             <NavItem
