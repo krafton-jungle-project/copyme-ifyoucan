@@ -1,10 +1,10 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import * as expressBasicAuth from 'express-basic-auth';
 import { SocketIoAdapter } from './adapters/socket-io.adapter';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
-import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
-import * as expressBasicAuth from 'express-basic-auth';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

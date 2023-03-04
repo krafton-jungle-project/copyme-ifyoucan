@@ -1,5 +1,5 @@
-import styled, { css, keyframes } from 'styled-components';
 import { useAtomValue } from 'jotai';
+import styled, { css, keyframes } from 'styled-components';
 import { gameAtom, GameStage } from '../../../app/game';
 
 const Container = styled.div`

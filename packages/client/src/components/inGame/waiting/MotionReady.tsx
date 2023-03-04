@@ -1,13 +1,13 @@
-import * as movenet from '../../../utils/tfjs-movenet';
-import { useClientSocket } from '../../../module/client-socket';
-import { isLeftHandUp, isValidBody } from '../../common/PoseRecognition';
 import { useAtom, useAtomValue } from 'jotai';
-import { useInterval } from '../hooks/useInterval';
-import { GunReload } from '../../../utils/sound';
-import { gameAtom } from '../../../app/game';
 import { useEffect, useState } from 'react';
-import { roomInfoAtom } from '../../../app/room';
+import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
+import { roomInfoAtom } from '../../../app/room';
+import { useClientSocket } from '../../../module/client-socket';
+import { GunReload } from '../../../utils/sound';
+import * as movenet from '../../../utils/tfjs-movenet';
+import { isLeftHandUp, isValidBody } from '../../common/PoseRecognition';
+import { useInterval } from '../hooks/useInterval';
 
 function MotionReady() {
   const { socket } = useClientSocket();

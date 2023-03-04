@@ -1,21 +1,20 @@
-import RoomList from '../components/lobby/room-list/RoomList';
-import styled, { css } from 'styled-components';
-import Loading from '../components/lobby/Loading';
-import { useEffect, useState } from 'react';
-import { removeUser } from '../utils/local-storage';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled, { css } from 'styled-components';
+import bgmOffImg from '../assets/images/bgm-off.png';
+import bgmOnImg from '../assets/images/bgm-on.png';
+import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
+import logoImg from '../assets/images/logo.png';
+import logoutImg from '../assets/images/logout.png';
+import BestShot from '../components/lobby/best-shot/BestShot';
+import ItemGuide from '../components/lobby/item-guide/ItemGuide';
+import Loading from '../components/lobby/Loading';
+import RoomList from '../components/lobby/room-list/RoomList';
 import Tutorial from '../components/lobby/tutorial/Tutorial';
 import { useMovenetStream } from '../module/movenet-stream';
-import { BackgroundMusic } from '../utils/sound';
-import logoImg from '../assets/images/logo.png';
-import { ButtonClick1, ButtonClick2 } from '../utils/sound';
-import logoutImg from '../assets/images/logout.png';
-import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
-import BestShot from '../components/lobby/best-shot/BestShot';
-import bgmOnImg from '../assets/images/bgm-on.png';
-import bgmOffImg from '../assets/images/bgm-off.png';
-import ItemGuide from '../components/lobby/item-guide/ItemGuide';
+import { removeUser } from '../utils/local-storage';
+import { BackgroundMusic, ButtonClick1, ButtonClick2 } from '../utils/sound';
 
 const Container = styled.div`
   /* position: absolute;

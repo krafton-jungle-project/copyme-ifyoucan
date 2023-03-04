@@ -1,6 +1,6 @@
 import { useAtom, useSetAtom } from 'jotai';
-import { createRoomModalAtom, fadeOutAtom } from '../../../app/room';
 import styled from 'styled-components';
+import { createRoomModalAtom, fadeOutAtom } from '../../../app/room';
 import { ButtonClick1 } from '../../../utils/sound';
 import CreateRoomModal from './CreateRoomModal';
 
