@@ -10,6 +10,7 @@ import {
 } from '@nestjs/websockets';
 import {
   ClientToServerEvents,
+  IGameMode,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
@@ -35,6 +36,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       readyCount: number;
       images: [string, string][];
       scores: number[];
+      gameMode: IGameMode;
     };
   } = {};
 
@@ -86,21 +88,26 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('create_room')
   createRoom(
     @ConnectedSocket() socket: ServerToClientSocket,
-    @MessageBody() roomName: string,
+    @MessageBody()
+    data: {
+      roomName: string;
+      gameMode: IGameMode;
+    },
   ): void {
     const roomId = uuidv4();
     this.rooms[roomId] = {
-      roomName,
+      roomName: data.roomName,
       users: [],
       isStart: false,
       readyCount: 0,
       images: [],
       scores: [],
+      gameMode: data.gameMode,
     };
 
-    this.server.to(socket.id).emit('new_room', roomId);
+    this.server.to(socket.id).emit('new_room', roomId, data.gameMode);
 
-    this.logger.log(`create room roomname: ${roomName} by user:${socket.id} `);
+    this.logger.log(`create room roomname: ${data.roomName} by user:${socket.id} `);
   }
 
   //! 준비
@@ -120,7 +127,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 준비 취소
   @SubscribeMessage('unready')
-  cancleReady(
+  cancelReady(
     @ConnectedSocket() socket: ServerToClientSocket,
     @MessageBody() roomId: string,
   ): void {
@@ -518,11 +525,5 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleGameStage(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() stage: number) {
     const roomId = this.userToRoom[socket.id];
     this.server.to(roomId).emit('get_change_stage', stage);
-  }
-
-  @SubscribeMessage('item_type')
-  handleItemRound(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() status: number) {
-    const roomId = this.userToRoom[socket.id];
-    this.server.to(roomId).emit('get_item_type', status);
   }
 }
