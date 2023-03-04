@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { useClientSocket } from '../../module/client-socket';
 import frameImgSrc from '../../assets/images/frame-img.png';
 import stickerImgSrc from '../../assets/images/sticker.png';
+import { useClientSocket } from '../../module/client-socket';
 
 const Canvas = styled.canvas`
   position: absolute;

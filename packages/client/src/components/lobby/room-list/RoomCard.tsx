@@ -1,8 +1,8 @@
+import { useSetAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import PoroImg from '../../../assets/images/arcade-poro.png';
-import { useSetAtom } from 'jotai';
 import { roomInfoAtom } from '../../../app/room';
+import PoroImg from '../../../assets/images/arcade-poro.png';
 
 const Container = styled.div`
   display: inline-flex;

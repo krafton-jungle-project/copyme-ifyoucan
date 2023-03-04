@@ -1,13 +1,13 @@
-import { MongooseModule } from '@nestjs/mongoose';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { EventsModule } from './events/events.module';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { MongooseModule } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { AppController } from './app.controller';
+import { AuthModule } from './auth/auth.module';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { EventsModule } from './events/events.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [

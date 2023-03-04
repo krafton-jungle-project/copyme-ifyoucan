@@ -1,12 +1,12 @@
-import styled from 'styled-components';
 import { useAtomValue } from 'jotai';
+import styled from 'styled-components';
 import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
-import MyVideo from './MyVideo';
-import PeerVideo from './PeerVideo';
-import Chatting from './Chatting';
 import { roomInfoAtom } from '../../../app/room';
 import { myNickName } from '../../../pages/Lobby';
+import Chatting from './Chatting';
+import MyVideo from './MyVideo';
+import PeerVideo from './PeerVideo';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;

@@ -1,24 +1,19 @@
-import styled, { css, keyframes } from 'styled-components';
-import { useEffect, useRef, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
+import { useEffect, useRef, useState } from 'react';
+import styled, { css, keyframes } from 'styled-components';
 import { gameAtom, GameStage } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
-import MyScoreBar from './MyScoreBar';
-import MyCanvas from './MyCanvas';
-import PeerCanvas from './PeerCanvas';
-import PeerScoreBar from './PeerScoreBar';
-import Versus from './Versus';
-import { myNickName } from '../../../pages/Lobby';
 import arrowImg from '../../../assets/images/arrow.png';
-import InvisibleDrawingCanvas from '../InvisibleDrawingCanvas';
-import transparentImg from '../../../assets/images/transparent.png';
-import roundOneImg from '../../../assets/images/round-one.gif';
-import roundTwoImg from '../../../assets/images/round-two.gif';
-import roundThreeImg from '../../../assets/images/round-three.gif';
-import transitionImg from '../../../assets/images/transition.gif';
-import winImg from '../../../assets/images/win.gif';
-import loseImg from '../../../assets/images/lose.gif';
 import gameOverImg from '../../../assets/images/game-over.gif';
+import loseImg from '../../../assets/images/lose.gif';
+import roundOneImg from '../../../assets/images/round-one.gif';
+import roundThreeImg from '../../../assets/images/round-three.gif';
+import roundTwoImg from '../../../assets/images/round-two.gif';
+import transitionImg from '../../../assets/images/transition.gif';
+import transparentImg from '../../../assets/images/transparent.png';
+import winImg from '../../../assets/images/win.gif';
+import { useClientSocket } from '../../../module/client-socket';
+import { myNickName } from '../../../pages/Lobby';
 import {
   Coin,
   GameMusic,
@@ -30,7 +25,12 @@ import {
   Transition,
   Win,
 } from '../../../utils/sound';
-import { useClientSocket } from '../../../module/client-socket';
+import InvisibleDrawingCanvas from '../InvisibleDrawingCanvas';
+import MyCanvas from './MyCanvas';
+import MyScoreBar from './MyScoreBar';
+import PeerCanvas from './PeerCanvas';
+import PeerScoreBar from './PeerScoreBar';
+import Versus from './Versus';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;

@@ -1,10 +1,10 @@
+import styled from '@emotion/styled';
 import classNames from 'classnames';
+import { useAtomValue } from 'jotai';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import styled from '@emotion/styled';
-import { useClientSocket } from '../../../module/client-socket';
-import { useAtomValue } from 'jotai';
 import { gameAtom } from '../../../app/game';
+import { useClientSocket } from '../../../module/client-socket';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;

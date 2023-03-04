@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
-import { useEffect } from 'react';
-import { useContext } from 'react';
-import { createContext } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import { clientSocket } from './socket-instance';
 
 interface ClientSocketContextProps {
