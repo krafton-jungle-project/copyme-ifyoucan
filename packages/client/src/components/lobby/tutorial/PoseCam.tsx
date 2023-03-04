@@ -11,8 +11,8 @@ import {
   isTPoseAtom,
   tutorialPassAtom,
 } from '../../../app/tutorial';
-import correctImg from '../../../assets/images/tutorial/correct.gif';
-import loadingImg from '../../../assets/images/tutorial/loading.webp';
+import correctImg from '../../../assets/images/lobby/tutorial/correct.gif';
+import loadingImg from '../../../assets/images/lobby/tutorial/loading.webp';
 import { Correct } from '../../../utils/sound';
 import * as movenet from '../../../utils/tfjs-movenet';
 import {

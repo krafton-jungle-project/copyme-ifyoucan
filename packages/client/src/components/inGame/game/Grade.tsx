@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import badImg from '../../../assets/images/score/bad.gif';
-import failImg from '../../../assets/images/score/fail.gif';
-import goodImg from '../../../assets/images/score/good.gif';
-import greatImg from '../../../assets/images/score/great.gif';
-import perfectImg from '../../../assets/images/score/perfect.gif';
+import badImg from '../../../assets/images/in-game/grade/bad.gif';
+import failImg from '../../../assets/images/in-game/grade/fail.gif';
+import goodImg from '../../../assets/images/in-game/grade/good.gif';
+import greatImg from '../../../assets/images/in-game/grade/great.gif';
+import perfectImg from '../../../assets/images/in-game/grade/perfect.gif';
 import { Fail, Great, Perfect, Stamp } from '../../../utils/sound';
 
 const GradeImg = styled.img<{ isMe: boolean }>`

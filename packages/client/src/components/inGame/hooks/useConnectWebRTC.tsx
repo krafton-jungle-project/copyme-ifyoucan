@@ -7,7 +7,7 @@ import { peerInfoAtom } from '../../../app/peer';
 import { roomInfoAtom } from '../../../app/room';
 import { useClientSocket } from '../../../module/client-socket';
 import { myNickName } from '../../../pages/Lobby';
-import { GameMusic, RoomEnter, RoomExit } from '../../../utils/sound';
+import { RoomEnter, RoomExit } from '../../../utils/sound';
 import { stream } from '../../../utils/tfjs-movenet';
 
 //! 스턴 서버 직접 생성 고려(임시)

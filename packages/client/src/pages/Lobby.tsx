@@ -2,11 +2,11 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import bgmOffImg from '../assets/images/bgm-off.png';
-import bgmOnImg from '../assets/images/bgm-on.png';
-import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
+import bgmOffImg from '../assets/images/lobby/bgm-off.png';
+import bgmOnImg from '../assets/images/lobby/bgm-on.png';
+import kraftonJungleImg from '../assets/images/lobby/krafton-jungle-logo.png';
+import logoutImg from '../assets/images/lobby/logout.png';
 import logoImg from '../assets/images/logo.png';
-import logoutImg from '../assets/images/logout.png';
 import BestShot from '../components/lobby/best-shot/BestShot';
 import ItemGuide from '../components/lobby/item-guide/ItemGuide';
 import Loading from '../components/lobby/Loading';
@@ -17,9 +17,9 @@ import { removeUser } from '../utils/local-storage';
 import { BackgroundMusic, ButtonClick1, ButtonClick2 } from '../utils/sound';
 
 const Container = styled.div`
-  /* position: absolute;
+  position: absolute;
   width: 100%;
-  height: 100%; */
+  height: 100%;
 `;
 
 const Wrapper = styled.div`
@@ -28,7 +28,10 @@ const Wrapper = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 80%;
-  height: 90%;
+  aspect-ratio: 3 / 2;
+  min-width: 900px;
+  min-height: 600px;
+  max-height: 90%;
   background-color: rgba(0, 0, 0, 0.5);
   border: 0.1rem solid #fff;
   border-radius: 40px;
@@ -230,7 +233,7 @@ function Lobby() {
     case '튜토리얼':
       content = <Tutorial />;
       break;
-    case '게임 모드':
+    case '게임모드':
       content = <ItemGuide />;
       break;
     case '베스트샷':
@@ -350,11 +353,11 @@ function Lobby() {
             <NavItem
               onClick={() => {
                 ButtonClick1.play();
-                setMode('게임 모드');
+                setMode('게임모드');
               }}
-              isSelected={mode === '게임 모드'}
+              isSelected={mode === '게임모드'}
             >
-              게임 모드
+              게임모드
             </NavItem>
             <VerticalLine />
             <NavItem

@@ -1,9 +1,9 @@
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { gameAtom } from '../../app/game';
 import { roomInfoAtom } from '../../app/room';
-import exitImg from '../../assets/images/exit.png';
+import exitImg from '../../assets/images/in-game/exit.png';
 import logoImg from '../../assets/images/logo.png';
 import { useClientSocket } from '../../module/client-socket';
 import { BackgroundMusic, GunReload } from '../../utils/sound';
@@ -18,7 +18,10 @@ const Container = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  height: 90%;
+  aspect-ratio: 16 / 9;
+  min-width: 900px;
+  min-height: 500px;
+  max-height: 90%;
 `;
 
 const FadeBackGround = styled.div`
@@ -96,7 +99,7 @@ const ExitTxt = styled.p`
 function InGame() {
   const { socket } = useClientSocket();
   const roomInfo = useAtomValue(roomInfoAtom);
-  const [game, setGame] = useAtom(gameAtom);
+  const game = useAtomValue(gameAtom);
   const navigate = useNavigate();
 
   function onStart() {
@@ -115,11 +118,6 @@ function InGame() {
       GunReload.play();
       socket.emit('ready', roomInfo.roomId);
     }
-
-    setGame((prev) => ({
-      ...prev,
-      user: { ...prev.user, isReady: !prev.user.isReady },
-    }));
   }
 
   const exitRoom = () => {
@@ -135,30 +133,32 @@ function InGame() {
   };
 
   return (
-    <Container>
+    <>
       <FadeBackGround />
-      <Header>
-        <LogoWrapper>
-          <Logo // hidden ready or start button
-            alt="logo"
-            src={logoImg}
-            onClick={() => {
-              roomInfo.host ? onStart() : onReady();
-            }}
-            isClickable={roomInfo.host ? game.peer.isReady : true}
-            isStart={game.isStart}
-          />
-        </LogoWrapper>
-        <RoundBox />
-        <Announcer />
-        <ExitWrapper onClick={exitRoom}>
-          <ExitImg alt="exit" src={exitImg} />
-          <ExitTxt>EXIT</ExitTxt>
-        </ExitWrapper>
-      </Header>
-      <WaitingBox />
-      <GameBox />
-    </Container>
+      <Container>
+        <Header>
+          <LogoWrapper>
+            <Logo // hidden ready or start button
+              alt="logo"
+              src={logoImg}
+              onClick={() => {
+                roomInfo.host ? onStart() : onReady();
+              }}
+              isClickable={roomInfo.host ? game.peer.isReady : true}
+              isStart={game.isStart}
+            />
+          </LogoWrapper>
+          <RoundBox />
+          <Announcer />
+          <ExitWrapper onClick={exitRoom}>
+            <ExitImg alt="exit" src={exitImg} />
+            <ExitTxt>EXIT</ExitTxt>
+          </ExitWrapper>
+        </Header>
+        <WaitingBox />
+        <GameBox />
+      </Container>
+    </>
   );
 }
 

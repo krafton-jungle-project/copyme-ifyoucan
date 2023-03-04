@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import { tutorialPassAtom } from '../../../app/tutorial';
-import partyPopperImg from '../../../assets/images/tutorial/party-popper.gif';
+import partyPopperImg from '../../../assets/images/lobby/tutorial/party-popper.gif';
 import { Yeah } from '../../../utils/sound';
 import Guide from './Guide';
 import PoseCam from './PoseCam';

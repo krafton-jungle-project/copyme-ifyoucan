@@ -1,17 +1,18 @@
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { gameAtom, GameStage } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
-import arrowImg from '../../../assets/images/arrow.png';
-import gameOverImg from '../../../assets/images/game-over.gif';
-import loseImg from '../../../assets/images/lose.gif';
-import roundOneImg from '../../../assets/images/round-one.gif';
-import roundThreeImg from '../../../assets/images/round-three.gif';
-import roundTwoImg from '../../../assets/images/round-two.gif';
-import transitionImg from '../../../assets/images/transition.gif';
+import { roomInfoAtom } from '../../../app/room';
+import arrowImg from '../../../assets/images/in-game/arrow.png';
+import gameOverImg from '../../../assets/images/in-game/game-over.gif';
+import loseImg from '../../../assets/images/in-game/lose.gif';
+import roundOneImg from '../../../assets/images/in-game/round-one.gif';
+import roundThreeImg from '../../../assets/images/in-game/round-three.gif';
+import roundTwoImg from '../../../assets/images/in-game/round-two.gif';
+import transitionImg from '../../../assets/images/in-game/transition.gif';
+import winImg from '../../../assets/images/in-game/win.gif';
 import transparentImg from '../../../assets/images/transparent.png';
-import winImg from '../../../assets/images/win.gif';
 import { useClientSocket } from '../../../module/client-socket';
 import { myNickName } from '../../../pages/Lobby';
 import {
@@ -227,7 +228,8 @@ const PeerJudgeImg = styled.img`
 `;
 
 function GameBox() {
-  const [game, setGame] = useAtom(gameAtom);
+  const game = useAtomValue(gameAtom);
+  const host = useAtomValue(roomInfoAtom).host;
   const { socket } = useClientSocket();
   const peerNickName = useAtomValue(peerInfoAtom).nickName;
   const myVideoRef = useRef<HTMLVideoElement>(null);
@@ -290,6 +292,14 @@ function GameBox() {
       }
       setTimeout(() => {
         setRoundImg(transparentImg);
+
+        if (host) {
+          if (game.round < 4) {
+            socket.emit('change_stage', GameStage.OFFEND);
+          } else {
+            socket.emit('result');
+          }
+        }
       }, 2000);
     }
     // 공수 전환 안내
@@ -298,9 +308,18 @@ function GameBox() {
       if (game.round % 1 !== 0) {
         Transition.play();
         setRoundImg(transitionImg);
-        setTimeout(() => {
-          setRoundImg(transparentImg);
-        }, 2000);
+      }
+
+      setTimeout(() => {
+        setRoundImg(transparentImg);
+
+        if (host) {
+          socket.emit('count_down', 'offend');
+        }
+      }, 2000);
+    } else if (game.stage === GameStage.DEFEND) {
+      if (host) {
+        socket.emit('count_down', 'defend');
       }
     }
     // 라운드 종료 후 승패 판정
@@ -312,17 +331,27 @@ function GameBox() {
           Win.play();
           setMyJudgeImg(winImg);
           setPeerJudgeImg(loseImg);
-          setGame((prev) => ({ ...prev, user: { ...prev.user, point: prev.user.point + 1 } }));
+
+          if (host) {
+            socket.emit('point', myNickName);
+          }
         } else {
           Lose.play();
           setMyJudgeImg(loseImg);
           setPeerJudgeImg(winImg);
-          setGame((prev) => ({ ...prev, peer: { ...prev.peer, point: prev.peer.point + 1 } }));
+
+          if (host) {
+            socket.emit('point', peerNickName);
+          }
         }
+
         setTimeout(() => {
           setMyJudgeImg(transparentImg);
           setPeerJudgeImg(transparentImg);
-          socket.emit('change_stage', GameStage.ROUND);
+
+          if (host) {
+            socket.emit('change_stage', GameStage.ROUND);
+          }
         }, 2500);
       }, 1500);
     }

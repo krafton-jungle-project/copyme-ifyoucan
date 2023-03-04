@@ -60,5 +60,9 @@ const initialState: GameState = {
 };
 
 const gameAtom = atomWithReset(initialState);
+gameAtom.onMount = (setAtom) => {
+  setAtom(initialState);
+  return () => setAtom(initialState);
+};
 
 export { GameStage, gameAtom };

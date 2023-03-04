@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { peerInfoAtom } from '../../../app/peer';
-import DefaultProfileImg from '../../../assets/images/peer-default-profile.jpg';
+import DefaultProfileImg from '../../../assets/images/in-game/peer-default-profile.jpg';
 
 const Container = styled.div`
   position: absolute;
