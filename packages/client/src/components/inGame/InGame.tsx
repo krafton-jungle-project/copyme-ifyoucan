@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { gameAtom } from '../../app/game';
@@ -99,7 +99,7 @@ const ExitTxt = styled.p`
 function InGame() {
   const { socket } = useClientSocket();
   const roomInfo = useAtomValue(roomInfoAtom);
-  const [game, setGame] = useAtom(gameAtom);
+  const game = useAtomValue(gameAtom);
   const navigate = useNavigate();
 
   function onStart() {
@@ -118,11 +118,6 @@ function InGame() {
       GunReload.play();
       socket.emit('ready', roomInfo.roomId);
     }
-
-    setGame((prev) => ({
-      ...prev,
-      user: { ...prev.user, isReady: !prev.user.isReady },
-    }));
   }
 
   const exitRoom = () => {

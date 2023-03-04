@@ -137,13 +137,7 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
       video: videoRef.current,
       canvas: canvasRef.current,
     };
-    // setTimeout(() => {
-    //   if (videoRef.current === null || canvasRef.current === null || !peerInfo.stream) return;
-    //   console.log('크기조정');
 
-    //   canvasRef.current.width = 640;
-    //   canvasRef.current.height = 480;
-    // }, 1000);
     movenet.peerCanvasRender({
       size: { width: 640, height: 480 },
       element: elements,
@@ -159,7 +153,7 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
   useEffect(() => {
     const getPeerPose = async () => {
       const poses = await movenet.detector.estimatePoses(movenet.peerCamera.video);
-      setGame((prev) => ({ ...prev, peer: { ...prev.peer, pose: poses[0] } }));
+      setGame((prev) => ({ ...prev, peer: { ...prev.peer, pose: poses[0] } })); //check
     };
 
     // 카운트다운 0초일 때,

@@ -1,9 +1,10 @@
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { gameAtom, GameStage } from '../../../app/game';
 import { useClientSocket } from '../../../module/client-socket';
 import { useMovenetStream } from '../../../module/movenet-stream';
+import { myNickName } from '../../../pages/Lobby';
 import { comparePoses } from '../../../utils/pose-similarity';
 import { useInterval } from '../hooks/useInterval';
 
@@ -100,7 +101,7 @@ const ScoreInfo = styled.div`
 `;
 
 function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement> }) {
-  const [game, setGame] = useAtom(gameAtom);
+  const game = useAtomValue(gameAtom);
   const [delay, setDelay] = useState<number | null>(null);
   const { socket } = useClientSocket();
   const detector = useMovenetStream().movenet.detector;
@@ -117,12 +118,9 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
 
     const myPose = await getMyPose();
     if (myPose && game.peer.pose) {
+      // 나의 실시간 점수
       const tempScore = comparePoses(myPose, game.peer.pose);
-      socket.emit('score', tempScore);
-      setGame((prev) => ({
-        ...prev,
-        user: { ...prev.user, score: tempScore },
-      }));
+      socket.emit('score', { defender: myNickName, score: tempScore });
     }
   }, delay);
 
@@ -137,7 +135,6 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
       // 수비가 종료되면
       else if (game.countDown === 0) {
         // 실시간 점수 계산을 멈추고, 자신의 최종 점수를 서버로 보낸다
-
         setDelay(null);
         socket.emit('round_score', game.user.score);
       }

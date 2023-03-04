@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { gameAtom, GameStage } from '../../app/game';
@@ -37,7 +37,7 @@ function Announcer() {
   const host = useAtomValue(roomInfoAtom).host;
   const peerInfo = useAtomValue(peerInfoAtom);
   const { socket } = useClientSocket();
-  const [game, setGame] = useAtom(gameAtom);
+  const game = useAtomValue(gameAtom);
   const [message, setMessage] = useState('');
 
   // 대기실
@@ -119,6 +119,7 @@ function Announcer() {
           } else {
             messageOrder = 0;
 
+            // 게임 시작 안내 메시지 모두 송출 후 1라운드 시작
             if (host) {
               socket.emit('change_stage', GameStage.ROUND);
             }
@@ -127,68 +128,24 @@ function Announcer() {
         case GameStage.ROUND:
           if (game.round < 4) {
             setMessage(`ROUND ${game.round}`);
-
-            //todo: 위치 빈경 필요
-            // 라운드 시작 시 점수 초기화
-            setTimeout(() => {
-              setGame((prev) => ({
-                ...prev,
-                user: { ...prev.user, score: 0 },
-                peer: { ...prev.peer, score: 0 },
-              }));
-            }, 1000);
-
-            setTimeout(() => {
-              if (host) {
-                socket.emit('change_stage', GameStage.OFFEND);
-              }
-            }, 2500);
           }
-          // 3(3.5) 라운드가 모두 끝났을 때(게임 종료)
+          // 3(3.5) 라운드가 모두 끝났을 때 게임 종료
           else {
             setMessage('GAME OVER');
-
-            if (host) {
-              setTimeout(() => {
-                socket.emit('result');
-              }, 2500);
-            }
           }
           break;
         case GameStage.OFFEND:
           // 공수 전환
           if (game.round % 1 !== 0) {
             setMessage('공격 수비 전환');
-
-            setTimeout(() => {
-              setMessage(`${game.user.isOffender ? myNickName : peerInfo.nickName}님의 공격!`);
-              setTimeout(() => {
-                if (host) {
-                  socket.emit('count_down', 'offend');
-                }
-              }, 1500);
-            }, 2000);
-          } else {
-            setTimeout(() => {
-              setMessage(`${game.user.isOffender ? myNickName : peerInfo.nickName}님의 공격!`);
-
-              setTimeout(() => {
-                if (host) {
-                  socket.emit('count_down', 'offend');
-                }
-              }, 1500);
-            }, 2000);
           }
 
+          setTimeout(() => {
+            setMessage(`${game.user.isOffender ? myNickName : peerInfo.nickName}님의 공격!`);
+          }, 2000);
           break;
         case GameStage.DEFEND:
           setMessage(`${game.user.isOffender ? peerInfo.nickName : myNickName}님의 수비!`);
-
-          setTimeout(() => {
-            if (host) {
-              socket.emit('count_down', 'defend');
-            }
-          }, 1500);
           break;
         default:
           break;
