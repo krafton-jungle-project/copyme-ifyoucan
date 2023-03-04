@@ -170,11 +170,8 @@ const useConnectWebRTC = () => {
 
       // 게임 중일 때 상대가 나가면, 로비로 이동한다.
       if (isStart) {
-        resetPeerInfo();
-        setRoomInfo((prev) => ({ ...prev, host: true }));
-        GameMusic.currentTime = 0;
-        GameMusic.pause();
-        socket.emit('finish');
+        alert('상대방이 게임에서 나갔습니다');
+        navigate('/', { replace: true });
       }
       // 게임 중이 아닐 땐, 내가 방장이 되고
       else {

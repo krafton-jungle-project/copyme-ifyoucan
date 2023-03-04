@@ -19,6 +19,7 @@ function Room() {
   const navigate = useNavigate();
   const { socket } = useClientSocket();
   const resetGame = useResetAtom(gameAtom);
+  const game = useAtomValue(gameAtom);
   const resetPeerInfo = useResetAtom(peerInfoAtom);
   const roomInfo = useAtomValue(roomInfoAtom);
   const resetRoomInfo = useResetAtom(roomInfoAtom);
@@ -54,6 +55,15 @@ function Room() {
       RoomExit.play(); // 자신 퇴장음
     };
   }, []);
+
+  useEffect(() => {
+    return () => {
+      // 게임 중 방을 나가면
+      if (game.isStart) {
+        window.location.reload();
+      }
+    };
+  }, [game.isStart]);
 
   return <InGame />;
 }
