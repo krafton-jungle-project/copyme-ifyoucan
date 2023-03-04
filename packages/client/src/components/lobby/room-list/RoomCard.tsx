@@ -2,7 +2,13 @@ import { useSetAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { roomInfoAtom } from '../../../app/room';
-import PoroImg from '../../../assets/images/arcade-poro.png';
+import BlueImg from '../../../assets/images/room-card/blue.gif';
+import GreenImg from '../../../assets/images/room-card/green.gif';
+import OrangeImg from '../../../assets/images/room-card/orange.gif';
+import PinkImg from '../../../assets/images/room-card/pink.gif';
+import PurpleImg from '../../../assets/images/room-card/purple.gif';
+import RedImg from '../../../assets/images/room-card/red.gif';
+import YellowImg from '../../../assets/images/room-card/yellow.gif';
 
 const Container = styled.div`
   display: inline-flex;
@@ -69,6 +75,8 @@ const JoinButton = styled.button<{ isFull: boolean }>`
   transition: 0.15s;
 `;
 
+const ThumbnailImg = [RedImg, PinkImg, OrangeImg, YellowImg, GreenImg, BlueImg, PurpleImg];
+
 interface RoomInfo {
   id: string;
   roomName: string;
@@ -90,7 +98,7 @@ export default function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
 
   return (
     <Container>
-      <Thumbnail alt="room thumbnail" src={PoroImg} />
+      <Thumbnail alt="room thumbnail" src={ThumbnailImg[Math.floor(Math.random() * 7)]} />
       <Wrapper>
         <RoomName>{roomInfo.roomName}</RoomName>
         <HeadCount isFull={roomInfo.users.length === 2}>{roomInfo.users.length} / 2</HeadCount>
