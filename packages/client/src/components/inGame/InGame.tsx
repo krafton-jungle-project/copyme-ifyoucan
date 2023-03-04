@@ -1,16 +1,16 @@
-import Announcer from './Announcer';
-import WaitingBox from './waiting/WaitingBox';
-import GameBox from './game/GameBox';
-import styled, { css } from 'styled-components';
-import logoImg from '../../assets/images/logo.png';
-import exitImg from '../../assets/images/exit.png';
-import { useClientSocket } from '../../module/client-socket';
 import { useAtom, useAtomValue } from 'jotai';
-import { roomInfoAtom } from '../../app/room';
-import { gameAtom } from '../../app/game';
-import { BackgroundMusic, GunReload } from '../../utils/sound';
 import { useNavigate } from 'react-router-dom';
+import styled, { css } from 'styled-components';
+import { gameAtom } from '../../app/game';
+import { roomInfoAtom } from '../../app/room';
+import exitImg from '../../assets/images/exit.png';
+import logoImg from '../../assets/images/logo.png';
+import { useClientSocket } from '../../module/client-socket';
+import { BackgroundMusic, GunReload } from '../../utils/sound';
+import Announcer from './Announcer';
+import GameBox from './game/GameBox';
 import RoundBox from './game/RoundBox';
+import WaitingBox from './waiting/WaitingBox';
 
 const Container = styled.div`
   position: absolute;

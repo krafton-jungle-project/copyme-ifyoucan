@@ -1,7 +1,7 @@
-import { UsersRepository } from './users.repository';
-import { UserRequestDto } from './dto/users.request.dto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { UserRequestDto } from './dto/users.request.dto';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {

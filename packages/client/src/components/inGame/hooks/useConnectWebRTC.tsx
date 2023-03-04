@@ -1,14 +1,14 @@
-import { useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { stream } from '../../../utils/tfjs-movenet';
 import { useAtom, useSetAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
-import { useClientSocket } from '../../../module/client-socket';
+import { useCallback, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
 import { roomInfoAtom } from '../../../app/room';
+import { useClientSocket } from '../../../module/client-socket';
 import { myNickName } from '../../../pages/Lobby';
-import { gameAtom } from '../../../app/game';
-import { BackgroundMusic, GameMusic, RoomEnter, RoomExit } from '../../../utils/sound';
+import { GameMusic, RoomEnter, RoomExit } from '../../../utils/sound';
+import { stream } from '../../../utils/tfjs-movenet';
 
 //! 스턴 서버 직접 생성 고려(임시)
 const pc_config = {

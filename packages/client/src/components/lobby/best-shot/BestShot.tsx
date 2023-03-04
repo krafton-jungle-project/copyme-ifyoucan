@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { Paging } from './Paging';
 import transparentImg from '../../../assets/images/transparent.png';
 import { ButtonClick2, ButtonClick3 } from '../../../utils/sound';
+import { Paging } from './Paging';
 
 const Container = styled.div`
   position: relative;

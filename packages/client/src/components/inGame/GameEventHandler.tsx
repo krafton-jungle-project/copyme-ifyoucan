@@ -1,7 +1,10 @@
-import { useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { useClientSocket } from '../../module/client-socket';
+import { useResetAtom } from 'jotai/utils';
+import { useEffect } from 'react';
 import { gameAtom, GameStage } from '../../app/game';
+import { roomInfoAtom } from '../../app/room';
+import { useClientSocket } from '../../module/client-socket';
+import { prevBgmState } from '../../pages/Lobby';
 import {
   BackgroundMusic,
   Bell,
@@ -12,9 +15,6 @@ import {
   POTG,
   Swish,
 } from '../../utils/sound';
-import { useResetAtom } from 'jotai/utils';
-import { roomInfoAtom } from '../../app/room';
-import { prevBgmState } from '../../pages/Lobby';
 
 const GameEventHandler = () => {
   const { socket } = useClientSocket();

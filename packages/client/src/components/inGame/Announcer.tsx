@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { gameAtom, GameStage } from '../../app/game';
 import { peerInfoAtom } from '../../app/peer';
-import { useClientSocket } from '../../module/client-socket';
 import { roomInfoAtom } from '../../app/room';
+import { useClientSocket } from '../../module/client-socket';
 import { myNickName } from '../../pages/Lobby';
 
 const Container = styled.div<{ isStart: boolean }>`

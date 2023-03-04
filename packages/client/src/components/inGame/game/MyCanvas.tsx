@@ -1,13 +1,13 @@
-import styled, { css, keyframes } from 'styled-components';
-import { useEffect, useRef } from 'react';
 import { useAtomValue } from 'jotai';
+import { useEffect, useRef } from 'react';
+import styled, { css, keyframes } from 'styled-components';
 import { gameAtom, GameStage, ItemType } from '../../../app/game';
-import * as movenet from '../../../utils/tfjs-movenet';
-import { capturePose } from '../../../utils/capture-pose';
+import { roomInfoAtom } from '../../../app/room';
 import { useClientSocket } from '../../../module/client-socket';
+import { capturePose } from '../../../utils/capture-pose';
+import * as movenet from '../../../utils/tfjs-movenet';
 import CountDown from './CountDown';
 import Grade from './Grade';
-import { roomInfoAtom } from '../../../app/room';
 
 const Container = styled.div`
   position: absolute;

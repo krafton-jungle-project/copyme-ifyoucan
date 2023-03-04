@@ -1,15 +1,15 @@
 import axios from 'axios';
 import { useAtom } from 'jotai';
+import jwt_decode from 'jwt-decode';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { isLoggedInAtom, isModalOpenedAtom } from '../app/login';
-import RegisterModal from '../components/member/RegisterModal';
-import jwt_decode from 'jwt-decode';
-import { setCookie } from '../utils/cookies';
-import { useMovenetStream } from '../module/movenet-stream';
-import Loading from '../components/lobby/Loading';
 import logoImg from '../assets/images/logo.png';
+import Loading from '../components/lobby/Loading';
+import RegisterModal from '../components/member/RegisterModal';
+import { useMovenetStream } from '../module/movenet-stream';
+import { setCookie } from '../utils/cookies';
 import { ButtonClick1 } from '../utils/sound';
 
 const Container = styled.div<{ isModalOpened: boolean }>`

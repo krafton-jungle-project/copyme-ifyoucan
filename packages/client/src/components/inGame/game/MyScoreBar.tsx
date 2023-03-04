@@ -1,11 +1,11 @@
-import styled, { css, keyframes } from 'styled-components';
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-import { GameStage, gameAtom } from '../../../app/game';
-import { comparePoses } from '../../../utils/pose-similarity';
-import { useInterval } from '../hooks/useInterval';
+import styled, { css, keyframes } from 'styled-components';
+import { gameAtom, GameStage } from '../../../app/game';
 import { useClientSocket } from '../../../module/client-socket';
 import { useMovenetStream } from '../../../module/movenet-stream';
+import { comparePoses } from '../../../utils/pose-similarity';
+import { useInterval } from '../hooks/useInterval';
 
 const Container = styled.div`
   position: absolute;
