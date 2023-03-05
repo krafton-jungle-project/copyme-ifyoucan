@@ -30,12 +30,14 @@ jobs:
           yarn install
 
       - name: build client
-        run: |
-          CI = false yarn client:build
+        run: yarn client:build
+          env:
+            CI: ""
 
       - name: build server
-        run: |
-          CI = false yarn server:build
+        run: yarn server:build
+         env:
+            CI: ""
 
       - name: Dev
         run: |
