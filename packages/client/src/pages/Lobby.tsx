@@ -261,7 +261,7 @@ function Lobby() {
     if (check) {
       localStorage.setItem('isAuthenticated', 'false');
       removeUser();
-      navigate('/login', { replace: true }); //temp: Private Router 적용 후 삭제
+      navigate('/login', { replace: true });
     } else {
       ButtonClick2.play();
     }

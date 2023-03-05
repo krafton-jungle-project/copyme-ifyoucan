@@ -32,7 +32,7 @@ function Room() {
   const resetRoomInfo = useResetAtom(roomInfoAtom);
   const { isStreamReady, initialize } = useMovenetStream();
 
-  usePreventExit(); //temp
+  usePreventExit();
   useConnectWebRTC();
   GameEventHandler();
   MotionReady();

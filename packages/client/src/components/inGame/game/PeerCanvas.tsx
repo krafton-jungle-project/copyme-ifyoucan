@@ -152,7 +152,7 @@ function PeerCanvas({ peerVideoRef }: { peerVideoRef: React.RefObject<HTMLVideoE
   useEffect(() => {
     const getPeerPose = async () => {
       const poses = await movenet.detector.estimatePoses(movenet.peerCamera.video);
-      setGame((prev) => ({ ...prev, peer: { ...prev.peer, pose: poses[0] } })); //check
+      setGame((prev) => ({ ...prev, peer: { ...prev.peer, pose: poses[0] } }));
     };
 
     // 카운트다운 0초일 때,

@@ -46,12 +46,12 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server<ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData>;
 
-  //!소켓 연결
+  //! 소켓 연결
   handleConnection(@ConnectedSocket() socket: ServerToClientSocket): void {
     this.logger.log(`socketId: ${socket.id} 소켓 연결`);
   }
 
-  //!소켓 연결 해제
+  //! 소켓 연결 해제
   handleDisconnect(@ConnectedSocket() socket: ServerToClientSocket): void {
     this.logger.log(`socketId: ${socket.id} 소켓 연결 해제 ❌`);
     const roomId = this.userToRoom[socket.id];

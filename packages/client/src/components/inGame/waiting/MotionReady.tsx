@@ -32,7 +32,7 @@ function MotionReady() {
         let pose = poses[0];
         // 전신이 나오지 않았는지 확인한다(최초 한 번)
         if (!game.user.isValidBody) {
-          setGame((prev) => ({ ...prev, user: { ...prev.user, isValidBody: isValidBody(pose) } })); //check
+          setGame((prev) => ({ ...prev, user: { ...prev.user, isValidBody: isValidBody(pose) } }));
         }
         // 최초 한 번 전신 확인을 했으면
         else {
