@@ -52,12 +52,12 @@ const Modal = styled.div<{ isOpened: boolean; isVisible: boolean }>`
   position: absolute;
   transform: translate(-50%);
   width: 35vw;
-  height: 55vh;
+  height: 60vh;
   left: 50%;
   min-width: 515px;
-  max-height: 400px;
-  max-height: 400px;
-  max-width: 600px;
+  min-height: 530px;
+  max-width: 570px;
+  max-height: 700px;
   background-color: #01000d;
   z-index: 999;
   display: flex;
@@ -74,7 +74,7 @@ const Modal = styled.div<{ isOpened: boolean; isVisible: boolean }>`
   ${(p) =>
     !p.isVisible &&
     css`
-      animation: ${fadeOut} 0.3s;
+      animation: ${fadeOut} 0.315s;
     `}
 `;
 
@@ -144,7 +144,7 @@ const ModeDiv = styled.div`
   border-radius: 10px;
 
   padding: 2% 0 2% 5%;
-  height: 40%;
+  height: 30%;
   width: 85%;
   display: flex;
   /* flex-direction: column; */
@@ -177,7 +177,7 @@ const SelectionDiv = styled.div`
   align-items: center;
 `;
 
-const SelSpan = styled.span<{
+const ModeSpan = styled.span<{
   lang: string;
   keys: number;
   selected1: number;
@@ -186,7 +186,9 @@ const SelSpan = styled.span<{
 }>`
   cursor: pointer;
   ${(p) =>
+    // 라운드 확인
     p.lang === '1' &&
+    // span의 고유 모드와 현재 클릭된 모드가 같으면 글자 강조
     p.keys === p.selected1 &&
     css`
       text-shadow: 0 0 2px #fff, 0 0 1px #fff, 0 0 10px #fff, 0 0 20px #bc13fe, 0 0 30px #bc13fe,
@@ -213,12 +215,14 @@ const round = [1, 2, 3];
 
 function CreateRoomModal() {
   const { socket } = useClientSocket();
-  const setRoomInfo = useSetAtom(roomInfoAtom);
   const navigate = useNavigate();
-  const [roomName, setRoomName] = useState<string>('');
+
+  const setRoomInfo = useSetAtom(roomInfoAtom);
   const [open, setOpen] = useAtom(createRoomModalAtom);
   const [visible, setVisible] = useAtom(fadeOutAtom);
-  const [gameMode, setGameMode] = useState({
+
+  const [roomName, setRoomName] = useState<string>('');
+  const [gameMode, setGameMode] = useState<IGameMode>({
     round1: GameMode.NORMAL,
     round2: GameMode.NORMAL,
     round3: GameMode.NORMAL,
@@ -254,6 +258,7 @@ function CreateRoomModal() {
 
   const handleMode = (e: any) => {
     let round: string = `round${e.target.lang}`;
+
     switch (e.target.innerText) {
       case '일반':
         setGameMode((prev) => ({ ...prev, [round]: GameMode.NORMAL }));
@@ -286,6 +291,14 @@ function CreateRoomModal() {
     }
   };
 
+  /**
+   * keys={key2} : span 본인이 무슨 게임 모드인지
+   * lang={val.toString()} : 몇 라운드의 span인지
+   * selected1={r1} : clickedMode()에서 클릭된 span의 라운드를 확인하여
+   * selected2={r2} : 라운드별 선택된 모드의 state를 변경하여 props로 넘겨주어
+   * selected3={r3} : styled component에서 강조할 span 구분하여 css 적용
+   */
+
   return (
     <>
       {open && <ModalBackground isOpened={open} onClick={lazyClose} isVisible={visible} />}
@@ -314,7 +327,7 @@ function CreateRoomModal() {
                   {modeName.map((val2, key2) => {
                     return (
                       <>
-                        <SelSpan
+                        <ModeSpan
                           key={key + key2 + 1}
                           keys={key2}
                           lang={val.toString()}
@@ -327,7 +340,7 @@ function CreateRoomModal() {
                           }}
                         >
                           {val2}
-                        </SelSpan>
+                        </ModeSpan>
                         {key2 < 3 && <span key={key2 + key + 5}>　|　</span>}
                       </>
                     );

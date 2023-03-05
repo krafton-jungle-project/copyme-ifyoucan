@@ -34,11 +34,13 @@ const Container = styled.div<{ isStart: boolean }>`
 `;
 
 function Announcer() {
+  const { socket } = useClientSocket();
+
+  const game = useAtomValue(gameAtom);
   const host = useAtomValue(roomInfoAtom).host;
   const peerInfo = useAtomValue(peerInfoAtom);
-  const { socket } = useClientSocket();
-  const game = useAtomValue(gameAtom);
-  const [message, setMessage] = useState('');
+
+  const [message, setMessage] = useState<string>('');
 
   // 대기실
   useEffect(() => {

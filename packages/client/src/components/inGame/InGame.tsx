@@ -98,10 +98,11 @@ const ExitTxt = styled.p`
 
 function InGame() {
   const { socket } = useClientSocket();
-  const roomInfo = useAtomValue(roomInfoAtom);
-  const game = useAtomValue(gameAtom);
-  const setExitInGame = useSetAtom(exitInGameAtom);
   const navigate = useNavigate();
+
+  const game = useAtomValue(gameAtom);
+  const roomInfo = useAtomValue(roomInfoAtom);
+  const setExitInGame = useSetAtom(exitInGameAtom);
 
   function onStart() {
     if (game.isStart || !game.peer.isReady) return;
