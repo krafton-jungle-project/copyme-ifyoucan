@@ -93,7 +93,7 @@ const PopUpContainer = styled.div<{ isPopUped: boolean }>`
     props.isPopUped &&
     css`
       visibility: visible;
-      animation: ${fadeIn} 0.7s;
+      animation: ${fadeIn} 0.5s;
       z-index: 1;
     `}
 
@@ -101,8 +101,7 @@ const PopUpContainer = styled.div<{ isPopUped: boolean }>`
     !props.isPopUped &&
     css`
       visibility: hidden;
-      animation: ${fadeOut} 0.7s;
-      opacity: 0;
+      animation: ${fadeOut} 0.5s;
     `}
 
   transition: opacity 0.5s ease-in-out;

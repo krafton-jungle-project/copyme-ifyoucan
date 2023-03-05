@@ -313,33 +313,28 @@ function CreateRoomModal() {
             ))}
           </RoundWrapper>
           <SelectionWrapper>
-            {round.map((val, key) => {
-              return (
-                <SelectionDiv key={key * 8}>
-                  {modeName.map((val2, key2) => {
-                    return (
-                      <>
-                        <SelSpan
-                          key={key + key2 + 1}
-                          keys={key2}
-                          lang={val.toString()}
-                          selected1={r1}
-                          selected2={r2}
-                          selected3={r3}
-                          onClick={(e) => {
-                            handleMode(e);
-                            clickedMode(e, key2);
-                          }}
-                        >
-                          {val2}
-                        </SelSpan>
-                        {key2 < 3 && <span key={key2 + key + 5}>　|　</span>}
-                      </>
-                    );
-                  })}
-                </SelectionDiv>
-              );
-            })}
+            {round.map((val, key) => (
+              <SelectionDiv key={key}>
+                {modeName.map((val2, key2) => (
+                  <div key={key2}>
+                    <SelSpan
+                      keys={key2}
+                      lang={val.toString()}
+                      selected1={r1}
+                      selected2={r2}
+                      selected3={r3}
+                      onClick={(e) => {
+                        handleMode(e);
+                        clickedMode(e, key2);
+                      }}
+                    >
+                      {val2}
+                    </SelSpan>
+                    {key2 < 3 && <span>　|　</span>}
+                  </div>
+                ))}
+              </SelectionDiv>
+            ))}
           </SelectionWrapper>
         </ModeDiv>
         <Button onClick={handleOk}>생성하기</Button>
