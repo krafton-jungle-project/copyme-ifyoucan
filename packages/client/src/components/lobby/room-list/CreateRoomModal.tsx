@@ -46,7 +46,7 @@ const ModalBackground = styled.div<{ isOpened: boolean; isVisible: boolean }>`
     `}
 `;
 
-const Modal2 = styled.div<{ isOpened: boolean; isVisible: boolean }>`
+const Modal = styled.div<{ isOpened: boolean; isVisible: boolean }>`
   border: 2px solid yellow;
   border-radius: 15px;
   position: absolute;
@@ -54,6 +54,8 @@ const Modal2 = styled.div<{ isOpened: boolean; isVisible: boolean }>`
   width: 35vw;
   height: 55vh;
   left: 50%;
+  min-width: 515px;
+  max-height: 400px;
   max-height: 400px;
   max-width: 600px;
   background-color: #01000d;
@@ -287,7 +289,7 @@ function CreateRoomModal() {
   return (
     <>
       {open && <ModalBackground isOpened={open} onClick={lazyClose} isVisible={visible} />}
-      <Modal2 isOpened={open} isVisible={visible}>
+      <Modal isOpened={open} isVisible={visible}>
         <Span onClick={lazyClose}>X</Span>
         <Title>방 만들기</Title>
         <Input
@@ -336,7 +338,7 @@ function CreateRoomModal() {
           </SelectionWrapper>
         </ModeDiv>
         <Button onClick={handleOk}>생성하기</Button>
-      </Modal2>
+      </Modal>
     </>
   );
 }
