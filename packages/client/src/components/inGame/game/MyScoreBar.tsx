@@ -68,7 +68,7 @@ const ScorePercent = styled.div<{ isJudgement: boolean }>`
   font-size: 40px;
   font-weight: bold;
   color: #ff3131;
-  transition: 0.5s;
+  transition: 0.3s;
 
   ${(props) =>
     props.isJudgement &&
