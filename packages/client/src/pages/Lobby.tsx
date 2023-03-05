@@ -20,15 +20,15 @@ import { BackgroundMusic, ButtonClick1, ButtonClick2 } from '../utils/sound';
 
 const Container = styled.div`
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
 `;
 
 const Wrapper = styled.div`
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   height: 80%;
   aspect-ratio: 3 / 2;
   min-width: 900px;
@@ -169,8 +169,7 @@ const VerticalLine = styled.div`
 const Section = styled.div`
   position: absolute;
   top: 20%;
-  left: 50%;
-  transform: translate(-50%);
+  left: 5%;
   width: 90%;
   height: 70%;
   border: 2px solid #fff8;
