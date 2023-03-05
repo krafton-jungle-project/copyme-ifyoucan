@@ -125,7 +125,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
 
     // 방에 모든 유저들에게 준비 했다고 알려줌
-    this.server.in(roomId).emit('get_ready');
+    this.server.in(roomId).emit('get_ready', socket.id);
   }
 
   //! 준비 취소
@@ -143,7 +143,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
 
     // 방에 모든 유저들에게 준비 취소했다고 알려줌
-    this.server.in(roomId).emit('get_unready');
+    this.server.in(roomId).emit('get_unready', socket.id);
   }
 
   //! imgae 전송(공격이 끝났을 시 이벤트를 받는다)
@@ -167,11 +167,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 게임 시작
   @SubscribeMessage('start')
-  gameStart(@MessageBody() roomId: string): void {
+  gameStart(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() roomId: string): void {
     if (!this.rooms[roomId].isStart) {
       // 게임이 시작하면 모든 유저들에게 게임이 시작됐다는 이벤트 발생
       this.rooms[roomId].isStart = true;
-      this.server.in(roomId).emit('get_start');
+      this.server.in(roomId).emit('get_start', socket.id);
     }
   }
 
@@ -191,20 +191,18 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 점수를 공격자에게 전송
   @SubscribeMessage('score')
-  getScore(
-    @ConnectedSocket() socket: ServerToClientSocket,
-    @MessageBody() data: { defender: string; score: number },
-  ): void {
+  getScore(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() score: number): void {
     // 실시간 수비 점수 공유
     const roomId = this.userToRoom[socket.id];
+    const data = { defenderId: socket.id, score };
     this.server.in(roomId).emit('get_score', data);
   }
 
   //! 라운드 승점 변경
   @SubscribeMessage('point')
-  getPoint(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() winner: string): void {
+  getPoint(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() winnerId: string): void {
     const roomId = this.userToRoom[socket.id];
-    this.server.in(roomId).emit('get_point', winner);
+    this.server.in(roomId).emit('get_point', winnerId);
   }
 
   //! 게임 끝

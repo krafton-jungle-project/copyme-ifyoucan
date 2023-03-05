@@ -21,10 +21,10 @@ export interface ServerToClientEvents {
   full: () => void;
   get_rooms: (rooms: Rooms) => void;
   new_room: (roomId: string, gameMode: IGameMode) => void;
-  get_ready: () => void;
-  get_unready: () => void;
-  get_start: () => void;
-  get_score: (data: { defender: string; score: number }) => void;
+  get_ready: (socketId: string) => void;
+  get_unready: (socketId: string) => void;
+  get_start: (socketId: string) => void;
+  get_score: (data: { defenderId: string; score: number }) => void;
   get_count_down: (count: number, stage: string) => void;
   get_result: () => void;
   get_finish: () => void;
@@ -57,7 +57,7 @@ export interface ClientToServerEvents {
   ready: (roomId: string) => void;
   unready: (roomId: string) => void;
   start: (roomId: string) => void;
-  score: (data: { defender: string; score: number }) => void;
+  score: (score: number) => void;
   round_score: (score: number) => void;
   result: () => void;
   finish: () => void;
@@ -80,14 +80,14 @@ export interface ClientToServerEvents {
   }) => void;
   message: (message: string, callback: (chat: IChat) => void) => void;
   change_stage: (stage: number) => void;
-  point: (winner: string) => void;
+  point: (winnerId: string) => void;
 }
 
 export interface InterServerEvents {
   get_rooms: (rooms: Rooms) => void;
   new_room: (roomId: string, gameMode: IGameMode) => void;
-  get_start: () => void;
-  get_score: (data: { defender: string; score: number }) => void;
+  get_start: (socketId: string) => void;
+  get_score: (data: { defenderId: string; score: number }) => void;
   peer: (data: { id: string; nickName: string }) => void;
   get_count_down: (count: number, stage: string) => void;
   get_offer: (offer: {
@@ -104,9 +104,9 @@ export interface InterServerEvents {
   get_result: () => void;
   get_finish: () => void;
   get_upload: (images: string[]) => void;
-  get_ready: () => void;
-  get_unready: () => void;
-  get_point: (winner: string) => void;
+  get_ready: (socketId: string) => void;
+  get_unready: (socketId: string) => void;
+  get_point: (winnerId: string) => void;
 }
 
 export interface SocketData {
