@@ -37,6 +37,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       images: [string, string][];
       scores: number[];
       gameMode: IGameMode;
+      thumbnailIdx: number;
     };
   } = {};
 
@@ -92,6 +93,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     data: {
       roomName: string;
       gameMode: IGameMode;
+      thumbnailIdx: number;
     },
   ): void {
     const roomId = uuidv4();
@@ -103,6 +105,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       images: [],
       scores: [],
       gameMode: data.gameMode,
+      thumbnailIdx: data.thumbnailIdx,
     };
 
     this.server.to(socket.id).emit('new_room', roomId, data.gameMode);
@@ -121,8 +124,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       isImg: false,
     });
 
-    // 방에 다른 유저들에게 준비 했다고 알려줌
-    socket.to(roomId).emit('get_ready');
+    // 방에 모든 유저들에게 준비 했다고 알려줌
+    this.server.in(roomId).emit('get_ready');
   }
 
   //! 준비 취소
@@ -139,8 +142,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       isImg: false,
     });
 
-    // 방에 다른 유저들에게 준비 취소했다고 알려줌
-    socket.to(roomId).emit('get_unready');
+    // 방에 모든 유저들에게 준비 취소했다고 알려줌
+    this.server.in(roomId).emit('get_unready');
   }
 
   //! imgae 전송(공격이 끝났을 시 이벤트를 받는다)
@@ -188,10 +191,20 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 점수를 공격자에게 전송
   @SubscribeMessage('score')
-  getScore(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() score: number): void {
-    // 공격자가 공격을 시작하면 수비자들에게 공격이 시작되었다는 이벤트 발생
+  getScore(
+    @ConnectedSocket() socket: ServerToClientSocket,
+    @MessageBody() data: { defender: string; score: number },
+  ): void {
+    // 실시간 수비 점수 공유
     const roomId = this.userToRoom[socket.id];
-    socket.to(roomId).emit('get_score', score);
+    this.server.in(roomId).emit('get_score', data);
+  }
+
+  //! 라운드 승점 변경
+  @SubscribeMessage('point')
+  getPoint(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() winner: string): void {
+    const roomId = this.userToRoom[socket.id];
+    this.server.in(roomId).emit('get_point', winner);
   }
 
   //! 게임 끝

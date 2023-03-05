@@ -239,7 +239,7 @@ function CreateRoomModal() {
 
   const handleOk = () => {
     setOpen(false);
-    socket.emit('create_room', { roomName, gameMode });
+    socket.emit('create_room', { roomName, gameMode, thumbnailIdx: Math.floor(Math.random() * 7) });
     joinRoom();
   };
 

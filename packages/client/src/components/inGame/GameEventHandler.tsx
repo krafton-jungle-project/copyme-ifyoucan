@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { gameAtom, GameStage } from '../../app/game';
 import { roomInfoAtom } from '../../app/room';
 import { useClientSocket } from '../../module/client-socket';
-import { prevBgmState } from '../../pages/Lobby';
+import { myNickName, prevBgmState } from '../../pages/Lobby';
 import {
   BackgroundMusic,
   Bell,
@@ -25,12 +25,20 @@ const GameEventHandler = () => {
   useEffect(() => {
     socket.on('get_ready', () => {
       GunReload.play();
-      setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: true } }));
+      if (host) {
+        setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: true } }));
+      } else {
+        setGame((prev) => ({ ...prev, user: { ...prev.user, isReady: true } }));
+      }
     });
 
     socket.on('get_unready', () => {
       GunReload.play();
-      setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: false } }));
+      if (host) {
+        setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: false } }));
+      } else {
+        setGame((prev) => ({ ...prev, user: { ...prev.user, isReady: false } }));
+      }
     });
 
     // 게임 Status를 waiting에서 game으로 바꾼다
@@ -68,7 +76,7 @@ const GameEventHandler = () => {
           // 라운드 전환
           setTimeout(() => {
             setGame((prev) => ({ ...prev, stage: GameStage.DEFEND }));
-          }, 2500);
+          }, 1000);
         }
 
         if (stage === 'defend') {
@@ -110,12 +118,33 @@ const GameEventHandler = () => {
       }
     });
 
-    socket.on('get_score', (score: number) => {
-      setGame((prev) => ({ ...prev, peer: { ...prev.peer, score } }));
+    socket.on('get_score', (data: { defender: string; score: number }) => {
+      if (data.defender === myNickName) {
+        setGame((prev) => ({ ...prev, user: { ...prev.user, score: data.score } }));
+      } else {
+        setGame((prev) => ({ ...prev, peer: { ...prev.peer, score: data.score } }));
+      }
+    });
+
+    socket.on('get_point', (winner: string) => {
+      if (winner === myNickName) {
+        setGame((prev) => ({ ...prev, user: { ...prev.user, point: prev.user.point + 1 } }));
+      } else {
+        setGame((prev) => ({ ...prev, peer: { ...prev.peer, point: prev.peer.point + 1 } }));
+      }
     });
 
     socket.on('get_change_stage', (stage: number) => {
       setGame((prev) => ({ ...prev, stage }));
+
+      if (stage === GameStage.ROUND) {
+        // 라운드 시작 시 점수 초기화
+        setGame((prev) => ({
+          ...prev,
+          user: { ...prev.user, score: 0 },
+          peer: { ...prev.peer, score: 0 },
+        }));
+      }
     });
 
     // 게임이 끝났을 때

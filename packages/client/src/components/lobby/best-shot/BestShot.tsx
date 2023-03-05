@@ -200,9 +200,9 @@ const NoPhotoAnnouncer = styled.div`
 function BestShot() {
   const [data, setData] = useState({ img: '', i: 0 });
   const [images, setImages] = useState<string[]>([]);
-  const [count, setCount] = useState(0); // 모드 총 개수
+  const [count, setCount] = useState(0); // 사진 총 개수
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-  const [postPerPage] = useState(8); // 페이지당 모드 개수
+  const [postPerPage] = useState(8); // 페이지당 사진 개수
   const [indexOfFirstPost, setIndexOfFirstPost] = useState(0);
   const [indexOfLastPost, setIndexOfLastPost] = useState(0);
   const [currentImages, setCurrentImages] = useState<string[]>([]);

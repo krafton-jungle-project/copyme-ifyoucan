@@ -11,11 +11,11 @@ import {
   tutorialImgAtom,
   tutorialPassAtom,
 } from '../../../app/tutorial';
-import leftHandUpImg from '../../../assets/images/tutorial/left.png';
-import rightHandUpImg from '../../../assets/images/tutorial/right.png';
-import SDRImg from '../../../assets/images/tutorial/SDR.png';
-import defaultImg from '../../../assets/images/tutorial/standing.png';
-import TPoseImg from '../../../assets/images/tutorial/tpose.png';
+import leftHandUpImg from '../../../assets/images/lobby/tutorial/left.png';
+import rightHandUpImg from '../../../assets/images/lobby/tutorial/right.png';
+import SDRImg from '../../../assets/images/lobby/tutorial/SDR.png';
+import defaultImg from '../../../assets/images/lobby/tutorial/standing.png';
+import TPoseImg from '../../../assets/images/lobby/tutorial/tpose.png';
 import { ButtonClick1 } from '../../../utils/sound';
 
 const Container = styled.div`

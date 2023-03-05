@@ -1,10 +1,8 @@
 import axios from 'axios';
-import { useAtom } from 'jotai';
 import jwt_decode from 'jwt-decode';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { isLoggedInAtom } from '../app/login';
 import logoImg from '../assets/images/logo.png';
 import Loading from '../components/lobby/Loading';
 import RegisterModal from '../components/member/RegisterModal';
@@ -124,19 +122,12 @@ function Login() {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom);
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
   const { isStreamReady } = useMovenetStream();
 
   function openModal() {
     setIsModalOpened(true);
   }
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/', { replace: true });
-    }
-  }, [isLoggedIn, navigate]);
 
   function handleId(e: React.ChangeEvent<HTMLInputElement>) {
     setId(e.target.value);
@@ -169,9 +160,8 @@ function Login() {
       const decodedUserInfo = jwt_decode(jwtToken); // 토큰 decode
       localStorage.setItem('userInfo', JSON.stringify(decodedUserInfo)); //토큰에 저장되어있는 userInfo 저장
       //로그인 해야지만 다음 이동 가능하게
-      sessionStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('isAuthenticated', 'true');
       // 메인으로 이동
-      setIsLoggedIn(true);
       navigate('/', { replace: true }); // 성공시 이동될 url 적용하기
 
       return res;

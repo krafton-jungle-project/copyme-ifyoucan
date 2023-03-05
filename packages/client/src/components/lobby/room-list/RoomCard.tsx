@@ -3,7 +3,13 @@ import type { IGameMode } from 'project-types';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { roomInfoAtom } from '../../../app/room';
-import PoroImg from '../../../assets/images/arcade-poro.png';
+import BlueImg from '../../../assets/images/lobby/room-card/blue.gif';
+import GreenImg from '../../../assets/images/lobby/room-card/green.gif';
+import OrangeImg from '../../../assets/images/lobby/room-card/orange.gif';
+import PinkImg from '../../../assets/images/lobby/room-card/pink.gif';
+import PurpleImg from '../../../assets/images/lobby/room-card/purple.gif';
+import RedImg from '../../../assets/images/lobby/room-card/red.gif';
+import YellowImg from '../../../assets/images/lobby/room-card/yellow.gif';
 
 const Container = styled.div`
   display: inline-flex;
@@ -70,6 +76,8 @@ const JoinButton = styled.button<{ isFull: boolean }>`
   transition: 0.15s;
 `;
 
+const ThumbnailImg = [RedImg, PinkImg, OrangeImg, YellowImg, GreenImg, BlueImg, PurpleImg];
+
 interface RoomInfo {
   id: string;
   roomName: string;
@@ -77,6 +85,7 @@ interface RoomInfo {
   isStart: boolean;
   readyCount: number;
   gameMode: IGameMode;
+  thumbnailIdx: number;
 }
 
 const mode = ['일반', '블러', '회전', '축소'];
@@ -94,7 +103,7 @@ function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
 
   return (
     <Container>
-      <Thumbnail alt="room thumbnail" src={PoroImg} />
+      <Thumbnail alt="room thumbnail" src={ThumbnailImg[roomInfo.thumbnailIdx]} />
       <Wrapper>
         <RoomName>{roomInfo.roomName}</RoomName>
         <HeadCount isFull={roomInfo.users.length === 2}>{roomInfo.users.length} / 2</HeadCount>
