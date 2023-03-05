@@ -40,10 +40,10 @@ const ScoreBar = styled.div<{ isInit: boolean; score: number; isDefense: boolean
   width: 100%;
   height: ${(props) => `${props.score.toString()}%`};
   transition: ${(props) => (props.isInit ? 'height 1.5s linear 1.2s' : 'height 0.5s linear')};
-  background-color: ${(props) => (props.score >= 60 ? '#1f51ff' : '#888')};
+  background-color: ${(props) => (props.score >= 50 ? '#1f51ff' : '#888')};
   border-radius: 20px;
   ${(props) =>
-    (props.isInit || (props.score >= 60 && props.isDefense)) &&
+    (props.isInit || (props.score >= 50 && props.isDefense)) &&
     css`
       background-color: #1f51ff;
       animation: ${animate} 1.5s linear infinite;
