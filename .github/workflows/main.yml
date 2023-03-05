@@ -31,13 +31,13 @@ jobs:
 
       - name: build client
         run: yarn client:build
-          env:
-            CI: ""
+        env:
+          CI: ""
 
       - name: build server
         run: yarn server:build
-         env:
-            CI: ""
+        env:
+          CI: ""
 
       - name: Dev
         run: |
