@@ -25,6 +25,20 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: create env file
+        working-directory: ./packages/server
+        run: |
+          echo "MONGODB_URI=${{ secrets.NEST_APP_MONGODB_URI }}" >> .env
+          echo "PORT=${{ secrets.NEST_APP_PORT }}" >> .env
+          echo "JWT_SECRET=${{ secrets.NEST_APP_JWT_SECRET }}" >> .env
+          echo "SWAGGER_USER=${{ secrets.NEST_APP_SWAGGER_USER }}" >> .env
+          echo "SWAGGER_PASSWORD=${{ secrets.NEST_APP_SWAGGER_PASSWORD }}" >> .env
+          echo "AWS_S3_ACCESS_KEY=${{ secrets.NEST_APP_AWS_S3_ACCESS_KEY }}" >> .env
+          echo "AWS_S3_SECRET_KEY=${{ secrets.NEST_APP_AWS_S3_SECRET_KEY }}" >> .env
+          echo "AWS_S3_REGION=${{ secrets.NEST_APP_AWS_S3_REGION}}" >> .env
+          echo "AWS_S3_BUCKET_NAME=${{ secrets.NEST_APP_AWS_S3_BUCKET_NAME }}" >> .env
+          cat .env
+
       - name: install dependencies
         run: |
           yarn install
@@ -32,25 +46,12 @@ jobs:
       - name: build client
         run: yarn client:build
         env:
-          CI: ""
+          CI: ''
 
       - name: build server
         run: yarn server:build
         env:
-          CI: ""
-
-      - name: Dev
-        run: |
-          yarn client:start
-          yarn server:dev
-
-      #     - name: create env file
-      #       working-directory: ./server
-      #       run: |
-      #         touch .env
-      #         cat << EOF >> .env
-      #         ${{ secrets.ENV }}
-      #         EOF
+          CI: ''
 
       - name: zip distributions
         run: zip -r server-build.zip ./packages/server/dist ./appspec.yml ./scripts
