@@ -35,7 +35,6 @@ const Video = styled.video<{ gameMode: number; offender: boolean }>`
   position: absolute;
   object-fit: cover;
   transform: scaleX(-1);
-  /* visibility: hidden; */
   width: 100%;
   height: 100%;
   border-radius: 20px;
@@ -70,8 +69,6 @@ const Canvas = styled.canvas`
   width: 100%;
   height: 100%;
   border-radius: 20px;
-  /* -webkit-transform: scaleX(-1);
-  transform: scaleX(-1); */
 `;
 
 const CapturedPose = styled.canvas<{ isCaptured: boolean; gameMode: number; offender: boolean }>`

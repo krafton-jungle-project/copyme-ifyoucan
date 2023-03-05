@@ -10,7 +10,7 @@ import { myNickName } from '../../../pages/Lobby';
 import { RoomEnter, RoomExit } from '../../../utils/sound';
 import { stream } from '../../../utils/tfjs-movenet';
 
-//! 스턴 서버 직접 생성 고려(임시)
+// 스턴 서버
 const pc_config = {
   iceServers: [
     {

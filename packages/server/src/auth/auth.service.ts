@@ -10,7 +10,7 @@ export class AuthService {
   async jwtLogIn(data: LoginRequestDto) {
     const { loginid, password } = data;
 
-    //*해당하는 아이디가 있는지 체크 로그인 유효성 검사 체크
+    //해당하는 아이디가 있는지 체크 로그인 유효성 검사 체크
     const user = await this.usersRepository.findUserByLoginId(loginid);
     if (!user) {
       throw new UnauthorizedException('아이디와 비밀번호를 확인해주세요');

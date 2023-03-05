@@ -19,7 +19,7 @@ const Container = styled.div<{ isStart: boolean }>`
 const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
   position: absolute;
   top: 50%;
-  transform: translate(0, -50%); /* 세로 가운데 정렬(top: 50%와 같이 사용) */
+  transform: translate(0, -50%);
   left: ${(props) => (props.isMe ? (props.isStart ? '-35%' : '0%') : 'none')};
   right: ${(props) => (props.isMe ? 'none' : props.isStart ? '-35%' : '0%')};
   width: 27.5%;
