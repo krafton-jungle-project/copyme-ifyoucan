@@ -98,8 +98,6 @@ const Div = styled.div<{ mode: string }>`
 
   &:hover {
     background-color: white;
-    /* width: 30%;
-    height: 114%; */
     transition: 0.3s;
     transform: scale(1.2);
   }
@@ -139,7 +137,6 @@ function ItemGuide() {
   function initConcen() {
     setHighlighted(-1);
     if (intervalId) clearInterval(intervalId);
-    console.log(`im done`, intervalId);
   }
 
   function playSound(idx: number) {
@@ -154,7 +151,6 @@ function ItemGuide() {
         sound[idx].play();
       }
     }, 300);
-    console.log(intervalId);
   }
 
   return (
