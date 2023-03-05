@@ -40,9 +40,9 @@ jobs:
           echo "AWS_S3_BUCKET_NAME=${{ secrets.NEST_APP_AWS_S3_BUCKET_NAME }}" >> .env
           cat .env
 
-      - name: install dependencies
-        run: |
-          yarn install
+      # - name: install dependencies
+      #   run: |
+      #     yarn install
 
       # - name: build client
       #   run: yarn client:build
