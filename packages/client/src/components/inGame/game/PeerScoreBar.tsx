@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai';
 import styled, { css, keyframes } from 'styled-components';
 import { gameAtom, GameStage } from '../../../app/game';
+import useCountNum from '../hooks/useCountNum';
 
 const Container = styled.div`
   position: absolute;
@@ -99,7 +100,9 @@ function PeerScoreBar() {
 
   return (
     <Container>
-      <ScorePercent isJudgement={game.stage === GameStage.JUDGE}>{game.peer.score}</ScorePercent>
+      <ScorePercent isJudgement={game.stage === GameStage.JUDGE}>
+        {useCountNum(game.peer.score, game.stage === GameStage.JUDGE ? 800 : 0)}
+      </ScorePercent>
       <ScoreBarWrapper>
         <ScoreBar
           isInit={game.stage === GameStage.INITIAL}

@@ -219,13 +219,14 @@ const nickNameArr = [
 
 const randomIdx = Math.floor(Math.random() * 10);
 export let myNickName = nickNameArr[randomIdx]; //temp
-export let prevBgmState = true; //temp
 
 function Lobby() {
   const navigate = useNavigate();
   const [mode, setMode] = useState('플레이');
   const { isStreamReady } = useMovenetStream();
-  const [muteImg, setMuteImg] = useState(prevBgmState === true ? bgmOffImg : bgmOnImg); //temp
+  const [muteImg, setMuteImg] = useState(
+    localStorage.getItem('bgm') === 'on' ? bgmOffImg : bgmOnImg,
+  );
   const exitInGame = useAtomValue(exitInGameAtom);
   let content;
 
@@ -276,8 +277,7 @@ function Lobby() {
   }, []);
 
   useEffect(() => {
-    //temp
-    if (prevBgmState === true) {
+    if (localStorage.getItem('bgm') === 'on') {
       setTimeout(() => {
         BackgroundMusic.play();
         BackgroundMusic.volume = 0.5;
@@ -306,13 +306,13 @@ function Lobby() {
   };
 
   const bgmHandler = () => {
-    if (prevBgmState === true) {
-      prevBgmState = false;
+    if (localStorage.getItem('bgm') === 'on') {
+      localStorage.setItem('bgm', 'off');
       ButtonClick1.play();
       BackgroundMusic.pause();
       setMuteImg(bgmOnImg);
     } else {
-      prevBgmState = true;
+      localStorage.setItem('bgm', 'on');
       ButtonClick1.play();
       BackgroundMusic.play();
       setMuteImg(bgmOffImg);

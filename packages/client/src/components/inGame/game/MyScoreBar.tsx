@@ -5,6 +5,7 @@ import { gameAtom, GameStage } from '../../../app/game';
 import { useClientSocket } from '../../../module/client-socket';
 import { useMovenetStream } from '../../../module/movenet-stream';
 import { comparePoses } from '../../../utils/pose-similarity';
+import useCountNum from '../hooks/useCountNum';
 import { useInterval } from '../hooks/useInterval';
 
 const Container = styled.div`
@@ -142,7 +143,9 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
 
   return (
     <Container>
-      <ScorePercent isJudgement={game.stage === GameStage.JUDGE}>{game.user.score}</ScorePercent>
+      <ScorePercent isJudgement={game.stage === GameStage.JUDGE}>
+        {useCountNum(game.user.score, game.stage === GameStage.JUDGE ? 800 : 0)}
+      </ScorePercent>
       <ScoreBarWrapper>
         <ScoreBar
           isInit={game.stage === GameStage.INITIAL}

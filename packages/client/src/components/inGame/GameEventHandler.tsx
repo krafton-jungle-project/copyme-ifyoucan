@@ -3,7 +3,6 @@ import { useResetAtom } from 'jotai/utils';
 import { useEffect } from 'react';
 import { gameAtom, GameStage } from '../../app/game';
 import { useClientSocket } from '../../module/client-socket';
-import { prevBgmState } from '../../pages/Lobby';
 import {
   BackgroundMusic,
   Bell,
@@ -160,7 +159,7 @@ const GameEventHandler = () => {
       POTG.pause();
       resetGame();
 
-      if (prevBgmState) {
+      if (localStorage.getItem('bgm') === 'on') {
         setTimeout(() => {
           BackgroundMusic.currentTime = 0;
           BackgroundMusic.play();

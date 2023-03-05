@@ -26,7 +26,7 @@ import win from '../assets/sounds/win.mp3';
 import lose from '../assets/sounds/lose.mp3';
 import youwin from '../assets/sounds/you-win.mp3';
 import youlose from '../assets/sounds/you-lose.mp3';
-import coin from '../assets/sounds/coin3.mp3'; //temp
+import coin from '../assets/sounds/coin.mp3';
 import notice from '../assets/sounds/notice.mp3';
 
 const CountDown = new Audio(countdown);
