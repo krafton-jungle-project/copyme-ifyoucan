@@ -421,6 +421,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     delete this.userToRoom[socket.id];
     socket.leave(roomId);
 
+    let ishost = false;
+    if (this.rooms[roomId].users.findIndex((user) => user.id == socket.id) === 0) {
+      ishost = true;
+    }
+
     // 유저 정보 업데이트
     if (this.rooms[roomId]) {
       this.rooms[roomId].users = this.rooms[roomId].users.filter((user) => user.id !== socket.id);
@@ -435,6 +440,13 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           message: `🔴 ${nickName}님이 퇴장했습니다 🔴`,
           isImg: false,
         });
+        if (ishost) {
+          socket.to(roomId).emit('message', {
+            userId: '',
+            message: '👑 방장이 되었습니다 👑',
+            isImg: false,
+          });
+        }
       }
     }
     // 모든 클라이언트에게 업데이트 된 방 정보 전달

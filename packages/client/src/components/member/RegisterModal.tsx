@@ -32,7 +32,7 @@ const ModalBackGround = styled.div<{ isVisible: boolean }>`
   ${(p) =>
     !p.isVisible &&
     css`
-      animation: ${fadeOut} 0.3s;
+      animation: ${fadeOut} 0.315s;
     `}
 `;
 

@@ -8,6 +8,7 @@ import Loading from '../components/lobby/Loading';
 import RegisterModal from '../components/member/RegisterModal';
 import { useMovenetStream } from '../module/movenet-stream';
 import { setCookie } from '../utils/cookies';
+import { getUser } from '../utils/local-storage';
 import { ButtonClick1 } from '../utils/sound';
 
 const Container = styled.div<{ isModalOpened: boolean }>`
@@ -119,11 +120,12 @@ const Btn = styled.div<{ nameTag: string }>`
 `;
 
 function Login() {
-  const [id, setId] = useState('');
-  const [pw, setPw] = useState('');
-  const navigate = useNavigate();
-  const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
   const { isStreamReady } = useMovenetStream();
+  const navigate = useNavigate();
+
+  const [id, setId] = useState<string>('');
+  const [pw, setPw] = useState<string>('');
+  const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
 
   function openModal() {
     setIsModalOpened(true);
@@ -138,37 +140,47 @@ function Login() {
   }
 
   const onClickConfirmButton = async (e: any) => {
-    e.preventDefault();
-    ButtonClick1.play();
-    console.log('login');
-    if (id === '') {
-      alert(`아이디를 입력해주세요`);
-      return;
-    }
-    if (pw === '') {
-      alert(`비밀번호를 입력해주세요`);
-      return;
-    }
-    try {
-      // const res = await axios.post('http://15.165.237.195:5001/users/login', {
-      const res = await axios.post('http://localhost:5001/users/login', {
-        loginid: id,
-        password: pw,
-      });
-      const jwtToken = res.data.data.token;
-      setCookie('accessJwtToken', jwtToken);
-      const decodedUserInfo = jwt_decode(jwtToken); // 토큰 decode
-      localStorage.setItem('userInfo', JSON.stringify(decodedUserInfo)); // 토큰에 저장되어있는 userInfo 저장
-      // 로그인 해야만 다음 이동 가능하게
-      localStorage.setItem('isAuthenticated', 'true');
-      // 배경음악 on으로 설정
-      localStorage.setItem('bgm', 'on');
-      // 메인으로 이동
-      navigate('/', { replace: true }); // 성공시 이동될 url 적용하기
+    const checkLogin = localStorage.getItem('isAuthenticated');
 
-      return res;
-    } catch (error) {
-      alert('로그인에 실패했습니다.');
+    if (checkLogin === 'true') {
+      const userInfo = getUser();
+      const check = window.confirm(`이미 ${userInfo.nickName}으로 로그인되어 있습니다.`);
+      if (check) {
+        navigate('/login', { replace: true });
+      }
+    } else {
+      e.preventDefault();
+      ButtonClick1.play();
+      console.log('login');
+      if (id === '') {
+        alert(`아이디를 입력해주세요`);
+        return;
+      }
+      if (pw === '') {
+        alert(`비밀번호를 입력해주세요`);
+        return;
+      }
+      try {
+        // const res = await axios.post('http://15.165.237.195:5001/users/login', {
+        const res = await axios.post('http://localhost:5001/users/login', {
+          loginid: id,
+          password: pw,
+        });
+        const jwtToken = res.data.data.token;
+        setCookie('accessJwtToken', jwtToken);
+        const decodedUserInfo = jwt_decode(jwtToken); // 토큰 decode
+        localStorage.setItem('userInfo', JSON.stringify(decodedUserInfo)); // 토큰에 저장되어있는 userInfo 저장
+        // 로그인 해야만 다음 이동 가능하게
+        localStorage.setItem('isAuthenticated', 'true');
+        // 배경음악 on으로 설정
+        localStorage.setItem('bgm', 'on');
+        // 메인으로 이동
+        navigate('/', { replace: true }); // 성공시 이동될 url 적용하기
+
+        return res;
+      } catch (error) {
+        alert('로그인에 실패했습니다.');
+      }
     }
   };
 
