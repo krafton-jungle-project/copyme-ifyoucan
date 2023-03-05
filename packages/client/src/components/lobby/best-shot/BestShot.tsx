@@ -380,7 +380,7 @@ function BestShot() {
           <Paging page={currentPage} count={count} setPage={setPage} />
         </Container>
       )}
-      <PopUpContainer isPopUped={data.img !== ''} onClick={() => imgAction('close')}>
+      <PopUpContainer isPopUped={data.img !== ''}>
         <PopUpWrapper>
           <MoveButtonWrapper>
             <Button onClick={() => imgAction('previous-img')} btnType={'move'}>
