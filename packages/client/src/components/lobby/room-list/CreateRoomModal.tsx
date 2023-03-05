@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import styled, { css, keyframes } from 'styled-components';
 import { createRoomModalAtom, fadeOutAtom, GameMode, roomInfoAtom } from '../../../app/room';
 import { useClientSocket } from '../../../module/client-socket';
+import { myNickName } from '../../../pages/Lobby';
 
 const fadeIn = keyframes`
   from {
@@ -207,7 +208,11 @@ function CreateRoomModal() {
 
   const handleOk = () => {
     setOpen(false);
-    socket.emit('create_room', { roomName, gameMode, thumbnailIdx: Math.floor(Math.random() * 7) });
+    socket.emit('create_room', {
+      roomName: roomName ? roomName : `${myNickName}님의 방`,
+      gameMode,
+      thumbnailIdx: Math.floor(Math.random() * 7),
+    });
     joinRoom();
   };
 
