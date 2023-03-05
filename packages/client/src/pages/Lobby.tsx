@@ -200,10 +200,7 @@ const Producer = styled.div`
   text-shadow: 0 0 2px #fff8;
 `;
 
-//temp
-//! for test
-
-export const myNickName = getUser().nickName; //temp
+export let myNickName = '';
 
 export let prevBgmState = true;
 
@@ -233,12 +230,15 @@ function Lobby() {
   }
 
   useEffect(() => {
+    // 닉네임 저장
+    myNickName = getUser().nickName;
+
+    // 게임 중 나오면 새로고침
     if (exitInGame) {
       window.location.reload();
     }
-  }, []);
 
-  useEffect(() => {
+    // 배경음악 설정 상태에 따라 배경음악 재생
     if (prevBgmState === true) {
       setTimeout(() => {
         BackgroundMusic.play();
