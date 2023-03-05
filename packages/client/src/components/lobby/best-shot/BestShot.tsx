@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import transparentImg from '../../../assets/images/transparent.png';
 import { ButtonClick2, ButtonClick3 } from '../../../utils/sound';
 import { Paging } from './Paging';
@@ -59,6 +59,24 @@ const DateTxt = styled.p`
   color: #fffb;
 `;
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
+
 const PopUpContainer = styled.div<{ isPopUped: boolean }>`
   position: absolute;
   display: flex;
@@ -75,7 +93,7 @@ const PopUpContainer = styled.div<{ isPopUped: boolean }>`
     props.isPopUped &&
     css`
       visibility: visible;
-      opacity: 1;
+      animation: ${fadeIn} 0.7s;
       z-index: 1;
     `}
 
@@ -83,6 +101,7 @@ const PopUpContainer = styled.div<{ isPopUped: boolean }>`
     !props.isPopUped &&
     css`
       visibility: hidden;
+      animation: ${fadeOut} 0.7s;
       opacity: 0;
     `}
 
@@ -178,7 +197,7 @@ const NoPhotoAnnouncer = styled.div`
   color: #fffb;
 `;
 
-export default function BestShot() {
+function BestShot() {
   const [data, setData] = useState({ img: '', i: 0 });
   const [images, setImages] = useState<string[]>([]);
   const [count, setCount] = useState(0); // 사진 총 개수
@@ -390,3 +409,5 @@ export default function BestShot() {
     </>
   );
 }
+
+export default BestShot;

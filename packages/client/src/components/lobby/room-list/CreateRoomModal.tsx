@@ -46,7 +46,7 @@ const ModalBackground = styled.div<{ isOpened: boolean; isVisible: boolean }>`
     `}
 `;
 
-const Modal2 = styled.div<{ isOpened: boolean; isVisible: boolean }>`
+const Modal = styled.div<{ isOpened: boolean; isVisible: boolean }>`
   border: 2px solid yellow;
   border-radius: 15px;
   position: absolute;
@@ -54,6 +54,8 @@ const Modal2 = styled.div<{ isOpened: boolean; isVisible: boolean }>`
   width: 35vw;
   height: 55vh;
   left: 50%;
+  min-width: 515px;
+  max-height: 400px;
   max-height: 400px;
   max-width: 600px;
   background-color: #01000d;
@@ -169,16 +171,45 @@ const SelectionWrapper = styled.div`
 `;
 
 const SelectionDiv = styled.div`
-  /* position: absolute; */
   font-size: 1.2rem;
   height: 33%;
   display: flex;
   align-items: center;
 `;
 
-const SelSpan = styled.span`
+const SelSpan = styled.span<{
+  lang: string;
+  keys: number;
+  selected1: number;
+  selected2: number;
+  selected3: number;
+}>`
   cursor: pointer;
+  ${(p) =>
+    p.lang === '1' &&
+    p.keys === p.selected1 &&
+    css`
+      text-shadow: 0 0 2px #fff, 0 0 1px #fff, 0 0 10px #fff, 0 0 20px #bc13fe, 0 0 30px #bc13fe,
+        0 0 20px #bc13fe, 0 0 30px #bc13fe, 0 0 50px #bc13fe;
+    `}
+  ${(p) =>
+    p.lang === '2' &&
+    p.keys === p.selected2 &&
+    css`
+      text-shadow: 0 0 2px #fff, 0 0 1px #fff, 0 0 10px #fff, 0 0 20px #bc13fe, 0 0 30px #bc13fe,
+        0 0 20px #bc13fe, 0 0 30px #bc13fe, 0 0 50px #bc13fe;
+    `}
+    ${(p) =>
+    p.lang === '3' &&
+    p.keys === p.selected3 &&
+    css`
+      text-shadow: 0 0 2px #fff, 0 0 1px #fff, 0 0 10px #fff, 0 0 20px #bc13fe, 0 0 30px #bc13fe,
+        0 0 20px #bc13fe, 0 0 30px #bc13fe, 0 0 50px #bc13fe;
+    `}
 `;
+
+const modeName = ['일반', '블러', '축소', '회전'];
+const round = [1, 2, 3];
 
 function CreateRoomModal() {
   const { socket } = useClientSocket();
@@ -192,6 +223,9 @@ function CreateRoomModal() {
     round2: GameMode.NORMAL,
     round3: GameMode.NORMAL,
   });
+  const [r1, setR1] = useState<number>(0);
+  const [r2, setR2] = useState<number>(0);
+  const [r3, setR3] = useState<number>(0);
 
   const joinRoom = () => {
     socket.on('new_room', (roomId: string, gameMode: IGameMode) => {
@@ -238,10 +272,24 @@ function CreateRoomModal() {
     }
   };
 
+  const clickedMode = (e: any, keys: number) => {
+    switch (e.target.lang) {
+      case '1':
+        setR1(keys);
+        break;
+      case '2':
+        setR2(keys);
+        break;
+      case '3':
+        setR3(keys);
+        break;
+    }
+  };
+
   return (
     <>
       {open && <ModalBackground isOpened={open} onClick={lazyClose} isVisible={visible} />}
-      <Modal2 isOpened={open} isVisible={visible}>
+      <Modal isOpened={open} isVisible={visible}>
         <Span onClick={lazyClose}>X</Span>
         <Title>방 만들기</Title>
         <Input
@@ -255,66 +303,42 @@ function CreateRoomModal() {
         <Title>모드 선택</Title>
         <ModeDiv>
           <RoundWrapper>
-            <RoundDiv>Round 1 :</RoundDiv>
-            <RoundDiv>Round 2 :</RoundDiv>
-            <RoundDiv>Round 3 :</RoundDiv>
+            {round.map((val, key) => (
+              <RoundDiv key={key}>Round {val} :</RoundDiv>
+            ))}
           </RoundWrapper>
           <SelectionWrapper>
-            <SelectionDiv>
-              <SelSpan lang="1" onClick={handleMode}>
-                일반
-              </SelSpan>
-              <span>　|　</span>
-              <SelSpan lang="1" onClick={handleMode}>
-                블러
-              </SelSpan>
-              <span>　|　</span>
-              <SelSpan lang="1" onClick={handleMode}>
-                축소
-              </SelSpan>
-              <span>　|　</span>
-              <SelSpan lang="1" onClick={handleMode}>
-                회전
-              </SelSpan>
-            </SelectionDiv>
-            <SelectionDiv>
-              <SelSpan lang="2" onClick={handleMode}>
-                일반
-              </SelSpan>
-              <span>　|　</span>
-              <SelSpan lang="2" onClick={handleMode}>
-                블러
-              </SelSpan>
-              <span>　|　</span>
-              <SelSpan lang="2" onClick={handleMode}>
-                축소
-              </SelSpan>
-              <span>　|　</span>
-              <SelSpan lang="2" onClick={handleMode}>
-                회전
-              </SelSpan>
-            </SelectionDiv>
-            <SelectionDiv>
-              <SelSpan lang="3" onClick={handleMode}>
-                일반
-              </SelSpan>
-              <span>　|　</span>
-              <SelSpan lang="3" onClick={handleMode}>
-                블러
-              </SelSpan>
-              <span>　|　</span>
-              <SelSpan lang="3" onClick={handleMode}>
-                축소
-              </SelSpan>
-              <span>　|　</span>
-              <SelSpan lang="3" onClick={handleMode}>
-                회전
-              </SelSpan>
-            </SelectionDiv>
+            {round.map((val, key) => {
+              return (
+                <SelectionDiv key={key * 8}>
+                  {modeName.map((val2, key2) => {
+                    return (
+                      <>
+                        <SelSpan
+                          key={key + key2 + 1}
+                          keys={key2}
+                          lang={val.toString()}
+                          selected1={r1}
+                          selected2={r2}
+                          selected3={r3}
+                          onClick={(e) => {
+                            handleMode(e);
+                            clickedMode(e, key2);
+                          }}
+                        >
+                          {val2}
+                        </SelSpan>
+                        {key2 < 3 && <span key={key2 + key + 5}>　|　</span>}
+                      </>
+                    );
+                  })}
+                </SelectionDiv>
+              );
+            })}
           </SelectionWrapper>
         </ModeDiv>
         <Button onClick={handleOk}>생성하기</Button>
-      </Modal2>
+      </Modal>
     </>
   );
 }
