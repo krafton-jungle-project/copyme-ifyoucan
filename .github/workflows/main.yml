@@ -3,11 +3,11 @@ name: Copy me If you Can
 on:
   # main branch에 푸시 시
   push:
-    branches: [ "feature/action" ]
-    
+    branches: ['feature/action']
+
   # main branch에 PR 시
   pull_request:
-    branches: [ "feature/action" ]
+    branches: ['feature/action']
 
 jobs:
   build:
@@ -18,51 +18,52 @@ jobs:
         node-version: [16.x]
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: install dependencies
-      run: |
-        yarn install
-        
-    - name: build client
-      run: |
-        yarn client:build
-      
-    - name: build server
-      run: |
-        yarn server:build
-        
-    - name: Dev
-      run: |
-        yarn client:start
-        yarn server:dev
-    
-#     - name: create env file
-#       working-directory: ./server
-#       run: | 
-#         touch .env
-#         cat << EOF >> .env
-#         ${{ secrets.ENV }}
-#         EOF
-        
-    - name: zip distributions
-      run: zip -r server-build.zip ./packages/server/dist ./appspec.yml ./scripts
-        
-    - name: AWS configure credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-northeast-2
-        
-    - name: upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./server-build.zip s3://${{ secrets.AWS_S3_BUCKET_NAME }}
-      
+      - name: install dependencies
+        run: |
+          yarn install
+
+      - name: build client
+        run: yarn client:build
+        env:
+          CI: ""
+
+      - name: build server
+        run: yarn server:build
+        env:
+          CI: ""
+
+      - name: Dev
+        run: |
+          yarn client:start
+          yarn server:dev
+
+      #     - name: create env file
+      #       working-directory: ./server
+      #       run: |
+      #         touch .env
+      #         cat << EOF >> .env
+      #         ${{ secrets.ENV }}
+      #         EOF
+
+      - name: zip distributions
+        run: zip -r server-build.zip ./packages/server/dist ./appspec.yml ./scripts
+
+      - name: AWS configure credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./server-build.zip s3://${{ secrets.AWS_S3_BUCKET_NAME }}
 #     - name: deploy with AWS codeDeploy
 #       run: aws deploy create-deployment
 #           --application-name zip-codedeploy
