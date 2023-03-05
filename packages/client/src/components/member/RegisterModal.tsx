@@ -1,10 +1,8 @@
 import axios from 'axios';
-import { useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
-import { isModalOpenedAtom } from '../../app/login';
+import styled, { css, keyframes } from 'styled-components';
 
-const popup = keyframes`
+const fadeIn = keyframes`
   from {
     opacity: 0;
   }
@@ -13,14 +11,29 @@ const popup = keyframes`
   }
 `;
 
-const ModalBackGround = styled.div`
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
+
+const ModalBackGround = styled.div<{ isVisible: boolean }>`
   z-index: 100;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
-  animation: ${popup} 1s;
+  animation: ${fadeIn} 1s;
+
+  ${(p) =>
+    !p.isVisible &&
+    css`
+      animation: ${fadeOut} 0.3s;
+    `}
 `;
 
 const Form = styled.form`
@@ -142,20 +155,26 @@ const RegisterBtn = styled.button`
   }
 `;
 
-function RegisterModal() {
-  const setIsModalOpened = useSetAtom(isModalOpenedAtom);
+function RegisterModal({
+  setIsModalOpened,
+}: {
+  setIsModalOpened: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const [id, setId] = useState<string>('');
+  const [pw, setPw] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [idValid, setIdValid] = useState<boolean>(false);
+  const [pwValid, setPwValid] = useState<boolean>(false);
+  const [nameValid, setNameValid] = useState<boolean>(false);
+  const [notAllow, setNotAllow] = useState<boolean>(true);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
 
-  const [id, setId] = useState('');
-  const [pw, setPw] = useState('');
-  const [name, setName] = useState('');
-  const [idValid, setIdValid] = useState(false);
-  const [pwValid, setPwValid] = useState(false);
-  const [nameValid, setNameValid] = useState(false);
-  const [notAllow, setNotAllow] = useState(true);
-
-  function closeModal() {
-    setIsModalOpened(false);
-  }
+  const lazyClose = () => {
+    setIsVisible(false);
+    setTimeout(() => {
+      setIsModalOpened(false);
+    }, 300);
+  };
 
   useEffect(() => {
     if (idValid && pwValid && nameValid) {
@@ -220,10 +239,10 @@ function RegisterModal() {
   };
 
   return (
-    <ModalBackGround>
+    <ModalBackGround onClick={lazyClose} isVisible={isVisible}>
       <ModalWrapper>
         <Div>
-          <ModalBtn onClick={closeModal}>X</ModalBtn>
+          <ModalBtn onClick={lazyClose}>X</ModalBtn>
         </Div>
         <Form>
           <Title>REGISTER</Title>

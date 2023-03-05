@@ -221,9 +221,9 @@ function CreateRoomModal() {
     round2: GameMode.NORMAL,
     round3: GameMode.NORMAL,
   });
-  const [r1, setR1] = useState(0);
-  const [r2, setR2] = useState(0);
-  const [r3, setR3] = useState(0);
+  const [r1, setR1] = useState<number>(0);
+  const [r2, setR2] = useState<number>(0);
+  const [r3, setR3] = useState<number>(0);
 
   const joinRoom = () => {
     socket.on('new_room', (roomId: string, gameMode: IGameMode) => {
