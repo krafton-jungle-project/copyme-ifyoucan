@@ -31,8 +31,8 @@ const Wrapper = styled.div`
   aspect-ratio: 3 / 2;
   min-width: 900px;
   min-height: 600px;
-  max-width: 1200px;
-  max-height: 800px;
+  max-width: 1050px;
+  max-height: 700px;
   background-color: rgba(0, 0, 0, 0.5);
   border: 0.1rem solid #fff;
   border-radius: 40px;

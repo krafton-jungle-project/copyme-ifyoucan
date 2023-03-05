@@ -119,18 +119,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.rooms[roomId].readyCount += 1;
 
     this.server.in(roomId).emit('message', {
-      userId: '',
-      message: ' ',
-      isImg: false,
-    });
-    this.server.in(roomId).emit('message', {
       message: `🔥 준비완료 🔥`,
       userId: '',
-      isImg: false,
-    });
-    this.server.in(roomId).emit('message', {
-      userId: '',
-      message: ' ',
       isImg: false,
     });
 
@@ -147,18 +137,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.rooms[roomId].readyCount -= 1;
 
     this.server.in(roomId).emit('message', {
-      userId: '',
-      message: ' ',
-      isImg: false,
-    });
-    this.server.in(roomId).emit('message', {
       message: `🚧 재정비중 🚧`,
       userId: '',
-      isImg: false,
-    });
-    this.server.in(roomId).emit('message', {
-      userId: '',
-      message: ' ',
       isImg: false,
     });
 
@@ -257,11 +237,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if (idx === 0) {
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '　',
-            isImg: false,
-          });
-          this.server.in(roomId).emit('message', {
-            userId: '',
             message: '🔥 최고의 수비 🔥',
             isImg: false,
           });
@@ -314,11 +289,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
           }
         } else if (idx === 3) {
-          this.server.in(roomId).emit('message', {
-            userId: '',
-            message: '　',
-            isImg: false,
-          });
           this.server.in(roomId).emit('message', {
             userId: '',
             message: '\n\n🔥 최고의 공격 🔥',
@@ -375,17 +345,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         } else {
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '　',
-            isImg: false,
-          });
-          this.server.in(roomId).emit('message', {
-            userId: '',
             message: `🕹️ GAME OVER 🕹️`,
-            isImg: false,
-          });
-          this.server.in(roomId).emit('message', {
-            userId: '',
-            message: '　',
             isImg: false,
           });
         }

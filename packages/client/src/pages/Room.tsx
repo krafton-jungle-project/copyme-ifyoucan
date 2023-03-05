@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import { gameAtom } from '../app/game';
 import { peerInfoAtom } from '../app/peer';
 import { roomInfoAtom } from '../app/room';
@@ -14,6 +15,13 @@ import { useClientSocket } from '../module/client-socket';
 import { useMovenetStream } from '../module/movenet-stream';
 import { GameMusic, RoomEnter, RoomExit } from '../utils/sound';
 import { myNickName } from './Lobby';
+
+const Container = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+`;
 
 function Room() {
   const navigate = useNavigate();
@@ -65,7 +73,11 @@ function Room() {
     };
   }, [game.isStart]);
 
-  return <InGame />;
+  return (
+    <Container>
+      <InGame />
+    </Container>
+  );
 }
 
 export default Room;

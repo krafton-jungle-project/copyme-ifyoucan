@@ -18,9 +18,9 @@ const Container = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  aspect-ratio: 16 / 9;
-  min-width: 900px;
-  min-height: 500px;
+  aspect-ratio: 4 / 3;
+  min-width: 800px;
+  min-height: 600px;
   max-height: 90%;
 `;
 

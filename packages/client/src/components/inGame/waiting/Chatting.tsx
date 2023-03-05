@@ -65,6 +65,9 @@ const MessageBox = styled.div`
       border: 0;
       border-radius: 0;
       background-color: rgba(255, 255, 255, 0);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin: 20px 0;
     }
   }
 `;
