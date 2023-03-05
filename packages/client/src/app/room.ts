@@ -46,4 +46,6 @@ const useRoomAtom = () => {
   return { rooms, roomList, updateRooms };
 };
 
-export { roomInfoAtom, useRoomAtom, createRoomModalAtom, fadeOutAtom, GameMode };
+const exitInGameAtom = atom(false);
+
+export { roomInfoAtom, useRoomAtom, createRoomModalAtom, fadeOutAtom, GameMode, exitInGameAtom };

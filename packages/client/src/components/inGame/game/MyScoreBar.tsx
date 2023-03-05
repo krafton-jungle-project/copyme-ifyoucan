@@ -4,7 +4,6 @@ import styled, { css, keyframes } from 'styled-components';
 import { gameAtom, GameStage } from '../../../app/game';
 import { useClientSocket } from '../../../module/client-socket';
 import { useMovenetStream } from '../../../module/movenet-stream';
-import { myNickName } from '../../../pages/Lobby';
 import { comparePoses } from '../../../utils/pose-similarity';
 import { useInterval } from '../hooks/useInterval';
 
@@ -120,7 +119,7 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     if (myPose && game.peer.pose) {
       // 나의 실시간 점수
       const tempScore = comparePoses(myPose, game.peer.pose);
-      socket.emit('score', { defender: myNickName, score: tempScore });
+      socket.emit('score', tempScore);
     }
   }, delay);
 
