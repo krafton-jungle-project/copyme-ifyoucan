@@ -24,7 +24,7 @@ export class AuthService {
     }
 
     //서명이 되어 토큰이 발급된다.
-    const payload = { loginid: loginid, sub: user.id };
+    const payload = { loginid: loginid, sub: user.id, nickName: user.name };
 
     return {
       token: this.jwtService.sign(payload),

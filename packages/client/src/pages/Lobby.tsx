@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +14,7 @@ import Loading from '../components/lobby/Loading';
 import RoomList from '../components/lobby/room-list/RoomList';
 import Tutorial from '../components/lobby/tutorial/Tutorial';
 import { useMovenetStream } from '../module/movenet-stream';
-import { removeUser } from '../utils/local-storage';
+import { getUser, removeUser } from '../utils/local-storage';
 import { BackgroundMusic, ButtonClick1, ButtonClick2 } from '../utils/sound';
 
 const Container = styled.div`
@@ -203,21 +202,8 @@ const Producer = styled.div`
 
 //temp
 //! for test
-const nickNameArr = [
-  '정태욱',
-  '조제희',
-  '박주환',
-  '김태준',
-  '홀란드',
-  '덕배',
-  '메시',
-  '즐라탄',
-  '소니',
-  '모드리치',
-];
 
-const randomIdx = Math.floor(Math.random() * 10);
-export let myNickName = nickNameArr[randomIdx]; //temp
+export const myNickName = getUser().nickName; //temp
 
 export let prevBgmState = true;
 
@@ -228,7 +214,6 @@ function Lobby() {
   const [muteImg, setMuteImg] = useState(prevBgmState === true ? bgmOffImg : bgmOnImg);
   const exitInGame = useAtomValue(exitInGameAtom);
   let content;
-
   switch (mode) {
     case '플레이':
       content = <RoomList />;
@@ -251,28 +236,6 @@ function Lobby() {
     if (exitInGame) {
       window.location.reload();
     }
-  }, []);
-
-  //todo: 최초 한 번만 실행하는 방법 생각해보기
-  useEffect(() => {
-    //todo: 경기 사진이나 동영상 가져올 때 정보 가져와야하므로 다시 고려해야함
-    const setMyNickName = async () => {
-      if (document.cookie) {
-        const token = document.cookie.split('=')[1];
-        try {
-          const res = await axios.get('http://localhost:5001/users/', {
-            // const res = await axios.get('http://15.165.237.195:5001/users/', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res) {
-            myNickName = res.data.data.name;
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    };
-    setMyNickName();
   }, []);
 
   useEffect(() => {
