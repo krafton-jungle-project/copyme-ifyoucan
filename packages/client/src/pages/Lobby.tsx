@@ -1,7 +1,9 @@
 import axios from 'axios';
+import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
+import { exitInGameAtom } from '../app/room';
 import bgmOffImg from '../assets/images/lobby/bgm-off.png';
 import bgmOnImg from '../assets/images/lobby/bgm-on.png';
 import kraftonJungleImg from '../assets/images/lobby/krafton-jungle-logo.png';
@@ -224,6 +226,7 @@ function Lobby() {
   const [mode, setMode] = useState('플레이');
   const { isStreamReady } = useMovenetStream();
   const [muteImg, setMuteImg] = useState(prevBgmState === true ? bgmOffImg : bgmOnImg);
+  const exitInGame = useAtomValue(exitInGameAtom);
   let content;
 
   switch (mode) {
@@ -243,6 +246,12 @@ function Lobby() {
       content = <RoomList />;
       break;
   }
+
+  useEffect(() => {
+    if (exitInGame) {
+      window.location.reload();
+    }
+  }, []);
 
   //todo: 최초 한 번만 실행하는 방법 생각해보기
   useEffect(() => {
@@ -266,18 +275,6 @@ function Lobby() {
     setMyNickName();
   }, []);
 
-  const logoutHandler = () => {
-    ButtonClick1.play();
-    const check = window.confirm('로그아웃 하시겠습니까?');
-    if (check) {
-      localStorage.setItem('isAuthenticated', 'false');
-      removeUser();
-      navigate('/login', { replace: true }); //temp: Private Router 적용 후 삭제
-    } else {
-      ButtonClick2.play();
-    }
-  };
-
   useEffect(() => {
     if (prevBgmState === true) {
       setTimeout(() => {
@@ -294,6 +291,18 @@ function Lobby() {
       );
     }
   }, []);
+
+  const logoutHandler = () => {
+    ButtonClick1.play();
+    const check = window.confirm('로그아웃 하시겠습니까?');
+    if (check) {
+      localStorage.setItem('isAuthenticated', 'false');
+      removeUser();
+      navigate('/login', { replace: true }); //temp: Private Router 적용 후 삭제
+    } else {
+      ButtonClick2.play();
+    }
+  };
 
   const bgmHandler = () => {
     if (prevBgmState === true) {

@@ -56,15 +56,6 @@ function Room() {
     };
   }, []);
 
-  useEffect(() => {
-    return () => {
-      // 게임 중 방을 나가면
-      if (game.isStart) {
-        window.location.reload();
-      }
-    };
-  }, [game.isStart]);
-
   return <InGame />;
 }
 
