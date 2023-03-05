@@ -132,17 +132,18 @@ const modeName = ['일반', '블러', '회전', '축소'];
 
 function ItemGuide() {
   const [concen, setConcen] = useState<number>(-1);
+
   function initConcen() {
     setConcen(-1);
-    console.log(concen);
   }
+
   return (
     <>
       <Wrapper>
         <GameModeDiv>
           {modeName.map((val, key) => {
             return (
-              <ModeNameDiv keys={key} concen={concen}>
+              <ModeNameDiv key={key} keys={key} concen={concen}>
                 {val}
               </ModeNameDiv>
             );
