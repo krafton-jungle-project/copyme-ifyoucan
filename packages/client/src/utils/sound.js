@@ -13,6 +13,7 @@ import gameover from '../assets/sounds/game-over.mp3';
 import great from '../assets/sounds/great.mp3';
 import gunreload from '../assets/sounds/gun-reload.mp3';
 import lose from '../assets/sounds/lose.mp3';
+import notice from '../assets/sounds/notice.mp3';
 import perfect from '../assets/sounds/perfect.mp3';
 import potg from '../assets/sounds/play-of-the-game.mp3';
 import pyororong from '../assets/sounds/pyororong.mp3';
@@ -60,6 +61,7 @@ const Lose = new Audio(lose);
 const YouWin = new Audio(youwin);
 const YouLose = new Audio(youlose);
 const Coin = new Audio(coin);
+const Notice = new Audio(notice);
 const Spin = new Audio(spin);
 const Pyororong = new Audio(pyororong);
 const SizeDown = new Audio(sizedown);
@@ -94,6 +96,7 @@ export {
   YouWin,
   YouLose,
   Coin,
+  Notice,
   Spin,
   Pyororong,
   SizeDown,

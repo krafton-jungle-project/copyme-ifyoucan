@@ -235,11 +235,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if (idx === 0) {
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '　',
-            isImg: false,
-          });
-          this.server.in(roomId).emit('message', {
-            userId: '',
             message: '🔥 최고의 수비 🔥',
             isImg: false,
           });
@@ -292,11 +287,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
           }
         } else if (idx === 3) {
-          this.server.in(roomId).emit('message', {
-            userId: '',
-            message: '　',
-            isImg: false,
-          });
           this.server.in(roomId).emit('message', {
             userId: '',
             message: '\n\n🔥 최고의 공격 🔥',
@@ -353,17 +343,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         } else {
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '　',
-            isImg: false,
-          });
-          this.server.in(roomId).emit('message', {
-            userId: '',
             message: `🕹️ GAME OVER 🕹️`,
-            isImg: false,
-          });
-          this.server.in(roomId).emit('message', {
-            userId: '',
-            message: '　',
             isImg: false,
           });
         }
@@ -407,15 +387,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     // 방 정보 업데이트
-    const countUsers = this.rooms[roomId].users.length;
-    if (countUsers === 2) {
-      //! 방 인원이 다 찼을 경우
-      this.server.to(socket.id).emit('full'); //todo
-      this.logger.log(`full users ${countUsers}`);
-      return;
-    } else {
-      this.rooms[roomId].users.push({ id: socket.id, nickName });
-    }
+    this.rooms[roomId].users.push({ id: socket.id, nickName });
     this.userToRoom[socket.id] = roomId;
 
     // 방에 연결

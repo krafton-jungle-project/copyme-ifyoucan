@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import { gameAtom } from '../app/game';
 import { peerInfoAtom } from '../app/peer';
 import { roomInfoAtom } from '../app/room';
@@ -15,11 +16,17 @@ import { useMovenetStream } from '../module/movenet-stream';
 import { GameMusic, RoomEnter, RoomExit } from '../utils/sound';
 import { myNickName } from './Lobby';
 
+const Container = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+`;
+
 function Room() {
   const navigate = useNavigate();
   const { socket } = useClientSocket();
   const resetGame = useResetAtom(gameAtom);
-  const game = useAtomValue(gameAtom);
   const resetPeerInfo = useResetAtom(peerInfoAtom);
   const roomInfo = useAtomValue(roomInfoAtom);
   const resetRoomInfo = useResetAtom(roomInfoAtom);
@@ -34,12 +41,12 @@ function Room() {
     if (!myNickName || !roomInfo.roomId) {
       alert('잘못된 접근입니다.');
       navigate('/', { replace: true });
-      window.location.reload(); //check
+      window.location.reload();
     } else if (!isStreamReady) {
       alert('비디오 연결이 종료되어 다시 로딩합니다.');
       initialize();
       navigate('/', { replace: true });
-      window.location.reload(); //check
+      window.location.reload();
     }
 
     RoomEnter.play(); // 자신 입장음
@@ -56,7 +63,11 @@ function Room() {
     };
   }, []);
 
-  return <InGame />;
+  return (
+    <Container>
+      <InGame />
+    </Container>
+  );
 }
 
 export default Room;
