@@ -271,7 +271,7 @@ function Lobby() {
     ButtonClick1.play();
     const check = window.confirm('로그아웃 하시겠습니까?');
     if (check) {
-      sessionStorage.setItem('isAuthenticated', 'false');
+      localStorage.setItem('isAuthenticated', 'false');
       removeUser();
       navigate('/login', { replace: true }); //temp: Private Router 적용 후 삭제
     } else {
