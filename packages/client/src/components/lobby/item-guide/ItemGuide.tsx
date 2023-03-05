@@ -3,6 +3,7 @@ import styled, { css, keyframes } from 'styled-components';
 import jjang9 from '../../../assets/images/gameMode/jjang9.png';
 import jjang9spin from '../../../assets/images/gameMode/jjang9spin.png';
 import jjanggu from '../../../assets/images/gameMode/jjanggu.png';
+import { Pyororong, SizeDown, Spin } from '../../../utils/sound';
 
 const blur = keyframes`
   from {
@@ -50,7 +51,7 @@ const GameModeDiv = styled.div`
   align-items: center;
 `;
 
-const ModeNameDiv = styled.div<{ keys: number; concen: number }>`
+const ModeNameDiv = styled.div<{ keys: number; highlighted: number }>`
   display: block;
   text-align: center;
   width: 25%;
@@ -62,7 +63,7 @@ const ModeNameDiv = styled.div<{ keys: number; concen: number }>`
   color: white;
 
   ${(p) =>
-    p.keys === p.concen &&
+    p.keys === p.highlighted &&
     css`
       font-size: 1.7rem;
       text-shadow: 0 0 2px #fff, 0 0 1px #fff, 0 0 10px #fff, 0 0 20px #bc13fe, 0 0 30px #bc13fe,
@@ -79,7 +80,14 @@ const ModeWrapper = styled.div`
   align-items: center;
 `;
 
-const Div = styled.div`
+const Img = styled.img`
+  width: 100%;
+  height: 100%;
+  max-width: 280px;
+  max-height: 280px;
+`;
+
+const Div = styled.div<{ mode: string }>`
   border: 2px solid yellow;
   width: 25%;
   height: 95%;
@@ -90,51 +98,63 @@ const Div = styled.div`
 
   &:hover {
     background-color: white;
-    width: 30%;
-    height: 114%;
+    /* width: 30%;
+    height: 114%; */
+    transition: 0.3s;
+    transform: scale(1.2);
   }
-`;
 
-const Img = styled.img<{ mode: string }>`
-  width: 100%;
-  height: 100%;
-  max-width: 280px;
-  max-height: 280px;
-
+  &:hover {
+    & ${Img} {
+      ${(p) =>
+        p.mode === 'blur' &&
+        css`
+          animation: ${blur} 1s;
+          animation-fill-mode: forwards;
+        `}
+      ${(p) =>
+        p.mode === 'spin' &&
+        css`
+          animation: ${spin} 1s infinite;
+        `}
   ${(p) =>
-    p.mode === 'blur' &&
-    css`
-      &:hover {
-        animation-delay: 2s;
-        animation: ${blur} 1.5s infinite;
-      }
-    `}
-  ${(p) =>
-    p.mode === 'spin' &&
-    css`
-      &:hover {
-        animation-delay: 1s;
-        animation: ${spin} 0.7s infinite;
-      }
-    `}
-  ${(p) =>
-    p.mode === 'sizedown' &&
-    css`
-      &:hover {
-        animation-delay: 3s;
-        animation: ${sizeDown} 0.7s infinite;
-      }
-    `}
+        p.mode === 'sizedown' &&
+        css`
+          animation: ${sizeDown} 1s;
+          animation-fill-mode: forwards;
+        `}
+      animation-delay: 0.3s;
+    }
+  }
 `;
 
 const mode = ['normal', 'blur', 'spin', 'sizedown'];
 const modeName = ['일반', '블러', '회전', '축소'];
+const sound = [Spin, Pyororong, Spin, SizeDown];
 
 function ItemGuide() {
-  const [concen, setConcen] = useState<number>(-1);
+  const [highlighted, setHighlighted] = useState<number>(-1);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
 
   function initConcen() {
-    setConcen(-1);
+    setHighlighted(-1);
+    if (intervalId) clearInterval(intervalId);
+    console.log(`im done`, intervalId);
+  }
+
+  function playSound(idx: number) {
+    setTimeout(() => {
+      if (idx === 0) {
+      } else if (idx === 1) {
+        sound[idx].play();
+      } else if (idx === 2) {
+        sound[idx].play();
+        setIntervalId(setInterval(() => sound[idx].play(), 1000));
+      } else if (idx === 3) {
+        sound[idx].play();
+      }
+    }, 300);
+    console.log(intervalId);
   }
 
   return (
@@ -143,24 +163,52 @@ function ItemGuide() {
         <GameModeDiv>
           {modeName.map((val, key) => {
             return (
-              <ModeNameDiv key={key} keys={key} concen={concen}>
+              <ModeNameDiv key={key} keys={key} highlighted={highlighted}>
                 {val}
               </ModeNameDiv>
             );
           })}
         </GameModeDiv>
         <ModeWrapper>
-          <Div onMouseEnter={() => setConcen(0)} onMouseLeave={initConcen}>
+          <Div
+            onMouseEnter={() => {
+              setHighlighted(0);
+              playSound(0);
+            }}
+            onMouseLeave={initConcen}
+            mode={mode[0]}
+          >
             일반
           </Div>
-          <Div onMouseEnter={() => setConcen(1)} onMouseLeave={initConcen}>
-            <Img src={jjanggu} mode={mode[1]} />
+          <Div
+            onMouseEnter={() => {
+              setHighlighted(1);
+              playSound(1);
+            }}
+            onMouseLeave={initConcen}
+            mode={mode[1]}
+          >
+            <Img src={jjanggu} />
           </Div>
-          <Div onMouseEnter={() => setConcen(2)} onMouseLeave={initConcen}>
-            <Img src={jjang9spin} mode={mode[2]} />
+          <Div
+            onMouseEnter={() => {
+              setHighlighted(2);
+              playSound(2);
+            }}
+            onMouseLeave={initConcen}
+            mode={mode[2]}
+          >
+            <Img src={jjang9spin} />
           </Div>
-          <Div onMouseEnter={() => setConcen(3)} onMouseLeave={initConcen}>
-            <Img src={jjang9} mode={mode[3]} />
+          <Div
+            onMouseEnter={() => {
+              setHighlighted(3);
+              playSound(3);
+            }}
+            onMouseLeave={initConcen}
+            mode={mode[3]}
+          >
+            <Img src={jjang9} />
           </Div>
         </ModeWrapper>
       </Wrapper>
