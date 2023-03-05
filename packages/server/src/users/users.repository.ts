@@ -1,8 +1,8 @@
-import { UserRequestDto } from './dto/users.request.dto';
-import { User } from './users.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { UserRequestDto } from './dto/users.request.dto';
+import { User } from './users.schema';
 
 @Injectable()
 export class UsersRepository {
@@ -31,5 +31,13 @@ export class UsersRepository {
   async updateUserImg(userId: string, imgUrl: string): Promise<User> {
     const filter = { _id: userId };
     return await this.userModel.findOneAndUpdate(filter, { $push: { imgUrls: imgUrl } });
+  }
+
+  async deleteUserImg(userId: string, key: string): Promise<User> {
+    const filter = { _id: userId };
+    const update = {
+      $pull: { imgUrls: `https://${process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/copy/${key}` },
+    };
+    return await this.userModel.findOneAndUpdate(filter, update, { returnOriginal: false });
   }
 }

@@ -1,25 +1,27 @@
-import RoomList from '../components/lobby/RoomList';
-import styled, { css } from 'styled-components';
-import Loading from '../components/lobby/Loading';
-import { useEffect, useState } from 'react';
-import { removeUser } from '../utils/local-storage';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Tutorial from '../components/lobby/Tutorial';
-import { useMovenetStream } from '../module/movenet-stream';
-import { BackgroundMusic } from '../utils/sound';
+import { useAtomValue } from 'jotai';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled, { css } from 'styled-components';
+import { exitInGameAtom } from '../app/room';
+import bgmOffImg from '../assets/images/lobby/bgm-off.png';
+import bgmOnImg from '../assets/images/lobby/bgm-on.png';
+import kraftonJungleImg from '../assets/images/lobby/krafton-jungle-logo.png';
+import logoutImg from '../assets/images/lobby/logout.png';
 import logoImg from '../assets/images/logo.png';
-import { ButtonClick } from '../utils/sound';
-import logoutImg from '../assets/images/logout.png';
-import kraftonJungleImg from '../assets/images/krafton-jungle-logo.png';
-import BestShot from '../components/lobby/BestShot';
-import bgmOnImg from '../assets/images/bgm-on.png';
-import bgmOffImg from '../assets/images/bgm-off.png';
+import BestShot from '../components/lobby/best-shot/BestShot';
+import ItemGuide from '../components/lobby/item-guide/ItemGuide';
+import Loading from '../components/lobby/Loading';
+import RoomList from '../components/lobby/room-list/RoomList';
+import Tutorial from '../components/lobby/tutorial/Tutorial';
+import { useMovenetStream } from '../module/movenet-stream';
+import { removeUser } from '../utils/local-storage';
+import { BackgroundMusic, ButtonClick1, ButtonClick2 } from '../utils/sound';
 
 const Container = styled.div`
-  /* position: absolute;
+  position: absolute;
   width: 100%;
-  height: 100%; */
+  height: 100%;
 `;
 
 const Wrapper = styled.div`
@@ -28,12 +30,15 @@ const Wrapper = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 80%;
-  height: 90%;
+  aspect-ratio: 3 / 2;
+  min-width: 900px;
+  min-height: 600px;
+  max-height: 90%;
   background-color: rgba(0, 0, 0, 0.5);
   border: 0.1rem solid #fff;
   border-radius: 40px;
-  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,
-    0 0 2.8rem #bc13fe, inset 0 0 1.3rem #bc13fe;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 1rem #bc13fe, 0 0 0.4rem #bc13fe,
+    0 0 1.4rem #bc13fe, inset 0 0 0.6rem #bc13fe;
 `;
 
 const Header = styled.div`
@@ -62,7 +67,7 @@ const MuteImg = styled.img`
 
 const MuteTxt = styled.p`
   position: absolute;
-  bottom: 0%;
+  bottom: 0;
   left: 50%;
   transform: translate(-50%);
   font-size: 12px;
@@ -102,7 +107,7 @@ const LogOutImg = styled.img`
 
 const LogOutTxt = styled.p`
   position: absolute;
-  bottom: 0%;
+  bottom: 0;
   left: 50%;
   transform: translate(-50%);
   font-size: 12px;
@@ -135,6 +140,7 @@ const NavItem = styled.div<{ isSelected: boolean }>`
   padding: 5px 5px 5px 5px;
   margin: 0 10px 0 10px;
   color: #fff8;
+  transition: 0.5s;
 
   ${(props) =>
     props.isSelected &&
@@ -178,6 +184,7 @@ const Footer = styled.div`
   bottom: 0;
   width: 100%;
   height: 10%;
+  z-index: -1;
 `;
 
 const ProducedBy = styled.div`
@@ -212,13 +219,14 @@ const nickNameArr = [
 const randomIdx = Math.floor(Math.random() * 10);
 export let myNickName = nickNameArr[randomIdx]; //temp
 
-let prevBgmState = true;
+export let prevBgmState = true;
 
 function Lobby() {
   const navigate = useNavigate();
   const [mode, setMode] = useState('플레이');
   const { isStreamReady } = useMovenetStream();
   const [muteImg, setMuteImg] = useState(prevBgmState === true ? bgmOffImg : bgmOnImg);
+  const exitInGame = useAtomValue(exitInGameAtom);
   let content;
 
   switch (mode) {
@@ -228,6 +236,9 @@ function Lobby() {
     case '튜토리얼':
       content = <Tutorial />;
       break;
+    case '게임모드':
+      content = <ItemGuide />;
+      break;
     case '베스트샷':
       content = <BestShot />;
       break;
@@ -235,6 +246,12 @@ function Lobby() {
       content = <RoomList />;
       break;
   }
+
+  useEffect(() => {
+    if (exitInGame) {
+      window.location.reload();
+    }
+  }, []);
 
   //todo: 최초 한 번만 실행하는 방법 생각해보기
   useEffect(() => {
@@ -258,15 +275,6 @@ function Lobby() {
     setMyNickName();
   }, []);
 
-  const logoutHandler = () => {
-    const check = window.confirm('로그아웃 하시겠습니까?');
-    if (check) {
-      sessionStorage.setItem('isAuthenticated', 'false');
-      removeUser();
-      navigate('/login', { replace: true }); //temp: Private Router 적용 후 삭제
-    }
-  };
-
   useEffect(() => {
     if (prevBgmState === true) {
       setTimeout(() => {
@@ -284,15 +292,27 @@ function Lobby() {
     }
   }, []);
 
+  const logoutHandler = () => {
+    ButtonClick1.play();
+    const check = window.confirm('로그아웃 하시겠습니까?');
+    if (check) {
+      localStorage.setItem('isAuthenticated', 'false');
+      removeUser();
+      navigate('/login', { replace: true }); //temp: Private Router 적용 후 삭제
+    } else {
+      ButtonClick2.play();
+    }
+  };
+
   const bgmHandler = () => {
     if (prevBgmState === true) {
       prevBgmState = false;
-      ButtonClick.play();
+      ButtonClick1.play();
       BackgroundMusic.pause();
       setMuteImg(bgmOnImg);
     } else {
       prevBgmState = true;
-      ButtonClick.play();
+      ButtonClick1.play();
       BackgroundMusic.play();
       setMuteImg(bgmOffImg);
     }
@@ -321,7 +341,7 @@ function Lobby() {
           <NavBar>
             <NavItem
               onClick={() => {
-                ButtonClick.play();
+                ButtonClick1.play();
                 setMode('플레이');
               }}
               isSelected={mode === '플레이'}
@@ -331,7 +351,7 @@ function Lobby() {
             <VerticalLine />
             <NavItem
               onClick={() => {
-                ButtonClick.play();
+                ButtonClick1.play();
                 setMode('튜토리얼');
               }}
               isSelected={mode === '튜토리얼'}
@@ -341,7 +361,17 @@ function Lobby() {
             <VerticalLine />
             <NavItem
               onClick={() => {
-                ButtonClick.play();
+                ButtonClick1.play();
+                setMode('게임모드');
+              }}
+              isSelected={mode === '게임모드'}
+            >
+              게임모드
+            </NavItem>
+            <VerticalLine />
+            <NavItem
+              onClick={() => {
+                ButtonClick1.play();
                 setMode('베스트샷');
               }}
               isSelected={mode === '베스트샷'}

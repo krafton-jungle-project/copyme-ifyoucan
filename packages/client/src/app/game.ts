@@ -5,6 +5,7 @@ interface UserState {
   isValidBody: boolean;
   isReady: boolean;
   score: number;
+  point: number;
   isOffender: boolean;
   gradable: boolean;
 }
@@ -12,14 +13,9 @@ interface UserState {
 interface PeerState {
   isReady: boolean;
   score: number;
+  point: number;
   pose: Pose | null;
   gradable: boolean;
-}
-
-enum GameStatus {
-  WAITING,
-  GAME,
-  RESULT,
 }
 
 enum GameStage {
@@ -27,24 +23,17 @@ enum GameStage {
   ROUND,
   OFFEND,
   DEFEND,
-}
-
-enum ItemType {
-  BLUR,
-  ROTATE,
-  SIZEDOWN,
+  JUDGE,
 }
 
 interface GameState {
   user: UserState;
   peer: PeerState;
   isStart: boolean;
-  status: GameStatus;
   stage: number;
   round: number;
   countDown: number;
   isCaptured: boolean;
-  item_type: number;
 }
 
 const initialState: GameState = {
@@ -52,24 +41,28 @@ const initialState: GameState = {
     isValidBody: false,
     isReady: false,
     score: 0,
+    point: 0,
     isOffender: false,
     gradable: false,
   },
   peer: {
     isReady: false,
     score: 0,
+    point: 0,
     pose: null,
     gradable: false,
   },
   isStart: false,
-  status: GameStatus.WAITING,
   stage: GameStage.INITIAL,
   round: 1,
   countDown: 0,
   isCaptured: false,
-  item_type: 100,
 };
 
 const gameAtom = atomWithReset(initialState);
+gameAtom.onMount = (setAtom) => {
+  setAtom(initialState);
+  return () => setAtom(initialState);
+};
 
-export { GameStatus, GameStage, ItemType, gameAtom };
+export { GameStage, gameAtom };

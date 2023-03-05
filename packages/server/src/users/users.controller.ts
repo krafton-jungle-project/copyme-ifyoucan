@@ -1,26 +1,29 @@
-import { AuthService } from '../auth/auth.service';
-import { UserRequestDto } from './dto/users.request.dto';
 import {
   Body,
-  Put,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
   Req,
   UploadedFile,
   UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Controller, Get, Post } from '@nestjs/common';
-import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
-import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
-import { UsersService } from './users.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { ReadOnlyUserDto } from './dto/user.dto';
 import { LoginRequestDto } from 'src/auth/dto/login.request.dto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
-import { User } from './users.schema';
+import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
+import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
 import { UploadService } from 'src/uploads/uploads.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthService } from '../auth/auth.service';
+import { ReadOnlyUserDto } from './dto/user.dto';
+import { UserRequestDto } from './dto/users.request.dto';
+import { User } from './users.schema';
+import { UsersService } from './users.service';
 
 @Controller('users')
 @UseInterceptors(SuccessInterceptor)
@@ -72,5 +75,23 @@ export class UsersController {
       message: '이미지 업로드 성공',
       user,
     });
+  }
+  @ApiOperation({ summary: '이미지 삭제 ' })
+  @UseGuards(JwtAuthGuard)
+  @Delete('/:key')
+  async deleteImg(@Req() req: any, @Param('key') key: string) {
+    const userId = req.user.id;
+
+    // Delete the image from S3
+    await this.uploadService.deleteS3Object(key);
+
+    // Update the user's information
+    const user = await this.usersService.deleteImg(userId, key);
+
+    return {
+      statusCode: 200,
+      message: '이미지 삭제 성공',
+      imgUrls: user.imgUrls,
+    };
   }
 }

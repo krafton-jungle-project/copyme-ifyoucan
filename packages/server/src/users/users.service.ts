@@ -1,7 +1,7 @@
-import { UsersRepository } from './users.repository';
-import { UserRequestDto } from './dto/users.request.dto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { UserRequestDto } from './dto/users.request.dto';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
@@ -32,5 +32,13 @@ export class UsersService {
       throw new UnauthorizedException('해당하는 아이디의 유저를 찾을 수 없습니다.');
     }
     return await this.usersRepository.updateUserImg(userId, imgUrl);
+  }
+
+  async deleteImg(userId: string, key: string) {
+    const user = await this.usersRepository.findUserByIdWithoutPassword(userId);
+    if (!user) {
+      throw new UnauthorizedException('해당하는 아이디의 유저를 찾을 수 없습니다.');
+    }
+    return await this.usersRepository.deleteUserImg(userId, key);
   }
 }

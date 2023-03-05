@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
-import { useCallback } from 'react';
-import { useEffect } from 'react';
-import { useState, createContext, useContext } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import * as movenet from '../../utils/tfjs-movenet';
 
 type InitializeState = 'ready' | 'loading' | 'success' | 'error';

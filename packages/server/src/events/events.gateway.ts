@@ -10,6 +10,7 @@ import {
 } from '@nestjs/websockets';
 import {
   ClientToServerEvents,
+  IGameMode,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
@@ -35,6 +36,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       readyCount: number;
       images: [string, string][];
       scores: number[];
+      gameMode: IGameMode;
+      thumbnailIdx: number;
     };
   } = {};
 
@@ -66,7 +69,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         socket.to(roomId).emit('user_exit', this.rooms[roomId].isStart);
         socket.to(roomId).emit('message', {
           userId: '',
-          message: `🔴 상대방의 연결이 끊겼습니다. 🔴`,
+          message: `🔴 상대방의 연결이 끊겼습니다 🔴`,
           isImg: false,
         });
       }
@@ -86,21 +89,28 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('create_room')
   createRoom(
     @ConnectedSocket() socket: ServerToClientSocket,
-    @MessageBody() roomName: string,
+    @MessageBody()
+    data: {
+      roomName: string;
+      gameMode: IGameMode;
+      thumbnailIdx: number;
+    },
   ): void {
     const roomId = uuidv4();
     this.rooms[roomId] = {
-      roomName,
+      roomName: data.roomName,
       users: [],
       isStart: false,
       readyCount: 0,
       images: [],
       scores: [],
+      gameMode: data.gameMode,
+      thumbnailIdx: data.thumbnailIdx,
     };
 
-    this.server.to(socket.id).emit('new_room', roomId);
+    this.server.to(socket.id).emit('new_room', roomId, data.gameMode);
 
-    this.logger.log(`create room roomname: ${roomName} by user:${socket.id} `);
+    this.logger.log(`create room roomname: ${data.roomName} by user:${socket.id} `);
   }
 
   //! 준비
@@ -114,13 +124,13 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       isImg: false,
     });
 
-    // 방에 다른 유저들에게 준비 했다고 알려줌
-    socket.to(roomId).emit('get_ready');
+    // 방에 모든 유저들에게 준비 했다고 알려줌
+    this.server.in(roomId).emit('get_ready', socket.id);
   }
 
   //! 준비 취소
   @SubscribeMessage('unready')
-  cancleReady(
+  cancelReady(
     @ConnectedSocket() socket: ServerToClientSocket,
     @MessageBody() roomId: string,
   ): void {
@@ -132,8 +142,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       isImg: false,
     });
 
-    // 방에 다른 유저들에게 준비 취소했다고 알려줌
-    socket.to(roomId).emit('get_unready');
+    // 방에 모든 유저들에게 준비 취소했다고 알려줌
+    this.server.in(roomId).emit('get_unready', socket.id);
   }
 
   //! imgae 전송(공격이 끝났을 시 이벤트를 받는다)
@@ -157,11 +167,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //! 게임 시작
   @SubscribeMessage('start')
-  gameStart(@MessageBody() roomId: string): void {
+  gameStart(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() roomId: string): void {
     if (!this.rooms[roomId].isStart) {
       // 게임이 시작하면 모든 유저들에게 게임이 시작됐다는 이벤트 발생
       this.rooms[roomId].isStart = true;
-      this.server.in(roomId).emit('get_start');
+      this.server.in(roomId).emit('get_start', socket.id);
     }
   }
 
@@ -182,15 +192,22 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //! 점수를 공격자에게 전송
   @SubscribeMessage('score')
   getScore(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() score: number): void {
-    // 공격자가 공격을 시작하면 수비자들에게 공격이 시작되었다는 이벤트 발생
+    // 실시간 수비 점수 공유
     const roomId = this.userToRoom[socket.id];
-    socket.to(roomId).emit('get_score', score);
+    const data = { defenderId: socket.id, score };
+    this.server.in(roomId).emit('get_score', data);
+  }
+
+  //! 라운드 승점 변경
+  @SubscribeMessage('point')
+  getPoint(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() winnerId: string): void {
+    const roomId = this.userToRoom[socket.id];
+    this.server.in(roomId).emit('get_point', winnerId);
   }
 
   //! 게임 끝
   @SubscribeMessage('result')
   gameResult(@ConnectedSocket() socket: ServerToClientSocket): void {
-    // 방에 모든 유저들에게 게임이 끝났다고 알려줌
     const roomId = this.userToRoom[socket.id];
     const scores = this.rooms[roomId].scores;
     const maxScore = Math.max.apply(null, scores);
@@ -201,16 +218,17 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('bestIdx', bestIdx);
     console.log('worstIdx', worstIdx);
     console.log(this.rooms[roomId].images.length);
-    this.rooms[roomId].images[worstIdx].forEach((img) => resultImg.push(img));
     this.rooms[roomId].images[bestIdx].forEach((img) => resultImg.push(img));
+    this.rooms[roomId].images[worstIdx].forEach((img) => resultImg.push(img));
+
     // 이미지 병합을 위해 결과 이미지를 클라이언트에 보낸다.
     this.server.in(roomId).emit('get_upload', resultImg);
     const users = this.rooms[roomId].users;
     let idx = 0;
 
-    //temp
+    // 방에 모든 유저들에게 게임이 끝났다고 알려줌
     this.rooms[roomId].isStart = false;
-    this.server.in(roomId).emit('get_finish');
+    this.server.in(roomId).emit('get_result');
 
     const intervalId = setInterval(() => {
       if (idx <= 6) {
@@ -222,29 +240,29 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           });
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '🔥 최고의 공격 🔥',
+            message: '🔥 최고의 수비 🔥',
             isImg: false,
           });
         } else if (idx === 1) {
           if (bestIdx % 2 === 0) {
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
+              userId: users[0].id,
               message: '공격 포즈',
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
+              userId: users[0].id,
               message: resultImg[0],
               isImg: true,
             });
           } else {
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
+              userId: users[1].id,
               message: '공격 포즈',
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
+              userId: users[1].id,
               message: resultImg[0],
               isImg: true,
             });
@@ -252,23 +270,23 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         } else if (idx === 2) {
           if (bestIdx % 2 === 0) {
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
-              message: `수비 포즈(유사도 ${minScore}%)`,
+              userId: users[1].id,
+              message: `수비 포즈(유사도 ${maxScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[0].id,
+              userId: users[1].id,
               message: resultImg[1],
               isImg: true,
             });
           } else {
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
-              message: `수비 포즈(유사도 ${minScore}%)`,
+              userId: users[0].id,
+              message: `수비 포즈(유사도 ${maxScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
-              userId: users[1].id,
+              userId: users[0].id,
               message: resultImg[1],
               isImg: true,
             });
@@ -281,7 +299,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           });
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '\n\n🔥 최고의 수비 🔥',
+            message: '\n\n🔥 최고의 공격 🔥',
             isImg: false,
           });
         } else if (idx === 4) {
@@ -312,7 +330,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           if (worstIdx % 2 === 0) {
             this.server.in(roomId).emit('message', {
               userId: users[1].id,
-              message: `수비 자세(유사도 ${maxScore}%)`,
+              message: `수비 자세(유사도 ${minScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
@@ -323,7 +341,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           } else {
             this.server.in(roomId).emit('message', {
               userId: users[0].id,
-              message: `수비 자세(유사도 ${maxScore}%)`,
+              message: `수비 자세(유사도 ${minScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
@@ -352,21 +370,27 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         idx++;
       } else {
+        // 모든 메세지 다 보낸 후
         clearInterval(intervalId);
-        //! 게임 상태 초기화 temp
+
+        // 방에 모든 유저들에게 게임 결과 송출이 끝났다고 알려줌
+        this.server.in(roomId).emit('get_finish');
+
+        // 게임 상태 초기화
         this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
       }
     }, 3000);
   }
 
-  //! 게임 끝
+  //! 게임 종료
   @SubscribeMessage('finish')
-  finish(@ConnectedSocket() socket: ServerToClientSocket): void {
-    // 방에 모든 유저들에게 게임이 끝났다고 알려줌
+  getFinsh(@ConnectedSocket() socket: ServerToClientSocket): void {
+    // 방에 모든 유저들에게 게임 결과 송출이 끝났다고 알려줌
     const roomId = this.userToRoom[socket.id];
-    //! 게임 상태 초기화
-    // this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
-    this.server.in(roomId).emit('get_finish');
+
+    this.server.to(socket.id).emit('get_finish');
+    // 게임 상태 초기화
+    this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
   }
 
   //! 방에 새로운 유저 join
@@ -502,17 +526,5 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleGameStage(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() stage: number) {
     const roomId = this.userToRoom[socket.id];
     this.server.to(roomId).emit('get_change_stage', stage);
-  }
-
-  @SubscribeMessage('change_status')
-  handleGameStatus(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() status: number) {
-    const roomId = this.userToRoom[socket.id];
-    this.server.to(roomId).emit('get_change_status', status);
-  }
-
-  @SubscribeMessage('item_type')
-  handleItemRound(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() status: number) {
-    const roomId = this.userToRoom[socket.id];
-    this.server.to(roomId).emit('get_item_type', status);
   }
 }

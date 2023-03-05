@@ -2,15 +2,6 @@ import type * as poseDetection from '@tensorflow-models/pose-detection';
 import { useAtom, useAtomValue } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import * as movenet from '../../../utils/tfjs-movenet';
-import {
-  isLeftHandUp,
-  isRightHandUp,
-  isSDRPose,
-  isTPose,
-  isValidBody,
-} from '../../common/PoseRecognition';
-import { useInterval } from '../../inGame/hooks/useInterval';
 import {
   isBodyAtom,
   isLeftAtom,
@@ -20,9 +11,18 @@ import {
   isTPoseAtom,
   tutorialPassAtom,
 } from '../../../app/tutorial';
+import correctImg from '../../../assets/images/lobby/tutorial/correct.gif';
+import loadingImg from '../../../assets/images/lobby/tutorial/loading.webp';
 import { Correct } from '../../../utils/sound';
-import correctImg from '../../../assets/images/tutorial/correct.gif';
-import loadingImg from '../../../assets/images/tutorial/loading.webp';
+import * as movenet from '../../../utils/tfjs-movenet';
+import {
+  isLeftHandUp,
+  isRightHandUp,
+  isSDRPose,
+  isTPose,
+  isValidBody,
+} from '../../common/PoseRecognition';
+import { useInterval } from '../../inGame/hooks/useInterval';
 
 const Container = styled.div`
   background-image: url(${loadingImg});

@@ -1,8 +1,15 @@
+import { useSetAtom } from 'jotai';
+import type { IGameMode } from 'project-types';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import Poro from '../../../assets/images/arcade-poro.png';
-import { useSetAtom } from 'jotai';
 import { roomInfoAtom } from '../../../app/room';
+import BlueImg from '../../../assets/images/lobby/room-card/blue.gif';
+import GreenImg from '../../../assets/images/lobby/room-card/green.gif';
+import OrangeImg from '../../../assets/images/lobby/room-card/orange.gif';
+import PinkImg from '../../../assets/images/lobby/room-card/pink.gif';
+import PurpleImg from '../../../assets/images/lobby/room-card/purple.gif';
+import RedImg from '../../../assets/images/lobby/room-card/red.gif';
+import YellowImg from '../../../assets/images/lobby/room-card/yellow.gif';
 
 const Container = styled.div`
   display: inline-flex;
@@ -69,39 +76,51 @@ const JoinButton = styled.button<{ isFull: boolean }>`
   transition: 0.15s;
 `;
 
+const ThumbnailImg = [RedImg, PinkImg, OrangeImg, YellowImg, GreenImg, BlueImg, PurpleImg];
+
 interface RoomInfo {
   id: string;
   roomName: string;
   users: { id: string; nickName: string }[];
   isStart: boolean;
   readyCount: number;
+  gameMode: IGameMode;
+  thumbnailIdx: number;
 }
 
-export default function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
+const mode = ['일반', '블러', '회전', '축소'];
+
+function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
   const navigate = useNavigate();
   const setRoomInfo = useSetAtom(roomInfoAtom);
 
-  const joinRoom = (roomId: string) => {
+  const joinRoom = (roomId: string, gameMode: IGameMode) => {
     if (roomInfo.users.length === 1) {
-      setRoomInfo((prev) => ({ ...prev, roomId }));
+      setRoomInfo((prev) => ({ ...prev, roomId, gameMode }));
       navigate('/room', { replace: true });
     }
   };
 
   return (
     <Container>
-      <Thumbnail alt="room thumbnail" src={Poro} />
+      <Thumbnail alt="room thumbnail" src={ThumbnailImg[roomInfo.thumbnailIdx]} />
       <Wrapper>
         <RoomName>{roomInfo.roomName}</RoomName>
         <HeadCount isFull={roomInfo.users.length === 2}>{roomInfo.users.length} / 2</HeadCount>
         <JoinButton
-          onClick={() => joinRoom(roomInfo.id)}
+          onClick={() => joinRoom(roomInfo.id, roomInfo.gameMode)}
           disabled={roomInfo.users.length === 2}
           isFull={roomInfo.users.length === 2}
         >
           {roomInfo.users.length === 2 ? 'FULL' : 'JOIN'}
         </JoinButton>
+        <div>
+          {mode[roomInfo.gameMode.round1]} / {mode[roomInfo.gameMode.round2]} /{' '}
+          {mode[roomInfo.gameMode.round3]}
+        </div>
       </Wrapper>
     </Container>
   );
 }
+
+export default RoomCard;

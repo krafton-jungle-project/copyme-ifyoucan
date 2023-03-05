@@ -1,16 +1,14 @@
 import axios from 'axios';
-import { useAtom } from 'jotai';
-import React, { useEffect, useState } from 'react';
+import jwt_decode from 'jwt-decode';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { isLoggedInAtom, isModalOpenedAtom } from '../app/login';
-import RegisterModal from '../components/member/RegisterModal';
-import jwt_decode from 'jwt-decode';
-import { setCookie } from '../utils/cookies';
-import { useMovenetStream } from '../module/movenet-stream';
-import Loading from '../components/lobby/Loading';
 import logoImg from '../assets/images/logo.png';
-import { ButtonClick } from '../utils/sound';
+import Loading from '../components/lobby/Loading';
+import RegisterModal from '../components/member/RegisterModal';
+import { useMovenetStream } from '../module/movenet-stream';
+import { setCookie } from '../utils/cookies';
+import { ButtonClick1 } from '../utils/sound';
 
 const Container = styled.div<{ isModalOpened: boolean }>`
   position: absolute;
@@ -31,7 +29,6 @@ const Container = styled.div<{ isModalOpened: boolean }>`
     props.isModalOpened &&
     css`
       z-index: -1;
-      box-shadow: none;
     `}
 `;
 
@@ -77,9 +74,9 @@ const TextDiv = styled.div`
   text-shadow: 0 0 2px #fff;
 `;
 
-const Input = styled.input<{ class: string }>`
+const Input = styled.input<{ nameTag: string }>`
   position: absolute;
-  top: ${(props) => (props.class === 'id' ? '45%' : '70%')};
+  top: ${(props) => (props.nameTag === 'id' ? '45%' : '70%')};
   font-size: large;
   color: #fff;
   border: 2px solid #fff;
@@ -96,9 +93,9 @@ const Input = styled.input<{ class: string }>`
   }
 `;
 
-const Btn = styled.div<{ class: string }>`
+const Btn = styled.div<{ nameTag: string }>`
   position: absolute;
-  bottom: ${(props) => (props.class === 'register' ? '25%' : '60%')};
+  bottom: ${(props) => (props.nameTag === 'register' ? '25%' : '60%')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -108,7 +105,7 @@ const Btn = styled.div<{ class: string }>`
   border-radius: 3px;
   font-size: large;
   font-weight: 600;
-  background-color: ${(props) => (props.class === 'register' ? '#e6a7ff54' : '#e6a7ff54')};
+  background-color: ${(props) => (props.nameTag === 'register' ? '#e6a7ff54' : '#e6a7ff54')};
   border: 2px solid #fff;
   cursor: pointer;
   transition: 0.3s;
@@ -121,23 +118,16 @@ const Btn = styled.div<{ class: string }>`
   }
 `;
 
-function Login2() {
+function Login() {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom);
-  const [isModalOpened, setIsModalOpened] = useAtom(isModalOpenedAtom);
+  const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
   const { isStreamReady } = useMovenetStream();
 
   function openModal() {
     setIsModalOpened(true);
   }
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/', { replace: true });
-    }
-  }, [isLoggedIn, navigate]);
 
   function handleId(e: React.ChangeEvent<HTMLInputElement>) {
     setId(e.target.value);
@@ -149,7 +139,7 @@ function Login2() {
 
   const onClickConfirmButton = async (e: any) => {
     e.preventDefault();
-    ButtonClick.play();
+    ButtonClick1.play();
     console.log('login');
     if (id === '') {
       alert(`아이디를 입력해주세요`);
@@ -170,9 +160,8 @@ function Login2() {
       const decodedUserInfo = jwt_decode(jwtToken); // 토큰 decode
       localStorage.setItem('userInfo', JSON.stringify(decodedUserInfo)); //토큰에 저장되어있는 userInfo 저장
       //로그인 해야지만 다음 이동 가능하게
-      sessionStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('isAuthenticated', 'true');
       // 메인으로 이동
-      setIsLoggedIn(true);
       navigate('/', { replace: true }); // 성공시 이동될 url 적용하기
 
       return res;
@@ -183,7 +172,7 @@ function Login2() {
 
   return (
     <>
-      {isModalOpened && <RegisterModal />}
+      {isModalOpened && <RegisterModal setIsModalOpened={setIsModalOpened} />}
       {!isStreamReady ? <Loading /> : null}
       <Container isModalOpened={isModalOpened}>
         <Form>
@@ -194,22 +183,22 @@ function Login2() {
               type="text"
               value={id}
               onChange={handleId}
-              class="id"
+              nameTag="id"
             />
             <Input
               placeholder="비밀번호 입력"
               type="password"
               value={pw}
               onChange={handlePw}
-              class="pw"
+              nameTag="pw"
             />
           </LoginWrapper>
           <SubmitWrapper>
             <TextDiv>계정을 만들고 게임을 즐겨보세요!</TextDiv>
-            <Btn onClick={onClickConfirmButton} class="login">
+            <Btn onClick={onClickConfirmButton} nameTag="login">
               로그인
             </Btn>
-            <Btn onClick={openModal} class="register">
+            <Btn onClick={openModal} nameTag="register">
               계정 만들기
             </Btn>
           </SubmitWrapper>
@@ -219,4 +208,4 @@ function Login2() {
   );
 }
 
-export default Login2;
+export default Login;

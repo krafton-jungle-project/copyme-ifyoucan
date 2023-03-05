@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import frameImgSrc from '../../assets/images/in-game/frame-img.png';
+import stickerImgSrc from '../../assets/images/in-game/sticker.png';
 import { useClientSocket } from '../../module/client-socket';
-import frameImgSrc from '../../assets/images/frame-img.png';
-import stickerImgSrc from '../../assets/images/sticker.png';
 
 const Canvas = styled.canvas`
   position: absolute;
@@ -31,7 +31,7 @@ const InvisibleDrawingCanvas = () => {
       if (document.cookie) {
         const token = document.cookie.split('=')[1];
         try {
-          // const res = await axios.post('http://15.165.237.195:5001/users/login', {
+          // const res = await axios.post('http://15.165.237.195:5001/users/upload', image, {
           const res = await axios.post('http://localhost:5001/users/upload', image, {
             headers: {
               'Content-Type': 'multipart/form-data',

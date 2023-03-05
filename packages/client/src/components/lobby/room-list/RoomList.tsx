@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { useRoomAtom } from '../../app/room';
-import { useClientSocket } from '../../module/client-socket';
-import CreateRoom from './room-list/CreateRoom';
-import RoomCard from './room-list/RoomCard';
+import { useRoomAtom } from '../../../app/room';
+import { useClientSocket } from '../../../module/client-socket';
+import CreateRoom from './CreateRoom';
+import RoomCard from './RoomCard';
 
 const Container = styled.div`
   position: relative;
@@ -98,13 +98,11 @@ function RoomList() {
             방을 직접 만들어 보세요!
           </NoRoomAnnouncer>
         ) : (
-          roomList.map((room) => {
-            return (
-              <RoomCardWrapper key={room.id}>
-                <RoomCard roomInfo={room} />
-              </RoomCardWrapper>
-            );
-          })
+          roomList.map((room) => (
+            <RoomCardWrapper key={room.id}>
+              <RoomCard roomInfo={room} />
+            </RoomCardWrapper>
+          ))
         )}
       </RoomCardContainer>
     </Container>

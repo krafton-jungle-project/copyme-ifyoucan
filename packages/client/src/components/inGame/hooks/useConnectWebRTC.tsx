@@ -1,14 +1,14 @@
-import { useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { stream } from '../../../utils/tfjs-movenet';
 import { useAtom, useSetAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
-import { useClientSocket } from '../../../module/client-socket';
-import { peerInfoAtom } from '../../../app/peer';
-import { roomInfoAtom } from '../../../app/room';
-import { myNickName } from '../../../pages/Lobby';
+import { useCallback, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { gameAtom } from '../../../app/game';
-import { BackgroundMusic, RoomEnter, RoomExit } from '../../../utils/sound';
+import { peerInfoAtom } from '../../../app/peer';
+import { exitInGameAtom, roomInfoAtom } from '../../../app/room';
+import { useClientSocket } from '../../../module/client-socket';
+import { myNickName } from '../../../pages/Lobby';
+import { RoomEnter, RoomExit } from '../../../utils/sound';
+import { stream } from '../../../utils/tfjs-movenet';
 
 //! 스턴 서버 직접 생성 고려(임시)
 const pc_config = {
@@ -32,6 +32,7 @@ const useConnectWebRTC = () => {
   const myStreamRef = useRef<MediaStream>(); // 유저 자신의 스트림 ref
   const [roomInfo, setRoomInfo] = useAtom(roomInfoAtom);
   const setPeerInfo = useSetAtom(peerInfoAtom);
+  const setExitInGame = useSetAtom(exitInGameAtom);
   const resetPeerInfo = useResetAtom(peerInfoAtom);
   const resetGame = useResetAtom(gameAtom);
 
@@ -170,10 +171,11 @@ const useConnectWebRTC = () => {
 
       // 게임 중일 때 상대가 나가면, 로비로 이동한다.
       if (isStart) {
-        BackgroundMusic.currentTime = 0;
+        setExitInGame(true);
+        alert('상대방이 게임에서 나갔습니다');
         navigate('/', { replace: true });
       }
-      // 게임 중이 아닐 땐, 내가 방장이 되고
+      // 게임 중이 아닐 땐, 내가 방장이 되고 게임 초기화
       else {
         resetPeerInfo();
         resetGame();

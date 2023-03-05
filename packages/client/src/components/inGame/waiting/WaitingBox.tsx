@@ -1,21 +1,19 @@
-import styled from 'styled-components';
 import { useAtomValue } from 'jotai';
+import styled from 'styled-components';
 import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
-import MyVideo from './MyVideo';
-import PeerVideo from './PeerVideo';
-import Chatting from './Chatting';
 import { roomInfoAtom } from '../../../app/room';
 import { myNickName } from '../../../pages/Lobby';
+import Chatting from './Chatting';
+import MyVideo from './MyVideo';
+import PeerVideo from './PeerVideo';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
-  bottom: 0%;
+  bottom: 0;
   width: 100%;
   height: 80%;
   visibility: ${(props) => (props.isStart ? 'hidden' : 'visible')};
-  transition-property: visibility;
-  transition-delay: 0.5s;
 `;
 
 const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
@@ -26,8 +24,8 @@ const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
   right: ${(props) => (props.isMe ? 'none' : props.isStart ? '-35%' : '0%')};
   width: 27.5%;
   aspect-ratio: 7/10;
-  transition-property: left, right;
-  transition-duration: 0.5s, 0.5s;
+  transition: 0.5s;
+  transition-delay: ${(props) => (props.isStart ? 'none' : '0.5s')};
 `;
 
 const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`
@@ -35,7 +33,7 @@ const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  top: 0%;
+  top: 0;
   width: 100%;
   height: 15%;
   font-size: 30px;
@@ -48,7 +46,7 @@ const NickNameBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  bottom: 0%;
+  bottom: 0;
   width: 100%;
   height: 15%;
   font-size: 30px;

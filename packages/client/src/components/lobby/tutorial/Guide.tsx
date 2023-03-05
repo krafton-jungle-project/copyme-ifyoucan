@@ -11,12 +11,12 @@ import {
   tutorialImgAtom,
   tutorialPassAtom,
 } from '../../../app/tutorial';
-import defaultImg from '../../../assets/images/tutorial/standing.png';
-import leftHandUp from '../../../assets/images/tutorial/left.png';
-import rightHandUp from '../../../assets/images/tutorial/right.png';
-import TPose from '../../../assets/images/tutorial/tpose.png';
-import SDR from '../../../assets/images/tutorial/SDR.png';
-import { ButtonClick } from '../../../utils/sound';
+import leftHandUpImg from '../../../assets/images/lobby/tutorial/left.png';
+import rightHandUpImg from '../../../assets/images/lobby/tutorial/right.png';
+import SDRImg from '../../../assets/images/lobby/tutorial/SDR.png';
+import defaultImg from '../../../assets/images/lobby/tutorial/standing.png';
+import TPoseImg from '../../../assets/images/lobby/tutorial/tpose.png';
+import { ButtonClick1 } from '../../../utils/sound';
 
 const Container = styled.div`
   grid-column: 1 / 3;
@@ -47,7 +47,7 @@ function Guide() {
       setContent('버튼을 눌러 튜토리얼을 시작하세요');
     }
     if (isStarted && !isBody) {
-      ButtonClick.play();
+      ButtonClick1.play();
       setContent('전신이 보이도록 서주세요');
       setImg(defaultImg);
     }
@@ -55,20 +55,20 @@ function Guide() {
     if (isBody && isStarted) {
       if (!isLeft) {
         setContent('왼손을 들어주세요');
-        setImg(leftHandUp);
-        console.log(leftHandUp);
+        setImg(leftHandUpImg);
+        console.log(leftHandUpImg);
       }
       if (isLeft && !isRight) {
         setContent('오른손을 들어주세요');
-        setImg(rightHandUp);
+        setImg(rightHandUpImg);
       }
       if (isLeft && isRight && !isT) {
         setContent('양팔을 벌려주세요');
-        setImg(TPose);
+        setImg(TPoseImg);
       }
       if (isLeft && isRight && isT && !isSDR) {
         setContent('상상도 못한 자세를 해주세요');
-        setImg(SDR);
+        setImg(SDRImg);
       }
       if (isPass) {
         setContent("수고하셨습니다! Let's PLAY!");

@@ -6,6 +6,7 @@
   font-family: 'NanumSquareRound', sans-serif;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+  /* border: 1px solid pink; */
 }
 
 body {
@@ -14,20 +15,4 @@ body {
   background-image: url('./assets/images/background-image.jpg');
   background-size: cover;
   color: white;
-
-  /* background: linear-gradient(270deg, #00d0ff, rgb(0, 0, 0), #ff0090);
-  background-size: 600% 600%;
-  animation: gradient 10s ease infinite; */
-}
-
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
 }

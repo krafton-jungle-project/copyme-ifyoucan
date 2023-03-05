@@ -1,8 +1,8 @@
-import * as path from 'path';
-import * as AWS from 'aws-sdk';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as AWS from 'aws-sdk';
 import { PromiseResult } from 'aws-sdk/lib/request';
+import * as path from 'path';
 
 // sharp
 
@@ -55,7 +55,7 @@ export class UploadService {
         .deleteObject(
           {
             Bucket: this.S3_BUCKET_NAME,
-            Key: key,
+            Key: `copy/${key}`,
           },
           callback,
         )

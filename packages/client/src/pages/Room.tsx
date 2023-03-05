@@ -1,24 +1,25 @@
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import InGame from '../components/inGame/InGame';
-import { myNickName } from './Lobby';
 import { useAtomValue } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
-import useConnectWebRTC from '../components/inGame/hooks/useConnectWebRTC';
-import GameEventHandler from '../components/inGame/GameEventHandler';
-import { useClientSocket } from '../module/client-socket';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { gameAtom } from '../app/game';
-import MotionReady from '../components/inGame/waiting/MotionReady';
 import { peerInfoAtom } from '../app/peer';
 import { roomInfoAtom } from '../app/room';
+import GameEventHandler from '../components/inGame/GameEventHandler';
+import useConnectWebRTC from '../components/inGame/hooks/useConnectWebRTC';
 import { usePreventExit } from '../components/inGame/hooks/usePreventExit';
-import { GameMusic, RoomEnter, RoomExit } from '../utils/sound';
+import InGame from '../components/inGame/InGame';
+import MotionReady from '../components/inGame/waiting/MotionReady';
+import { useClientSocket } from '../module/client-socket';
 import { useMovenetStream } from '../module/movenet-stream';
+import { GameMusic, RoomEnter, RoomExit } from '../utils/sound';
+import { myNickName } from './Lobby';
 
 function Room() {
   const navigate = useNavigate();
   const { socket } = useClientSocket();
   const resetGame = useResetAtom(gameAtom);
+  const game = useAtomValue(gameAtom);
   const resetPeerInfo = useResetAtom(peerInfoAtom);
   const roomInfo = useAtomValue(roomInfoAtom);
   const resetRoomInfo = useResetAtom(roomInfoAtom);

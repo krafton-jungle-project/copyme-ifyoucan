@@ -1,7 +1,9 @@
+import { useSetAtom } from 'jotai';
+import { useResetAtom } from 'jotai/utils';
 import { useEffect } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { gameAtom, GameStage } from '../../app/game';
 import { useClientSocket } from '../../module/client-socket';
-import { gameAtom, GameStage, GameStatus } from '../../app/game';
+import { prevBgmState } from '../../pages/Lobby';
 import {
   BackgroundMusic,
   Bell,
@@ -9,35 +11,40 @@ import {
   CountDown,
   GameMusic,
   GunReload,
+  POTG,
   Swish,
 } from '../../utils/sound';
-import { useResetAtom } from 'jotai/utils';
-import { roomInfoAtom } from '../../app/room';
 
 const GameEventHandler = () => {
   const { socket } = useClientSocket();
-  const host = useAtomValue(roomInfoAtom).host;
   const setGame = useSetAtom(gameAtom);
   const resetGame = useResetAtom(gameAtom);
 
   useEffect(() => {
-    socket.on('get_ready', () => {
+    socket.on('get_ready', (socketId: string) => {
       GunReload.play();
-      setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: true } }));
+      if (socketId === socket.id) {
+        setGame((prev) => ({ ...prev, user: { ...prev.user, isReady: true } }));
+      } else {
+        setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: true } }));
+      }
     });
 
-    socket.on('get_unready', () => {
+    socket.on('get_unready', (socketId: string) => {
       GunReload.play();
-      setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: false } }));
+      if (socketId === socket.id) {
+        setGame((prev) => ({ ...prev, user: { ...prev.user, isReady: false } }));
+      } else {
+        setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: false } }));
+      }
     });
 
-    //! 게임 Status를 waiting에서 game으로 바꾼다
-    socket.on('get_start', () => {
+    // 게임 Status를 waiting에서 game으로 바꾼다
+    socket.on('get_start', (socketId: string) => {
       setGame((prev) => ({
         ...prev,
-        user: { ...prev.user, isOffender: host ? true : false },
+        user: { ...prev.user, isOffender: socketId === socket.id ? true : false },
         isStart: true,
-        status: GameStatus.GAME,
       }));
 
       BackgroundMusic.pause();
@@ -67,7 +74,7 @@ const GameEventHandler = () => {
           // 라운드 전환
           setTimeout(() => {
             setGame((prev) => ({ ...prev, stage: GameStage.DEFEND }));
-          }, 2500);
+          }, 1000);
         }
 
         if (stage === 'defend') {
@@ -97,7 +104,7 @@ const GameEventHandler = () => {
                 setTimeout(() => {
                   setGame((prev) => ({
                     ...prev,
-                    stage: Number.isInteger(prev.round + 0.5) ? GameStage.ROUND : GameStage.OFFEND,
+                    stage: Number.isInteger(prev.round + 0.5) ? GameStage.JUDGE : GameStage.OFFEND,
                     round: prev.round + 0.5,
                     user: { ...prev.user, isOffender: !prev.user.isOffender }, // 공수전환
                   }));
@@ -109,29 +116,58 @@ const GameEventHandler = () => {
       }
     });
 
-    socket.on('get_score', (score: number) => {
-      setGame((prev) => ({ ...prev, peer: { ...prev.peer, score } }));
+    socket.on('get_score', (data: { defenderId: string; score: number }) => {
+      if (data.defenderId === socket.id) {
+        setGame((prev) => ({ ...prev, user: { ...prev.user, score: data.score } }));
+      } else {
+        setGame((prev) => ({ ...prev, peer: { ...prev.peer, score: data.score } }));
+      }
+    });
+
+    socket.on('get_point', (winnerId: string) => {
+      if (winnerId === socket.id) {
+        setGame((prev) => ({ ...prev, user: { ...prev.user, point: prev.user.point + 1 } }));
+      } else {
+        setGame((prev) => ({ ...prev, peer: { ...prev.peer, point: prev.peer.point + 1 } }));
+      }
     });
 
     socket.on('get_change_stage', (stage: number) => {
       setGame((prev) => ({ ...prev, stage }));
-    });
 
-    socket.on('get_change_status', (status: number) => {
-      setGame((prev) => ({ ...prev, status }));
-    });
-
-    // 아이템 라운드 관리
-    socket.on('get_item_type', (ItemType: number) => {
-      setGame((prev) => ({ ...prev, item_type: ItemType }));
+      if (stage === GameStage.ROUND) {
+        // 라운드 시작 시 점수 초기화
+        setGame((prev) => ({
+          ...prev,
+          user: { ...prev.user, score: 0 },
+          peer: { ...prev.peer, score: 0 },
+        }));
+      }
     });
 
     // 게임이 끝났을 때
-    socket.on('get_finish', () => {
-      GameMusic.currentTime = 0;
-      GameMusic.pause();
-      resetGame();
+    socket.on('get_result', () => {
+      POTG.play();
+      POTG.volume = 0.6;
+      // 게임 start 상태를 false로 바꿔서 결과를 보여주는 도중 상대가 나가도 튕기지 않게 하고
+      // 화면을 GameBox에서 WaitingBox로 전환하여 결과를 채팅으로 보여줄 수 있도록 한다.
+      setGame((prev) => ({ ...prev, isStart: false }));
     });
+
+    // 게임 결과를 모두 보여줬을 때
+    socket.on('get_finish', () => {
+      POTG.currentTime = 0;
+      POTG.pause();
+      resetGame();
+
+      if (prevBgmState) {
+        setTimeout(() => {
+          BackgroundMusic.currentTime = 0;
+          BackgroundMusic.play();
+        }, 2000);
+      }
+    });
+
     return () => {
       socket.removeAllListeners();
     };

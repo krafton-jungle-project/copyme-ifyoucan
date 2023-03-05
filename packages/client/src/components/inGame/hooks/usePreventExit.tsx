@@ -11,6 +11,6 @@ function usePreventExit() {
     (() => window.addEventListener('beforeunload', preventDefault))();
     return () => window.removeEventListener('beforeunload', preventDefault);
   }, []);
-};
+}
 
 export { usePreventExit };

@@ -1,10 +1,10 @@
+import styled from '@emotion/styled';
 import classNames from 'classnames';
+import { useAtomValue } from 'jotai';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import styled from '@emotion/styled';
-import { useClientSocket } from '../../../module/client-socket';
-import { useAtomValue } from 'jotai';
 import { gameAtom } from '../../../app/game';
+import { useClientSocket } from '../../../module/client-socket';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -16,8 +16,8 @@ const Container = styled.div<{ isStart: boolean }>`
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 1rem;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff;
-  transition-property: top;
-  transition-duration: 0.5s;
+  transition: 0.5s;
+  transition-delay: ${(props) => (props.isStart ? 'none' : '0.5s')};
 `;
 
 const ChatWrapper = styled.div`
@@ -90,7 +90,7 @@ const FormWrapper = styled.div`
   left: 2%;
   width: 96%;
   height: 10%;
-  bottom: 0%;
+  bottom: 0;
   border-top: 2px solid rgba(255, 255, 255, 0.5);
 `;
 

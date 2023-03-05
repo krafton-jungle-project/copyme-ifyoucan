@@ -11,15 +11,22 @@ export interface IChat {
   isImg: boolean;
 }
 
+export interface IGameMode {
+  round1: number;
+  round2: number;
+  round3: number;
+}
+
 export interface ServerToClientEvents {
   full: () => void;
   get_rooms: (rooms: Rooms) => void;
-  new_room: (roomId: string) => void;
-  get_ready: () => void;
-  get_unready: () => void;
-  get_start: () => void;
-  get_score: (score: number) => void;
+  new_room: (roomId: string, gameMode: IGameMode) => void;
+  get_ready: (socketId: string) => void;
+  get_unready: (socketId: string) => void;
+  get_start: (socketId: string) => void;
+  get_score: (data: { defenderId: string; score: number }) => void;
   get_count_down: (count: number, stage: string) => void;
+  get_result: () => void;
   get_finish: () => void;
   peer: (data: { id: string; nickName: string }) => void;
   greeting: (data: { message: string }) => void;
@@ -33,9 +40,8 @@ export interface ServerToClientEvents {
   message: (chat: IChat) => void;
   user_exit: (isStart: boolean) => void;
   get_change_stage: (stage: number) => void;
-  get_change_status: (stage: number) => void;
   get_upload: (images: string[]) => void;
-  get_item_type: (status: number) => void;
+  get_point: (winner: string) => void;
 }
 
 export interface ClientToServerEvents {
@@ -45,7 +51,7 @@ export interface ClientToServerEvents {
    * 서버에서는 get_rooms 이벤트를 통해 응답합니다.
    */
   rooms: () => void;
-  create_room: (roomName: string) => void;
+  create_room: (data: { roomName: string; gameMode: IGameMode; thumbnailIdx: number }) => void;
   join_room: (data: { roomId: string; nickName: string }) => void;
   exit_room: (nickName: string) => void;
   ready: (roomId: string) => void;
@@ -54,6 +60,7 @@ export interface ClientToServerEvents {
   score: (score: number) => void;
   round_score: (score: number) => void;
   result: () => void;
+  finish: () => void;
   count_down: (stage: string) => void;
   offer: (data: {
     sdp: RTCSessionDescriptionInit;
@@ -73,15 +80,14 @@ export interface ClientToServerEvents {
   }) => void;
   message: (message: string, callback: (chat: IChat) => void) => void;
   change_stage: (stage: number) => void;
-  change_status: (status: number) => void;
-  finish: () => void;
-  item_type: (status: number) => void;
+  point: (winnerId: string) => void;
 }
 
 export interface InterServerEvents {
   get_rooms: (rooms: Rooms) => void;
-  new_room: (roomId: string) => void;
-  get_start: () => void;
+  new_room: (roomId: string, gameMode: IGameMode) => void;
+  get_start: (socketId: string) => void;
+  get_score: (data: { defenderId: string; score: number }) => void;
   peer: (data: { id: string; nickName: string }) => void;
   get_count_down: (count: number, stage: string) => void;
   get_offer: (offer: {
@@ -95,10 +101,12 @@ export interface InterServerEvents {
   full: () => void; //todo
   message: (chat: IChat) => void;
   get_change_stage: (stage: number) => void;
-  get_change_status: (stage: number) => void;
+  get_result: () => void;
   get_finish: () => void;
   get_upload: (images: string[]) => void;
-  get_item_type: (status: number) => void;
+  get_ready: (socketId: string) => void;
+  get_unready: (socketId: string) => void;
+  get_point: (winnerId: string) => void;
 }
 
 export interface SocketData {
