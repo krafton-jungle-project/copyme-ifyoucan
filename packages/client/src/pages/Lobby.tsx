@@ -217,14 +217,13 @@ const nickNameArr = [
 
 const randomIdx = Math.floor(Math.random() * 10);
 export let myNickName = nickNameArr[randomIdx]; //temp
-
-export let prevBgmState = true;
+export let prevBgmState = true; //temp
 
 function Lobby() {
   const navigate = useNavigate();
   const [mode, setMode] = useState('플레이');
   const { isStreamReady } = useMovenetStream();
-  const [muteImg, setMuteImg] = useState(prevBgmState === true ? bgmOffImg : bgmOnImg);
+  const [muteImg, setMuteImg] = useState(prevBgmState === true ? bgmOffImg : bgmOnImg); //temp
   let content;
 
   switch (mode) {
@@ -280,6 +279,7 @@ function Lobby() {
   };
 
   useEffect(() => {
+    //temp
     if (prevBgmState === true) {
       setTimeout(() => {
         BackgroundMusic.play();

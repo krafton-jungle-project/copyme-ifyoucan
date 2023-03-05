@@ -27,6 +27,7 @@ import lose from '../assets/sounds/lose.mp3';
 import youwin from '../assets/sounds/you-win.mp3';
 import youlose from '../assets/sounds/you-lose.mp3';
 import coin from '../assets/sounds/coin3.mp3'; //temp
+import notice from '../assets/sounds/notice.mp3';
 
 const CountDown = new Audio(countdown);
 const GameMusic = new Audio(gamemusic);
@@ -57,6 +58,7 @@ const Lose = new Audio(lose);
 const YouWin = new Audio(youwin);
 const YouLose = new Audio(youlose);
 const Coin = new Audio(coin);
+const Notice = new Audio(notice);
 
 export {
   CountDown,
@@ -88,4 +90,5 @@ export {
   YouWin,
   YouLose,
   Coin,
+  Notice,
 };

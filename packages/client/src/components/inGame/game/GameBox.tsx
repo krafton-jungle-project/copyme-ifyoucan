@@ -5,12 +5,16 @@ import { gameAtom, GameStage } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
 import { roomInfoAtom } from '../../../app/room';
 import arrowImg from '../../../assets/images/in-game/arrow.png';
-import gameOverImg from '../../../assets/images/in-game/game-over.gif';
 import loseImg from '../../../assets/images/in-game/lose.gif';
-import roundOneImg from '../../../assets/images/in-game/round-one.gif';
-import roundThreeImg from '../../../assets/images/in-game/round-three.gif';
-import roundTwoImg from '../../../assets/images/in-game/round-two.gif';
-import transitionImg from '../../../assets/images/in-game/transition.gif';
+import blurImg from '../../../assets/images/in-game/notice/blur.gif';
+import gameOverImg from '../../../assets/images/in-game/notice/game-over.gif';
+import normalImg from '../../../assets/images/in-game/notice/normal.png';
+import rotateImg from '../../../assets/images/in-game/notice/rotate.gif';
+import roundOneImg from '../../../assets/images/in-game/notice/round-one.gif';
+import roundThreeImg from '../../../assets/images/in-game/notice/round-three.gif';
+import roundTwoImg from '../../../assets/images/in-game/notice/round-two.gif';
+import sizeDownImg from '../../../assets/images/in-game/notice/sizedown.gif';
+import transitionImg from '../../../assets/images/in-game/notice/transition.gif';
 import winImg from '../../../assets/images/in-game/win.gif';
 import transparentImg from '../../../assets/images/transparent.png';
 import { useClientSocket } from '../../../module/client-socket';
@@ -20,6 +24,7 @@ import {
   GameMusic,
   GameOver,
   Lose,
+  Notice,
   RoundOne,
   RoundThree,
   RoundTwo,
@@ -175,12 +180,12 @@ const FadeBackGround = styled.div<{ visible: boolean }>`
   transform: translate(-50%, -50%);
   width: 200%;
   height: 200%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.8);
   border: 5px solid white;
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `;
 
-const RoundImg = styled.img`
+const NoticeImg = styled.img`
   position: absolute;
   z-index: 1;
   top: 50%;
@@ -227,15 +232,19 @@ const PeerJudgeImg = styled.img`
   width: 80%;
 `;
 
+const roundSound = [RoundOne, RoundTwo, RoundThree];
+const roundImg = [roundOneImg, roundTwoImg, roundThreeImg];
+const gameModeImg = [normalImg, blurImg, rotateImg, sizeDownImg];
+
 function GameBox() {
   const game = useAtomValue(gameAtom);
-  const host = useAtomValue(roomInfoAtom).host;
+  const { host, gameMode } = useAtomValue(roomInfoAtom);
   const { socket } = useClientSocket();
   const peerNickName = useAtomValue(peerInfoAtom).nickName;
   const myVideoRef = useRef<HTMLVideoElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null);
   const [focus, setFocus] = useState('noMe');
-  let [roundImg, setRoundImg] = useState(transparentImg);
+  let [noticeImg, setNoticeImg] = useState(transparentImg);
   let [myJudgeImg, setMyJudgeImg] = useState(transparentImg);
   let [peerJudgeImg, setPeerJudgeImg] = useState(transparentImg);
 
@@ -266,52 +275,52 @@ function GameBox() {
   }, [game.stage, game.countDown]);
 
   useEffect(() => {
-    // 라운드 시작 안내
     if (game.stage === GameStage.ROUND) {
-      switch (game.round) {
-        case 1:
-          RoundOne.play();
-          setRoundImg(roundOneImg);
-          break;
-        case 2:
-          RoundTwo.play();
-          setRoundImg(roundTwoImg);
-          break;
-        case 3:
-          RoundThree.play();
-          setRoundImg(roundThreeImg);
-          break;
-        case 4:
-          GameMusic.currentTime = 0;
-          GameMusic.pause();
-          GameOver.play();
-          setRoundImg(gameOverImg);
-          break;
-        default:
-          break;
-      }
-      setTimeout(() => {
-        setRoundImg(transparentImg);
+      // 라운드 시작 및 게임 모드 안내
+      if (game.round < 4) {
+        roundSound[game.round - 1].play();
+        setNoticeImg(roundImg[game.round - 1]);
 
-        if (host) {
-          if (game.round < 4) {
-            socket.emit('change_stage', GameStage.OFFEND);
-          } else {
+        setTimeout(() => {
+          Notice.play();
+          const round = `round${game.round}` as keyof typeof gameMode;
+          setNoticeImg(gameModeImg[gameMode[round]]);
+
+          setTimeout(() => {
+            setNoticeImg(transparentImg);
+
+            if (host) {
+              socket.emit('change_stage', GameStage.OFFEND);
+            }
+          }, 2500);
+        }, 2500);
+      }
+      // 게임 종료 안내
+      else {
+        GameMusic.currentTime = 0;
+        GameMusic.pause();
+        GameOver.play();
+        setNoticeImg(gameOverImg);
+
+        setTimeout(() => {
+          setNoticeImg(transparentImg);
+
+          if (host) {
             socket.emit('result');
           }
-        }
-      }, 2000);
+        }, 2000);
+      }
     }
     // 공수 전환 안내
     else if (game.stage === GameStage.OFFEND) {
       // x.5 라운드
       if (game.round % 1 !== 0) {
         Transition.play();
-        setRoundImg(transitionImg);
+        setNoticeImg(transitionImg);
       }
 
       setTimeout(() => {
-        setRoundImg(transparentImg);
+        setNoticeImg(transparentImg);
 
         if (host) {
           socket.emit('count_down', 'offend');
@@ -373,7 +382,7 @@ function GameBox() {
           <MyJudgeImg alt="my judge image" src={myJudgeImg} />
         </CameraWrapper>
       </Wrapper>
-      <RoundImg alt="round image" src={roundImg} />
+      <NoticeImg alt="round image" src={noticeImg} />
       <Judge isJudgement={game.stage === GameStage.JUDGE}>
         {game.user.score >= game.peer.score ? '>' : '<'}
       </Judge>
@@ -389,7 +398,7 @@ function GameBox() {
         </CameraWrapper>
       </Wrapper>
       <InvisibleDrawingCanvas />
-      <FadeBackGround visible={roundImg !== transparentImg || game.stage === GameStage.JUDGE} />
+      <FadeBackGround visible={noticeImg !== transparentImg || game.stage === GameStage.JUDGE} />
     </Container>
   );
 }
