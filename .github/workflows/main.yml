@@ -28,6 +28,7 @@ jobs:
       - name: create env file
         working-directory: ./packages/server
         run: |
+          touch .env
           echo "MONGODB_URI=${{ secrets.NEST_APP_MONGODB_URI }}" >> .env
           echo "PORT=${{ secrets.NEST_APP_PORT }}" >> .env
           echo "JWT_SECRET=${{ secrets.NEST_APP_JWT_SECRET }}" >> .env
@@ -43,10 +44,10 @@ jobs:
         run: |
           yarn install
 
-      - name: build client
-        run: yarn client:build
-        env:
-          CI: ''
+      # - name: build client
+      #   run: yarn client:build
+      #   env:
+      #     CI: ''
 
       - name: build server
         run: yarn server:build
