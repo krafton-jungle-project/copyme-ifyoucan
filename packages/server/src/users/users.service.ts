@@ -13,6 +13,10 @@ export class UsersService {
     if (isUserExist) {
       throw new UnauthorizedException('해당하는 아이디는 이미 존재합니다.');
     }
+    const isNicknameExist = await this.usersRepository.existsByNickname(name);
+    if (isNicknameExist) {
+      throw new UnauthorizedException('해당하는 닉네임은 이미 존재합니다.');
+    }
     //비밀번호 암호화를 하자 bycript=> hash를 해준다.(설치해야 함)
     const hashedPassword = await bcrypt.hash(password, 10);
 
