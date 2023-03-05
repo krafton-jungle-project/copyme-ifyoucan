@@ -3,7 +3,7 @@ import styled, { css, keyframes } from 'styled-components';
 import jjang9 from '../../../assets/images/gameMode/jjang9.png';
 import jjang9spin from '../../../assets/images/gameMode/jjang9spin.png';
 import jjanggu from '../../../assets/images/gameMode/jjanggu.png';
-import { Pyororong, SizeDown, Spin } from '../../../utils/sound';
+import { Blur, SizeDown, Spin } from '../../../utils/sound';
 
 const blur = keyframes`
   from {
@@ -128,7 +128,7 @@ const Div = styled.div<{ mode: string }>`
 
 const mode = ['normal', 'blur', 'spin', 'sizedown'];
 const modeName = ['일반', '블러', '회전', '축소'];
-const sound = [Spin, Pyororong, Spin, SizeDown];
+const sound = [Spin, Blur, Spin, SizeDown];
 
 function ItemGuide() {
   const [highlighted, setHighlighted] = useState<number>(-1);

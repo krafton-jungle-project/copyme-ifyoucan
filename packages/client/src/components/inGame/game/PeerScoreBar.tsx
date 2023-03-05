@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai';
 import styled, { css, keyframes } from 'styled-components';
 import { gameAtom, GameStage } from '../../../app/game';
+import useCountNum from '../hooks/useCountNum';
 
 const Container = styled.div`
   position: absolute;
@@ -40,10 +41,10 @@ const ScoreBar = styled.div<{ isInit: boolean; score: number; isDefense: boolean
   width: 100%;
   height: ${(props) => `${props.score.toString()}%`};
   transition: ${(props) => (props.isInit ? 'height 1.5s linear 1.2s' : 'height 0.5s linear')};
-  background-color: ${(props) => (props.score >= 60 ? '#1f51ff' : '#888')};
+  background-color: ${(props) => (props.score >= 50 ? '#1f51ff' : '#888')};
   border-radius: 20px;
   ${(props) =>
-    (props.isInit || (props.score >= 60 && props.isDefense)) &&
+    (props.isInit || (props.score >= 50 && props.isDefense)) &&
     css`
       background-color: #1f51ff;
       animation: ${animate} 1.5s linear infinite;
@@ -62,7 +63,7 @@ const ScorePercent = styled.div<{ isJudgement: boolean }>`
   font-size: 40px;
   font-weight: bold;
   color: #1f51ff;
-  transition: 0.5s;
+  transition: 0.3s;
 
   ${(props) =>
     props.isJudgement &&
@@ -99,7 +100,9 @@ function PeerScoreBar() {
 
   return (
     <Container>
-      <ScorePercent isJudgement={game.stage === GameStage.JUDGE}>{game.peer.score}</ScorePercent>
+      <ScorePercent isJudgement={game.stage === GameStage.JUDGE}>
+        {useCountNum(game.peer.score, game.stage === GameStage.JUDGE ? 800 : 0)}
+      </ScorePercent>
       <ScoreBarWrapper>
         <ScoreBar
           isInit={game.stage === GameStage.INITIAL}

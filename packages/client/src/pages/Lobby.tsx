@@ -19,15 +19,15 @@ import { BackgroundMusic, ButtonClick1, ButtonClick2 } from '../utils/sound';
 
 const Container = styled.div`
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
 `;
 
 const Wrapper = styled.div`
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   height: 80%;
   aspect-ratio: 3 / 2;
   min-width: 900px;
@@ -168,8 +168,7 @@ const VerticalLine = styled.div`
 const Section = styled.div`
   position: absolute;
   top: 20%;
-  left: 50%;
-  transform: translate(-50%);
+  left: 5%;
   width: 90%;
   height: 70%;
   border: 2px solid #fff8;
@@ -202,13 +201,14 @@ const Producer = styled.div`
 `;
 
 export let myNickName = '';
-export let prevBgmState = true;
 
 function Lobby() {
   const navigate = useNavigate();
   const [mode, setMode] = useState('플레이');
   const { isStreamReady } = useMovenetStream();
-  const [muteImg, setMuteImg] = useState(prevBgmState === true ? bgmOffImg : bgmOnImg); //temp
+  const [muteImg, setMuteImg] = useState(
+    localStorage.getItem('bgm') === 'on' ? bgmOffImg : bgmOnImg,
+  );
   const exitInGame = useAtomValue(exitInGameAtom);
   let content;
   switch (mode) {
@@ -237,9 +237,9 @@ function Lobby() {
     if (exitInGame) {
       window.location.reload();
     }
-    
+
     // 배경음악 설정 상태에 따라 배경음악 재생
-    if (prevBgmState === true) {
+    if (localStorage.getItem('bgm') === 'on') {
       setTimeout(() => {
         BackgroundMusic.play();
         BackgroundMusic.volume = 0.5;
@@ -268,13 +268,13 @@ function Lobby() {
   };
 
   const bgmHandler = () => {
-    if (prevBgmState === true) {
-      prevBgmState = false;
+    if (localStorage.getItem('bgm') === 'on') {
+      localStorage.setItem('bgm', 'off');
       ButtonClick1.play();
       BackgroundMusic.pause();
       setMuteImg(bgmOnImg);
     } else {
-      prevBgmState = true;
+      localStorage.setItem('bgm', 'on');
       ButtonClick1.play();
       BackgroundMusic.play();
       setMuteImg(bgmOffImg);

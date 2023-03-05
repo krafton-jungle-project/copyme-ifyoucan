@@ -78,13 +78,12 @@ const fadeOut = keyframes`
 `;
 
 const PopUpContainer = styled.div<{ isPopUped: boolean }>`
-  position: absolute;
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, calc(-54.5%));
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
   background-color: #000d;
@@ -112,6 +111,7 @@ const PopUpWrapper = styled.div`
   grid-template-columns: 20% 60% 20%;
   grid-template-rows: calc(100% * 7 / 8) calc(100% * 1 / 8);
   height: 85%;
+  max-width: 100%;
   aspect-ratio: 25 / 24;
 `;
 

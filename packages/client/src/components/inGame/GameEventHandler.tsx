@@ -3,7 +3,6 @@ import { useResetAtom } from 'jotai/utils';
 import { useEffect } from 'react';
 import { gameAtom, GameStage } from '../../app/game';
 import { useClientSocket } from '../../module/client-socket';
-import { prevBgmState } from '../../pages/Lobby';
 import {
   BackgroundMusic,
   Bell,
@@ -151,16 +150,15 @@ const GameEventHandler = () => {
       POTG.volume = 0.6;
       // 게임 start 상태를 false로 바꿔서 결과를 보여주는 도중 상대가 나가도 튕기지 않게 하고
       // 화면을 GameBox에서 WaitingBox로 전환하여 결과를 채팅으로 보여줄 수 있도록 한다.
-      setGame((prev) => ({ ...prev, isStart: false }));
+      resetGame();
     });
 
     // 게임 결과를 모두 보여줬을 때
     socket.on('get_finish', () => {
       POTG.currentTime = 0;
       POTG.pause();
-      resetGame();
 
-      if (prevBgmState) {
+      if (localStorage.getItem('bgm') === 'on') {
         setTimeout(() => {
           BackgroundMusic.currentTime = 0;
           BackgroundMusic.play();

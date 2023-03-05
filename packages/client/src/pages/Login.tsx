@@ -169,9 +169,11 @@ function Login() {
         const jwtToken = res.data.data.token;
         setCookie('accessJwtToken', jwtToken);
         const decodedUserInfo = jwt_decode(jwtToken); // 토큰 decode
-        localStorage.setItem('userInfo', JSON.stringify(decodedUserInfo)); //토큰에 저장되어있는 userInfo 저장
-        //로그인 해야지만 다음 이동 가능하게
+        localStorage.setItem('userInfo', JSON.stringify(decodedUserInfo)); // 토큰에 저장되어있는 userInfo 저장
+        // 로그인 해야만 다음 이동 가능하게
         localStorage.setItem('isAuthenticated', 'true');
+        // 배경음악 on으로 설정
+        localStorage.setItem('bgm', 'on');
         // 메인으로 이동
         navigate('/', { replace: true }); // 성공시 이동될 url 적용하기
 
