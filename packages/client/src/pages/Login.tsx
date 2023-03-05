@@ -163,7 +163,7 @@ function Login() {
       const decodedUserInfo = jwt_decode(jwtToken); // 토큰 decode
       localStorage.setItem('userInfo', JSON.stringify(decodedUserInfo)); //토큰에 저장되어있는 userInfo 저장
       //로그인 해야지만 다음 이동 가능하게
-      sessionStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('isAuthenticated', 'true');
       // 메인으로 이동
       navigate('/', { replace: true }); // 성공시 이동될 url 적용하기
 
