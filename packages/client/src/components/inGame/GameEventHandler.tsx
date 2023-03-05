@@ -1,10 +1,9 @@
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
 import { useEffect } from 'react';
 import { gameAtom, GameStage } from '../../app/game';
-import { roomInfoAtom } from '../../app/room';
 import { useClientSocket } from '../../module/client-socket';
-import { myNickName, prevBgmState } from '../../pages/Lobby';
+import { prevBgmState } from '../../pages/Lobby';
 import {
   BackgroundMusic,
   Bell,
@@ -18,34 +17,33 @@ import {
 
 const GameEventHandler = () => {
   const { socket } = useClientSocket();
-  const host = useAtomValue(roomInfoAtom).host;
   const setGame = useSetAtom(gameAtom);
   const resetGame = useResetAtom(gameAtom);
 
   useEffect(() => {
-    socket.on('get_ready', () => {
+    socket.on('get_ready', (socketId: string) => {
       GunReload.play();
-      if (host) {
-        setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: true } }));
-      } else {
+      if (socketId === socket.id) {
         setGame((prev) => ({ ...prev, user: { ...prev.user, isReady: true } }));
+      } else {
+        setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: true } }));
       }
     });
 
-    socket.on('get_unready', () => {
+    socket.on('get_unready', (socketId: string) => {
       GunReload.play();
-      if (host) {
-        setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: false } }));
-      } else {
+      if (socketId === socket.id) {
         setGame((prev) => ({ ...prev, user: { ...prev.user, isReady: false } }));
+      } else {
+        setGame((prev) => ({ ...prev, peer: { ...prev.peer, isReady: false } }));
       }
     });
 
     // 게임 Status를 waiting에서 game으로 바꾼다
-    socket.on('get_start', () => {
+    socket.on('get_start', (socketId: string) => {
       setGame((prev) => ({
         ...prev,
-        user: { ...prev.user, isOffender: host ? true : false },
+        user: { ...prev.user, isOffender: socketId === socket.id ? true : false },
         isStart: true,
       }));
 
@@ -118,16 +116,16 @@ const GameEventHandler = () => {
       }
     });
 
-    socket.on('get_score', (data: { defender: string; score: number }) => {
-      if (data.defender === myNickName) {
+    socket.on('get_score', (data: { defenderId: string; score: number }) => {
+      if (data.defenderId === socket.id) {
         setGame((prev) => ({ ...prev, user: { ...prev.user, score: data.score } }));
       } else {
         setGame((prev) => ({ ...prev, peer: { ...prev.peer, score: data.score } }));
       }
     });
 
-    socket.on('get_point', (winner: string) => {
-      if (winner === myNickName) {
+    socket.on('get_point', (winnerId: string) => {
+      if (winnerId === socket.id) {
         setGame((prev) => ({ ...prev, user: { ...prev.user, point: prev.user.point + 1 } }));
       } else {
         setGame((prev) => ({ ...prev, peer: { ...prev.peer, point: prev.peer.point + 1 } }));

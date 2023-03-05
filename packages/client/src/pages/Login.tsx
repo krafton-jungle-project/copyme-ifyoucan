@@ -1,10 +1,8 @@
 import axios from 'axios';
-import { useAtom } from 'jotai';
 import jwt_decode from 'jwt-decode';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { isModalOpenedAtom } from '../app/login';
 import logoImg from '../assets/images/logo.png';
 import Loading from '../components/lobby/Loading';
 import RegisterModal from '../components/member/RegisterModal';
@@ -31,7 +29,6 @@ const Container = styled.div<{ isModalOpened: boolean }>`
     props.isModalOpened &&
     css`
       z-index: -1;
-      box-shadow: none;
     `}
 `;
 
@@ -125,7 +122,7 @@ function Login() {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
   const navigate = useNavigate();
-  const [isModalOpened, setIsModalOpened] = useAtom(isModalOpenedAtom);
+  const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
   const { isStreamReady } = useMovenetStream();
 
   function openModal() {
@@ -175,7 +172,7 @@ function Login() {
 
   return (
     <>
-      {isModalOpened && <RegisterModal />}
+      {isModalOpened && <RegisterModal setIsModalOpened={setIsModalOpened} />}
       {!isStreamReady ? <Loading /> : null}
       <Container isModalOpened={isModalOpened}>
         <Form>

@@ -240,7 +240,7 @@ function GameBox() {
   const game = useAtomValue(gameAtom);
   const { host, gameMode } = useAtomValue(roomInfoAtom);
   const { socket } = useClientSocket();
-  const peerNickName = useAtomValue(peerInfoAtom).nickName;
+  const peerInfo = useAtomValue(peerInfoAtom);
   const myVideoRef = useRef<HTMLVideoElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null);
   const [focus, setFocus] = useState('noMe');
@@ -342,7 +342,7 @@ function GameBox() {
           setPeerJudgeImg(loseImg);
 
           if (host) {
-            socket.emit('point', myNickName);
+            socket.emit('point', socket.id);
           }
         } else {
           Lose.play();
@@ -350,7 +350,7 @@ function GameBox() {
           setPeerJudgeImg(winImg);
 
           if (host) {
-            socket.emit('point', peerNickName);
+            socket.emit('point', peerInfo.socketId);
           }
         }
 
@@ -392,7 +392,7 @@ function GameBox() {
           <GameRole isMe={false} focus={focus}>
             {game.user.isOffender ? '수비자' : '공격자'}
           </GameRole>
-          <NickNameBox>{peerNickName}</NickNameBox>
+          <NickNameBox>{peerInfo.nickName}</NickNameBox>
           <PeerCanvas peerVideoRef={peerVideoRef} />
           <PeerJudgeImg alt="peer judge image" src={peerJudgeImg} />
         </CameraWrapper>

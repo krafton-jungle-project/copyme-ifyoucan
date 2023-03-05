@@ -1,8 +1,8 @@
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { gameAtom } from '../../app/game';
-import { roomInfoAtom } from '../../app/room';
+import { exitInGameAtom, roomInfoAtom } from '../../app/room';
 import exitImg from '../../assets/images/in-game/exit.png';
 import logoImg from '../../assets/images/logo.png';
 import { useClientSocket } from '../../module/client-socket';
@@ -100,6 +100,7 @@ function InGame() {
   const { socket } = useClientSocket();
   const roomInfo = useAtomValue(roomInfoAtom);
   const game = useAtomValue(gameAtom);
+  const setExitInGame = useSetAtom(exitInGameAtom);
   const navigate = useNavigate();
 
   function onStart() {
@@ -125,6 +126,7 @@ function InGame() {
       BackgroundMusic.currentTime = 0;
       const check = window.confirm('🔴 게임 중에 나가면 게임 결과가 저장되지 않습니다!! 🔴');
       if (check) {
+        setExitInGame(true);
         navigate('/', { replace: true });
       }
     } else {

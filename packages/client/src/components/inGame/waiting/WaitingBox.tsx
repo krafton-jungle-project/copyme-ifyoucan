@@ -31,6 +31,7 @@ const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
 const pop = keyframes`
   0%, 100% {
     transform: rotate(0deg);
+    font-size: 40px;
   }
   50% {
     transform: rotate(30deg);
@@ -40,15 +41,15 @@ const pop = keyframes`
 
 const glow = keyframes`
   0%, 100% {
-    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff3131, 0 0 20px #ff3131;
+    text-shadow: 0 0 10px #fff, 0 0 10px #fff, 0 0 20px #fff, 0 0 20px #fff;
   }
   50% {
-    text-shadow: 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff3131, 0 0 25px #ff3131
+    text-shadow: 0 0  20px #fff, 0 0  20px #fff, 0 0 40px #fff, 0 0 40px #fff
 
   }
 `;
 
-const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`
+const ReadyState = styled.div<{ isMe: boolean; isHost: boolean; isReady: boolean }>`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -58,14 +59,15 @@ const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`
   height: 12%;
   font-size: 30px;
   font-weight: bold;
-  color: ${(props) => (props.isHost ? 'yellow' : props.isReady ? 'red' : 'grey')};
+  color: ${(props) =>
+    props.isHost ? 'yellow' : props.isReady ? (props.isMe ? 'red' : 'blue') : 'grey'};
   transition: 0.5s;
 
   ${(props) =>
     props.isReady &&
     css`
+      font-size: 40px;
       font-weight: 900;
-      -webkit-text-stroke: 0.5px #fff8;
       animation-name: ${pop}, ${glow};
       animation-duration: 0.3s, 1s;
       animation-iteration-count: 1, infinite;
@@ -93,14 +95,14 @@ function WaitingBox() {
   return (
     <Container isStart={game.isStart}>
       <Wrapper isMe={true} isStart={game.isStart}>
-        <ReadyState isHost={roomInfo.host} isReady={game.user.isReady}>
+        <ReadyState isMe={true} isHost={roomInfo.host} isReady={game.user.isReady}>
           {roomInfo.host ? '👑 HOST' : game.user.isReady ? 'READY' : 'NOT READY'}
         </ReadyState>
         <MyVideo />
         <NickNameBox>{myNickName}</NickNameBox>
       </Wrapper>
       <Wrapper isMe={false} isStart={game.isStart}>
-        <ReadyState isHost={!roomInfo.host} isReady={game.peer.isReady}>
+        <ReadyState isMe={false} isHost={!roomInfo.host} isReady={game.peer.isReady}>
           {roomInfo.host
             ? peerInfo.nickName
               ? game.peer.isReady
