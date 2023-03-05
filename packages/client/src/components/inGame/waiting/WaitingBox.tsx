@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
 import { roomInfoAtom } from '../../../app/room';
@@ -28,6 +28,26 @@ const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
   transition-delay: ${(props) => (props.isStart ? 'none' : '0.5s')};
 `;
 
+const pop = keyframes`
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(30deg);
+    font-size: 48px;
+  }
+`;
+
+const glow = keyframes`
+  0%, 100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff3131, 0 0 20px #ff3131;
+  }
+  50% {
+    text-shadow: 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff3131, 0 0 25px #ff3131
+
+  }
+`;
+
 const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`
   position: absolute;
   display: flex;
@@ -35,10 +55,22 @@ const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`
   align-items: center;
   top: 0;
   width: 100%;
-  height: 15%;
+  height: 12%;
   font-size: 30px;
   font-weight: bold;
   color: ${(props) => (props.isHost ? 'yellow' : props.isReady ? 'red' : 'grey')};
+  transition: 0.5s;
+
+  ${(props) =>
+    props.isReady &&
+    css`
+      font-weight: 900;
+      -webkit-text-stroke: 0.5px #fff8;
+      animation-name: ${pop}, ${glow};
+      animation-duration: 0.3s, 1s;
+      animation-iteration-count: 1, infinite;
+      animation-timing-function: ease-in-out, ease-in-out;
+    `}
 `;
 
 const NickNameBox = styled.div`
@@ -48,7 +80,7 @@ const NickNameBox = styled.div`
   align-items: center;
   bottom: 0;
   width: 100%;
-  height: 15%;
+  height: 12%;
   font-size: 30px;
   font-weight: bold;
 `;
