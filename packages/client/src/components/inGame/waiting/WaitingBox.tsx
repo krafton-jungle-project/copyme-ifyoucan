@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
 import { roomInfoAtom } from '../../../app/room';
@@ -19,7 +19,7 @@ const Container = styled.div<{ isStart: boolean }>`
 const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
   position: absolute;
   top: 50%;
-  transform: translate(0, -50%); /* 세로 가운데 정렬(top: 50%와 같이 사용) */
+  transform: translate(0, -50%);
   left: ${(props) => (props.isMe ? (props.isStart ? '-35%' : '0%') : 'none')};
   right: ${(props) => (props.isMe ? 'none' : props.isStart ? '-35%' : '0%')};
   width: 27.5%;
@@ -28,17 +28,51 @@ const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
   transition-delay: ${(props) => (props.isStart ? 'none' : '0.5s')};
 `;
 
-const ReadyState = styled.div<{ isHost: boolean; isReady: boolean }>`
+const pop = keyframes`
+  0%, 100% {
+    transform: rotate(0deg);
+    font-size: 40px;
+  }
+  50% {
+    transform: rotate(30deg);
+    font-size: 48px;
+  }
+`;
+
+const glow = keyframes`
+  0%, 100% {
+    text-shadow: 0 0 10px #fff, 0 0 10px #fff, 0 0 20px #fff, 0 0 20px #fff;
+  }
+  50% {
+    text-shadow: 0 0  20px #fff, 0 0  20px #fff, 0 0 40px #fff, 0 0 40px #fff
+
+  }
+`;
+
+const ReadyState = styled.div<{ isMe: boolean; isHost: boolean; isReady: boolean }>`
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
   top: 0;
   width: 100%;
-  height: 15%;
+  height: 12%;
   font-size: 30px;
   font-weight: bold;
-  color: ${(props) => (props.isHost ? 'yellow' : props.isReady ? 'red' : 'grey')};
+  color: ${(props) =>
+    props.isHost ? 'yellow' : props.isReady ? (props.isMe ? 'red' : 'blue') : 'grey'};
+  transition: 0.5s;
+
+  ${(props) =>
+    props.isReady &&
+    css`
+      font-size: 40px;
+      font-weight: 900;
+      animation-name: ${pop}, ${glow};
+      animation-duration: 0.3s, 1s;
+      animation-iteration-count: 1, infinite;
+      animation-timing-function: ease-in-out, ease-in-out;
+    `}
 `;
 
 const NickNameBox = styled.div`
@@ -48,7 +82,7 @@ const NickNameBox = styled.div`
   align-items: center;
   bottom: 0;
   width: 100%;
-  height: 15%;
+  height: 12%;
   font-size: 30px;
   font-weight: bold;
 `;
@@ -61,14 +95,14 @@ function WaitingBox() {
   return (
     <Container isStart={game.isStart}>
       <Wrapper isMe={true} isStart={game.isStart}>
-        <ReadyState isHost={roomInfo.host} isReady={game.user.isReady}>
+        <ReadyState isMe={true} isHost={roomInfo.host} isReady={game.user.isReady}>
           {roomInfo.host ? '👑 HOST' : game.user.isReady ? 'READY' : 'NOT READY'}
         </ReadyState>
         <MyVideo />
         <NickNameBox>{myNickName}</NickNameBox>
       </Wrapper>
       <Wrapper isMe={false} isStart={game.isStart}>
-        <ReadyState isHost={!roomInfo.host} isReady={game.peer.isReady}>
+        <ReadyState isMe={false} isHost={!roomInfo.host} isReady={game.peer.isReady}>
           {roomInfo.host
             ? peerInfo.nickName
               ? game.peer.isReady

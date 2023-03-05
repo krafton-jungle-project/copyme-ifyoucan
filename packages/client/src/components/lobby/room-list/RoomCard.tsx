@@ -35,20 +35,31 @@ const Wrapper = styled.div`
 `;
 
 const RoomName = styled.div`
-  display: block;
   font-size: 24px;
   font-weight: 700;
   padding-bottom: 5px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  @media only screen and (max-height: 800px) {
+    font-size: 20px;
+  }
+`;
+
+const RoomGameMode = styled.div`
+  font-size: 16px;
+
+  @media only screen and (max-height: 800px) {
+    font-size: 12px;
+  }
 `;
 
 const HeadCount = styled.div<{ isFull: boolean }>`
   position: absolute;
   bottom: 0;
   left: 0;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   color: ${(props) => (props.isFull ? '#f16' : '#cf0')};
 `;
@@ -76,8 +87,6 @@ const JoinButton = styled.button<{ isFull: boolean }>`
   transition: 0.15s;
 `;
 
-const ThumbnailImg = [RedImg, PinkImg, OrangeImg, YellowImg, GreenImg, BlueImg, PurpleImg];
-
 interface RoomInfo {
   id: string;
   roomName: string;
@@ -88,11 +97,11 @@ interface RoomInfo {
   thumbnailIdx: number;
 }
 
-const mode = ['일반', '블러', '회전', '축소'];
-
 function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
   const navigate = useNavigate();
   const setRoomInfo = useSetAtom(roomInfoAtom);
+  const mode = ['일반', '블러', '회전', '축소'];
+  const ThumbnailImg = [RedImg, PinkImg, OrangeImg, YellowImg, GreenImg, BlueImg, PurpleImg];
 
   const joinRoom = (roomId: string, gameMode: IGameMode) => {
     if (roomInfo.users.length === 1) {
@@ -106,6 +115,10 @@ function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
       <Thumbnail alt="room thumbnail" src={ThumbnailImg[roomInfo.thumbnailIdx]} />
       <Wrapper>
         <RoomName>{roomInfo.roomName}</RoomName>
+        <RoomGameMode>
+          {mode[roomInfo.gameMode.round1]} / {mode[roomInfo.gameMode.round2]} /{' '}
+          {mode[roomInfo.gameMode.round3]}
+        </RoomGameMode>
         <HeadCount isFull={roomInfo.users.length === 2}>{roomInfo.users.length} / 2</HeadCount>
         <JoinButton
           onClick={() => joinRoom(roomInfo.id, roomInfo.gameMode)}
@@ -114,10 +127,6 @@ function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
         >
           {roomInfo.users.length === 2 ? 'FULL' : 'JOIN'}
         </JoinButton>
-        <div>
-          {mode[roomInfo.gameMode.round1]} / {mode[roomInfo.gameMode.round2]} /{' '}
-          {mode[roomInfo.gameMode.round3]}
-        </div>
       </Wrapper>
     </Container>
   );
