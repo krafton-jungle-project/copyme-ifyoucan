@@ -7,7 +7,7 @@ const Container = styled.div`
   position: absolute;
   top: 50%;
   left: 0;
-  transform: translate(0, -50%); /* 세로 가운데 정렬(top: 50%와 같이 사용) */
+  transform: translate(0, -50%);
   width: 100%;
   aspect-ratio: 1;
   border-radius: 20px;

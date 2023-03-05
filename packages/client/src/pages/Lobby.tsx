@@ -28,11 +28,12 @@ const Wrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80%;
+  height: 80%;
   aspect-ratio: 3 / 2;
   min-width: 900px;
   min-height: 600px;
-  max-height: 90%;
+  max-width: 1050px;
+  max-height: 700px;
   background-color: rgba(0, 0, 0, 0.5);
   border: 0.1rem solid #fff;
   border-radius: 40px;
@@ -201,14 +202,13 @@ const Producer = styled.div`
 `;
 
 export let myNickName = '';
-
 export let prevBgmState = true;
 
 function Lobby() {
   const navigate = useNavigate();
   const [mode, setMode] = useState('플레이');
   const { isStreamReady } = useMovenetStream();
-  const [muteImg, setMuteImg] = useState(prevBgmState === true ? bgmOffImg : bgmOnImg);
+  const [muteImg, setMuteImg] = useState(prevBgmState === true ? bgmOffImg : bgmOnImg); //temp
   const exitInGame = useAtomValue(exitInGameAtom);
   let content;
   switch (mode) {
@@ -237,7 +237,7 @@ function Lobby() {
     if (exitInGame) {
       window.location.reload();
     }
-
+    
     // 배경음악 설정 상태에 따라 배경음악 재생
     if (prevBgmState === true) {
       setTimeout(() => {

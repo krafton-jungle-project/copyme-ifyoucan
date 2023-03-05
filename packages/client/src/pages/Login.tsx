@@ -119,11 +119,12 @@ const Btn = styled.div<{ nameTag: string }>`
 `;
 
 function Login() {
-  const [id, setId] = useState('');
-  const [pw, setPw] = useState('');
-  const navigate = useNavigate();
-  const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
   const { isStreamReady } = useMovenetStream();
+  const navigate = useNavigate();
+
+  const [id, setId] = useState<string>('');
+  const [pw, setPw] = useState<string>('');
+  const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
 
   function openModal() {
     setIsModalOpened(true);

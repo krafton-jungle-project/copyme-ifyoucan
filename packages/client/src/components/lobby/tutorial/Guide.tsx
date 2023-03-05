@@ -31,8 +31,6 @@ const Container = styled.div`
 `;
 
 function Guide() {
-  const [content, setContent] = useState('');
-
   const setImg = useSetAtom(tutorialImgAtom);
   const isStarted = useAtomValue(isStartedAtom);
   const isBody = useAtomValue(isBodyAtom);
@@ -41,6 +39,8 @@ function Guide() {
   const isT = useAtomValue(isTPoseAtom);
   const isSDR = useAtomValue(isSDRAtom);
   const isPass = useAtomValue(tutorialPassAtom);
+
+  const [content, setContent] = useState<string>('');
 
   useEffect(() => {
     if (!isStarted) {

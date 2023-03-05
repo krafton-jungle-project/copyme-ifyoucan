@@ -18,9 +18,9 @@ const Container = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  aspect-ratio: 16 / 9;
-  min-width: 900px;
-  min-height: 500px;
+  aspect-ratio: 4 / 3;
+  min-width: 800px;
+  min-height: 600px;
   max-height: 90%;
 `;
 
@@ -98,10 +98,11 @@ const ExitTxt = styled.p`
 
 function InGame() {
   const { socket } = useClientSocket();
-  const roomInfo = useAtomValue(roomInfoAtom);
-  const game = useAtomValue(gameAtom);
-  const setExitInGame = useSetAtom(exitInGameAtom);
   const navigate = useNavigate();
+
+  const game = useAtomValue(gameAtom);
+  const roomInfo = useAtomValue(roomInfoAtom);
+  const setExitInGame = useSetAtom(exitInGameAtom);
 
   function onStart() {
     if (game.isStart || !game.peer.isReady) return;
