@@ -8,6 +8,7 @@ import Loading from '../components/lobby/Loading';
 import RegisterModal from '../components/member/RegisterModal';
 import { useMovenetStream } from '../module/movenet-stream';
 import { setCookie } from '../utils/cookies';
+import { getUser } from '../utils/local-storage';
 import { ButtonClick1 } from '../utils/sound';
 
 const Container = styled.div<{ isModalOpened: boolean }>`
@@ -139,6 +140,15 @@ function Login() {
   }
 
   const onClickConfirmButton = async (e: any) => {
+    const checkLogin = localStorage.getItem('isAuthenticated');
+
+    if (checkLogin === 'true') {
+      const userInfo = getUser();
+      const check = window.confirm(`이미 ${userInfo.nickName}으로 로그인되어 있습니다.`);
+      if (check) {
+        navigate('/login', { replace: true });
+      }
+    }
     e.preventDefault();
     ButtonClick1.play();
     console.log('login');
