@@ -18,7 +18,6 @@ export interface IGameMode {
 }
 
 export interface ServerToClientEvents {
-  full: () => void;
   get_rooms: (rooms: Rooms) => void;
   new_room: (roomId: string, gameMode: IGameMode) => void;
   get_ready: (socketId: string) => void;
@@ -98,7 +97,6 @@ export interface InterServerEvents {
   get_answer: (answer: RTCSessionDescription) => void;
   get_ice: (data: RTCIceCandidate) => void;
   error: () => void;
-  full: () => void; //todo
   message: (chat: IChat) => void;
   get_change_stage: (stage: number) => void;
   get_result: () => void;

@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useAtomValue } from 'jotai';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
 import { gameAtom } from '../../../app/game';
 import { useClientSocket } from '../../../module/client-socket';
 
@@ -65,6 +65,9 @@ const MessageBox = styled.div`
       border: 0;
       border-radius: 0;
       background-color: rgba(255, 255, 255, 0);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin: 20px 0;
     }
   }
 `;

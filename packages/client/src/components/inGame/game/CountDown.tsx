@@ -1,35 +1,74 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { gameAtom, GameStage } from '../../../app/game';
+import { GameMode } from '../../../app/room';
 
-const Container = styled.div`
+const Container = styled.div<{ isMe: boolean; isOffender: boolean; gameMode: number }>`
   position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 40%;
-  aspect-ratio: 1;
-  border-radius: 50%;
+
+  /* 축소 모드가 아니거나 축소 모드이더라도 공격자가 아닐 경우 */
+  ${(props) =>
+    (props.gameMode !== GameMode.SIZEDOWN ||
+      (props.gameMode === GameMode.SIZEDOWN && !props.isOffender)) &&
+    css`
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    `}
+
+  /* 축소 모드일 때 내가 공격자인 경우 */
+  ${(props) =>
+    props.gameMode === GameMode.SIZEDOWN &&
+    props.isMe &&
+    props.isOffender &&
+    css`
+      top: 50%;
+      left: 10%;
+      transform: translate(0, -50%);
+    `}
+
+  /* 축소 모드일 때 상대가 공격자인 경우 */
+  ${(props) =>
+    props.gameMode === GameMode.SIZEDOWN &&
+    !props.isMe &&
+    props.isOffender &&
+    css`
+      top: 50%;
+      right: 10%;
+      transform: translate(0, -50%);
+    `}
+
   font-size: 12vh;
-  font-weight: 400;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 0 20px #39ff14;
 
-  border: 3px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 0 0.2rem rgba(255, 255, 255, 0.6), 0 0 0.2rem rgba(255, 255, 255, 0.6),
-    0 0 2rem rgba(15, 255, 80, 0.1), 0 0 0.8rem rgba(15, 255, 80, 0.1),
-    0 0 2.8rem rgba(15, 255, 80, 0.1), inset 0 0 1.3rem rgba(15, 255, 80, 0.1);
+  &::after {
+    content: attr(data-count);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    color: #39ff14;
+    filter: blur(15px);
+  }
 
-  color: rgba(255, 255, 255, 0.8);
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.8),
-    0 0 50px rgba(255, 255, 255, 0.8), 0 0 42px rgba(15, 255, 80, 0.1),
-    0 0 120px rgba(15, 255, 80, 0.1), 0 0 92px rgba(15, 255, 80, 0.1),
-    0 0 102px rgba(15, 255, 80, 0.1), 0 0 151px rgba(15, 255, 80, 0.1);
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #6bf952;
+    z-index: -2;
+    opacity: 0.2;
+    filter: blur(20px);
+  }
 `;
 
-function CountDown({ isMe }: { isMe: boolean }) {
+function CountDown({ isMe, gameMode }: { isMe: boolean; gameMode: number }) {
   const game = useAtomValue(gameAtom);
   const [visibility, setVisibility] = useState(false);
 
@@ -56,7 +95,20 @@ function CountDown({ isMe }: { isMe: boolean }) {
   } else {
   }
 
-  return <>{visibility && game.countDown > 0 ? <Container>{game.countDown}</Container> : null}</>;
+  return (
+    <>
+      {visibility && game.countDown > 0 ? (
+        <Container
+          data-count={String(game.countDown)}
+          isMe={isMe}
+          isOffender={isMe ? game.user.isOffender : !game.user.isOffender}
+          gameMode={gameMode}
+        >
+          {game.countDown}
+        </Container>
+      ) : null}
+    </>
+  );
 }
 
 export default CountDown;
