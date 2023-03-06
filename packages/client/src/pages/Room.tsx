@@ -13,8 +13,8 @@ import InGame from '../components/inGame/InGame';
 import MotionReady from '../components/inGame/waiting/MotionReady';
 import { useClientSocket } from '../module/client-socket';
 import { useMovenetStream } from '../module/movenet-stream';
+import { getUser } from '../utils/local-storage';
 import { GameMusic, RoomEnter, RoomExit } from '../utils/sound';
-import { myNickName } from './Lobby';
 
 const Container = styled.div`
   position: absolute;
@@ -27,6 +27,7 @@ const Container = styled.div`
 `;
 
 function Room() {
+  const myNickName = getUser().nickName;
   const navigate = useNavigate();
   const { socket } = useClientSocket();
   const resetGame = useResetAtom(gameAtom);

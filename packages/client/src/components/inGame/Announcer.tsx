@@ -5,7 +5,7 @@ import { gameAtom, GameStage } from '../../app/game';
 import { peerInfoAtom } from '../../app/peer';
 import { roomInfoAtom } from '../../app/room';
 import { useClientSocket } from '../../module/client-socket';
-import { myNickName } from '../../pages/Lobby';
+import { getUser } from '../../utils/local-storage';
 
 const Container = styled.div<{ isStart: boolean }>`
   position: absolute;
@@ -35,6 +35,7 @@ const Container = styled.div<{ isStart: boolean }>`
 
 function Announcer() {
   const { socket } = useClientSocket();
+  const myNickName = getUser().nickName;
 
   const game = useAtomValue(gameAtom);
   const host = useAtomValue(roomInfoAtom).host;

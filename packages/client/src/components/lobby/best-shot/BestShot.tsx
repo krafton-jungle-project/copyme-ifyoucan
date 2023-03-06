@@ -215,7 +215,7 @@ function BestShot() {
     setCount(images.length);
     setIndexOfLastPost(currentPage * postPerPage);
     setIndexOfFirstPost(indexOfLastPost - postPerPage);
-    let tempImages = images.slice(indexOfFirstPost, indexOfLastPost);
+    const tempImages = images.slice(indexOfFirstPost, indexOfLastPost);
     while (tempImages.length < 8) {
       tempImages.push('');
     }
@@ -227,10 +227,12 @@ function BestShot() {
       if (document.cookie) {
         const token = document.cookie.split('=')[1];
         try {
-          const res = await axios.get('http://localhost:5001/users/', {
-            // const res = await axios.get('http://15.165.237.195:5001/users/', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const res = await axios.get(
+            `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
           if (res) {
             const imgurls = res.data.data.imgurl;
             setImages(imgurls.reverse());
@@ -289,7 +291,7 @@ function BestShot() {
         break;
       case 'next-img':
         // 현재 페이지에서 보여지는 사진의 수
-        let currentImagesNum = images.slice(indexOfFirstPost, indexOfLastPost).length;
+        const currentImagesNum = images.slice(indexOfFirstPost, indexOfLastPost).length;
 
         // 현재 페이지에서 보여지는 사진 중 마지막 사진이 아닐 때
         if (i < currentImagesNum - 1) {
@@ -331,21 +333,27 @@ function BestShot() {
         break;
       case 'delete':
         // data 상태 업데이트
-        const token = document.cookie.split('=')[1];
-        const key = data.img.split('/')[4];
-        const config = { headers: { Authorization: `Bearer ${token}` } };
-        try {
-          const res = await axios.delete(`http://localhost:5001/users/${key}`, config); // 서버와 통신하여 데이터 삭제
-          // const res = await axios.delete(`http://15.165.237.195:5001/users/${key}`, config); // 서버와 통신하여 데이터 삭제
-          if (res) {
-            const newImgUrls = res.data.data.imgUrls;
-            setImages(newImgUrls.reverse());
-            setData({ img: '', i: 0 });
-            alert('삭제되었습니다');
+        const check = window.confirm('정말로 삭제하시겠습니까?');
+        if (check) {
+          const token = document.cookie.split('=')[1];
+          const key = data.img.split('/')[4];
+          const config = { headers: { Authorization: `Bearer ${token}` } };
+          try {
+            const res = await axios.delete(
+              `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users/${key}`,
+              config,
+            ); // 서버와 통신하여 데이터 삭제
+            if (res) {
+              const newImgUrls = res.data.data.imgUrls;
+              setImages(newImgUrls.reverse());
+              setData({ img: '', i: 0 });
+              alert('삭제되었습니다');
+            }
+          } catch (error) {
+            console.log(error);
           }
-        } catch (error) {
-          console.log(error);
         }
+
         break;
       default:
         break;

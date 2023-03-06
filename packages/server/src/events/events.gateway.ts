@@ -21,9 +21,7 @@ type ServerToClientSocket = Socket<ServerToClientEvents>;
 
 @WebSocketGateway(8081, {
   cors: {
-    // origin: 'http://localhost:3000',
     origin: '*',
-    // origin: 'http://6650-175-126-107-17.jp.ngrok.io',
   },
 })
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -76,12 +74,22 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     // 모든 클라이언트에게 업데이트 된 방 정보 전달
+    Object.entries(this.rooms).map(([id, room]) => {
+      if (room.users.length === 0) {
+        delete this.rooms[id];
+      }
+    });
     this.server.emit('get_rooms', this.rooms);
   }
 
   //! 방 조회
   @SubscribeMessage('rooms')
   getRooms(@ConnectedSocket() socket: ServerToClientSocket): void {
+    Object.entries(this.rooms).map(([id, room]) => {
+      if (room.users.length === 0) {
+        delete this.rooms[id];
+      }
+    });
     this.server.to(socket.id).emit('get_rooms', this.rooms);
   }
 
@@ -381,6 +389,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 방에 연결
     socket.join(roomId);
 
+    Object.entries(this.rooms).map(([id, room]) => {
+      if (room.users.length === 0) {
+        delete this.rooms[id];
+      }
+    });
     // Lobby 유저에게 Room 정보 전달
     this.server.emit('get_rooms', this.rooms);
 
@@ -437,6 +450,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
       }
     }
+    Object.entries(this.rooms).map(([id, room]) => {
+      if (room.users.length === 0) {
+        delete this.rooms[id];
+      }
+    });
     // 모든 클라이언트에게 업데이트 된 방 정보 전달
     this.server.emit('get_rooms', this.rooms);
 
