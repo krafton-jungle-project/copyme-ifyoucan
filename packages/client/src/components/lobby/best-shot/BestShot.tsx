@@ -340,7 +340,7 @@ function BestShot() {
           const config = { headers: { Authorization: `Bearer ${token}` } };
           try {
             const res = await axios.delete(
-              `process.env.SERVER_URL${process.env.SERVER_PORT}/users/${key}`,
+              `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users/${key}`,
               config,
             ); // 서버와 통신하여 데이터 삭제
             if (res) {
