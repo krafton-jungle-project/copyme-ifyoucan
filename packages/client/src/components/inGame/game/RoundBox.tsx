@@ -20,6 +20,8 @@ const Container = styled.div<{ isStart: boolean }>`
   padding: 6px;
   box-shadow: 0 0 2px #fff, 0 0 4px #fff;
   background-color: #000b;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   visibility: ${(props) => (props.isStart ? 'visible' : 'hidden')};
   opacity: ${(props) => (props.isStart ? 1 : 0)};
   transition: opacity 0.5s ease-in-out;
@@ -40,8 +42,6 @@ const Round = styled.p`
   justify-content: center;
   align-items: center;
   text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   color: #f4ff00;
 `;
 

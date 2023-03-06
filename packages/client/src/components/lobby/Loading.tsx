@@ -12,8 +12,8 @@ const FadeBackGround = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  background: #333;
-  opacity: 0.9;
+  background: #000f;
+  opacity: 0.8;
 `;
 
 const LoadingWrapper = styled.div`

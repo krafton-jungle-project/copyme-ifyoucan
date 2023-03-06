@@ -14,9 +14,6 @@ import WaitingBox from './waiting/WaitingBox';
 
 const Container = styled.div`
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   width: 90%;
   aspect-ratio: 4 / 3;
   min-width: 800px;
@@ -31,7 +28,7 @@ const FadeBackGround = styled.div`
   transform: translate(-50%, -50%);
   width: 120%;
   height: 120%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #0008;
 `;
 
 const Header = styled.div`
@@ -105,13 +102,13 @@ function InGame() {
   const setExitInGame = useSetAtom(exitInGameAtom);
 
   function onStart() {
-    if (game.isStart || !game.peer.isReady) return;
+    if (game.isStart || game.isResult || !game.peer.isReady) return;
 
     socket.emit('start', roomInfo.roomId);
   }
 
   function onReady() {
-    if (game.isStart) return;
+    if (game.isStart || game.isResult) return;
 
     if (game.user.isReady) {
       GunReload.play();
@@ -147,7 +144,9 @@ function InGame() {
               onClick={() => {
                 roomInfo.host ? onStart() : onReady();
               }}
-              isClickable={roomInfo.host ? game.peer.isReady : true}
+              isClickable={
+                game.isStart || game.isResult ? false : roomInfo.host ? game.peer.isReady : true
+              }
               isStart={game.isStart}
             />
           </LogoWrapper>

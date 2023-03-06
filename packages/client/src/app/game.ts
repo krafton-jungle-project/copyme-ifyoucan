@@ -34,6 +34,7 @@ interface GameState {
   round: number;
   countDown: number;
   isCaptured: boolean;
+  isResult: boolean;
 }
 
 const initialState: GameState = {
@@ -57,6 +58,7 @@ const initialState: GameState = {
   round: 1,
   countDown: 0,
   isCaptured: false,
+  isResult: false,
 };
 
 const gameAtom = atomWithReset(initialState);

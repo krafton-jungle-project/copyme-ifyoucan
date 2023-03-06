@@ -7,9 +7,10 @@ import { useClientSocket } from '../../module/client-socket';
 
 const Canvas = styled.canvas`
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.1);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: none; // 캔버스 안보이게
-  left: 20%;
 `;
 let sx: number;
 let sy: number;
@@ -154,7 +155,9 @@ const InvisibleDrawingCanvas = () => {
                   if (blob) {
                     formData.append('image', blob, 'image.png');
                   }
-                  upload(formData); //! 이미지 업로드 post 요청
+
+                  // 이미지 업로드 post 요청
+                  upload(formData);
                 }, 'image/png');
               };
             };
