@@ -36,15 +36,7 @@ const ModalBackGround = styled.div<{ isVisible: boolean }>`
     `}
 `;
 
-const Form = styled.form`
-  width: 90%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ModalWrapper = styled.div`
+const ModalWrapper = styled.div<{ isVisible: boolean }>`
   z-index: 100;
   position: fixed;
   top: 50%;
@@ -59,6 +51,20 @@ const ModalWrapper = styled.div`
 
   width: 500px;
   height: 650px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  ${(p) =>
+    !p.isVisible &&
+    css`
+      animation: ${fadeOut} 0.315s;
+    `}
+`;
+
+const Form = styled.form`
+  width: 90%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -241,8 +247,9 @@ function RegisterModal({
   };
 
   return (
-    <ModalBackGround onClick={lazyClose} isVisible={isVisible}>
-      <ModalWrapper>
+    <>
+      <ModalBackGround onClick={lazyClose} isVisible={isVisible} />
+      <ModalWrapper isVisible={isVisible}>
         <Div>
           <ModalBtn onClick={lazyClose}>X</ModalBtn>
         </Div>
@@ -276,7 +283,7 @@ function RegisterModal({
           </RegisterBtn>
         </Form>
       </ModalWrapper>
-    </ModalBackGround>
+    </>
   );
 }
 

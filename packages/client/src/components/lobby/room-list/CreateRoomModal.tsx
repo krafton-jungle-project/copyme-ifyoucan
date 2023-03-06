@@ -31,7 +31,7 @@ const ModalBackground = styled.div<{ isOpened: boolean; isVisible: boolean }>`
   transform: translate(-50%, -50%);
   left: 50%;
   width: 100vw;
-  height: 147vh;
+  height: 141vh;
   z-index: 1;
 
   ${(p) =>
@@ -51,7 +51,7 @@ const Modal = styled.div<{ isOpened: boolean; isVisible: boolean }>`
   border: 2px solid yellow;
   border-radius: 15px;
   position: absolute;
-  transform: translate(-50%);
+  transform: translate(-50%, -20%);
   width: 35vw;
   height: 60vh;
   left: 50%;
