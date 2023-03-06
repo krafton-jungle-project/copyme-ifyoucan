@@ -9,7 +9,7 @@ import kraftonJungleImg from '../assets/images/lobby/krafton-jungle-logo.png';
 import logoutImg from '../assets/images/lobby/logout.png';
 import logoImg from '../assets/images/logo.png';
 import BestShot from '../components/lobby/best-shot/BestShot';
-import ItemGuide from '../components/lobby/item-guide/ItemGuide';
+import GameModeGuide from '../components/lobby/game-mode-guide/GameModeGuide';
 import Loading from '../components/lobby/Loading';
 import RoomList from '../components/lobby/room-list/RoomList';
 import Tutorial from '../components/lobby/tutorial/Tutorial';
@@ -219,7 +219,7 @@ function Lobby() {
       content = <Tutorial />;
       break;
     case '게임모드':
-      content = <ItemGuide />;
+      content = <GameModeGuide />;
       break;
     case '베스트샷':
       content = <BestShot />;

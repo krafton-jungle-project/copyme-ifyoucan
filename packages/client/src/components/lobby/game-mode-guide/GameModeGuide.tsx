@@ -130,7 +130,7 @@ const mode = ['normal', 'blur', 'spin', 'sizedown'];
 const modeName = ['일반', '블러', '회전', '축소'];
 const sound = [Spin, Blur, Spin, SizeDown];
 
-function ItemGuide() {
+function GameModeGuide() {
   const [highlighted, setHighlighted] = useState<number>(-1);
   const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
 
@@ -212,4 +212,4 @@ function ItemGuide() {
   );
 }
 
-export default ItemGuide;
+export default GameModeGuide;
