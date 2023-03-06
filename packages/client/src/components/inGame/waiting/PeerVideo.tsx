@@ -5,7 +5,7 @@ import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
 import loserEffectImg from '../../../assets/images/in-game/loser-effect.gif';
 import DefaultProfileImg from '../../../assets/images/in-game/peer-default-profile.jpg';
-import winnerEffectImg from '../../../assets/images/in-game/winner-effect-me.gif';
+import winnerEffectImg from '../../../assets/images/in-game/winner-effect-peer.gif';
 
 const Container = styled.div<{ isResult: boolean; isWinner: boolean }>`
   position: absolute;

@@ -78,10 +78,10 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; gameMode: number; offe
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  border-radius: 20px;
+  border-radius: 5px;
   visibility: hidden;
 
-  border: 0.2rem solid #fff;
+  border: 10px outset #fff;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff, 0 0 0.8rem #fff, 0 0 2.8rem #fff,
     inset 0 0 1.3rem #fff;
 
