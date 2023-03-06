@@ -228,7 +228,7 @@ function BestShot() {
         const token = document.cookie.split('=')[1];
         try {
           const res = await axios.get(
-            `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users/upload`,
+            `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users`,
             {
               headers: { Authorization: `Bearer ${token}` },
             },
