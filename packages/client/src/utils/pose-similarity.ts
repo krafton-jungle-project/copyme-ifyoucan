@@ -1,43 +1,56 @@
 import type { Keypoint, Pose } from '@tensorflow-models/pose-detection';
-import '@tensorflow/tfjs-backend-webgl';
+
+// Usage Usage Usage Usage Usage Usage Usage Usage
+// comparePoses(공격자, 수비자);
+// comparePoses(stdPose, pose4);
 
 // euclideanDistance 함수
-const euclideanDistance = (kp1: Keypoint, kp2: Keypoint): number =>
-  Math.sqrt(Math.pow(kp1.x - kp2.x, 2) + Math.pow(kp1.y - kp2.y, 2));
+function euclideanDistance(kp1: Keypoint, kp2: Keypoint): number {
+  return Math.sqrt(Math.pow(kp1.x - kp2.x, 2) + Math.pow(kp1.y - kp2.y, 2));
+}
 
-// scaling 함수
-const resizePose = (pose: Pose) => {
-  // 양쪽 어깨 좌표 받아옴, 어깨가 가장 인식이 잘 되므로 어깨로 선정하겠슴다
-  const leftShoulder = pose.keypoints[5];
-  const rightShoulder = pose.keypoints[6];
-
-  // 어깨 간의 유클리디안 거리 계산
-  // 직각 삼각형에서 빗변 구하는 공식이라고 보면 됨
-  const shoulderDist: number = euclideanDistance(leftShoulder, rightShoulder);
-
-  // 어깨 거리에 따라 이미지의 스케일 계수를 결정
-  // 기준이 되는(우리에게는 공격자) 사람의 키포인트를 스케일링 함수에 넣어 스케일 계수 설정 후 아래 진행
-  const scaleFactor: number = 1 / shoulderDist;
-
-  // 키포인트의 좌표 값을 스케일 계수에 따라 보정
-  for (const keypoint of pose.keypoints) {
-    keypoint.x *= scaleFactor;
-    keypoint.y *= scaleFactor;
-  }
-};
-
-/**
- *
- * @param {*} pose1 : 공격자 (채점 기준)
- * @param {*} pose2 : 수비자 (채점)
- * @returns 공격자 기준에 맞춘 수비자의 pose2
- */
 // 사각형 산술평균 중심
 function squareCenter(a: Keypoint, b: Keypoint, c: Keypoint, d: Keypoint): number[] {
   return [(a.x + b.x + c.x + d.x) / 4, (a.y + b.y + c.y + d.y) / 4];
 }
+
+// // 다각형 무게중심 코드
+// function getCentroid(points: Keypoint[]) {
+//   let area = 0,
+//     cx = 0,
+//     cy = 0;
+
+//   for (let i = 0; i < points.length; i++) {
+//     let j = (i + 1) % points.length;
+
+//     let pt1 = points[i];
+//     let pt2 = points[j];
+
+//     let x1 = pt1[0];
+//     let x2 = pt2[0];
+//     let y1 = pt1[1];
+//     let y2 = pt2[1];
+
+//     area += x1 * y2;
+//     area -= y1 * x2;
+
+//     cx += (x1 + x2) * (x1 * y2 - x2 * y1);
+//     cy += (y1 + y2) * (x1 * y2 - x2 * y1);
+//   }
+
+//   area /= 2;
+//   area = Math.abs(area);
+
+//   cx = cx / (6.0 * area);
+//   cy = cy / (6.0 * area);
+
+//   return {
+//     x: Math.abs(cx),
+//     y: Math.abs(cy),
+//   };
+// }
+
 /**
- *
  * @param {*} pose1 : 공격자 (채점 기준)
  * @param {*} pose2 : 수비자 (채점)
  * @returns 공격자 기준에 맞춘 수비자의 pose2
@@ -79,8 +92,29 @@ function alignPose(pose1: Pose, pose2: Pose): Pose {
   return pose2;
 }
 
-export function comparePoses(pose1: Pose, pose2: Pose): number {
-  // Deep copy 후 cmpPose 진행, shallow copy 진행 시, 캔버스에 skelton을 그릴 때
+// 공격자의 어깨 거리를 scaling factor로 이용한 계산 방법
+function resizePose(pose: Pose): void {
+  // 양쪽 어깨 좌표 받아옴, 어깨가 가장 인식이 잘 되므로 어깨로 선정하겠슴다
+  const leftShoulder = pose.keypoints[5];
+  const rightShoulder = pose.keypoints[6];
+
+  // 어깨 간의 유클리디안 거리 계산
+  // 직각 삼각형에서 빗변 구하는 공식이라고 보면 됨
+  const shoulderDist: number = euclideanDistance(leftShoulder, rightShoulder);
+
+  // 어깨 거리에 따라 이미지의 스케일 계수를 결정
+  // 기준이 되는(우리에게는 공격자) 사람의 키포인트를 스케일링 함수에 넣어 스케일 계수 설정 후 아래 진행
+  const scaleFactor: number = 1 / shoulderDist;
+
+  // 키포인트의 좌표 값을 스케일 계수에 따라 보정
+  for (const keypoint of pose.keypoints) {
+    keypoint.x *= scaleFactor;
+    keypoint.y *= scaleFactor;
+  }
+}
+
+function comparePoses(pose1: Pose, pose2: Pose): number {
+  // Deep copy 후 cmpPose 진행, shallow copy 진행 시, 캔버스에 skeleton을 그릴 때
   // resizing된 점들을 토대로 그리기 때문에 제대로 그려지지 않음
 
   // 일단 기준 포즈와 채점
@@ -107,11 +141,81 @@ export function comparePoses(pose1: Pose, pose2: Pose): number {
   // (점들의 차의 합) / (점의 개수)
   // totalDistance / 17
   let averageDistance = totalDistance / (alignedPose1.keypoints.length - 5);
+  let score = Math.ceil(100 - 100 * averageDistance);
 
-  return Math.ceil(averageDistance >= 1 ? 0 : 100 - 100 * averageDistance);
+  return score > 0 ? score : 0;
 }
 
-export function cosineSimilarity(pose1: Pose, pose2: Pose): number {
+// vector vector vector vector vector vector vector
+// vector vector vector vector vector vector vector
+// 34차원 벡터 이용한 scaling factor 구하는 함수
+// 공격자의 포즈를 넣어야 함
+function vectorScalingFactor(pose: Pose): number {
+  const initCoordinate = {
+    x: 0,
+    y: 0,
+  };
+  let sum: number = 0;
+  let keypoint: Keypoint;
+
+  // 얼굴 키포인트 제외하고 scalingFactor 계산
+  // for (let i = 0; i < pose.keypoints.length; i++) {
+  for (let i = 5; i < pose.keypoints.length; i++) {
+    keypoint = pose.keypoints[i];
+    // (0, 0)과 모든 신체 키포인트에 대한 거리의 제곱들을 모두 더함
+    sum += euclideanDistance(keypoint, initCoordinate) ** 2;
+  }
+  // 다 더한 값에 제곱근을 씌우고 계산한 키포인트 개수만큼 나눔
+  const scalingFactor: number = sum ** 0.5 / (pose.keypoints.length - 5);
+
+  return scalingFactor;
+}
+
+// vector scaling 함수
+function vectorResizePose(pose: Pose, scalingFactor: number): void {
+  // 키포인트의 좌표 값을 스케일 계수에 따라 보정
+  for (const keypoint of pose.keypoints) {
+    keypoint.x /= scalingFactor;
+    keypoint.y /= scalingFactor;
+  }
+}
+
+function vectorComparePoses(pose1: Pose, pose2: Pose): number {
+  // Deep copy 후 cmpPose 진행, shallow copy 진행 시, 캔버스에 skeleton을 그릴 때
+  // resizing된 점들을 토대로 그리기 때문에 제대로 그려지지 않음
+
+  const scalingFactor = vectorScalingFactor(pose1);
+  console.log(`scalingFactor: ${scalingFactor}`);
+
+  let myPose = JSON.parse(JSON.stringify(pose1));
+  let peerPose = JSON.parse(JSON.stringify(pose2));
+
+  vectorResizePose(myPose, scalingFactor);
+  vectorResizePose(peerPose, scalingFactor);
+
+  // 어깨와 골반 총 4개의 점을 이용하여 몸통의 중심을 기준으로 pose를 align함
+  let alignedPose1 = alignPose(myPose, myPose);
+  let alignedPose2 = alignPose(myPose, peerPose);
+
+  // align 후에 같은 신체 부위의 점들의 차의 평균 거리를 구함
+  // 포즈 1의 한 점과 포즈 2의 한 점의 유클리디안 거리를 구해서 totalDistance 합함
+  let totalDistance = 0;
+  for (let i = 5; i < alignedPose1.keypoints.length; i++) {
+    let joint1 = alignedPose1.keypoints[i];
+    let joint2 = alignedPose2.keypoints[i];
+    let distance = euclideanDistance(joint1, joint2);
+    totalDistance += distance;
+  }
+
+  // (점들의 차의 합) / (점의 개수)
+  // totalDistance / 17
+  let averageDistance = totalDistance / (alignedPose1.keypoints.length - 5);
+  let score = Math.ceil(100 - 100 * averageDistance);
+
+  return score > 0 ? score : 0;
+}
+
+function cosineSimilarity(pose1: Pose, pose2: Pose): number {
   resizePose(pose1);
   resizePose(pose2);
   const keypoints1 = pose1.keypoints;
@@ -135,42 +239,4 @@ export function cosineSimilarity(pose1: Pose, pose2: Pose): number {
   return (similarity + 1) * 50;
 }
 
-// 각 스트림에서 추출한 pose object 넣으시면 됩니다 ㅎㅎ;
-// Usage: comparePoses(공격자, 수비자)
-// comparePoses(stdPose, pose4);
-
-// // 다각형 무게중심 코드
-// function getCentroid(points: Keypoint[]) {
-//   let area = 0,
-//     cx = 0,
-//     cy = 0;
-
-//   for (let i = 0; i < points.length; i++) {
-//     let j = (i + 1) % points.length;
-
-//     let pt1 = points[i];
-//     let pt2 = points[j];
-
-//     let x1 = pt1[0];
-//     let x2 = pt2[0];
-//     let y1 = pt1[1];
-//     let y2 = pt2[1];
-
-//     area += x1 * y2;
-//     area -= y1 * x2;
-
-//     cx += (x1 + x2) * (x1 * y2 - x2 * y1);
-//     cy += (y1 + y2) * (x1 * y2 - x2 * y1);
-//   }
-
-//   area /= 2;
-//   area = Math.abs(area);
-
-//   cx = cx / (6.0 * area);
-//   cy = cy / (6.0 * area);
-
-//   return {
-//     x: Math.abs(cx),
-//     y: Math.abs(cy),
-//   };
-// }
+export { comparePoses, vectorComparePoses, cosineSimilarity };

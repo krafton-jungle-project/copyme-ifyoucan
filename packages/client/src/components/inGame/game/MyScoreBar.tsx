@@ -4,7 +4,7 @@ import styled, { css, keyframes } from 'styled-components';
 import { gameAtom, GameStage } from '../../../app/game';
 import { useClientSocket } from '../../../module/client-socket';
 import { useMovenetStream } from '../../../module/movenet-stream';
-import { comparePoses } from '../../../utils/pose-similarity';
+import { vectorComparePoses } from '../../../utils/pose-similarity';
 import useCountNum from '../hooks/useCountNum';
 import { useInterval } from '../hooks/useInterval';
 
@@ -119,8 +119,13 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
     const myPose = await getMyPose();
     if (myPose && game.peer.pose) {
       // 나의 실시간 점수
-      const tempScore = comparePoses(myPose, game.peer.pose);
-      socket.emit('score', tempScore);
+
+      // 기존 채점 방식 (어깨 기준)
+      // const tempScore = comparePoses(myPose, game.peer.pose);
+
+      // 24 dimension vector 유사도 계산
+      const vectorScore = vectorComparePoses(game.peer.pose, myPose);
+      socket.emit('score', vectorScore);
     }
   }, delay);
 
