@@ -263,7 +263,7 @@ function CreateRoomModal() {
   };
 
   const handleMode = (e: any) => {
-    let round: string = `round${e.target.lang}`;
+    const round: string = `round${e.target.lang}`;
 
     switch (e.target.innerText) {
       case '일반':

@@ -245,9 +245,9 @@ function GameBox() {
   const myVideoRef = useRef<HTMLVideoElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null);
   const [focus, setFocus] = useState('noMe');
-  let [noticeImg, setNoticeImg] = useState(transparentImg);
-  let [myJudgeImg, setMyJudgeImg] = useState(transparentImg);
-  let [peerJudgeImg, setPeerJudgeImg] = useState(transparentImg);
+  const [noticeImg, setNoticeImg] = useState(transparentImg);
+  const [myJudgeImg, setMyJudgeImg] = useState(transparentImg);
+  const [peerJudgeImg, setPeerJudgeImg] = useState(transparentImg);
 
   useEffect(() => {
     if (

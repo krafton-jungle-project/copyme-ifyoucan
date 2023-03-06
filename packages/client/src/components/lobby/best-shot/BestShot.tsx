@@ -215,7 +215,7 @@ function BestShot() {
     setCount(images.length);
     setIndexOfLastPost(currentPage * postPerPage);
     setIndexOfFirstPost(indexOfLastPost - postPerPage);
-    let tempImages = images.slice(indexOfFirstPost, indexOfLastPost);
+    const tempImages = images.slice(indexOfFirstPost, indexOfLastPost);
     while (tempImages.length < 8) {
       tempImages.push('');
     }
@@ -289,7 +289,7 @@ function BestShot() {
         break;
       case 'next-img':
         // 현재 페이지에서 보여지는 사진의 수
-        let currentImagesNum = images.slice(indexOfFirstPost, indexOfLastPost).length;
+        const currentImagesNum = images.slice(indexOfFirstPost, indexOfLastPost).length;
 
         // 현재 페이지에서 보여지는 사진 중 마지막 사진이 아닐 때
         if (i < currentImagesNum - 1) {
