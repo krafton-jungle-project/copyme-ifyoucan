@@ -66,9 +66,10 @@ jobs:
 
       - name: upload to S3
         run: aws s3 cp --region ap-northeast-2 ./server-build.zip s3://${{ secrets.AWS_S3_BUCKET_NAME }}
-#     - name: deploy with AWS codeDeploy
-#       run: aws deploy create-deployment
-#           --application-name zip-codedeploy
-#           --deployment-config-name CodeDeployDefault.OneAtATime
-#           --deployment-group-name zip-codedeploy
-#           --s3-location bucket=together-zip,bundleType=zip,key=public/together-zip.zip
+
+      - name: deploy with AWS codeDeploy
+        run: aws deploy create-deployment
+          --application-name copyme-Ifyoucan
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name github-action
+          --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME }},bundleType=zip,key=server-build.zip
