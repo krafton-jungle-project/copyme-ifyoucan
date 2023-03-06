@@ -24,7 +24,7 @@ const Button = styled.button`
   cursor: pointer;
 
   &:hover {
-    color: black;
+    color: #fff;
     background-color: #dd74c1;
     filter: drop-shadow(0 0 10px #dd74c1) contrast(2) brightness(2);
   }

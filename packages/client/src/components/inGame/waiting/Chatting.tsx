@@ -13,7 +13,7 @@ const Container = styled.div<{ isStart: boolean }>`
   transform: translate(-50%, -50%);
   width: 38%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #0008;
   border-radius: 1rem;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff;
   transition: 0.5s;
@@ -41,30 +41,28 @@ const MessageBox = styled.div`
     align-self: flex-start;
     .message {
       align-self: flex-start;
-      text-shadow: 0 0 5px #ff3131, 0 0 10px #ff3131;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      text-shadow: 0 0 3px #ff3131, 0 0 6px #ff3131;
+      border: 2px solid #fff8;
       border-radius: 0px 20px 20px 20px;
-      background-color: rgba(255, 255, 255, 0.05);
     }
   }
   &.peer_message {
     align-self: flex-end;
     .message {
       align-self: flex-end;
-      text-shadow: 0 0 5px #1f51ff, 0 0 10px #1f51ff;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      text-shadow: 0 0 3px #1f51ff, 0 0 6px #1f51ff;
+      border: 2px solid #fff8;
       border-radius: 20px 0px 20px 20px;
-      background-color: rgba(255, 255, 255, 0.05);
     }
   }
   &.alarm {
     align-self: center;
     .message {
       align-self: center;
+      text-shadow: none;
       text-shadow: 0 0 5px #fff;
       border: 0;
       border-radius: 0;
-      background-color: rgba(255, 255, 255, 0);
       text-overflow: ellipsis;
       white-space: nowrap;
       margin: 20px 0;
@@ -94,7 +92,7 @@ const FormWrapper = styled.div`
   width: 96%;
   height: 10%;
   bottom: 0;
-  border-top: 2px solid rgba(255, 255, 255, 0.5);
+  border-top: 2px solid #fff8;
 `;
 
 const MessageForm = styled.form`
@@ -109,7 +107,7 @@ const MessageForm = styled.form`
 
   input {
     background-color: transparent;
-    color: white;
+    color: #fff;
     text-shadow: 0 0 1px #fff;
     flex-grow: 1;
     border: 0px;
@@ -118,7 +116,6 @@ const MessageForm = styled.form`
 
   button {
     background-color: transparent;
-    color: white;
     border: 0px;
   }
 `;

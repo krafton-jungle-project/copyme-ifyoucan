@@ -22,7 +22,7 @@ const ScoreBarWrapper = styled.div`
   transform: translate(-50%, -50%);
   width: 80%;
   height: 80%;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: #0008;
   border: 0.2rem solid #fff;
   border-radius: 20px;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #ff3131, 0 0 0.8rem #ff3131,
@@ -78,7 +78,7 @@ const ScorePercent = styled.div<{ isJudgement: boolean }>`
       transform: translate(0, -50%);
       font-size: 100px;
       font-weight: 800;
-      -webkit-text-stroke: 2px black;
+      -webkit-text-stroke: 2px #000;
       text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff;
     `}
 `;

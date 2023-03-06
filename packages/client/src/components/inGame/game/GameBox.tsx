@@ -180,8 +180,7 @@ const FadeBackGround = styled.div<{ visible: boolean }>`
   transform: translate(-50%, -50%);
   width: 200%;
   height: 200%;
-  background-color: rgba(0, 0, 0, 0.8);
-  border: 5px solid white;
+  background-color: #0008; // check
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `;
 
@@ -209,7 +208,7 @@ const Judge = styled.p<{ isJudgement: boolean }>`
     css`
       font-size: 100px;
       font-weight: 800;
-      -webkit-text-stroke: 2px black;
+      -webkit-text-stroke: 2px #000;
       text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff;
     `}
 `;

@@ -14,9 +14,6 @@ import WaitingBox from './waiting/WaitingBox';
 
 const Container = styled.div`
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   width: 90%;
   aspect-ratio: 4 / 3;
   min-width: 800px;
@@ -31,7 +28,7 @@ const FadeBackGround = styled.div`
   transform: translate(-50%, -50%);
   width: 120%;
   height: 120%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #0008;
 `;
 
 const Header = styled.div`

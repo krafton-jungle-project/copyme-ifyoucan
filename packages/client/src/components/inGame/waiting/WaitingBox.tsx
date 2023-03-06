@@ -60,7 +60,7 @@ const ReadyState = styled.div<{ isMe: boolean; isHost: boolean; isReady: boolean
   font-size: 30px;
   font-weight: bold;
   color: ${(props) =>
-    props.isHost ? 'yellow' : props.isReady ? (props.isMe ? 'red' : 'blue') : 'grey'};
+    props.isHost ? '#ff0' : props.isReady ? (props.isMe ? '#f00' : '#00f') : '#808080'};
   transition: 0.5s;
 
   ${(props) =>

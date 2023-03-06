@@ -26,7 +26,7 @@ const ModalBackGround = styled.div<{ isVisible: boolean }>`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #0008;
   animation: ${fadeIn} 1s;
 
   ${(p) =>
@@ -112,18 +112,18 @@ const ErrorWrapper = styled.div`
 `;
 
 const ErrorText = styled.div`
-  color: #ff0000;
+  color: #f00;
   font-size: 0.9rem;
-  text-shadow: 0 0 2px red;
+  text-shadow: 0 0 2px #f00;
 `;
 
 const ModalBtn = styled.button`
   padding: 1% 2%;
   background-color: transparent;
-  border: 1px solid white;
+  border: 1px solid #fff;
   box-shadow: 0 0 0.3rem #fff, 0 0 0.3rem #fff;
   border-radius: 5px;
-  color: white;
+  color: #fff;
   font-size: large;
   font-weight: 800;
   cursor: pointer;
