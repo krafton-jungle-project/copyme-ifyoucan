@@ -14,7 +14,7 @@ import Loading from '../components/lobby/Loading';
 import RoomList from '../components/lobby/room-list/RoomList';
 import Tutorial from '../components/lobby/tutorial/Tutorial';
 import { useMovenetStream } from '../module/movenet-stream';
-import { getUser, removeUser } from '../utils/local-storage';
+import { removeUser } from '../utils/local-storage';
 import { BackgroundMusic, ButtonClick1, ButtonClick2 } from '../utils/sound';
 
 const Container = styled.div`
@@ -200,8 +200,6 @@ const Producer = styled.div`
   text-shadow: 0 0 2px #fff8;
 `;
 
-export let myNickName = '';
-
 function Lobby() {
   const navigate = useNavigate();
   const [mode, setMode] = useState('플레이');
@@ -230,14 +228,6 @@ function Lobby() {
   }
 
   useEffect(() => {
-    // 닉네임 저장
-    const userInfo = getUser();
-    if (userInfo) {
-      myNickName = userInfo.nickName;
-    } else {
-      window.location.reload();
-    }
-
     // 게임 중 나오면 새로고침
     if (exitInGame) {
       window.location.reload();
@@ -266,7 +256,7 @@ function Lobby() {
     if (check) {
       localStorage.setItem('isAuthenticated', 'false');
       removeUser();
-      navigate('/login', { replace: true }); //temp: Private Router 적용 후 삭제
+      navigate('/login', { replace: true });
     } else {
       ButtonClick2.play();
     }

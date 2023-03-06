@@ -6,7 +6,7 @@ import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
 import { exitInGameAtom, roomInfoAtom } from '../../../app/room';
 import { useClientSocket } from '../../../module/client-socket';
-import { myNickName } from '../../../pages/Lobby';
+import { getUser } from '../../../utils/local-storage';
 import { RoomEnter, RoomExit } from '../../../utils/sound';
 import { stream } from '../../../utils/tfjs-movenet';
 
@@ -26,6 +26,7 @@ const pc_config = {
 };
 
 const useConnectWebRTC = () => {
+  const myNickName = getUser().nickName;
   const { socket } = useClientSocket();
   const navigate = useNavigate();
   const pcRef = useRef<RTCPeerConnection>(); // 상대 유저의 RTCPeerConnection 저장
