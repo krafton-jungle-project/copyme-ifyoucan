@@ -45,7 +45,7 @@ function Announcer() {
   // 대기실
   useEffect(() => {
     if (!game.isStart) {
-      if (game.round < 4) {
+      if (!game.isResult) {
         // 내가 방장일 때
         if (host) {
           // 아직 상대가 입장하지 않았으면
@@ -101,6 +101,7 @@ function Announcer() {
     game.user.isReady,
     game.peer.isReady,
     game.round,
+    game.isResult,
   ]);
 
   // 게임중

@@ -276,7 +276,7 @@ function GameBox() {
   useEffect(() => {
     if (game.stage === GameStage.ROUND) {
       // 라운드 시작 및 게임 모드 안내
-      if (game.round < 2) {
+      if (game.round < 4) {
         roundSound[game.round - 1].play();
         setNoticeImg(roundImg[game.round - 1]);
 
@@ -304,7 +304,6 @@ function GameBox() {
         setTimeout(() => {
           setNoticeImg(transparentImg);
 
-          //check
           if (host) {
             socket.emit('potg');
           }
@@ -382,7 +381,7 @@ function GameBox() {
           <MyJudgeImg alt="my judge image" src={myJudgeImg} />
         </CameraWrapper>
       </Wrapper>
-      <NoticeImg alt="round image" src={noticeImg} />
+      <NoticeImg alt="notice image" src={noticeImg} />
       <Judge isJudgement={game.stage === GameStage.JUDGE}>
         {game.user.score >= game.peer.score ? '>' : '<'}
       </Judge>

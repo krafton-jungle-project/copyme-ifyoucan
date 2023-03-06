@@ -17,12 +17,12 @@ function MotionReady() {
   const [motionReadyDelay, setMotionReadyDelay] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!game.isStart) {
+    if (!game.isStart && !game.isResult) {
       setMotionReadyDelay(1000);
     } else {
       setMotionReadyDelay(null);
     }
-  }, [game.isStart]);
+  }, [game.isStart, game.isResult]);
 
   useInterval(async () => {
     // peer가 있다면

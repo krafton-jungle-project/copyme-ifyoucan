@@ -102,13 +102,13 @@ function InGame() {
   const setExitInGame = useSetAtom(exitInGameAtom);
 
   function onStart() {
-    if (game.isStart || !game.peer.isReady) return;
+    if (game.isStart || game.isResult || !game.peer.isReady) return;
 
     socket.emit('start', roomInfo.roomId);
   }
 
   function onReady() {
-    if (game.isStart) return;
+    if (game.isStart || game.isResult) return;
 
     if (game.user.isReady) {
       GunReload.play();
@@ -144,7 +144,9 @@ function InGame() {
               onClick={() => {
                 roomInfo.host ? onStart() : onReady();
               }}
-              isClickable={roomInfo.host ? game.peer.isReady : true}
+              isClickable={
+                game.isStart || game.isResult ? false : roomInfo.host ? game.peer.isReady : true
+              }
               isStart={game.isStart}
             />
           </LogoWrapper>

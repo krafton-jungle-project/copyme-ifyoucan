@@ -104,7 +104,7 @@ function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
   const ThumbnailImg = [RedImg, PinkImg, OrangeImg, YellowImg, GreenImg, BlueImg, PurpleImg];
 
   const joinRoom = (roomId: string, gameMode: IGameMode) => {
-    if (roomInfo.users.length === 1) {
+    if (!roomInfo.isStart && roomInfo.users.length === 1) {
       setRoomInfo((prev) => ({ ...prev, roomId, gameMode }));
       navigate('/room', { replace: true });
     }
@@ -119,13 +119,15 @@ function RoomCard({ roomInfo }: { roomInfo: RoomInfo }) {
           {mode[roomInfo.gameMode.round1]} / {mode[roomInfo.gameMode.round2]} /{' '}
           {mode[roomInfo.gameMode.round3]}
         </RoomGameMode>
-        <HeadCount isFull={roomInfo.users.length === 2}>{roomInfo.users.length} / 2</HeadCount>
+        <HeadCount isFull={roomInfo.isStart || roomInfo.users.length === 2}>
+          {roomInfo.users.length} / 2
+        </HeadCount>
         <JoinButton
           onClick={() => joinRoom(roomInfo.id, roomInfo.gameMode)}
-          disabled={roomInfo.users.length === 2}
+          disabled={roomInfo.isStart || roomInfo.users.length === 2}
           isFull={roomInfo.users.length === 2}
         >
-          {roomInfo.users.length === 2 ? 'FULL' : 'JOIN'}
+          {roomInfo.isStart ? 'inGame' : roomInfo.users.length === 2 ? 'FULL' : 'JOIN'}
         </JoinButton>
       </Wrapper>
     </Container>
