@@ -231,7 +231,12 @@ function Lobby() {
 
   useEffect(() => {
     // 닉네임 저장
-    myNickName = getUser().nickName;
+    const userInfo = getUser();
+    if (userInfo) {
+      myNickName = userInfo.nickName;
+    } else {
+      window.location.reload();
+    }
 
     // 게임 중 나오면 새로고침
     if (exitInGame) {

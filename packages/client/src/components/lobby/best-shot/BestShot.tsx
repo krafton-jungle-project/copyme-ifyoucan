@@ -331,21 +331,25 @@ function BestShot() {
         break;
       case 'delete':
         // data 상태 업데이트
-        const token = document.cookie.split('=')[1];
-        const key = data.img.split('/')[4];
-        const config = { headers: { Authorization: `Bearer ${token}` } };
-        try {
-          const res = await axios.delete(`http://localhost:5001/users/${key}`, config); // 서버와 통신하여 데이터 삭제
-          // const res = await axios.delete(`http://15.165.237.195:5001/users/${key}`, config); // 서버와 통신하여 데이터 삭제
-          if (res) {
-            const newImgUrls = res.data.data.imgUrls;
-            setImages(newImgUrls.reverse());
-            setData({ img: '', i: 0 });
-            alert('삭제되었습니다');
+        const check = window.confirm('정말로 삭제하시겠습니까?');
+        if (check) {
+          const token = document.cookie.split('=')[1];
+          const key = data.img.split('/')[4];
+          const config = { headers: { Authorization: `Bearer ${token}` } };
+          try {
+            const res = await axios.delete(`http://localhost:5001/users/${key}`, config); // 서버와 통신하여 데이터 삭제
+            // const res = await axios.delete(`http://15.165.237.195:5001/users/${key}`, config); // 서버와 통신하여 데이터 삭제
+            if (res) {
+              const newImgUrls = res.data.data.imgUrls;
+              setImages(newImgUrls.reverse());
+              setData({ img: '', i: 0 });
+              alert('삭제되었습니다');
+            }
+          } catch (error) {
+            console.log(error);
           }
-        } catch (error) {
-          console.log(error);
         }
+
         break;
       default:
         break;
