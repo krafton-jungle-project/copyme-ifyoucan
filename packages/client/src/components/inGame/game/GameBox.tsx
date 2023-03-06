@@ -18,7 +18,7 @@ import transitionImg from '../../../assets/images/in-game/notice/transition.gif'
 import winImg from '../../../assets/images/in-game/win.gif';
 import transparentImg from '../../../assets/images/transparent.png';
 import { useClientSocket } from '../../../module/client-socket';
-import { myNickName } from '../../../pages/Lobby';
+import { getUser } from '../../../utils/local-storage';
 import {
   Coin,
   GameMusic,
@@ -237,6 +237,7 @@ const roundImg = [roundOneImg, roundTwoImg, roundThreeImg];
 const gameModeImg = [normalImg, blurImg, rotateImg, sizeDownImg];
 
 function GameBox() {
+  const myNickName = getUser().nickName;
   const game = useAtomValue(gameAtom);
   const { host, gameMode } = useAtomValue(roomInfoAtom);
   const { socket } = useClientSocket();
@@ -244,9 +245,9 @@ function GameBox() {
   const myVideoRef = useRef<HTMLVideoElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null);
   const [focus, setFocus] = useState('noMe');
-  let [noticeImg, setNoticeImg] = useState(transparentImg);
-  let [myJudgeImg, setMyJudgeImg] = useState(transparentImg);
-  let [peerJudgeImg, setPeerJudgeImg] = useState(transparentImg);
+  const [noticeImg, setNoticeImg] = useState(transparentImg);
+  const [myJudgeImg, setMyJudgeImg] = useState(transparentImg);
+  const [peerJudgeImg, setPeerJudgeImg] = useState(transparentImg);
 
   useEffect(() => {
     if (

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import styled, { css, keyframes } from 'styled-components';
 import { createRoomModalAtom, fadeOutAtom, GameMode, roomInfoAtom } from '../../../app/room';
 import { useClientSocket } from '../../../module/client-socket';
-import { myNickName } from '../../../pages/Lobby';
+import { getUser } from '../../../utils/local-storage';
 
 const fadeIn = keyframes`
   from {
@@ -215,6 +215,7 @@ const modeName = ['일반', '블러', '축소', '회전'];
 const round = [1, 2, 3];
 
 function CreateRoomModal() {
+  const myNickName = getUser().nickName;
   const { socket } = useClientSocket();
   const navigate = useNavigate();
 
@@ -262,7 +263,7 @@ function CreateRoomModal() {
   };
 
   const handleMode = (e: any) => {
-    let round: string = `round${e.target.lang}`;
+    const round: string = `round${e.target.lang}`;
 
     switch (e.target.innerText) {
       case '일반':

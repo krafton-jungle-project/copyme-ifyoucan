@@ -28,7 +28,7 @@ export function capturePose(
     const ctx = toDraw.getContext('2d') as CanvasRenderingContext2D;
     ctx.drawImage(toCapture, 0, 0, 640, 480);
     if (socket && (flag === 0 || flag === 1)) {
-      let imgSrc: string = toDraw.toDataURL('image/webp', 0.5);
+      const imgSrc: string = toDraw.toDataURL('image/webp', 0.5);
       emitDataToDefender(imgSrc, flag, socket);
     }
   }

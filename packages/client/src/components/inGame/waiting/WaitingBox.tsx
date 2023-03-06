@@ -3,7 +3,7 @@ import styled, { css, keyframes } from 'styled-components';
 import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
 import { roomInfoAtom } from '../../../app/room';
-import { myNickName } from '../../../pages/Lobby';
+import { getUser } from '../../../utils/local-storage';
 import Chatting from './Chatting';
 import MyVideo from './MyVideo';
 import PeerVideo from './PeerVideo';
@@ -88,6 +88,7 @@ const NickNameBox = styled.div`
 `;
 
 function WaitingBox() {
+  const myNickName = getUser().nickName;
   const game = useAtomValue(gameAtom);
   const roomInfo = useAtomValue(roomInfoAtom);
   const peerInfo = useAtomValue(peerInfoAtom);

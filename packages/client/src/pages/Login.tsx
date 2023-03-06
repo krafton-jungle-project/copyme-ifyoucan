@@ -161,11 +161,13 @@ function Login() {
         return;
       }
       try {
-        const res = await axios.post('http://15.165.237.195:5001/users/login', {
-          // const res = await axios.post('http://localhost:5001/users/login', {
-          loginid: id,
-          password: pw,
-        });
+        const res = await axios.post(
+          `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users/login`,
+          {
+            loginid: id,
+            password: pw,
+          },
+        );
         const jwtToken = res.data.data.token;
         setCookie('accessJwtToken', jwtToken);
         const decodedUserInfo = jwt_decode(jwtToken); // 토큰 decode
