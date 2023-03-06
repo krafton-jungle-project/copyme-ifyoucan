@@ -3,8 +3,9 @@ import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
-import partypopperImg from '../../../assets/images/in-game/party-popper-peer.gif';
+import loserEffectImg from '../../../assets/images/in-game/loser-effect.gif';
 import DefaultProfileImg from '../../../assets/images/in-game/peer-default-profile.jpg';
+import winnerEffectImg from '../../../assets/images/in-game/winner-effect-me.gif';
 
 const Container = styled.div<{ isResult: boolean; isWinner: boolean }>`
   position: absolute;
@@ -38,11 +39,12 @@ const Video = styled.video`
   background-color: #0008;
 `;
 
-const WinnerPartyPopper = styled.img`
+const ResultEffect = styled.img`
   position: absolute;
   object-fit: cover;
   width: 100%;
   height: 100%;
+  border-radius: 20px;
 `;
 
 const PeerVideo = () => {
@@ -58,8 +60,11 @@ const PeerVideo = () => {
     <Container isResult={game.isResult} isWinner={game.user.point < game.peer.point}>
       <Img src={DefaultProfileImg} />
       <Video ref={videoRef} autoPlay />
-      {game.isResult && game.user.point < game.peer.point ? (
-        <WinnerPartyPopper alt="winner party popper" src={partypopperImg} />
+      {game.isResult ? (
+        <ResultEffect
+          alt="result effect"
+          src={game.user.point < game.peer.point ? winnerEffectImg : loserEffectImg}
+        />
       ) : null}
     </Container>
   );

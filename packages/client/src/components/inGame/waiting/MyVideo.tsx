@@ -2,8 +2,9 @@ import { useAtomValue } from 'jotai';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { gameAtom } from '../../../app/game';
+import loserEffectImg from '../../../assets/images/in-game/loser-effect.gif';
 import DefaultProfileImg from '../../../assets/images/in-game/my-default-profile.png';
-import partypopperImg from '../../../assets/images/in-game/party-popper-me.gif';
+import winnerEffectImg from '../../../assets/images/in-game/winner-effect-me.gif';
 import { stream } from '../../../utils/tfjs-movenet';
 
 const Container = styled.div<{ isResult: boolean; isWinner: boolean }>`
@@ -38,11 +39,12 @@ const Video = styled.video`
   background-color: #0008;
 `;
 
-const WinnerPartyPopper = styled.img`
+const ResultEffect = styled.img`
   position: absolute;
   object-fit: cover;
   width: 100%;
   height: 100%;
+  border-radius: 20px;
 `;
 
 function MyVideo() {
@@ -57,8 +59,11 @@ function MyVideo() {
     <Container isResult={game.isResult} isWinner={game.user.point >= game.peer.point}>
       <Img alt="defalut profile" src={DefaultProfileImg} />
       <Video ref={videoRef} autoPlay></Video>
-      {game.isResult && game.user.point >= game.peer.point ? (
-        <WinnerPartyPopper alt="winner party popper" src={partypopperImg} />
+      {game.isResult ? (
+        <ResultEffect
+          alt="result effect"
+          src={game.user.point >= game.peer.point ? winnerEffectImg : loserEffectImg}
+        />
       ) : null}
     </Container>
   );

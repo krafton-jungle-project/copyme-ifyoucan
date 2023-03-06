@@ -177,7 +177,13 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('start')
   gameStart(@ConnectedSocket() socket: ServerToClientSocket, @MessageBody() roomId: string): void {
     if (!this.rooms[roomId].isStart) {
-      // 게임이 시작하면 모든 유저들에게 게임이 시작됐다는 이벤트 발생
+      this.server.in(roomId).emit('message', {
+        userId: '',
+        message: `🏁 게임시작 🏁`,
+        isImg: false,
+      });
+
+      // 모든 유저들에게 게임이 시작됐다는 이벤트 발생
       this.rooms[roomId].isStart = true;
       this.server.in(roomId).emit('get_start', socket.id);
     }
@@ -299,7 +305,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         } else if (idx === 3) {
           this.server.in(roomId).emit('message', {
             userId: '',
-            message: '\n\n🔥 최고의 공격 🔥',
+            message: '🔥 최고의 공격 🔥',
             isImg: false,
           });
         } else if (idx === 4) {
