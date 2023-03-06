@@ -205,30 +205,30 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.in(roomId).emit('get_point', winnerId);
   }
 
-  //! 게임 끝
-  @SubscribeMessage('result')
-  gameResult(@ConnectedSocket() socket: ServerToClientSocket): void {
+  //! 최고의 플레이 송출
+  @SubscribeMessage('potg')
+  sendPOTG(@ConnectedSocket() socket: ServerToClientSocket): void {
     const roomId = this.userToRoom[socket.id];
     const scores = this.rooms[roomId].scores;
     const maxScore = Math.max.apply(null, scores);
     const minScore = Math.min.apply(null, scores);
     const bestIdx = scores.indexOf(maxScore);
     const worstIdx = scores.indexOf(minScore);
-    const resultImg = [];
+    const potgImg = [];
     console.log('bestIdx', bestIdx);
     console.log('worstIdx', worstIdx);
     console.log(this.rooms[roomId].images.length);
-    this.rooms[roomId].images[bestIdx].forEach((img) => resultImg.push(img));
-    this.rooms[roomId].images[worstIdx].forEach((img) => resultImg.push(img));
+    this.rooms[roomId].images[bestIdx].forEach((img) => potgImg.push(img));
+    this.rooms[roomId].images[worstIdx].forEach((img) => potgImg.push(img));
 
     // 이미지 병합을 위해 결과 이미지를 클라이언트에 보낸다.
-    this.server.in(roomId).emit('get_upload', resultImg);
+    this.server.in(roomId).emit('get_upload', potgImg);
     const users = this.rooms[roomId].users;
     let idx = 0;
 
     // 방에 모든 유저들에게 게임이 끝났다고 알려줌
     this.rooms[roomId].isStart = false;
-    this.server.in(roomId).emit('get_result');
+    this.server.in(roomId).emit('get_potg');
 
     const intervalId = setInterval(() => {
       if (idx <= 6) {
@@ -247,7 +247,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
             this.server.in(roomId).emit('message', {
               userId: users[0].id,
-              message: resultImg[0],
+              message: potgImg[0],
               isImg: true,
             });
           } else {
@@ -258,7 +258,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
             this.server.in(roomId).emit('message', {
               userId: users[1].id,
-              message: resultImg[0],
+              message: potgImg[0],
               isImg: true,
             });
           }
@@ -271,7 +271,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
             this.server.in(roomId).emit('message', {
               userId: users[1].id,
-              message: resultImg[1],
+              message: potgImg[1],
               isImg: true,
             });
           } else {
@@ -282,7 +282,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
             this.server.in(roomId).emit('message', {
               userId: users[0].id,
-              message: resultImg[1],
+              message: potgImg[1],
               isImg: true,
             });
           }
@@ -301,7 +301,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
             this.server.in(roomId).emit('message', {
               userId: users[0].id,
-              message: resultImg[2],
+              message: potgImg[2],
               isImg: true,
             });
           } else {
@@ -312,7 +312,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
             this.server.in(roomId).emit('message', {
               userId: users[1].id,
-              message: resultImg[2],
+              message: potgImg[2],
               isImg: true,
             });
           }
@@ -325,7 +325,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
             this.server.in(roomId).emit('message', {
               userId: users[1].id,
-              message: resultImg[3],
+              message: potgImg[3],
               isImg: true,
             });
           } else {
@@ -336,7 +336,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
             this.server.in(roomId).emit('message', {
               userId: users[0].id,
-              message: resultImg[3],
+              message: potgImg[3],
               isImg: true,
             });
           }
@@ -360,17 +360,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
       }
     }, 3000);
-  }
-
-  //! 게임 종료
-  @SubscribeMessage('finish')
-  getFinsh(@ConnectedSocket() socket: ServerToClientSocket): void {
-    // 방에 모든 유저들에게 게임 결과 송출이 끝났다고 알려줌
-    const roomId = this.userToRoom[socket.id];
-
-    this.server.to(socket.id).emit('get_finish');
-    // 게임 상태 초기화
-    this.rooms[roomId] = { ...this.rooms[roomId], isStart: false, images: [], scores: [] };
   }
 
   //! 방에 새로운 유저 join

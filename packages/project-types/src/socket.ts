@@ -25,7 +25,7 @@ export interface ServerToClientEvents {
   get_start: (socketId: string) => void;
   get_score: (data: { defenderId: string; score: number }) => void;
   get_count_down: (count: number, stage: string) => void;
-  get_result: () => void;
+  get_potg: () => void;
   get_finish: () => void;
   peer: (data: { id: string; nickName: string }) => void;
   greeting: (data: { message: string }) => void;
@@ -58,8 +58,7 @@ export interface ClientToServerEvents {
   start: (roomId: string) => void;
   score: (score: number) => void;
   round_score: (score: number) => void;
-  result: () => void;
-  finish: () => void;
+  potg: () => void;
   count_down: (stage: string) => void;
   offer: (data: {
     sdp: RTCSessionDescriptionInit;
@@ -99,7 +98,7 @@ export interface InterServerEvents {
   error: () => void;
   message: (chat: IChat) => void;
   get_change_stage: (stage: number) => void;
-  get_result: () => void;
+  get_potg: () => void;
   get_finish: () => void;
   get_upload: (images: string[]) => void;
   get_ready: (socketId: string) => void;

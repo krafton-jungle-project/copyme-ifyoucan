@@ -145,7 +145,7 @@ const GameEventHandler = () => {
     });
 
     // 게임이 끝났을 때
-    socket.on('get_result', () => {
+    socket.on('get_potg', () => {
       POTG.play();
       POTG.volume = 0.6;
       // 게임 start 상태를 false로 바꿔서 결과를 보여주는 도중 상대가 나가도 튕기지 않게 하고

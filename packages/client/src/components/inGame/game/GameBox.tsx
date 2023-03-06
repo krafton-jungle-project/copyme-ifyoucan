@@ -180,7 +180,7 @@ const FadeBackGround = styled.div<{ visible: boolean }>`
   transform: translate(-50%, -50%);
   width: 200%;
   height: 200%;
-  background-color: #0008; // check
+  background-color: #000b; //check: 실제 시연 환경에 맞게 밝기 조절 필요
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `;
 
@@ -276,7 +276,7 @@ function GameBox() {
   useEffect(() => {
     if (game.stage === GameStage.ROUND) {
       // 라운드 시작 및 게임 모드 안내
-      if (game.round < 4) {
+      if (game.round < 2) {
         roundSound[game.round - 1].play();
         setNoticeImg(roundImg[game.round - 1]);
 
@@ -304,8 +304,9 @@ function GameBox() {
         setTimeout(() => {
           setNoticeImg(transparentImg);
 
+          //check
           if (host) {
-            socket.emit('result');
+            socket.emit('potg');
           }
         }, 2000);
       }
