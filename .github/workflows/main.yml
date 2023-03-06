@@ -55,7 +55,7 @@ jobs:
           CI: ''
 
       - name: zip distributions
-        run: zip -r server-build.zip ./packages/server/dist ./appspec.yml ./scripts
+        run: zip -r server-build.zip ./packages/server/dist ./packages/server  ./appspec.yml ./scripts
 
       - name: AWS configure credentials
         uses: aws-actions/configure-aws-credentials@v1
