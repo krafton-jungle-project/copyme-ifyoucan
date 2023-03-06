@@ -34,7 +34,7 @@ const pop = keyframes`
     font-size: 40px;
   }
   50% {
-    transform: rotate(30deg);
+    transform: rotate(15deg);
     font-size: 48px;
   }
 `;
@@ -44,23 +44,28 @@ const glow = keyframes`
     text-shadow: 0 0 10px #fff, 0 0 10px #fff, 0 0 20px #fff, 0 0 20px #fff;
   }
   50% {
-    text-shadow: 0 0  20px #fff, 0 0  20px #fff, 0 0 40px #fff, 0 0 40px #fff
+    text-shadow: 0 0 20px #fff, 0 0 20px #fff, 0 0 40px #fff, 0 0 40px #fff
 
   }
 `;
 
-const ReadyState = styled.div<{ isMe: boolean; isHost: boolean; isReady: boolean }>`
+const StateWrapper = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   top: 0;
   width: 100%;
   height: 12%;
   font-size: 30px;
   font-weight: bold;
-  color: ${(props) =>
-    props.isHost ? 'yellow' : props.isReady ? (props.isMe ? 'red' : 'blue') : 'grey'};
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const ReadyState = styled.p<{ isHost: boolean; isReady: boolean }>`
+  color: ${(props) => (props.isHost ? '#ff0' : props.isReady ? '#f00' : '#808080')};
   transition: 0.5s;
 
   ${(props) =>
@@ -73,6 +78,38 @@ const ReadyState = styled.div<{ isMe: boolean; isHost: boolean; isReady: boolean
       animation-iteration-count: 1, infinite;
       animation-timing-function: ease-in-out, ease-in-out;
     `}
+`;
+
+const ResultState = styled.p<{ isWinner: boolean }>`
+  font-size: 40px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 10px ${(props) => (props.isWinner ? '#00f' : '#f00')};
+
+  &::after {
+    content: attr(data-winner);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: ${(props) => (props.isWinner ? '#00f' : '#f00')};
+    z-index: -1;
+    filter: blur(5px);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: ${(props) => (props.isWinner ? '#00f' : '#f00')};
+    z-index: -2;
+    opacity: 0.1;
+    filter: blur(10px);
+  }
 `;
 
 const NickNameBox = styled.div`
@@ -96,22 +133,44 @@ function WaitingBox() {
   return (
     <Container isStart={game.isStart}>
       <Wrapper isMe={true} isStart={game.isStart}>
-        <ReadyState isMe={true} isHost={roomInfo.host} isReady={game.user.isReady}>
-          {roomInfo.host ? '👑 HOST' : game.user.isReady ? 'READY' : 'NOT READY'}
-        </ReadyState>
+        <StateWrapper>
+          {game.isResult ? (
+            <ResultState
+              data-winner={game.user.point >= game.peer.point ? '🏆 WINNER 🏆' : '👻 LOSER 👻'}
+              isWinner={game.user.point >= game.peer.point}
+            >
+              {game.user.point >= game.peer.point ? '🏆 WINNER 🏆' : '👻 LOSER 👻'}
+            </ResultState>
+          ) : (
+            <ReadyState isHost={roomInfo.host} isReady={game.user.isReady}>
+              {roomInfo.host ? '👑 HOST 👑' : game.user.isReady ? '🔥 READY 🔥' : '🚧 NOT READY 🚧'}
+            </ReadyState>
+          )}
+        </StateWrapper>
         <MyVideo />
         <NickNameBox>{myNickName}</NickNameBox>
       </Wrapper>
       <Wrapper isMe={false} isStart={game.isStart}>
-        <ReadyState isMe={false} isHost={!roomInfo.host} isReady={game.peer.isReady}>
-          {roomInfo.host
-            ? peerInfo.nickName
-              ? game.peer.isReady
-                ? 'READY'
-                : 'NOT READY'
-              : 'WAITING'
-            : '👑 HOST'}
-        </ReadyState>
+        <StateWrapper>
+          {game.isResult ? (
+            <ResultState
+              data-winner={game.user.point < game.peer.point ? '🏆 WINNER 🏆' : '👻 LOSER 👻'}
+              isWinner={game.user.point < game.peer.point}
+            >
+              {game.user.point < game.peer.point ? '🏆 WINNER 🏆' : '👻 LOSER 👻'}
+            </ResultState>
+          ) : (
+            <ReadyState isHost={!roomInfo.host} isReady={game.peer.isReady}>
+              {roomInfo.host
+                ? peerInfo.nickName
+                  ? game.peer.isReady
+                    ? '🔥 READY 🔥'
+                    : '🚧 NOT READY 🚧'
+                  : 'WAITING'
+                : '👑 HOST 👑'}
+            </ReadyState>
+          )}
+        </StateWrapper>
         <PeerVideo />
         <NickNameBox>{peerInfo.nickName}</NickNameBox>
       </Wrapper>

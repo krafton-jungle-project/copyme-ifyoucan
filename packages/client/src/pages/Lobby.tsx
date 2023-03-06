@@ -34,7 +34,7 @@ const Wrapper = styled.div`
   min-height: 600px;
   max-width: 1050px;
   max-height: 700px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #0008;
   border: 0.1rem solid #fff;
   border-radius: 40px;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 1rem #bc13fe, 0 0 0.4rem #bc13fe,
@@ -145,7 +145,7 @@ const NavItem = styled.div<{ isSelected: boolean }>`
   ${(props) =>
     props.isSelected &&
     css`
-      color: white;
+      color: #fff;
       text-shadow: 0 0 2px #fff, 0 0 1px #fff, 0 0 10px #fff, 0 0 20px #bc13fe, 0 0 30px #bc13fe,
         0 0 20px #bc13fe, 0 0 30px #bc13fe, 0 0 50px #bc13fe;
     `}
@@ -162,7 +162,7 @@ const NavItem = styled.div<{ isSelected: boolean }>`
 
 const VerticalLine = styled.div`
   height: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid #fff8;
 `;
 
 const Section = styled.div`

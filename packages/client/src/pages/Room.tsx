@@ -18,6 +18,9 @@ import { GameMusic, RoomEnter, RoomExit } from '../utils/sound';
 
 const Container = styled.div`
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -33,7 +36,7 @@ function Room() {
   const resetRoomInfo = useResetAtom(roomInfoAtom);
   const { isStreamReady, initialize } = useMovenetStream();
 
-  usePreventExit(); //temp
+  usePreventExit();
   useConnectWebRTC();
   GameEventHandler();
   MotionReady();

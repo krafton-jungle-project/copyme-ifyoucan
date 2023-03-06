@@ -25,10 +25,9 @@ const VS = styled.div<{ isStart: boolean }>`
       font-weight: 0;
     `}
     
-  color: rgba(255, 255, 255, 0.6);
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.6),
-    0 0 50px rgba(255, 255, 255, 0.6), 0 0 42px #bc13fe, 0 0 120px #bc13fe, 0 0 92px #bc13fe,
-    0 0 102px #bc13fe, 0 0 151px #bc13fe;
+  color: #fff8;
+  text-shadow: 0 0 5px #fff8, 0 0 20px #fff8, 0 0 50px #fff8, 0 0 42px #bc13fe, 0 0 120px #bc13fe,
+    0 0 92px #bc13fe, 0 0 102px #bc13fe, 0 0 151px #bc13fe;
 
   text-align: center;
   transition: 0.5s;

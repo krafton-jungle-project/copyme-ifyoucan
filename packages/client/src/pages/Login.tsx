@@ -19,7 +19,7 @@ const Container = styled.div<{ isModalOpened: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #0008;
   border: 0.1rem solid #fff;
   border-radius: 12px;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #bc13fe, 0 0 0.8rem #bc13fe,

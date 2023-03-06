@@ -27,8 +27,8 @@ const ImgWrapper = styled.div`
   align-items: center;
   padding: 20px;
   margin: 20px 30px;
-  border: 1px solid #ff00cc;
-  background-color: #ff00cc11;
+  border: 1px solid #f0c;
+  background-color: #f0c1;
   border-radius: 5px;
 `;
 

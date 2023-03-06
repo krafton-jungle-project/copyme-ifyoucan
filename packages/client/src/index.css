@@ -13,5 +13,5 @@ body {
   height: 100vh;
   background-image: url('./assets/images/background-image.jpg');
   background-size: cover;
-  color: white;
+  color: #fff;
 }

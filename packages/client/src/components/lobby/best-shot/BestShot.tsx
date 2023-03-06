@@ -43,9 +43,9 @@ const ImgWrapper = styled.div`
 const Img = styled.img`
   width: 100%;
   height: 100%;
-  border: 1px solid #ff00cc66;
+  border: 1px solid #f0c6;
   border-radius: 5px;
-  background-color: #ff00cc11;
+  background-color: #f0c1;
 `;
 
 const DateTxt = styled.p`

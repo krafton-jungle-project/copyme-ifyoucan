@@ -44,7 +44,7 @@ const Wrapper = styled.div`
 `;
 
 const GameModeDiv = styled.div`
-  border: 2px solid yellow;
+  border: 2px solid #ff0;
   width: 88%;
   height: 20%;
   display: flex;
@@ -60,7 +60,6 @@ const ModeNameDiv = styled.div<{ keys: number; highlighted: number }>`
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  color: white;
 
   ${(p) =>
     p.keys === p.highlighted &&
@@ -88,7 +87,7 @@ const Img = styled.img`
 `;
 
 const Div = styled.div<{ mode: string }>`
-  border: 2px solid yellow;
+  border: 2px solid #ff0;
   width: 25%;
   height: 95%;
   display: flex;
@@ -97,7 +96,7 @@ const Div = styled.div<{ mode: string }>`
   object-fit: cover;
 
   &:hover {
-    background-color: white;
+    background-color: #fff;
     transition: 0.3s;
     transform: scale(1.2);
   }

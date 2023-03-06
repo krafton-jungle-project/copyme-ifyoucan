@@ -180,8 +180,7 @@ const FadeBackGround = styled.div<{ visible: boolean }>`
   transform: translate(-50%, -50%);
   width: 200%;
   height: 200%;
-  background-color: rgba(0, 0, 0, 0.8);
-  border: 5px solid white;
+  background-color: #000b; //check: 실제 시연 환경에 맞게 밝기 조절 필요
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `;
 
@@ -209,7 +208,7 @@ const Judge = styled.p<{ isJudgement: boolean }>`
     css`
       font-size: 100px;
       font-weight: 800;
-      -webkit-text-stroke: 2px black;
+      -webkit-text-stroke: 2px #000;
       text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff;
     `}
 `;
@@ -307,7 +306,7 @@ function GameBox() {
           setNoticeImg(transparentImg);
 
           if (host) {
-            socket.emit('result');
+            socket.emit('potg');
           }
         }, 2000);
       }
@@ -383,7 +382,7 @@ function GameBox() {
           <MyJudgeImg alt="my judge image" src={myJudgeImg} />
         </CameraWrapper>
       </Wrapper>
-      <NoticeImg alt="round image" src={noticeImg} />
+      <NoticeImg alt="notice image" src={noticeImg} />
       <Judge isJudgement={game.stage === GameStage.JUDGE}>
         {game.user.score >= game.peer.score ? '>' : '<'}
       </Judge>

@@ -26,7 +26,7 @@ const fadeOut = keyframes`
 `;
 
 const ModalBackground = styled.div<{ isOpened: boolean; isVisible: boolean }>`
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #0008;
   position: absolute;
   transform: translate(-50%, -50%);
   left: 50%;
@@ -48,7 +48,7 @@ const ModalBackground = styled.div<{ isOpened: boolean; isVisible: boolean }>`
 `;
 
 const Modal = styled.div<{ isOpened: boolean; isVisible: boolean }>`
-  border: 2px solid yellow;
+  border: 2px solid #ff0;
   border-radius: 15px;
   position: absolute;
   transform: translate(-50%);
@@ -80,7 +80,7 @@ const Modal = styled.div<{ isOpened: boolean; isVisible: boolean }>`
 `;
 
 const Span = styled.span`
-  border: 2px solid yellow;
+  border: 2px solid #ff0;
   position: absolute;
   right: 5%;
   top: 8%;
@@ -125,7 +125,7 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
-  border: 2px solid yellow;
+  border: 2px solid #ff0;
   background-color: transparent;
   border-radius: 10px;
   padding: 2% 0;

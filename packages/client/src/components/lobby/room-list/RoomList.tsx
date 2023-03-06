@@ -42,8 +42,8 @@ const RoomCardContainer = styled.div`
   bottom: 0;
   width: 100%;
   height: 93%;
-  border: 1px solid #ff00cc;
-  background-color: #ff00cc11;
+  border: 1px solid #f0c;
+  background-color: #f0c1;
   border-radius: 5px;
   &::-webkit-scrollbar {
     display: none;
