@@ -15,7 +15,7 @@ import RoomList from '../components/lobby/room-list/RoomList';
 import Tutorial from '../components/lobby/tutorial/Tutorial';
 import { useMovenetStream } from '../module/movenet-stream';
 import { removeUser } from '../utils/local-storage';
-import { BackgroundMusic, ButtonClick1, ButtonClick2 } from '../utils/sound';
+import { BackgroundMusic, ButtonClick1, ButtonClick2, ButtonClick4 } from '../utils/sound';
 
 const Container = styled.div`
   position: absolute;
@@ -254,6 +254,7 @@ function Lobby() {
     ButtonClick1.play();
     const check = window.confirm('로그아웃 하시겠습니까?');
     if (check) {
+      ButtonClick4.play();
       localStorage.setItem('isAuthenticated', 'false');
       removeUser();
       navigate('/login', { replace: true });

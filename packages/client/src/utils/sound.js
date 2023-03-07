@@ -4,6 +4,7 @@ import blur from '../assets/sounds/blur.mp3';
 import button1 from '../assets/sounds/button1.mp3';
 import button2 from '../assets/sounds/button2.mp3';
 import button3 from '../assets/sounds/button3.mp3';
+import button4 from '../assets/sounds/button4.mp3';
 import cameraclick from '../assets/sounds/camera-click.mp3';
 import coin from '../assets/sounds/coin.mp3';
 import correct from '../assets/sounds/correct.mp3';
@@ -38,6 +39,7 @@ const Blur = new Audio(blur);
 const ButtonClick1 = new Audio(button1);
 const ButtonClick2 = new Audio(button2);
 const ButtonClick3 = new Audio(button3);
+const ButtonClick4 = new Audio(button4);
 const CameraClick = new Audio(cameraclick);
 const Coin = new Audio(coin);
 const Correct = new Audio(correct);
@@ -73,6 +75,7 @@ export {
   ButtonClick1,
   ButtonClick2,
   ButtonClick3,
+  ButtonClick4,
   CameraClick,
   Coin,
   Correct,

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import transparentImg from '../../../assets/images/transparent.png';
-import { ButtonClick2, ButtonClick3 } from '../../../utils/sound';
+import { ButtonClick2, ButtonClick3, ButtonClick4 } from '../../../utils/sound';
 import { Paging } from './Paging';
 
 const Container = styled.div`
@@ -347,13 +347,15 @@ function BestShot() {
               const newImgUrls = res.data.data.imgUrls;
               setImages(newImgUrls.reverse());
               setData({ img: '', i: 0 });
+              ButtonClick4.play();
               alert('삭제되었습니다');
             }
           } catch (error) {
             console.log(error);
           }
+        } else {
+          ButtonClick2.play();
         }
-
         break;
       default:
         break;
