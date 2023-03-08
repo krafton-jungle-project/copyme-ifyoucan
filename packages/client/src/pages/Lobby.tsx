@@ -167,6 +167,9 @@ const VerticalLine = styled.div`
 
 const Section = styled.div`
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   top: 20%;
   left: 5%;
   width: 90%;

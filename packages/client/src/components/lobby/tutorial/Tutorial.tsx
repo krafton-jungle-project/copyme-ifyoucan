@@ -9,10 +9,6 @@ import PoseCam from './PoseCam';
 import PoseImg from './PoseImg';
 
 const Container = styled.div`
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: grid;
   grid-template-columns: 50% 50%;
   grid-template-rows: 20% 80%;

@@ -6,6 +6,7 @@ import styled, { css, keyframes } from 'styled-components';
 import { createRoomModalAtom, fadeOutAtom, GameMode, roomInfoAtom } from '../../../app/room';
 import { useClientSocket } from '../../../module/client-socket';
 import { getUser } from '../../../utils/local-storage';
+import { ButtonClick2, ButtonClick3 } from '../../../utils/sound';
 
 const fadeIn = keyframes`
   from {
@@ -26,12 +27,12 @@ const fadeOut = keyframes`
 `;
 
 const ModalBackground = styled.div<{ isOpened: boolean; isVisible: boolean }>`
-  background-color: #0008;
-  position: absolute;
-  transform: translate(-50%, -50%);
-  left: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
-  height: 141vh;
+  height: 100vh;
+  background-color: #0008;
   z-index: 1;
 
   ${(p) =>
@@ -48,19 +49,19 @@ const ModalBackground = styled.div<{ isOpened: boolean; isVisible: boolean }>`
 `;
 
 const Modal = styled.div<{ isOpened: boolean; isVisible: boolean }>`
-  border: 2px solid #ff0;
-  border-radius: 15px;
-  position: absolute;
-  transform: translate(-50%, -20%);
-  width: 35vw;
-  height: 60vh;
+  position: fixed;
+  top: 50%;
   left: 50%;
-  min-width: 515px;
-  min-height: 530px;
-  max-width: 570px;
-  max-height: 700px;
+  transform: translate(-50%, -40%);
+  width: 420px;
+  height: 400px;
+  border: 1px solid #fff;
+  border-radius: 15px;
   background-color: #01000d;
-  z-index: 999;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 0.3rem #faed27, 0 0 0.4rem #faed27,
+    0 0 1rem #faed27, inset 0 0 0.3rem #faed27;
+  padding: 20px 30px;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -79,103 +80,95 @@ const Modal = styled.div<{ isOpened: boolean; isVisible: boolean }>`
     `}
 `;
 
-const Span = styled.span`
-  border: 2px solid #ff0;
-  position: absolute;
-  right: 5%;
-  top: 8%;
-  padding: 1% 2%;
-  cursor: pointer;
-  border-radius: 10px;
-  font-weight: 700;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  &:hover {
-    background-color: #f0ffa744;
-    text-shadow: 0 0 2px #fff;
-  }
-`;
-
 const Title = styled.div`
   font-size: 27px;
-  font-weight: 700;
+  font-weight: 800;
 `;
 
 const Input = styled.input`
-  padding: 3% 4%;
-  width: 70%;
-  border: 2px solid #fffe;
+  width: 100%;
+  height: 50px;
+  border: 1px solid #fffb;
   border-radius: 10px;
-  font-size: large;
+  font-size: 18px;
+  padding: 15px;
   background-color: transparent;
   color: #fff;
-
-  &::placeholder {
-    color: #fffd;
-  }
+  transition: 0.3s;
 
   &:focus {
     transition: 0.3s;
-    box-shadow: 0 0 0.1rem #fff, 0 0 0.1rem #fff, 0 0 0.4rem #fff, 0 0 0.4rem #fff, 0 0 0.6rem #fff,
-      inset 0 0 0.4rem #fff;
+    box-shadow: 0 0 0.1rem #fff, 0 0 0.1rem #fff, 0 0 0.4rem #fff, 0 0 0.4rem;
     outline: none;
   }
 `;
 
 const Button = styled.button`
-  border: 2px solid #ff0;
-  background-color: transparent;
+  border: 1px solid #fffb;
+  background-color: #faed27;
   border-radius: 10px;
-  padding: 2% 0;
-  width: 35%;
-  font-size: larger;
-  color: #fff;
+  padding: 10px 30px;
+  margin: 15px 15px 0 15px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #000;
   cursor: pointer;
+  transition: 0.3s;
 
   &:hover {
-    background-color: #f0ffa744;
-    text-shadow: 0 0 2px #fff;
+    color: #fff;
+    background-color: transparent;
+    text-shadow: 0 0 2px #fff, 0 0 4px #fff;
+    box-shadow: 0 0 0.1rem #fff, 0 0 0.1rem #fff, 0 0 0.4rem #fff, 0 0 0.4rem;
   }
 `;
 
 const ModeDiv = styled.div`
-  border: 2px solid #fff;
+  border: 1px solid #fffb;
   border-radius: 10px;
-
-  padding: 2% 0 2% 5%;
+  padding: 15px 20px;
   height: 30%;
-  width: 85%;
+  width: 100%;
   display: flex;
-  /* flex-direction: column; */
   justify-content: space-evenly;
   align-items: center;
+  font-size: 18px;
 `;
 
 const RoundWrapper = styled.div`
-  width: 27%;
+  width: 30%;
   height: 100%;
+  font-weight: 800;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #faed27cc;
 `;
 
 const RoundDiv = styled.div`
   height: 33%;
   width: 100%;
-  display: flex;
-  align-items: center;
-  font-size: 1.2rem;
+  /* display: flex; */
+  /* align-items: center; */
+  margin: 4px 0;
 `;
 
 const SelectionWrapper = styled.div`
-  width: 73%;
+  width: 70%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 const SelectionDiv = styled.div`
-  font-size: 1.2rem;
   height: 33%;
   display: flex;
   align-items: center;
+  justify-content: center;
+  margin: 4px 0;
 `;
 
 const ModeSpan = styled.span<{
@@ -185,6 +178,8 @@ const ModeSpan = styled.span<{
   selected2: number;
   selected3: number;
 }>`
+  color: #fffb;
+  transition: 0.3s;
   cursor: pointer;
   ${(p) =>
     // 라운드 확인
@@ -192,26 +187,23 @@ const ModeSpan = styled.span<{
     // span의 고유 모드와 현재 클릭된 모드가 같으면 글자 강조
     p.keys === p.selected1 &&
     css`
-      text-shadow: 0 0 2px #fff, 0 0 1px #fff, 0 0 10px #fff, 0 0 20px #bc13fe, 0 0 30px #bc13fe,
-        0 0 20px #bc13fe, 0 0 30px #bc13fe, 0 0 50px #bc13fe;
+      text-shadow: 0 0 1px #fff, 0 0 1px #fff, 0 0 5px #faed27, 0 0 10px #faed27, 0 0 20px #faed27;
     `}
   ${(p) =>
     p.lang === '2' &&
     p.keys === p.selected2 &&
     css`
-      text-shadow: 0 0 2px #fff, 0 0 1px #fff, 0 0 10px #fff, 0 0 20px #bc13fe, 0 0 30px #bc13fe,
-        0 0 20px #bc13fe, 0 0 30px #bc13fe, 0 0 50px #bc13fe;
+      text-shadow: 0 0 1px #fff, 0 0 1px #fff, 0 0 5px #faed27, 0 0 10px #faed27, 0 0 20px #faed27;
     `}
     ${(p) =>
     p.lang === '3' &&
     p.keys === p.selected3 &&
     css`
-      text-shadow: 0 0 2px #fff, 0 0 1px #fff, 0 0 10px #fff, 0 0 20px #bc13fe, 0 0 30px #bc13fe,
-        0 0 20px #bc13fe, 0 0 30px #bc13fe, 0 0 50px #bc13fe;
+      text-shadow: 0 0 1px #fff, 0 0 1px #fff, 0 0 5px #faed27, 0 0 10px #faed27, 0 0 20px #faed27;
     `}
 `;
 
-const modeName = ['일반', '블러', '축소', '회전'];
+const modeName = ['노말', '블러', '축소', '회전'];
 const round = [1, 2, 3];
 
 function CreateRoomModal() {
@@ -256,6 +248,7 @@ function CreateRoomModal() {
   };
 
   const lazyClose = () => {
+    ButtonClick3.play();
     setVisible(false);
     setTimeout(() => {
       setOpen(false);
@@ -263,10 +256,11 @@ function CreateRoomModal() {
   };
 
   const handleMode = (e: any) => {
+    ButtonClick2.play();
     const round: string = `round${e.target.lang}`;
 
     switch (e.target.innerText) {
-      case '일반':
+      case '노말':
         setGameMode((prev) => ({ ...prev, [round]: GameMode.NORMAL }));
         break;
       case '블러':
@@ -309,21 +303,20 @@ function CreateRoomModal() {
     <>
       {open && <ModalBackground isOpened={open} onClick={lazyClose} isVisible={visible} />}
       <Modal isOpened={open} isVisible={visible}>
-        <Span onClick={lazyClose}>X</Span>
-        <Title>방 만들기</Title>
+        <Title style={{ color: '#faed27' }}>방만들기</Title>
         <Input
           type="text"
-          placeholder="방 제목을 입력해주세요"
+          placeholder="방제목을 입력하세요"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setRoomName(e.target.value);
           }}
           value={roomName}
         />
-        <Title>모드 선택</Title>
+        <Title style={{ color: '#fffd', fontSize: '24px', marginTop: '15px' }}>게임모드 선택</Title>
         <ModeDiv>
           <RoundWrapper>
             {round.map((val, key) => (
-              <RoundDiv key={key}>Round {val} :</RoundDiv>
+              <RoundDiv key={key}>ROUND {val}</RoundDiv>
             ))}
           </RoundWrapper>
           <SelectionWrapper>
@@ -344,14 +337,19 @@ function CreateRoomModal() {
                     >
                       {val2}
                     </ModeSpan>
-                    {key2 < 3 && <span>　|　</span>}
+                    {key2 < 3 && (
+                      <span style={{ fontSize: '12px', color: '#fff8', margin: '12px' }}>|</span>
+                    )}
                   </div>
                 ))}
               </SelectionDiv>
             ))}
           </SelectionWrapper>
         </ModeDiv>
-        <Button onClick={handleOk}>생성하기</Button>
+        <div>
+          <Button onClick={handleOk}>생성</Button>
+          <Button onClick={lazyClose}>취소</Button>
+        </div>
       </Modal>
     </>
   );

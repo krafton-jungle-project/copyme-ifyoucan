@@ -76,7 +76,7 @@ const InvisibleDrawingCanvas = () => {
         ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
       }
     };
-    console.log('upload');
+
     socket.on('get_upload', (images: string[]) => {
       console.log('get_upload');
 

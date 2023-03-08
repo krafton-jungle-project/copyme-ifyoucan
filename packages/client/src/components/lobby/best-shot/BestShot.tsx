@@ -6,10 +6,7 @@ import { ButtonClick2, ButtonClick3, ButtonClick4 } from '../../../utils/sound';
 import { Paging } from './Paging';
 
 const Container = styled.div`
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: absolute;
   width: 80%;
   height: 90%;
 `;
