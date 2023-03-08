@@ -68,6 +68,7 @@ const StateWrapper = styled.div`
 const ReadyState = styled.p<{ isHost: boolean; isReady: boolean }>`
   color: ${(props) => (props.isHost ? '#ff0' : props.isReady ? '#f00' : '#808080')};
   transition: 0.5s;
+  will-change: transform, font-size;
 
   ${(props) =>
     props.isReady &&
