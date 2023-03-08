@@ -12,7 +12,7 @@ interface RoomState {
 enum GameMode {
   NORMAL,
   BLUR,
-  ROTATE,
+  SPIN,
   SIZEDOWN,
 }
 

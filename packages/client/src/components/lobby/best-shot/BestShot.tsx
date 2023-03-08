@@ -313,11 +313,8 @@ function BestShot() {
         break;
       case 'download':
         const url = data.img;
-
         fetch(url)
-          .then((response) => {
-            return response.blob();
-          })
+          .then((response) => response.blob())
           .then((blob) => {
             const blobUrl = URL.createObjectURL(blob);
             const link = document.createElement('a');

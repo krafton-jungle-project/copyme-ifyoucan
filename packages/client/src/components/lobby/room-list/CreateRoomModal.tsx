@@ -265,7 +265,7 @@ function CreateRoomModal() {
         setGameMode((prev) => ({ ...prev, [round]: GameMode.BLUR }));
         break;
       case '회전':
-        setGameMode((prev) => ({ ...prev, [round]: GameMode.ROTATE }));
+        setGameMode((prev) => ({ ...prev, [round]: GameMode.SPIN }));
         break;
       case '축소':
         setGameMode((prev) => ({ ...prev, [round]: GameMode.SIZEDOWN }));

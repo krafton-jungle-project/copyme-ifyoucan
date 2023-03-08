@@ -1,8 +1,10 @@
 import type { Keypoint, Pose } from '@tensorflow-models/pose-detection';
 
 // Usage Usage Usage Usage Usage Usage Usage Usage
-// comparePoses(공격자, 수비자);
-// comparePoses(stdPose, pose4);
+
+// comparePoses(채점기준포즈, 수비자);
+// vectorComparePoses(채점기준포즈, 수비자);
+// cosineSimilarity(채점기준포즈, 수비자);
 
 // euclideanDistance 함수
 function euclideanDistance(kp1: Keypoint, kp2: Keypoint): number {
@@ -91,7 +93,10 @@ function alignPose(pose1: Pose, pose2: Pose): Pose {
 
   return pose2;
 }
+// 여기까지 공통 사용 함수
+// -----------------------------------------------
 
+// -----------------------------------------------
 // 공격자의 어깨 거리를 scaling factor로 이용한 계산 방법
 function resizePose(pose: Pose): void {
   // 양쪽 어깨 좌표 받아옴, 어깨가 가장 인식이 잘 되므로 어깨로 선정하겠슴다
@@ -142,14 +147,13 @@ function comparePoses(pose1: Pose, pose2: Pose): number {
   // totalDistance / 17
   let averageDistance = totalDistance / (alignedPose1.keypoints.length - 5);
   let score = Math.ceil(100 - 100 * averageDistance);
-
+  // console.log('temp: ', averageDistance);
   return score > 0 ? score : 0;
 }
 
-// vector vector vector vector vector vector vector
+// -----------------------------------------------
 // vector vector vector vector vector vector vector
 // 34차원 벡터 이용한 scaling factor 구하는 함수
-// 공격자의 포즈를 넣어야 함
 function vectorScalingFactor(pose: Pose): number {
   const initCoordinate = {
     x: 0,
@@ -166,7 +170,8 @@ function vectorScalingFactor(pose: Pose): number {
     sum += euclideanDistance(keypoint, initCoordinate) ** 2;
   }
   // 다 더한 값에 제곱근을 씌우고 계산한 키포인트 개수만큼 나눔
-  const scalingFactor: number = sum ** 0.5 / (pose.keypoints.length - 5);
+  // const scalingFactor: number = sum ** 0.5 / (pose.keypoints.length - 5);
+  const scalingFactor: number = sum ** 0.5;
 
   return scalingFactor;
 }
@@ -184,13 +189,15 @@ function vectorComparePoses(pose1: Pose, pose2: Pose): number {
   // Deep copy 후 cmpPose 진행, shallow copy 진행 시, 캔버스에 skeleton을 그릴 때
   // resizing된 점들을 토대로 그리기 때문에 제대로 그려지지 않음
 
-  const scalingFactor = vectorScalingFactor(pose1);
+  const scalingFactor1 = vectorScalingFactor(pose1);
+  const scalingFactor2 = vectorScalingFactor(pose2);
 
   let myPose = JSON.parse(JSON.stringify(pose1));
   let peerPose = JSON.parse(JSON.stringify(pose2));
 
-  vectorResizePose(myPose, scalingFactor);
-  vectorResizePose(peerPose, scalingFactor);
+  // 모든 좌표의 제곱의 합을 1로 만듦
+  vectorResizePose(myPose, scalingFactor1);
+  vectorResizePose(peerPose, scalingFactor2);
 
   // 어깨와 골반 총 4개의 점을 이용하여 몸통의 중심을 기준으로 pose를 align함
   let alignedPose1 = alignPose(myPose, myPose);
@@ -209,9 +216,9 @@ function vectorComparePoses(pose1: Pose, pose2: Pose): number {
   // (점들의 차의 합) / (점의 개수)
   // totalDistance / 17
   let averageDistance = totalDistance / (alignedPose1.keypoints.length - 5);
-  let score = Math.ceil(100 - 100 * averageDistance);
-
-  return score > 0 ? score : 0;
+  let score = Math.ceil(100 - 1000 * averageDistance);
+  // console.log('vector: ', averageDistance);
+  return score;
 }
 
 function cosineSimilarity(pose1: Pose, pose2: Pose): number {

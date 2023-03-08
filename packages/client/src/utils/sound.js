@@ -25,6 +25,7 @@ import roundone from '../assets/sounds/round-one.mp3';
 import roundthree from '../assets/sounds/round-three.mp3';
 import roundtwo from '../assets/sounds/round-two.mp3';
 import sizedown from '../assets/sounds/sizedown.mp3';
+import spin11s from '../assets/sounds/spin-11s.mp3';
 import spin from '../assets/sounds/spin.wav';
 import stamp from '../assets/sounds/stamp.mp3';
 import swish from '../assets/sounds/swish.mp3';
@@ -59,6 +60,7 @@ const RoundOne = new Audio(roundone);
 const RoundThree = new Audio(roundthree);
 const RoundTwo = new Audio(roundtwo);
 const SizeDown = new Audio(sizedown);
+const Spin11s = new Audio(spin11s);
 const Spin = new Audio(spin);
 const Stamp = new Audio(stamp);
 const Swish = new Audio(swish);
@@ -94,6 +96,7 @@ export {
   RoundThree,
   RoundTwo,
   SizeDown,
+  Spin11s,
   Spin,
   Stamp,
   Swish,

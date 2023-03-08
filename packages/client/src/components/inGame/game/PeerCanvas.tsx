@@ -19,7 +19,7 @@ const Container = styled.div`
   border-radius: 20px;
 `;
 
-const rotate = keyframes`
+const spin = keyframes`
   0% {
     transform: scaleX(-1);
   }
@@ -49,10 +49,10 @@ const Video = styled.video<{ gameMode: number; offender: boolean }>`
     `}
 
   ${(p) =>
-    p.gameMode === GameMode.ROTATE &&
+    p.gameMode === GameMode.SPIN &&
     p.offender &&
     css`
-      animation: ${rotate} 1.5s infinite;
+      animation: ${spin} 1.5s infinite;
     `}
 
   ${(p) =>
@@ -105,10 +105,10 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; gameMode: number; offe
     `}
 
   ${(p) =>
-    p.gameMode === GameMode.ROTATE &&
+    p.gameMode === GameMode.SPIN &&
     p.offender &&
     css`
-      animation: ${rotate} 1.5s infinite;
+      animation: ${spin} 1.5s infinite;
     `}
 
   ${(p) =>

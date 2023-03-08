@@ -10,11 +10,11 @@ import loseImg from '../../../assets/images/in-game/lose.gif';
 import blurImg from '../../../assets/images/in-game/notice/blur.gif';
 import gameOverImg from '../../../assets/images/in-game/notice/game-over.gif';
 import normalImg from '../../../assets/images/in-game/notice/normal.png';
-import rotateImg from '../../../assets/images/in-game/notice/rotate.gif';
 import roundOneImg from '../../../assets/images/in-game/notice/round-one.gif';
 import roundThreeImg from '../../../assets/images/in-game/notice/round-three.gif';
 import roundTwoImg from '../../../assets/images/in-game/notice/round-two.gif';
 import sizeDownImg from '../../../assets/images/in-game/notice/sizedown.gif';
+import spinImg from '../../../assets/images/in-game/notice/spin.gif';
 import transitionImg from '../../../assets/images/in-game/notice/transition.gif';
 import winImg from '../../../assets/images/in-game/win.gif';
 import transparentImg from '../../../assets/images/transparent.png';
@@ -236,7 +236,7 @@ const PeerJudgeImg = styled.img`
 
 const roundSound = [RoundOne, RoundTwo, RoundThree];
 const roundImg = [roundOneImg, roundTwoImg, roundThreeImg];
-const gameModeImg = [normalImg, blurImg, rotateImg, sizeDownImg];
+const gameModeImg = [normalImg, blurImg, spinImg, sizeDownImg];
 
 function GameBox() {
   const myNickName = getUser().nickName;
