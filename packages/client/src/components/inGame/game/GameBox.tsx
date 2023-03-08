@@ -56,6 +56,7 @@ const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
   height: 100%;
   transition: 0.5s;
   transition-delay: ${(props) => (props.isStart ? '0.5s' : 'none')};
+  will-change: left, right;
 `;
 
 const CameraWrapper = styled.div<{ isMe: boolean }>`
@@ -87,6 +88,7 @@ const GameRole = styled.div<{ isMe: boolean; focus: string }>`
   font-size: 35px;
   font-weight: bold;
   color: #f4ff00aa;
+  transition: 0.5s;
 
   ${(props) =>
     ((props.isMe && props.focus === 'me') || (!props.isMe && props.focus === 'peer')) &&
@@ -94,8 +96,6 @@ const GameRole = styled.div<{ isMe: boolean; focus: string }>`
       color: #f4ff00;
       animation: ${textHighlight} 1.6s linear infinite;
     `}
-
-  transition: 0.5s;
 `;
 
 const NickNameBox = styled.div`
@@ -128,6 +128,8 @@ const CameraFocus = styled.div<{ focus: string }>`
   width: 48%;
   height: 100%;
   border-radius: 20px;
+  transition: 0.5s;
+  will-change: box-shadow;
 
   ${(props) =>
     (props.focus === 'noMe' || props.focus === 'noPeer') &&
@@ -141,8 +143,6 @@ const CameraFocus = styled.div<{ focus: string }>`
     css`
       animation: ${blinkAnimate} 0.8s linear infinite;
     `}
-
-  transition: 0.5s;
 `;
 
 const upDownAnimate = keyframes`
@@ -159,6 +159,7 @@ const HighlightArrow = styled.img<{ focus: string }>`
   visibility: hidden;
   top: -25%;
   height: 20%;
+  will-change: top;
   animation: ${upDownAnimate} 0.5s linear infinite;
 
   ${(props) =>
@@ -182,7 +183,7 @@ const FadeBackGround = styled.div<{ visible: boolean }>`
   transform: translate(-50%, -50%);
   width: 200%;
   height: 200%;
-  background-color: #000b; //check: 실제 시연 환경에 맞게 밝기 조절 필요
+  background-color: #0008; //check: 실제 시연 환경에 맞게 밝기 조절 필요
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `;
 

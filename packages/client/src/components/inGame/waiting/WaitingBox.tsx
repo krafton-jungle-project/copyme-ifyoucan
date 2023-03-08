@@ -26,6 +26,7 @@ const Wrapper = styled.div<{ isMe: boolean; isStart: boolean }>`
   aspect-ratio: 7/10;
   transition: 0.5s;
   transition-delay: ${(props) => (props.isStart ? 'none' : '0.5s')};
+  will-change: left, right;
 `;
 
 const pop = keyframes`

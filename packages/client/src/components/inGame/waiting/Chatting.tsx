@@ -18,6 +18,7 @@ const Container = styled.div<{ isStart: boolean }>`
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff;
   transition: 0.5s;
   transition-delay: ${(props) => (props.isStart ? 'none' : '0.5s')};
+  will-change: top;
 `;
 
 const ChatWrapper = styled.div`
