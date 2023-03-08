@@ -140,7 +140,7 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
         break;
       case GameMode.SPIN:
         Spin11s.play();
-        Spin11s.volume = 0.6;
+        Spin11s.volume = 0.3;
         break;
       default:
         break;
