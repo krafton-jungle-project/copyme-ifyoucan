@@ -104,22 +104,20 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
-  border: 1px solid #fffb;
-  background-color: #faed27;
   border-radius: 10px;
   padding: 10px 30px;
   margin: 15px 15px 0 15px;
   font-size: 18px;
   font-weight: 900;
-  color: #000;
-  cursor: pointer;
+  color: #e4cb58;
+  border-color: #e4cb58;
+  background-color: #e4cb5833;
   transition: 0.3s;
+  cursor: pointer;
 
   &:hover {
-    color: #fff;
-    background-color: transparent;
-    text-shadow: 0 0 2px #fff, 0 0 4px #fff;
-    box-shadow: 0 0 0.1rem #fff, 0 0 0.1rem #fff, 0 0 0.4rem #fff, 0 0 0.4rem;
+    box-shadow: 0 0.5em 0.5em -0.4em #fff;
+    transform: translateY(-3px);
   }
 `;
 
@@ -203,7 +201,7 @@ const ModeSpan = styled.span<{
     `}
 `;
 
-const modeName = ['노말', '블러', '축소', '회전'];
+const modeName = ['노말', '블러', '회전', '축소'];
 const round = [1, 2, 3];
 
 function CreateRoomModal() {
@@ -266,10 +264,10 @@ function CreateRoomModal() {
       case '블러':
         setGameMode((prev) => ({ ...prev, [round]: GameMode.BLUR }));
         break;
-      case '축소':
+      case '회전':
         setGameMode((prev) => ({ ...prev, [round]: GameMode.SIZEDOWN }));
         break;
-      case '회전':
+      case '축소':
         setGameMode((prev) => ({ ...prev, [round]: GameMode.ROTATE }));
         break;
       default:

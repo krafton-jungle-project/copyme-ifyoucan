@@ -20,15 +20,14 @@ const Button = styled.button`
   font-size: 30px;
   letter-spacing: 5px;
   font-weight: 800;
-  filter: drop-shadow(0 0 5px #dd74c1) drop-shadow(0 0 20px #dd74c1) contrast(2) brightness(2);
+  filter: drop-shadow(0 0 3px #dd74c1) drop-shadow(0 0 10px #dd74c1) contrast(1) brightness(1.5);
   cursor: pointer;
 
-  &:hover {
-    color: #fff;
-    background-color: #dd74c1;
-    filter: drop-shadow(0 0 10px #dd74c1) contrast(2) brightness(2);
-  }
   transition: 0.5s;
+  &:hover {
+    color: #000;
+    background-color: #dd74c1;
+  }
 `;
 
 const Img = styled.img`
