@@ -276,7 +276,7 @@ function CreateRoomModal() {
         setGameMode((prev) => ({ ...prev, [round]: GameMode.SIZEDOWN }));
         break;
       case '회전':
-        setGameMode((prev) => ({ ...prev, [round]: GameMode.ROTATE }));
+        setGameMode((prev) => ({ ...prev, [round]: GameMode.SPIN }));
         break;
       default:
         break;
