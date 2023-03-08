@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
-import img1 from '../../../assets/images/gameMode/jjanggu-1.png';
-import img2 from '../../../assets/images/gameMode/jjanggu-2.png';
-import img3 from '../../../assets/images/gameMode/jjanggu-3.png';
-import img4 from '../../../assets/images/gameMode/jjanggu-4.png';
+import jeheeImg from '../../../assets/images/lobby/game-mode-guide/jehee.png';
+import joohwanImg from '../../../assets/images/lobby/game-mode-guide/joohwan.png';
+import taejunImg from '../../../assets/images/lobby/game-mode-guide/taejun.png';
+import taeukImg from '../../../assets/images/lobby/game-mode-guide/taeuk.png';
 import { Blur, ButtonClick4, SizeDown, Spin } from '../../../utils/sound';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 90%;
   height: 80%;
 `;
@@ -16,10 +17,9 @@ const Container = styled.div`
 const Guide = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
   width: 100%;
-  height: 20%;
-  font-size: 35px;
+  height: 25%;
+  font-size: 30px;
   font-weight: 400;
   text-shadow: 0 0 2px #fff, 0 0 4px #fff;
 `;
@@ -29,9 +29,7 @@ const ModeWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 80%;
-  padding: 20px;
-  margin-top: 10px;
+  height: 75%;
 `;
 
 const ModeName = styled.div<{ keys: number; highlighted: number }>`
@@ -58,7 +56,7 @@ const blur = keyframes`
     filter: blur(0);
   }
   to {
-    filter: blur(17px);
+    filter: blur(5px);
   }
 `;
 
@@ -91,10 +89,10 @@ const ModeImg = styled.img`
 `;
 
 const Mode = styled.div<{ mode: string }>`
-  padding: 10px;
+  padding: 5px;
   border: 2px solid #ff007f88;
   border-radius: 5px;
-  width: 22%;
+  width: 23%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -102,6 +100,7 @@ const Mode = styled.div<{ mode: string }>`
   justify-content: center;
   object-fit: cover;
   transition: 0.3s;
+  margin: 10px 5px;
   filter: grayscale(25%);
 
   &:hover {
@@ -135,7 +134,7 @@ const Mode = styled.div<{ mode: string }>`
 `;
 
 const mode = ['노말', '블러', '회전', '축소'];
-const modeImg = [img1, img2, img3, img4];
+const modeImg = [joohwanImg, taejunImg, taeukImg, jeheeImg];
 const sound = [ButtonClick4, Blur, Spin, SizeDown];
 
 function GameModeGuide() {
