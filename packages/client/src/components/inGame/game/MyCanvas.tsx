@@ -5,6 +5,7 @@ import { gameAtom, GameStage } from '../../../app/game';
 import { GameMode, roomInfoAtom } from '../../../app/room';
 import { useClientSocket } from '../../../module/client-socket';
 import { capturePose } from '../../../utils/capture-pose';
+import { Blur, SizeDown, Spin11s } from '../../../utils/sound';
 import * as movenet from '../../../utils/tfjs-movenet';
 import CountDown from './CountDown';
 import Grade from './Grade';
@@ -18,7 +19,7 @@ const Container = styled.div`
   border-radius: 20px;
 `;
 
-const rotate = keyframes`
+const spin = keyframes`
   0% {
     transform: scaleX(-1);
   }
@@ -47,10 +48,10 @@ const Video = styled.video<{ gameMode: number; offender: boolean }>`
     `}
 
   ${(p) =>
-    p.gameMode === GameMode.ROTATE &&
+    p.gameMode === GameMode.SPIN &&
     p.offender &&
     css`
-      animation: ${rotate} 1.5s infinite;
+      animation: ${spin} 1.5s infinite;
     `}
 
   ${(p) =>
@@ -102,10 +103,10 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; gameMode: number; offe
     `}
 
   ${(p) =>
-    p.gameMode === GameMode.ROTATE &&
+    p.gameMode === GameMode.SPIN &&
     p.offender &&
     css`
-      animation: ${rotate} 1.5s infinite;
+      animation: ${spin} 1.5s infinite;
     `}
 
   ${(p) =>
@@ -126,6 +127,23 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
   const host = useAtomValue(roomInfoAtom).host;
   const { socket } = useClientSocket();
   const [mode, setMode] = useState<number>(100);
+
+  const handleModeBGM = (gameMode: number): void => {
+    switch (gameMode) {
+      case GameMode.BLUR:
+        Blur.play();
+        break;
+      case GameMode.SIZEDOWN:
+        SizeDown.play();
+        break;
+      case GameMode.SPIN:
+        Spin11s.play();
+        Spin11s.volume = 0.6;
+        break;
+      default:
+        break;
+    }
+  };
 
   useEffect(() => {
     if (videoRef.current === null || canvasRef.current === null) return;
@@ -169,7 +187,7 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
           } else {
             capturePose(videoRef.current, capturedPoseRef.current);
           }
-
+          videoRef.current.style.visibility = 'hidden';
           capturedPoseRef.current.style.visibility = 'visible';
         }
       }
@@ -185,12 +203,15 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
       switch (Math.floor(game.round)) {
         case 1:
           setMode(roomInfo.gameMode.round1);
+          handleModeBGM(roomInfo.gameMode.round1);
           break;
         case 2:
           setMode(roomInfo.gameMode.round2);
+          handleModeBGM(roomInfo.gameMode.round2);
           break;
         case 3:
           setMode(roomInfo.gameMode.round3);
+          handleModeBGM(roomInfo.gameMode.round3);
           break;
       }
     }
@@ -198,7 +219,13 @@ function MyCanvas({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoElement
 
   // 공수 비교 이펙트 끝나고 캡쳐 사진 감추고 다시 비디오 on
   useEffect(() => {
-    if (capturedPoseRef.current && game.stage === GameStage.DEFEND && !game.isCaptured) {
+    if (
+      videoRef.current &&
+      capturedPoseRef.current &&
+      game.stage === GameStage.DEFEND &&
+      !game.isCaptured
+    ) {
+      videoRef.current.style.visibility = 'visible';
       capturedPoseRef.current.style.visibility = 'hidden';
     }
   }, [game.isCaptured]);

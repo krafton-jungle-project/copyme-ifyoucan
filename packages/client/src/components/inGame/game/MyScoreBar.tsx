@@ -125,6 +125,7 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
 
       // 24 dimension vector 유사도 계산
       const vectorScore = vectorComparePoses(game.peer.pose, myPose);
+
       socket.emit('score', vectorScore);
     }
   }, delay);
