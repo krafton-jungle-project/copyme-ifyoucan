@@ -134,7 +134,7 @@ const Mode = styled.div<{ mode: string }>`
 `;
 
 const mode = ['노말', '블러', '회전', '축소'];
-const modeImg = [joohwanImg, taejunImg, taeukImg, jeheeImg];
+const modeImg = [taejunImg, joohwanImg, taeukImg, jeheeImg];
 const sound = [ButtonClick4, Blur, Spin, SizeDown];
 
 function GameModeGuide() {
