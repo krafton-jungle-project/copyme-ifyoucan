@@ -5,6 +5,7 @@ import { gameAtom, GameStage } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
 import { roomInfoAtom } from '../../../app/room';
 import arrowImg from '../../../assets/images/in-game/arrow.png';
+import drawImg from '../../../assets/images/in-game/draw.gif';
 import loseImg from '../../../assets/images/in-game/lose.gif';
 import blurImg from '../../../assets/images/in-game/notice/blur.gif';
 import gameOverImg from '../../../assets/images/in-game/notice/game-over.gif';
@@ -21,6 +22,7 @@ import { useClientSocket } from '../../../module/client-socket';
 import { getUser } from '../../../utils/local-storage';
 import {
   Coin,
+  Draw,
   GameMusic,
   GameOver,
   Lose,
@@ -336,7 +338,7 @@ function GameBox() {
       Coin.play();
 
       setTimeout(() => {
-        if (game.user.score >= game.peer.score) {
+        if (game.user.score > game.peer.score) {
           Win.play();
           setMyJudgeImg(winImg);
           setPeerJudgeImg(loseImg);
@@ -344,6 +346,10 @@ function GameBox() {
           if (host) {
             socket.emit('point', socket.id);
           }
+        } else if (game.user.score === game.peer.score) {
+          Draw.play();
+          setMyJudgeImg(drawImg);
+          setPeerJudgeImg(drawImg);
         } else {
           Lose.play();
           setMyJudgeImg(loseImg);
@@ -384,7 +390,7 @@ function GameBox() {
       </Wrapper>
       <NoticeImg alt="notice image" src={noticeImg} />
       <Judge isJudgement={game.stage === GameStage.JUDGE}>
-        {game.user.score >= game.peer.score ? '>' : '<'}
+        {game.user.score > game.peer.score ? '>' : game.user.score === game.peer.score ? '=' : '<'}
       </Judge>
       <Wrapper isMe={false} isStart={game.isStart}>
         <PeerScoreBar />

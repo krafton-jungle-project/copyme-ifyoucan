@@ -336,7 +336,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           if (worstIdx % 2 === 0) {
             this.server.in(roomId).emit('message', {
               userId: users[1].id,
-              message: `수비 자세(유사도 ${minScore}%)`,
+              message: `수비 포즈(유사도 ${minScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {
@@ -347,7 +347,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           } else {
             this.server.in(roomId).emit('message', {
               userId: users[0].id,
-              message: `수비 자세(유사도 ${minScore}%)`,
+              message: `수비 포즈(유사도 ${minScore}%)`,
               isImg: false,
             });
             this.server.in(roomId).emit('message', {

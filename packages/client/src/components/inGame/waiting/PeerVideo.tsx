@@ -6,8 +6,9 @@ import { peerInfoAtom } from '../../../app/peer';
 import loserEffectImg from '../../../assets/images/in-game/loser-effect.gif';
 import DefaultProfileImg from '../../../assets/images/in-game/peer-default-profile.jpg';
 import winnerEffectImg from '../../../assets/images/in-game/winner-effect-peer.gif';
+import transparentImg from '../../../assets/images/transparent.png';
 
-const Container = styled.div<{ isResult: boolean; isWinner: boolean }>`
+const Container = styled.div<{ isResult: boolean; isLoser: boolean }>`
   position: absolute;
   top: 50%;
   right: 0;
@@ -17,7 +18,7 @@ const Container = styled.div<{ isResult: boolean; isWinner: boolean }>`
   border-radius: 20px;
   box-shadow: ${(props) =>
     props.isResult ? 'none' : '0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #1f51ff'};
-  filter: ${(props) => (props.isResult && !props.isWinner ? 'grayscale(100%)' : 'none')};
+  filter: ${(props) => (props.isResult && props.isLoser ? 'grayscale(100%)' : 'none')};
   transition: 1s;
 `;
 
@@ -57,13 +58,19 @@ const PeerVideo = () => {
   }, [peerStream]);
 
   return (
-    <Container isResult={game.isResult} isWinner={game.user.point < game.peer.point}>
+    <Container isResult={game.isResult} isLoser={game.user.point > game.peer.point}>
       <Img src={DefaultProfileImg} />
       <Video ref={videoRef} autoPlay />
       {game.isResult ? (
         <ResultEffect
           alt="result effect"
-          src={game.user.point < game.peer.point ? winnerEffectImg : loserEffectImg}
+          src={
+            game.user.point < game.peer.point
+              ? winnerEffectImg
+              : game.user.point === game.peer.point
+              ? transparentImg
+              : loserEffectImg
+          }
         />
       ) : null}
     </Container>

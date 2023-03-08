@@ -127,17 +127,17 @@ function PeerScoreBar() {
         {useCountNum(game.peer.score, game.stage === GameStage.JUDGE ? 800 : 0)}
       </ScorePercent>
       <ScoreBarWrapper>
+        <ScoreBar
+          isInit={game.stage === GameStage.INITIAL}
+          score={game.isStart ? game.peer.score : 100}
+          isDefense={game.user.isOffender && game.stage === GameStage.DEFEND}
+        />
         <Criteria
           visible={game.stage === GameStage.DEFEND && game.user.isOffender && game.peer.score < 50}
         >
           <BaseLine />
           <FailTxt>FAIL</FailTxt>
         </Criteria>
-        <ScoreBar
-          isInit={game.stage === GameStage.INITIAL}
-          score={game.isStart ? game.peer.score : 100}
-          isDefense={game.user.isOffender && game.stage === GameStage.DEFEND}
-        />
       </ScoreBarWrapper>
       <ScoreInfo>유사도</ScoreInfo>
     </Container>

@@ -80,11 +80,12 @@ const ReadyState = styled.p<{ isHost: boolean; isReady: boolean }>`
     `}
 `;
 
-const ResultState = styled.p<{ isWinner: boolean }>`
+const ResultState = styled.p<{ result: string }>`
   font-size: 40px;
   font-weight: 900;
   color: #fff;
-  text-shadow: 0 0 10px ${(props) => (props.isWinner ? '#00f' : '#f00')};
+  text-shadow: 0 0 10px
+    ${(props) => (props.result === 'win' ? '#00f' : props.result === 'draw' ? '#0f0' : '#f00')};
 
   &::after {
     content: attr(data-winner);
@@ -93,7 +94,8 @@ const ResultState = styled.p<{ isWinner: boolean }>`
     left: 0;
     width: 100%;
     height: 100%;
-    color: ${(props) => (props.isWinner ? '#00f' : '#f00')};
+    color: ${(props) =>
+      props.result === 'win' ? '#00f' : props.result === 'draw' ? '#0f0' : '#f00'};
     z-index: -1;
     filter: blur(5px);
   }
@@ -105,7 +107,8 @@ const ResultState = styled.p<{ isWinner: boolean }>`
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: ${(props) => (props.isWinner ? '#00f' : '#f00')};
+    background-color: ${(props) =>
+      props.result === 'win' ? '#00f' : props.result === 'draw' ? '#0f0' : '#f00'};
     z-index: -2;
     opacity: 0.1;
     filter: blur(10px);
@@ -136,10 +139,26 @@ function WaitingBox() {
         <StateWrapper>
           {game.isResult ? (
             <ResultState
-              data-winner={game.user.point >= game.peer.point ? '🏆 WINNER 🏆' : '👻 LOSER 👻'}
-              isWinner={game.user.point >= game.peer.point}
+              data-winner={
+                game.user.point > game.peer.point
+                  ? '🏆 WINNER 🏆'
+                  : game.user.point === game.peer.point
+                  ? '⚔️ DRAW ⚔️'
+                  : '👻 LOSER 👻'
+              }
+              result={
+                game.user.point > game.peer.point
+                  ? 'win'
+                  : game.user.point === game.peer.point
+                  ? 'draw'
+                  : 'lose'
+              }
             >
-              {game.user.point >= game.peer.point ? '🏆 WINNER 🏆' : '👻 LOSER 👻'}
+              {game.user.point > game.peer.point
+                ? '🏆 WINNER 🏆'
+                : game.user.point === game.peer.point
+                ? '⚔️ DRAW ⚔️'
+                : '👻 LOSER 👻'}
             </ResultState>
           ) : (
             <ReadyState isHost={roomInfo.host} isReady={game.user.isReady}>
@@ -154,10 +173,26 @@ function WaitingBox() {
         <StateWrapper>
           {game.isResult ? (
             <ResultState
-              data-winner={game.user.point < game.peer.point ? '🏆 WINNER 🏆' : '👻 LOSER 👻'}
-              isWinner={game.user.point < game.peer.point}
+              data-winner={
+                game.user.point < game.peer.point
+                  ? '🏆 WINNER 🏆'
+                  : game.user.point === game.peer.point
+                  ? '⚔️ DRAW ⚔️'
+                  : '👻 LOSER 👻'
+              }
+              result={
+                game.user.point < game.peer.point
+                  ? 'win'
+                  : game.user.point === game.peer.point
+                  ? 'draw'
+                  : 'lose'
+              }
             >
-              {game.user.point < game.peer.point ? '🏆 WINNER 🏆' : '👻 LOSER 👻'}
+              {game.user.point < game.peer.point
+                ? '🏆 WINNER 🏆'
+                : game.user.point === game.peer.point
+                ? '⚔️ DRAW ⚔️'
+                : '👻 LOSER 👻'}
             </ResultState>
           ) : (
             <ReadyState isHost={!roomInfo.host} isReady={game.peer.isReady}>
