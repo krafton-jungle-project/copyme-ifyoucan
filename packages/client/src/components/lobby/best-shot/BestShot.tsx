@@ -2,14 +2,11 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import transparentImg from '../../../assets/images/transparent.png';
-import { ButtonClick2, ButtonClick3 } from '../../../utils/sound';
+import { ButtonClick2, ButtonClick3, ButtonClick4 } from '../../../utils/sound';
 import { Paging } from './Paging';
 
 const Container = styled.div`
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: absolute;
   width: 80%;
   height: 90%;
 `;
@@ -265,33 +262,6 @@ function BestShot() {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
-  const downloadImg = (blob: any) => {
-    let url = blob;
-
-    let image = new Image();
-    image.crossOrigin = 'anonymous';
-    image.src = url;
-    image.onload = () => {
-      let canvas = document.createElement('canvas');
-
-      canvas.width = image.width;
-      canvas.height = image.height;
-      console.log('1111');
-      // canvas.style.visibility = 'hidden';
-      document.body.appendChild(canvas);
-      console.log('2222');
-      canvas.getContext('2d')?.drawImage(image, 0, 0);
-
-      let link = document.createElement('a');
-      link.href = canvas.toDataURL();
-      link.download = 'bestshot.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      document.body.removeChild(canvas);
-    };
-  };
-
   const imgAction = async (action: string) => {
     ButtonClick3.play();
     let i = data.i;
@@ -343,19 +313,17 @@ function BestShot() {
         break;
       case 'download':
         const url = data.img;
-        downloadImg(url);
-
-        // fetch(url)
-        //   .then((response) => response.blob())
-        //   .then((blob) => {
-        //     const blobUrl = URL.createObjectURL(blob);
-        //     const link = document.createElement('a');
-        //     link.href = blobUrl;
-        //     link.download = 'bestshot.png';
-        //     document.body.appendChild(link);
-        //     link.click();
-        //     document.body.removeChild(link);
-        //   });
+        fetch(url)
+          .then((response) => response.blob())
+          .then((blob) => {
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = 'bestshot.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          });
         break;
       case 'delete':
         // data 상태 업데이트
@@ -373,13 +341,15 @@ function BestShot() {
               const newImgUrls = res.data.data.imgUrls;
               setImages(newImgUrls.reverse());
               setData({ img: '', i: 0 });
+              ButtonClick4.play();
               alert('삭제되었습니다');
             }
           } catch (error) {
             console.log(error);
           }
+        } else {
+          ButtonClick2.play();
         }
-
         break;
       default:
         break;

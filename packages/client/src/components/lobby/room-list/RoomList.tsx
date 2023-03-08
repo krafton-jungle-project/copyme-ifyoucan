@@ -6,10 +6,7 @@ import CreateRoom from './CreateRoom';
 import RoomCard from './RoomCard';
 
 const Container = styled.div`
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: absolute;
   width: 80%;
   height: 90%;
 `;

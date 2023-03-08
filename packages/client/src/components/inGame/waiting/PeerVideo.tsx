@@ -3,10 +3,12 @@ import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { gameAtom } from '../../../app/game';
 import { peerInfoAtom } from '../../../app/peer';
-import partypopperImg from '../../../assets/images/in-game/party-popper-peer.gif';
+import loserEffectImg from '../../../assets/images/in-game/loser-effect.gif';
 import DefaultProfileImg from '../../../assets/images/in-game/peer-default-profile.jpg';
+import winnerEffectImg from '../../../assets/images/in-game/winner-effect-peer.gif';
+import transparentImg from '../../../assets/images/transparent.png';
 
-const Container = styled.div<{ isResult: boolean; isWinner: boolean }>`
+const Container = styled.div<{ isResult: boolean; isLoser: boolean }>`
   position: absolute;
   top: 50%;
   right: 0;
@@ -16,7 +18,7 @@ const Container = styled.div<{ isResult: boolean; isWinner: boolean }>`
   border-radius: 20px;
   box-shadow: ${(props) =>
     props.isResult ? 'none' : '0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #1f51ff'};
-  filter: ${(props) => (props.isResult && !props.isWinner ? 'grayscale(100%)' : 'none')};
+  filter: ${(props) => (props.isResult && props.isLoser ? 'grayscale(100%)' : 'none')};
   transition: 1s;
 `;
 
@@ -38,11 +40,12 @@ const Video = styled.video`
   background-color: #0008;
 `;
 
-const WinnerPartyPopper = styled.img`
+const ResultEffect = styled.img`
   position: absolute;
   object-fit: cover;
   width: 100%;
   height: 100%;
+  border-radius: 20px;
 `;
 
 const PeerVideo = () => {
@@ -55,11 +58,20 @@ const PeerVideo = () => {
   }, [peerStream]);
 
   return (
-    <Container isResult={game.isResult} isWinner={game.user.point < game.peer.point}>
+    <Container isResult={game.isResult} isLoser={game.user.point > game.peer.point}>
       <Img src={DefaultProfileImg} />
       <Video ref={videoRef} autoPlay />
-      {game.isResult && game.user.point < game.peer.point ? (
-        <WinnerPartyPopper alt="winner party popper" src={partypopperImg} />
+      {game.isResult ? (
+        <ResultEffect
+          alt="result effect"
+          src={
+            game.user.point < game.peer.point
+              ? winnerEffectImg
+              : game.user.point === game.peer.point
+              ? transparentImg
+              : loserEffectImg
+          }
+        />
       ) : null}
     </Container>
   );

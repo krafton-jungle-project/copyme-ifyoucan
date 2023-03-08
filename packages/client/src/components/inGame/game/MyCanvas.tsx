@@ -39,6 +39,7 @@ const Video = styled.video<{ gameMode: number; offender: boolean }>`
   height: 100%;
   border-radius: 20px;
   transition: 0.7s;
+  will-change: transform;
 
   ${(p) =>
     p.gameMode === GameMode.BLUR &&
@@ -79,14 +80,15 @@ const CapturedPose = styled.canvas<{ isCaptured: boolean; gameMode: number; offe
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  border-radius: 20px;
+  border-radius: 5px;
   visibility: hidden;
 
-  border: 0.2rem solid #fff;
+  border: 10px outset #fff;
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #fff, 0 0 0.8rem #fff, 0 0 2.8rem #fff,
     inset 0 0 1.3rem #fff;
 
   transition: 0.7s;
+  will-change: transform, left;
 
   ${(p) =>
     p.isCaptured &&

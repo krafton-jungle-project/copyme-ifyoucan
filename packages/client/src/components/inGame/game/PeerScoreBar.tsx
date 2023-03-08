@@ -24,6 +24,29 @@ const ScoreBarWrapper = styled.div`
     0 0 2.8rem #1f51ff, inset 0 0 1.3rem #1f51ff;
 `;
 
+const Criteria = styled.div<{ visible: boolean }>`
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  opacity: ${(props) => (props.visible ? 1 : 0)};
+  transition: opacity 0.5s ease-in-out;
+`;
+
+const BaseLine = styled.hr`
+  border: 1px solid #fff;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #1f51ff, 0 0 0.8rem #1f51ff,
+    0 0 2.8rem #1f51ff, inset 0 0 1.3rem #1f51ff;
+`;
+
+const FailTxt = styled.p`
+  position: absolute;
+  margin-top: 5px;
+  width: 100%;
+  font-size: 20px;
+  text-align: center;
+  text-shadow: 0 0 2px #fff, 0 0 4px #fff;
+`;
+
 const animate = keyframes`
   0%, 100% {
     opacity: 0.5;
@@ -109,6 +132,12 @@ function PeerScoreBar() {
           score={game.isStart ? game.peer.score : 100}
           isDefense={game.user.isOffender && game.stage === GameStage.DEFEND}
         />
+        <Criteria
+          visible={game.stage === GameStage.DEFEND && game.user.isOffender && game.peer.score < 50}
+        >
+          <BaseLine />
+          <FailTxt>FAIL</FailTxt>
+        </Criteria>
       </ScoreBarWrapper>
       <ScoreInfo>유사도</ScoreInfo>
     </Container>

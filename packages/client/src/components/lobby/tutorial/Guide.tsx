@@ -44,7 +44,7 @@ function Guide() {
 
   useEffect(() => {
     if (!isStarted) {
-      setContent('버튼을 눌러 튜토리얼을 시작하세요');
+      setContent('시작 버튼을 눌러 튜토리얼을 시작하세요');
     }
     if (isStarted && !isBody) {
       ButtonClick1.play();

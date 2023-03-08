@@ -122,7 +122,7 @@ function InGame() {
   const exitRoom = () => {
     if (game.isStart) {
       BackgroundMusic.currentTime = 0;
-      const check = window.confirm('🔴 게임 중에 나가면 게임 결과가 저장되지 않습니다!! 🔴');
+      const check = window.confirm('게임 중에 나가면 게임 결과가 저장되지 않습니다!!!');
       if (check) {
         setExitInGame(true);
         navigate('/', { replace: true });
