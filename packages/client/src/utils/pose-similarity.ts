@@ -185,7 +185,6 @@ function vectorComparePoses(pose1: Pose, pose2: Pose): number {
   // resizing된 점들을 토대로 그리기 때문에 제대로 그려지지 않음
 
   const scalingFactor = vectorScalingFactor(pose1);
-  console.log(`scalingFactor: ${scalingFactor}`);
 
   let myPose = JSON.parse(JSON.stringify(pose1));
   let peerPose = JSON.parse(JSON.stringify(pose2));

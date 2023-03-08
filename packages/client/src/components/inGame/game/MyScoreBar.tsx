@@ -29,6 +29,29 @@ const ScoreBarWrapper = styled.div`
     0 0 2.8rem #ff3131, inset 0 0 1.3rem #ff3131;
 `;
 
+const Criteria = styled.div<{ visible: boolean }>`
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  opacity: ${(props) => (props.visible ? 1 : 0)};
+  transition: opacity 0.5s ease-in-out;
+`;
+
+const BaseLine = styled.hr`
+  border: 1px solid #fff;
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 2rem #ff3131, 0 0 0.8rem #ff3131,
+    0 0 2.8rem #ff3131, inset 0 0 1.3rem #ff3131;
+`;
+
+const FailTxt = styled.p`
+  position: absolute;
+  margin-top: 5px;
+  width: 100%;
+  font-size: 20px;
+  text-align: center;
+  text-shadow: 0 0 2px #fff, 0 0 4px #fff;
+`;
+
 const animate = keyframes`
   0%, 100% {
     opacity: 0.5;
@@ -152,6 +175,12 @@ function MyScoreBar({ myVideoRef }: { myVideoRef: React.RefObject<HTMLVideoEleme
         {useCountNum(game.user.score, game.stage === GameStage.JUDGE ? 800 : 0)}
       </ScorePercent>
       <ScoreBarWrapper>
+        <Criteria
+          visible={game.stage === GameStage.DEFEND && !game.user.isOffender && game.user.score < 50}
+        >
+          <BaseLine />
+          <FailTxt>FAIL</FailTxt>
+        </Criteria>
         <ScoreBar
           isInit={game.stage === GameStage.INITIAL}
           score={game.isStart ? game.user.score : 100}
