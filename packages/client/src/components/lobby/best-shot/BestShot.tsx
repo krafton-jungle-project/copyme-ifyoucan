@@ -265,6 +265,33 @@ function BestShot() {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
+  const downloadImg = (blob: any) => {
+    let url = blob;
+
+    let image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.src = url;
+    image.onload = () => {
+      let canvas = document.createElement('canvas');
+
+      canvas.width = image.width;
+      canvas.height = image.height;
+      console.log('1111');
+      // canvas.style.visibility = 'hidden';
+      document.body.appendChild(canvas);
+      console.log('2222');
+      canvas.getContext('2d')?.drawImage(image, 0, 0);
+
+      let link = document.createElement('a');
+      link.href = canvas.toDataURL();
+      link.download = 'bestshot.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      document.body.removeChild(canvas);
+    };
+  };
+
   const imgAction = async (action: string) => {
     ButtonClick3.play();
     let i = data.i;
@@ -316,20 +343,19 @@ function BestShot() {
         break;
       case 'download':
         const url = data.img;
+        downloadImg(url);
 
-        fetch(url)
-          .then((response) => {
-            return response.blob();
-          })
-          .then((blob) => {
-            const blobUrl = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = 'bestshot.png';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          });
+        // fetch(url)
+        //   .then((response) => response.blob())
+        //   .then((blob) => {
+        //     const blobUrl = URL.createObjectURL(blob);
+        //     const link = document.createElement('a');
+        //     link.href = blobUrl;
+        //     link.download = 'bestshot.png';
+        //     document.body.appendChild(link);
+        //     link.click();
+        //     document.body.removeChild(link);
+        //   });
         break;
       case 'delete':
         // data 상태 업데이트
