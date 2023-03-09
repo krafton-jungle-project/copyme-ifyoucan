@@ -98,23 +98,28 @@ function alignPose(pose1: Pose, pose2: Pose): Pose {
 
 // -----------------------------------------------
 // 공격자의 어깨 거리를 scaling factor로 이용한 계산 방법
-function resizePose(pose: Pose): void {
+
+function resizePose(pose1: Pose, pose2: Pose): void {
   // 양쪽 어깨 좌표 받아옴, 어깨가 가장 인식이 잘 되므로 어깨로 선정하겠슴다
-  const leftShoulder = pose.keypoints[5];
-  const rightShoulder = pose.keypoints[6];
+  const leftShoulder1 = pose1.keypoints[5];
+  const rightShoulder1 = pose1.keypoints[6];
+
+  const leftShoulder2 = pose2.keypoints[5];
+  const rightShoulder2 = pose2.keypoints[6];
 
   // 어깨 간의 유클리디안 거리 계산
   // 직각 삼각형에서 빗변 구하는 공식이라고 보면 됨
-  const shoulderDist: number = euclideanDistance(leftShoulder, rightShoulder);
+  const shoulderDist1: number = euclideanDistance(leftShoulder1, rightShoulder1);
+  const shoulderDist2: number = euclideanDistance(leftShoulder2, rightShoulder2);
 
   // 어깨 거리에 따라 이미지의 스케일 계수를 결정
   // 기준이 되는(우리에게는 공격자) 사람의 키포인트를 스케일링 함수에 넣어 스케일 계수 설정 후 아래 진행
-  const scaleFactor: number = 1 / shoulderDist;
+  const scaleFactor: number = shoulderDist2 / shoulderDist1;
 
   // 키포인트의 좌표 값을 스케일 계수에 따라 보정
-  for (const keypoint of pose.keypoints) {
-    keypoint.x *= scaleFactor;
-    keypoint.y *= scaleFactor;
+  for (const keypoint of pose2.keypoints) {
+    keypoint.x /= scaleFactor;
+    keypoint.y /= scaleFactor;
   }
 }
 
@@ -126,8 +131,8 @@ function comparePoses(pose1: Pose, pose2: Pose): number {
   // pose1 = stdPose;
   let myPose = JSON.parse(JSON.stringify(pose1));
   let peerPose = JSON.parse(JSON.stringify(pose2));
-  resizePose(myPose);
-  resizePose(peerPose);
+
+  resizePose(myPose, peerPose);
 
   // 어깨와 골반 총 4개의 점을 이용하여 몸통의 중심을 기준으로 pose를 align함
   let alignedPose1 = alignPose(myPose, myPose);
@@ -154,24 +159,33 @@ function comparePoses(pose1: Pose, pose2: Pose): number {
 // -----------------------------------------------
 // vector vector vector vector vector vector vector
 // 34차원 벡터 이용한 scaling factor 구하는 함수
-function vectorScalingFactor(pose: Pose): number {
+function vectorScalingFactor(pose1: Pose, pose2: Pose): number {
   const initCoordinate = {
     x: 0,
     y: 0,
   };
-  let sum: number = 0;
+  let sum1: number = 0;
+  let sum2: number = 0;
   let keypoint: Keypoint;
 
   // 얼굴 키포인트 제외하고 scalingFactor 계산
   // for (let i = 0; i < pose.keypoints.length; i++) {
-  for (let i = 5; i < pose.keypoints.length; i++) {
-    keypoint = pose.keypoints[i];
+  for (let i = 5; i < pose1.keypoints.length; i++) {
+    keypoint = pose1.keypoints[i];
     // (0, 0)과 모든 신체 키포인트에 대한 거리의 제곱들을 모두 더함
-    sum += euclideanDistance(keypoint, initCoordinate) ** 2;
+    sum1 += euclideanDistance(keypoint, initCoordinate) ** 2;
+  }
+  for (let i = 5; i < pose2.keypoints.length; i++) {
+    keypoint = pose2.keypoints[i];
+    // (0, 0)과 모든 신체 키포인트에 대한 거리의 제곱들을 모두 더함
+    sum2 += euclideanDistance(keypoint, initCoordinate) ** 2;
   }
   // 다 더한 값에 제곱근을 씌우고 계산한 키포인트 개수만큼 나눔
   // const scalingFactor: number = sum ** 0.5 / (pose.keypoints.length - 5);
-  const scalingFactor: number = sum ** 0.5;
+  const res1: number = sum1 ** 0.5;
+  const res2: number = sum2 ** 0.5;
+
+  const scalingFactor: number = res1 / res2;
 
   return scalingFactor;
 }
@@ -180,8 +194,8 @@ function vectorScalingFactor(pose: Pose): number {
 function vectorResizePose(pose: Pose, scalingFactor: number): void {
   // 키포인트의 좌표 값을 스케일 계수에 따라 보정
   for (const keypoint of pose.keypoints) {
-    keypoint.x /= scalingFactor;
-    keypoint.y /= scalingFactor;
+    keypoint.x *= scalingFactor;
+    keypoint.y *= scalingFactor;
   }
 }
 
@@ -189,15 +203,13 @@ function vectorComparePoses(pose1: Pose, pose2: Pose): number {
   // Deep copy 후 cmpPose 진행, shallow copy 진행 시, 캔버스에 skeleton을 그릴 때
   // resizing된 점들을 토대로 그리기 때문에 제대로 그려지지 않음
 
-  const scalingFactor1 = vectorScalingFactor(pose1);
-  const scalingFactor2 = vectorScalingFactor(pose2);
+  const scalingFactor1 = vectorScalingFactor(pose1, pose2);
 
   let myPose = JSON.parse(JSON.stringify(pose1));
   let peerPose = JSON.parse(JSON.stringify(pose2));
 
   // 모든 좌표의 제곱의 합을 1로 만듦
-  vectorResizePose(myPose, scalingFactor1);
-  vectorResizePose(peerPose, scalingFactor2);
+  vectorResizePose(peerPose, scalingFactor1);
 
   // 어깨와 골반 총 4개의 점을 이용하여 몸통의 중심을 기준으로 pose를 align함
   let alignedPose1 = alignPose(myPose, myPose);
@@ -216,33 +228,9 @@ function vectorComparePoses(pose1: Pose, pose2: Pose): number {
   // (점들의 차의 합) / (점의 개수)
   // totalDistance / 17
   let averageDistance = totalDistance / (alignedPose1.keypoints.length - 5);
-  let score = Math.ceil(100 - 1000 * averageDistance);
+  let score = Math.ceil(100 - 100 * averageDistance);
   // return score;
   return averageDistance;
-}
-
-function cosineSimilarity(pose1: Pose, pose2: Pose): number {
-  resizePose(pose1);
-  resizePose(pose2);
-  const keypoints1 = pose1.keypoints;
-  const keypoints2 = pose2.keypoints;
-
-  const xCoords1 = keypoints1.map((keypoint) => keypoint.x);
-  const yCoords1 = keypoints1.map((keypoint) => keypoint.y);
-  const xCoords2 = keypoints2.map((keypoint) => keypoint.x);
-  const yCoords2 = keypoints2.map((keypoint) => keypoint.y);
-
-  let dotProduct = 0;
-  let mag1 = 0;
-  let mag2 = 0;
-  for (let i = 0; i < xCoords1.length; i++) {
-    dotProduct += xCoords1[i] * xCoords2[i] + yCoords1[i] * yCoords2[i];
-    mag1 += xCoords1[i] ** 2 + yCoords1[i] ** 2;
-    mag2 += xCoords2[i] ** 2 + yCoords2[i] ** 2;
-  }
-
-  const similarity = dotProduct / (Math.sqrt(mag1) * Math.sqrt(mag2));
-  return (similarity + 1) * 50;
 }
 
 function compareBeforeAfter(pose: Pose): number[] {
@@ -252,110 +240,110 @@ function compareBeforeAfter(pose: Pose): number[] {
   return [before, after];
 }
 
-export { comparePoses, vectorComparePoses, cosineSimilarity, compareBeforeAfter };
+export { comparePoses, vectorComparePoses, compareBeforeAfter };
 
 const stdPose = {
   keypoints: [
     {
-      y: 15.844368528726578,
-      x: 165.7098786733583,
-      score: 0.777631938457489,
+      y: 102.32397811647627,
+      x: 317.77891888749076,
+      score: 0.524370551109314,
       name: 'nose',
     },
     {
-      y: 12.5437938066986,
-      x: 171.01245007422483,
-      score: 0.7810917496681213,
+      y: 95.89698086155383,
+      x: 325.83646084391313,
+      score: 0.6754545569419861,
       name: 'left_eye',
     },
     {
-      y: 12.056964653149468,
-      x: 160.92977366246987,
-      score: 0.8350298404693604,
+      y: 94.65624582323431,
+      x: 309.52331182963195,
+      score: 0.6927956342697144,
       name: 'right_eye',
     },
     {
-      y: 19.608600210213105,
-      x: 177.18774016583694,
-      score: 0.7721454501152039,
+      y: 106.06414893156844,
+      x: 336.40641951667556,
+      score: 0.8166402578353882,
       name: 'left_ear',
     },
     {
-      y: 19.224320593014802,
-      x: 154.5143924134911,
-      score: 0.6346286535263062,
+      y: 104.52040281586898,
+      x: 300.1385435540584,
+      score: 0.7499926686286926,
       name: 'right_ear',
     },
     {
-      y: 49.80612215141936,
-      x: 191.4848714620821,
-      score: 0.8914048671722412,
+      y: 151.07636536679277,
+      x: 351.5366097559036,
+      score: 0.840023934841156,
       name: 'left_shoulder',
     },
     {
-      y: 50.255960630894045,
-      x: 141.405863473505,
-      score: 0.8338426351547241,
+      y: 151.75774838727224,
+      x: 277.6696410271652,
+      score: 0.7506059408187866,
       name: 'right_shoulder',
     },
     {
-      y: 65.58269100828977,
-      x: 223.37945426718892,
-      score: 0.8739467859268188,
+      y: 213.4454798506027,
+      x: 364.5635298215178,
+      score: 0.7202083468437195,
       name: 'left_elbow',
     },
     {
-      y: 64.71406025165709,
-      x: 105.73902503515632,
-      score: 0.739861249923706,
+      y: 216.22065492033897,
+      x: 266.9451931373128,
+      score: 0.6515448093414307,
       name: 'right_elbow',
     },
     {
-      y: 70.36016806153422,
-      x: 258.2772639111415,
-      score: 0.7727532982826233,
+      y: 261.6989588913633,
+      x: 363.2169751213518,
+      score: 0.6500011682510376,
       name: 'left_wrist',
     },
     {
-      y: 68.40301830852565,
-      x: 68.37802201055078,
-      score: 0.4832562804222107,
+      y: 264.70290145172237,
+      x: 263.75021362451787,
+      score: 0.7714205980300903,
       name: 'right_wrist',
     },
     {
-      y: 119.33645187728143,
-      x: 179.009017406063,
-      score: 0.856987714767456,
+      y: 262.8305680700712,
+      x: 336.64035742736826,
+      score: 0.8510838747024536,
       name: 'left_hip',
     },
     {
-      y: 119.13639564222093,
-      x: 150.49688440877094,
-      score: 0.7852920889854431,
+      y: 261.76476086348094,
+      x: 292.0175319391057,
+      score: 0.8412824273109436,
       name: 'right_hip',
     },
     {
-      y: 176.3822544977228,
-      x: 177.5845696618441,
-      score: 0.8080315589904785,
+      y: 358.7558154105006,
+      x: 331.84621098534853,
+      score: 0.7504003047943115,
       name: 'left_knee',
     },
     {
-      y: 178.26349336611415,
-      x: 158.68104687921357,
-      score: 0.7015287280082703,
+      y: 359.07504247847544,
+      x: 296.0166214563911,
+      score: 0.8078945875167847,
       name: 'right_knee',
     },
     {
-      y: 216.05530782551068,
-      x: 169.63797298406524,
-      score: 0.32375526428222656,
+      y: 437.70608984901384,
+      x: 334.3771766789177,
+      score: 0.6798939108848572,
       name: 'left_ankle',
     },
     {
-      y: 215.1502328995088,
-      x: 157.35223153958887,
-      score: 0.34621304273605347,
+      y: 440.2507283399807,
+      x: 290.5572821116479,
+      score: 0.652317464351654,
       name: 'right_ankle',
     },
   ],

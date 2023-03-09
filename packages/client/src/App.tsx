@@ -2,6 +2,7 @@ import * as Jotai from 'jotai';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ClientSocketContextProvider } from './module/client-socket';
 import { MovenetStreamContextProvider } from './module/movenet-stream';
+import Graph from './pages/Graph';
 import Lobby from './pages/Lobby';
 import Login from './pages/Login';
 import Room from './pages/Room';
@@ -27,6 +28,9 @@ function App() {
                 <Route element={<PrivateRoute authentication={true} />}>
                   <Route path="/room" element={<Room />} />
                 </Route>
+              </Routes>
+              <Routes>
+                <Route path="/graph" element={<Graph />} />
               </Routes>
             </div>
           </MovenetStreamContextProvider>
