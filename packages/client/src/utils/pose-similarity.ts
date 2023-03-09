@@ -98,23 +98,28 @@ function alignPose(pose1: Pose, pose2: Pose): Pose {
 
 // -----------------------------------------------
 // 공격자의 어깨 거리를 scaling factor로 이용한 계산 방법
-function resizePose(pose: Pose): void {
+
+function resizePose(pose1: Pose, pose2: Pose): void {
   // 양쪽 어깨 좌표 받아옴, 어깨가 가장 인식이 잘 되므로 어깨로 선정하겠슴다
-  const leftShoulder = pose.keypoints[5];
-  const rightShoulder = pose.keypoints[6];
+  const leftShoulder1 = pose1.keypoints[5];
+  const rightShoulder1 = pose1.keypoints[6];
+
+  const leftShoulder2 = pose2.keypoints[5];
+  const rightShoulder2 = pose2.keypoints[6];
 
   // 어깨 간의 유클리디안 거리 계산
   // 직각 삼각형에서 빗변 구하는 공식이라고 보면 됨
-  const shoulderDist: number = euclideanDistance(leftShoulder, rightShoulder);
+  const shoulderDist1: number = euclideanDistance(leftShoulder1, rightShoulder1);
+  const shoulderDist2: number = euclideanDistance(leftShoulder2, rightShoulder2);
 
   // 어깨 거리에 따라 이미지의 스케일 계수를 결정
   // 기준이 되는(우리에게는 공격자) 사람의 키포인트를 스케일링 함수에 넣어 스케일 계수 설정 후 아래 진행
-  const scaleFactor: number = 1 / shoulderDist;
+  const scaleFactor: number = shoulderDist2 / shoulderDist1;
 
   // 키포인트의 좌표 값을 스케일 계수에 따라 보정
-  for (const keypoint of pose.keypoints) {
-    keypoint.x *= scaleFactor;
-    keypoint.y *= scaleFactor;
+  for (const keypoint of pose2.keypoints) {
+    keypoint.x /= scaleFactor;
+    keypoint.y /= scaleFactor;
   }
 }
 
@@ -126,8 +131,8 @@ function comparePoses(pose1: Pose, pose2: Pose): number {
   // pose1 = stdPose;
   let myPose = JSON.parse(JSON.stringify(pose1));
   let peerPose = JSON.parse(JSON.stringify(pose2));
-  resizePose(myPose);
-  resizePose(peerPose);
+
+  resizePose(myPose, peerPose);
 
   // 어깨와 골반 총 4개의 점을 이용하여 몸통의 중심을 기준으로 pose를 align함
   let alignedPose1 = alignPose(myPose, myPose);
@@ -147,31 +152,40 @@ function comparePoses(pose1: Pose, pose2: Pose): number {
   // totalDistance / 17
   let averageDistance = totalDistance / (alignedPose1.keypoints.length - 5);
   let score = Math.ceil(100 - 100 * averageDistance);
-  // console.log('temp: ', averageDistance);
   return score > 0 ? score : 0;
+  // return averageDistance;
 }
 
 // -----------------------------------------------
 // vector vector vector vector vector vector vector
 // 34차원 벡터 이용한 scaling factor 구하는 함수
-function vectorScalingFactor(pose: Pose): number {
+function vectorScalingFactor(pose1: Pose, pose2: Pose): number {
   const initCoordinate = {
     x: 0,
     y: 0,
   };
-  let sum: number = 0;
+  let sum1: number = 0;
+  let sum2: number = 0;
   let keypoint: Keypoint;
 
   // 얼굴 키포인트 제외하고 scalingFactor 계산
   // for (let i = 0; i < pose.keypoints.length; i++) {
-  for (let i = 5; i < pose.keypoints.length; i++) {
-    keypoint = pose.keypoints[i];
+  for (let i = 5; i < pose1.keypoints.length; i++) {
+    keypoint = pose1.keypoints[i];
     // (0, 0)과 모든 신체 키포인트에 대한 거리의 제곱들을 모두 더함
-    sum += euclideanDistance(keypoint, initCoordinate) ** 2;
+    sum1 += euclideanDistance(keypoint, initCoordinate) ** 2;
+  }
+  for (let i = 5; i < pose2.keypoints.length; i++) {
+    keypoint = pose2.keypoints[i];
+    // (0, 0)과 모든 신체 키포인트에 대한 거리의 제곱들을 모두 더함
+    sum2 += euclideanDistance(keypoint, initCoordinate) ** 2;
   }
   // 다 더한 값에 제곱근을 씌우고 계산한 키포인트 개수만큼 나눔
   // const scalingFactor: number = sum ** 0.5 / (pose.keypoints.length - 5);
-  const scalingFactor: number = sum ** 0.5;
+  const res1: number = sum1 ** 0.5;
+  const res2: number = sum2 ** 0.5;
+
+  const scalingFactor: number = res1 / res2;
 
   return scalingFactor;
 }
@@ -180,8 +194,8 @@ function vectorScalingFactor(pose: Pose): number {
 function vectorResizePose(pose: Pose, scalingFactor: number): void {
   // 키포인트의 좌표 값을 스케일 계수에 따라 보정
   for (const keypoint of pose.keypoints) {
-    keypoint.x /= scalingFactor;
-    keypoint.y /= scalingFactor;
+    keypoint.x *= scalingFactor;
+    keypoint.y *= scalingFactor;
   }
 }
 
@@ -189,15 +203,13 @@ function vectorComparePoses(pose1: Pose, pose2: Pose): number {
   // Deep copy 후 cmpPose 진행, shallow copy 진행 시, 캔버스에 skeleton을 그릴 때
   // resizing된 점들을 토대로 그리기 때문에 제대로 그려지지 않음
 
-  const scalingFactor1 = vectorScalingFactor(pose1);
-  const scalingFactor2 = vectorScalingFactor(pose2);
+  const scalingFactor1 = vectorScalingFactor(pose1, pose2);
 
   let myPose = JSON.parse(JSON.stringify(pose1));
   let peerPose = JSON.parse(JSON.stringify(pose2));
 
   // 모든 좌표의 제곱의 합을 1로 만듦
-  vectorResizePose(myPose, scalingFactor1);
-  vectorResizePose(peerPose, scalingFactor2);
+  vectorResizePose(peerPose, scalingFactor1);
 
   // 어깨와 골반 총 4개의 점을 이용하여 몸통의 중심을 기준으로 pose를 align함
   let alignedPose1 = alignPose(myPose, myPose);
@@ -216,33 +228,9 @@ function vectorComparePoses(pose1: Pose, pose2: Pose): number {
   // (점들의 차의 합) / (점의 개수)
   // totalDistance / 17
   let averageDistance = totalDistance / (alignedPose1.keypoints.length - 5);
-  let score = Math.ceil(100 - 1000 * averageDistance);
-  // console.log('vector: ', averageDistance);
-  return score;
+  let score = Math.ceil(100 - 100 * averageDistance);
+  return score > 0 ? score : 0;
+  // return averageDistance;
 }
 
-function cosineSimilarity(pose1: Pose, pose2: Pose): number {
-  resizePose(pose1);
-  resizePose(pose2);
-  const keypoints1 = pose1.keypoints;
-  const keypoints2 = pose2.keypoints;
-
-  const xCoords1 = keypoints1.map((keypoint) => keypoint.x);
-  const yCoords1 = keypoints1.map((keypoint) => keypoint.y);
-  const xCoords2 = keypoints2.map((keypoint) => keypoint.x);
-  const yCoords2 = keypoints2.map((keypoint) => keypoint.y);
-
-  let dotProduct = 0;
-  let mag1 = 0;
-  let mag2 = 0;
-  for (let i = 0; i < xCoords1.length; i++) {
-    dotProduct += xCoords1[i] * xCoords2[i] + yCoords1[i] * yCoords2[i];
-    mag1 += xCoords1[i] ** 2 + yCoords1[i] ** 2;
-    mag2 += xCoords2[i] ** 2 + yCoords2[i] ** 2;
-  }
-
-  const similarity = dotProduct / (Math.sqrt(mag1) * Math.sqrt(mag2));
-  return (similarity + 1) * 50;
-}
-
-export { comparePoses, vectorComparePoses, cosineSimilarity };
+export { comparePoses, vectorComparePoses };
