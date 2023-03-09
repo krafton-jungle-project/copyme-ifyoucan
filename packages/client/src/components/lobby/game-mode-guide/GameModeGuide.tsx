@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
+import cardImg1 from '../../../assets/images/lobby/game-mode-guide/card1.png';
+import cardImg2 from '../../../assets/images/lobby/game-mode-guide/card2.png';
+import cardImg3 from '../../../assets/images/lobby/game-mode-guide/card3.png';
+import cardImg4 from '../../../assets/images/lobby/game-mode-guide/card4.png';
 import jeheeImg from '../../../assets/images/lobby/game-mode-guide/jehee.png';
 import joohwanImg from '../../../assets/images/lobby/game-mode-guide/joohwan.png';
 import taejunImg from '../../../assets/images/lobby/game-mode-guide/taejun.png';
@@ -18,7 +22,7 @@ const Guide = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  height: 25%;
+  height: 20%;
   font-size: 30px;
   font-weight: 400;
   text-shadow: 0 0 2px #fff, 0 0 4px #fff;
@@ -29,26 +33,22 @@ const ModeWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 75%;
+  height: 80%;
 `;
 
-const ModeName = styled.div<{ keys: number; highlighted: number }>`
+const ModeName = styled.div`
+  position: absolute;
+  top: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   width: 100%;
-  height: 15%;
+  height: 12%;
   font-size: 20px;
-  font-weight: 600;
-
-  ${(p) =>
-    p.keys === p.highlighted &&
-    css`
-      font-weight: 400;
-      text-shadow: 0 0 2px #fff, 0 0 1px #fff, 0 0 10px #fff, 0 0 10px #ff007f, 0 0 15px #ff007f,
-        0 0 10px #ff007f, 0 0 15px #ff007f, 0 0 20px #ff007f;
-    `}
+  font-weight: 800;
+  color: #000;
+  margin-top: 5px;
 `;
 
 const blur = keyframes`
@@ -82,15 +82,25 @@ const sizeDown = keyframes`
 `;
 
 const ModeImg = styled.img`
+  position: absolute;
+  bottom: 0%;
   width: 100%;
   height: 85%;
-  max-width: 280px;
-  max-height: 280px;
+  margin-bottom: 5px;
+`;
+
+const ModeBackGroundImg = styled.img`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 `;
 
 const Mode = styled.div<{ mode: string }>`
+  background-color: #fffb;
   padding: 5px;
-  border: 2px solid #ff007f88;
+  border: 2px solid #ff007f;
   border-radius: 5px;
   width: 23%;
   height: 100%;
@@ -104,6 +114,7 @@ const Mode = styled.div<{ mode: string }>`
   filter: grayscale(25%);
 
   &:hover {
+    z-index: 1;
     border: 1px solid #fff;
     filter: none;
     box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 0.3rem #ff007f, 0 0 0.4rem #ff007f,
@@ -136,17 +147,16 @@ const Mode = styled.div<{ mode: string }>`
 const mode = ['노말', '블러', '회전', '축소'];
 const modeImg = [taejunImg, joohwanImg, taeukImg, jeheeImg];
 const sound = [ButtonClick4, Blur, Spin, SizeDown];
+const cardImg = [cardImg1, cardImg2, cardImg3, cardImg4];
 
 function GameModeGuide() {
-  const [highlighted, setHighlighted] = useState<number>(-1);
   const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
   const [title, setTitle] = useState<string>('');
-  const [body, setBody] = useState<string>('마우스를 올리면 설명이 나타납니다');
+  const [body, setBody] = useState<string>('카드에 마우스를 올리면 설명이 나타납니다');
 
   function initConcen() {
-    setHighlighted(-1);
     setTitle('');
-    setBody('마우스를 올리면 설명이 나타납니다');
+    setBody('카드에 마우스를 올리면 설명이 나타납니다');
     if (intervalId) clearInterval(intervalId);
   }
 
@@ -189,15 +199,13 @@ function GameModeGuide() {
           <Mode
             key={key}
             onMouseEnter={() => {
-              setHighlighted(key);
               playSound(key);
             }}
             onMouseLeave={initConcen}
             mode={val}
           >
-            <ModeName keys={key} highlighted={highlighted}>
-              {val}
-            </ModeName>
+            <ModeBackGroundImg src={cardImg[key]} />
+            <ModeName>{val}</ModeName>
             <ModeImg src={modeImg[key]} />
           </Mode>
         ))}
