@@ -151,7 +151,7 @@ function comparePoses(pose1: Pose, pose2: Pose): number {
   // (점들의 차의 합) / (점의 개수)
   // totalDistance / 17
   let averageDistance = totalDistance / (alignedPose1.keypoints.length - 5);
-  let score = 100 - averageDistance;
+  let score = Math.floor(100 - averageDistance);
   return score > 0 ? score : 0;
   // return averageDistance;
 }
