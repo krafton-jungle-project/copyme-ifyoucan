@@ -152,7 +152,7 @@ function comparePoses(pose1: Pose, pose2: Pose): number {
   // totalDistance / 17
   let averageDistance = totalDistance / (alignedPose1.keypoints.length - 5);
   let score = 100 - averageDistance;
-  return score;
+  return score > 0 ? score : 0;
   // return averageDistance;
 }
 
