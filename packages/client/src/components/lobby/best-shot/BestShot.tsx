@@ -312,18 +312,28 @@ function BestShot() {
         setData({ img: '', i: 0 });
         break;
       case 'download':
-        const url = data.img;
-        fetch(url)
-          .then((response) => response.blob())
-          .then((blob) => {
-            const blobUrl = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = 'bestshot.png';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        const token = document.cookie.split('=')[1];
+        const key = data.img.split('/')[4];
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        try {
+          const res = await axios.get(
+            `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users/download/${key}`,
+            config,
+          ); // 서버와 통신하여 데이터 삭제}
+          const fileStream = res.data.data.data.s3Object;
+          const myBlob = new Blob([new Uint8Array([...fileStream.Body.data]).buffer], {
+            type: fileStream.ContentType,
           });
+          const blobUrl = URL.createObjectURL(myBlob);
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = 'bestshot.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } catch (error) {
+          console.log(error);
+        }
         break;
       case 'delete':
         // data 상태 업데이트

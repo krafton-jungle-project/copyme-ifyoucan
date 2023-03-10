@@ -69,4 +69,20 @@ export class UploadService {
   public getAwsS3FileUrl(objectKey: string) {
     return `https://${this.S3_BUCKET_NAME}.s3.amazonaws.com/${objectKey}`;
   }
+
+  async downloadS3Object(key: string): Promise<{
+    s3Object: PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>;
+  }> {
+    try {
+      const s3Object = await this.awsS3
+        .getObject({
+          Bucket: this.S3_BUCKET_NAME,
+          Key: `copy/${key}`,
+        })
+        .promise();
+      return { s3Object };
+    } catch (error) {
+      throw new BadRequestException(`Failed to delete file : ${error}`);
+    }
+  }
 }
