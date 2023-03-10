@@ -94,4 +94,18 @@ export class UsersController {
       imgUrls: user.imgUrls,
     };
   }
+
+  @ApiOperation({ summary: '이미지 다운로드' })
+  @UseGuards(JwtAuthGuard)
+  @Get('download/:key')
+  async downlodaImg(@Param('key') key: string) {
+    //s3에 업로드
+    const s3Object = await this.uploadService.downloadS3Object(key);
+
+    return {
+      statuscode: 200,
+      message: '이미지 다운로드 성공',
+      data: s3Object,
+    };
+  }
 }
