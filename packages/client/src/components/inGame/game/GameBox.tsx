@@ -183,7 +183,7 @@ const FadeBackGround = styled.div<{ visible: boolean }>`
   transform: translate(-50%, -50%);
   width: 200%;
   height: 200%;
-  background-color: #0008; //check: 실제 시연 환경에 맞게 밝기 조절 필요
+  background-color: #0008;
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `;
 
