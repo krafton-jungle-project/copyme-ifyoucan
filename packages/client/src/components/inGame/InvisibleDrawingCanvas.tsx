@@ -33,7 +33,7 @@ const InvisibleDrawingCanvas = () => {
         const token = document.cookie.split('=')[1];
         try {
           const res = await axios.post(
-            `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users/upload`,
+            `https://${process.env.REACT_APP_SERVER_URL}/users/upload`,
             image,
             {
               headers: {

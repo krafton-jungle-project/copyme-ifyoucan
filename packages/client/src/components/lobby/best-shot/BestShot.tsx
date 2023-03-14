@@ -224,12 +224,9 @@ function BestShot() {
       if (document.cookie) {
         const token = document.cookie.split('=')[1];
         try {
-          const res = await axios.get(
-            `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          );
+          const res = await axios.get(`https://${process.env.REACT_APP_SERVER_URL}/users`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           if (res) {
             const imgurls = res.data.data.imgurl;
             setImages(imgurls.reverse());
@@ -317,7 +314,7 @@ function BestShot() {
         const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
           const res = await axios.get(
-            `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users/download/${key}`,
+            `https://${process.env.REACT_APP_SERVER_URL}/users/download/${key}`,
             config,
           ); // 서버와 통신하여 데이터 삭제}
           const fileStream = res.data.data.data.s3Object;
@@ -344,7 +341,7 @@ function BestShot() {
           const config = { headers: { Authorization: `Bearer ${token}` } };
           try {
             const res = await axios.delete(
-              `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users/${key}`,
+              `https://${process.env.REACT_APP_SERVER_URL}/users/${key}`,
               config,
             ); // 서버와 통신하여 데이터 삭제
             if (res) {

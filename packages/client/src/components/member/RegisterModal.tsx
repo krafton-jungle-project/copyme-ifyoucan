@@ -223,14 +223,11 @@ function RegisterModal({
   const onClickConfirmButton = () => {
     console.log('signup');
     axios
-      .post(
-        `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/users`,
-        {
-          loginid: id,
-          name: name,
-          password: pw,
-        },
-      )
+      .post(`https://${process.env.REACT_APP_SERVER_URL}/users`, {
+        loginid: id,
+        name: name,
+        password: pw,
+      })
       .then((res) => {
         console.log(res.data.data);
         // 토큰을 받아서 저장 (local storage 또는 쿠키?)
