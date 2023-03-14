@@ -18,17 +18,22 @@ export interface IGameMode {
 }
 
 export interface ServerToClientEvents {
-  get_rooms: (rooms: Rooms) => void;
   new_room: (roomId: string, gameMode: IGameMode) => void;
+  user_exit: (isStart: boolean) => void;
+  get_rooms: (rooms: Rooms) => void;
   get_ready: (socketId: string) => void;
   get_unready: (socketId: string) => void;
   get_start: (socketId: string) => void;
   get_score: (data: { defenderId: string; score: number }) => void;
   get_count_down: (count: number, stage: string) => void;
+  get_change_stage: (stage: number) => void;
+  get_upload: (images: string[]) => void;
+  get_point: (winner: string) => void;
   get_potg: () => void;
   get_finish: () => void;
   peer: (data: { id: string; nickName: string }) => void;
   greeting: (data: { message: string }) => void;
+  message: (chat: IChat) => void;
   get_offer: (data: {
     sdp: RTCSessionDescription;
     offerSendID: string;
@@ -36,19 +41,9 @@ export interface ServerToClientEvents {
   }) => void;
   get_answer: (answer: RTCSessionDescription) => void;
   get_ice: (data: RTCIceCandidate) => void;
-  message: (chat: IChat) => void;
-  user_exit: (isStart: boolean) => void;
-  get_change_stage: (stage: number) => void;
-  get_upload: (images: string[]) => void;
-  get_point: (winner: string) => void;
 }
 
 export interface ClientToServerEvents {
-  /**
-   * rooms
-   * 방리스트에 대한 데이터를 요청합니다.
-   * 서버에서는 get_rooms 이벤트를 통해 응답합니다.
-   */
   rooms: () => void;
   create_room: (data: { roomName: string; gameMode: IGameMode; thumbnailIdx: number }) => void;
   join_room: (data: { roomId: string; nickName: string }) => void;
@@ -60,6 +55,9 @@ export interface ClientToServerEvents {
   round_score: (score: number) => void;
   potg: () => void;
   count_down: (stage: string) => void;
+  message: (message: string, callback: (chat: IChat) => void) => void;
+  change_stage: (stage: number) => void;
+  point: (winnerId: string) => void;
   offer: (data: {
     sdp: RTCSessionDescriptionInit;
     offerSendID: string;
@@ -76,18 +74,23 @@ export interface ClientToServerEvents {
     candidateSendID: string;
     candidateReceiveID: string;
   }) => void;
-  message: (message: string, callback: (chat: IChat) => void) => void;
-  change_stage: (stage: number) => void;
-  point: (winnerId: string) => void;
 }
 
 export interface InterServerEvents {
-  get_rooms: (rooms: Rooms) => void;
   new_room: (roomId: string, gameMode: IGameMode) => void;
+  get_rooms: (rooms: Rooms) => void;
+  get_ready: (socketId: string) => void;
+  get_unready: (socketId: string) => void;
   get_start: (socketId: string) => void;
   get_score: (data: { defenderId: string; score: number }) => void;
-  peer: (data: { id: string; nickName: string }) => void;
   get_count_down: (count: number, stage: string) => void;
+  get_change_stage: (stage: number) => void;
+  get_potg: () => void;
+  get_finish: () => void;
+  get_upload: (images: string[]) => void;
+  get_point: (winnerId: string) => void;
+  peer: (data: { id: string; nickName: string }) => void;
+  message: (chat: IChat) => void;
   get_offer: (offer: {
     sdp: RTCSessionDescription;
     offerSendID: string;
@@ -96,21 +99,4 @@ export interface InterServerEvents {
   get_answer: (answer: RTCSessionDescription) => void;
   get_ice: (data: RTCIceCandidate) => void;
   error: () => void;
-  message: (chat: IChat) => void;
-  get_change_stage: (stage: number) => void;
-  get_potg: () => void;
-  get_finish: () => void;
-  get_upload: (images: string[]) => void;
-  get_ready: (socketId: string) => void;
-  get_unready: (socketId: string) => void;
-  get_point: (winnerId: string) => void;
-}
-
-export interface SocketData {
-  // name: string;
-  // age: number;
-  // io.on("connection", (socket) => {
-  //   socket.data.name = "john";
-  //   socket.data.age = 42;
-  // });
 }

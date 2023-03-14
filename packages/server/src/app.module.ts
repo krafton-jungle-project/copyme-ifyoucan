@@ -2,7 +2,6 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { EventsModule } from './events/events.module';
@@ -23,8 +22,6 @@ import { UsersModule } from './users/users.module';
     EventsModule,
     UploadsModule,
   ],
-  controllers: [AppController],
-  providers: [],
 })
 export class AppModule implements NestModule {
   private readonly isDev: boolean = process.env.MODE === 'dev' ? true : false;
